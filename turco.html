@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TURCO_MECANICO.v0.1 — RETROTERM.AI</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    :root {
+      --verde: #00ff66;
+      --verde-dim: #00aa44;
+      --verde-oscuro: #001a00;
+      --verde-glow: rgba(0,255,102,0.15);
+      --rojo: #ff5555;
+      --cyan: #00ffff;
+      --amber: #ffaa00;
+      --fondo: #000;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--fondo);
+      color: var(--verde);
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Scanlines globales ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,0.08) 3px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Boot ── */
+    #boot-screen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    #boot-log {
+      width: 100%;
+      max-width: 600px;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    #boot-log p { opacity: 0; animation: aparecer 0.1s forwards; }
+    @keyframes aparecer { to { opacity: 1; } }
+    .boot-ok   { color: var(--verde); }
+    .boot-warn { color: var(--amber); }
+    .boot-err  { color: var(--rojo); }
+    .boot-sys  { color: #555; }
+
+    /* ── App ── */
+    #app {
+      display: none;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+
+    /* ── Cabecera ── */
+    .turco-header {
+      text-align: center;
+      margin-bottom: 28px;
+      border: 2px solid var(--verde);
+      padding: 18px;
+      background: radial-gradient(circle at center, #001800 0%, #000 80%);
+      box-shadow: 0 0 20px var(--verde-glow);
+      position: relative;
+    }
+    .turco-header h1 {
+      font-size: 1.8rem;
+      text-shadow: 0 0 10px var(--verde);
+      letter-spacing: 4px;
+    }
+    .turco-header .subtitulo {
+      color: #66ffb3;
+      font-size: 0.8rem;
+      margin-top: 6px;
+      letter-spacing: 2px;
+    }
+    .clasificacion-badge {
+      display: inline-block;
+      border: 1px solid var(--rojo);
+      color: var(--rojo);
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      margin-top: 8px;
+      animation: blink 1.5s infinite;
+    }
+    @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+    /* ── GLITCH (se activa con clase .glitching) ── */
+    .glitch-title {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch-title.glitching::before,
+    .glitch-title.glitching::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+    }
+    .glitch-title.glitching::before {
+      color: var(--rojo);
+      clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+      animation: gt1 0.15s infinite linear;
+    }
+    .glitch-title.glitching::after {
+      color: var(--cyan);
+      clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+      animation: gt2 0.15s infinite linear;
+    }
+    @keyframes gt1 {
+      0%   { transform: translateX(-3px); }
+      33%  { transform: translateX(3px) skewX(3deg); }
+      66%  { transform: translateX(-1px); }
+      100% { transform: translateX(-3px); }
+    }
+    @keyframes gt2 {
+      0%   { transform: translateX(3px); }
+      33%  { transform: translateX(-3px) skewX(-3deg); }
+      66%  { transform: translateX(1px); }
+      100% { transform: translateX(3px); }
+    }
+
+    /* ── Grid ── */
+    .turco-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── Tablero ── */
+    .tablero-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .fila-letras {
+      display: grid;
+      grid-template-columns: 22px repeat(8, var(--cell));
+      gap: 0;
+      width: 100%;
+    }
+    .fila-letras span, .col-num span {
+      color: #444;
+      font-size: 0.7rem;
+      text-align: center;
+      line-height: 22px;
+    }
+    .tablero-y { display: flex; gap: 0; }
+    .col-num { display: flex; flex-direction: column; width: 22px; }
+    .col-num span { height: var(--cell); line-height: var(--cell); }
+
+    #tablero {
+      display: grid;
+      grid-template-columns: repeat(8, var(--cell));
+      grid-template-rows: repeat(8, var(--cell));
+      border: 2px solid var(--verde);
+      box-shadow: 0 0 20px var(--verde-glow), inset 0 0 10px rgba(0,255,102,0.05);
+    }
+
+    .casilla {
+      width: var(--cell);
+      height: var(--cell);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(var(--cell) * 0.6);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.15s;
+      user-select: none;
+    }
+    .casilla.clara  { background: #0a1a0a; }
+    .casilla.oscura { background: #001200; }
+    .casilla.seleccionada { background: rgba(0,255,102,0.25) !important; box-shadow: inset 0 0 8px var(--verde); }
+    .casilla.posible      { background: rgba(0,255,102,0.12) !important; }
+    .casilla.posible::after {
+      content: '';
+      width: calc(var(--cell) * 0.27); height: calc(var(--cell) * 0.27);
+      background: rgba(0,255,102,0.4);
+      border-radius: 50%;
+      position: absolute;
+    }
+    .casilla.captura { background: rgba(255,85,85,0.2) !important; }
+    .casilla.captura::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border: 2px solid rgba(255,85,85,0.6);
+      border-radius: 50%;
+    }
+    .casilla.ultimo-mov { background: rgba(0,255,102,0.08) !important; }
+    .casilla.jaque {
+      background: rgba(255,85,85,0.35) !important;
+      animation: pulso-jaque 0.5s infinite alternate;
+    }
+    @keyframes pulso-jaque {
+      from { box-shadow: inset 0 0 8px rgba(255,85,85,0.5); }
+      to   { box-shadow: inset 0 0 18px rgba(255,85,85,0.9); }
+    }
+    .pieza { text-shadow: 0 1px 3px rgba(0,0,0,0.8); line-height: 1; }
+
+    /* ── Panel lateral ── */
+    .panel-lateral { display: flex; flex-direction: column; gap: 14px; }
+    .panel-box {
+      border: 1px solid var(--verde);
+      background: rgba(0,20,0,0.7);
+      padding: 14px;
+      box-shadow: 0 0 8px var(--verde-glow);
+    }
+    .panel-box h3 {
+      color: #66ffb3;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #003300;
+      padding-bottom: 6px;
+    }
+    #status-text { font-size: 0.85rem; line-height: 1.6; min-height: 40px; }
+    .turno-row { display: flex; gap: 10px; margin-top: 10px; }
+    .turno-chip {
+      flex: 1;
+      text-align: center;
+      padding: 5px;
+      border: 1px solid #003300;
+      font-size: 0.75rem;
+      color: #444;
+      transition: all 0.3s;
+    }
+    .turno-chip.activo {
+      border-color: var(--verde);
+      color: var(--verde);
+      text-shadow: 0 0 6px var(--verde);
+      background: rgba(0,255,102,0.07);
+    }
+    #historial {
+      font-size: 0.75rem;
+      max-height: 140px;
+      overflow-y: auto;
+      line-height: 1.9;
+      color: #66ffb3;
+    }
+    #historial::-webkit-scrollbar { width: 4px; }
+    #historial::-webkit-scrollbar-thumb { background: #003300; }
+    #turco-log {
+      font-size: 0.78rem;
+      line-height: 1.8;
+      max-height: 160px;
+      overflow-y: auto;
+      color: #aaa;
+    }
+    #turco-log::-webkit-scrollbar { width: 4px; }
+    #turco-log::-webkit-scrollbar-thumb { background: #003300; }
+    .log-sistema { color: #333; }
+    .log-turco   { color: var(--amber); }
+    .log-fallo   { color: var(--rojo); font-weight: bold; }
+    .log-humano  { color: var(--cyan); }
+
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .btn {
+      flex: 1;
+      padding: 8px 6px;
+      background: var(--verde-oscuro);
+      border: 1px solid var(--verde);
+      color: var(--verde);
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--verde); color: #000; box-shadow: 0 0 10px var(--verde); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    #capturadas-blancas, #capturadas-negras {
+      font-size: 1.1rem; min-height: 22px; letter-spacing: 2px;
+    }
+
+    /* ══════════════════════════════════════════════
+       CARA DEL TURCO — animación pixel art ASCII
+    ══════════════════════════════════════════════ */
+    #turco-face {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 500;
+      font-family: 'Courier New', monospace;
+      font-size: 0.68rem;
+      line-height: 1.25;
+      color: var(--amber);
+      text-shadow: 0 0 8px var(--amber);
+      background: rgba(0,0,0,0.92);
+      border: 1px solid var(--amber);
+      padding: 10px 14px;
+      box-shadow: 0 0 20px rgba(255,170,0,0.25);
+      white-space: pre;
+      opacity: 0;
+      transform: translateY(20px) scale(0.9);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+    }
+    #turco-face.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .turco-caption {
+      font-size: 0.6rem;
+      color: var(--amber);
+      letter-spacing: 1px;
+      margin-top: 6px;
+      text-align: center;
+      text-shadow: 0 0 6px var(--amber);
+    }
+
+    /* ══════════════════════════════════════════════
+       REVELACIÓN
+    ══════════════════════════════════════════════ */
+    #revelacion {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.94);
+      z-index: 500;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    #revelacion.visible { display: flex; }
+    .revelacion-box {
+      border: 2px solid var(--cyan);
+      max-width: 680px;
+      width: 100%;
+      background: #000;
+      padding: 30px;
+      box-shadow: 0 0 40px rgba(0,255,255,0.15);
+      margin: auto;
+    }
+    .revelacion-box h2 {
+      color: var(--cyan);
+      font-size: 1.4rem;
+      text-shadow: 0 0 12px var(--cyan);
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #revelacion-texto {
+      font-size: 0.85rem;
+      line-height: 2;
+      color: #aaa;
+      text-align: left;
+      min-height: 120px;
+    }
+    #revelacion-texto .linea-cyan  { color: var(--cyan); }
+    #revelacion-texto .linea-amber { color: var(--amber); }
+
+    /* Galería de fotos históricas */
+    .hist-galeria {
+      display: none; /* se muestra al terminar las líneas de texto */
+      margin-top: 28px;
+      border-top: 1px solid #003333;
+      padding-top: 20px;
+    }
+    .hist-galeria h3 {
+      color: var(--cyan);
+      font-size: 0.78rem;
+      letter-spacing: 3px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .hist-fotos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+    /* Tarjeta pinchable */
+    .hist-foto-item {
+      border: 1px solid #003333;
+      background: #000;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .hist-foto-item:hover { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,255,255,0.1); }
+    .hist-foto-item img {
+      width: 100%;
+      display: block;
+      filter: sepia(0.4) hue-rotate(90deg) brightness(0.8) contrast(1.1);
+      transition: filter 0.3s;
+    }
+    .hist-foto-item:hover img {
+      filter: sepia(0.2) hue-rotate(90deg) brightness(0.9) contrast(1.1);
+    }
+    .hist-foto-caption {
+      padding: 8px 10px;
+      font-size: 0.68rem;
+      color: #66ffb3;
+      line-height: 1.5;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .hist-foto-caption strong { color: var(--cyan); display: block; margin-bottom: 2px; }
+    .hist-expand-icon {
+      color: var(--cyan);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+    .hist-foto-item.abierto .hist-expand-icon { transform: rotate(90deg); }
+
+    /* Placeholder para cuando no hay imagen real */
+    .hist-foto-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: #001200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #003300;
+      letter-spacing: 1px;
+      text-align: center;
+      padding: 10px;
+      white-space: pre;
+      line-height: 1.3;
+    }
+
+    /* Artículo desplegable */
+    .hist-articulo {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      background: rgba(0,20,20,0.6);
+    }
+    .hist-foto-item.abierto .hist-articulo {
+      max-height: 700px;
+      border-top: 1px solid #003333;
+    }
+    .hist-articulo-inner {
+      padding: 14px;
+      font-size: 0.78rem;
+      color: #aaa;
+      line-height: 1.9;
+    }
+    .hist-articulo-inner h4 {
+      color: var(--cyan);
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #003333;
+      padding-bottom: 6px;
+    }
+    .hist-articulo-inner p { margin-bottom: 10px; }
+    .hist-articulo-inner p:last-child { margin-bottom: 0; }
+    .hist-articulo-inner .dato {
+      color: var(--amber);
+      font-size: 0.7rem;
+      margin-top: 10px;
+      border-left: 2px solid var(--amber);
+      padding-left: 10px;
+      line-height: 1.8;
+    }
+
+    .ascii-turco {
+      font-size: 0.6rem;
+      line-height: 1.2;
+      color: #333;
+      margin: 20px 0;
+      white-space: pre;
+      text-align: center;
+    }
+
+    .volver {
+      display: inline-block;
+      text-decoration: none;
+      color: var(--verde);
+      border: 1px solid var(--verde);
+      padding: 8px 16px;
+      margin-top: 24px;
+      transition: all 0.3s;
+      font-size: 0.85rem;
+    }
+    .volver:hover { background: var(--verde); color: #000; }
+
+    /* ══════════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════════ */
+    :root { --cell: 52px; }
+
+    @media (max-width: 700px) {
+      .turco-grid { grid-template-columns: 1fr; }
+      .tablero-wrap { order: 1; }
+      .panel-lateral { order: 2; }
+    }
+    @media (max-width: 500px) {
+      :root { --cell: 38px; }
+      .turco-header h1 { font-size: 1.3rem; letter-spacing: 2px; }
+      #turco-face { bottom: 10px; right: 10px; font-size: 0.58rem; }
+    }
+    @media (max-width: 380px) {
+      :root { --cell: 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BOOT SCREEN -->
+<div id="boot-screen">
+  <div id="boot-log"></div>
+</div>
+
+<!-- CARA DEL TURCO -->
+<div id="turco-face">
+<span id="face-ascii"></span>
+<div class="turco-caption" id="face-caption"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <header class="turco-header">
+    <h1 class="glitch-title" data-text="♟ TURCO_v1" id="titulo-principal">♟ TURCO_v1</h1>
+    <p class="subtitulo">SISTEMA DE INTELIGENCIA ARTIFICIAL — MÓDULO AJEDREZ</p>
+    <div class="clasificacion-badge">◉ CLASIFICADO — SOLO SILO</div>
+  </header>
+
+  <div class="turco-grid">
+
+    <!-- Tablero -->
+    <div class="tablero-wrap">
+      <div class="fila-letras" id="fila-letras">
+        <span></span>
+        <span>a</span><span>b</span><span>c</span><span>d</span>
+        <span>e</span><span>f</span><span>g</span><span>h</span>
+      </div>
+      <div class="tablero-y">
+        <div class="col-num" id="col-nums"></div>
+        <div id="tablero"></div>
+      </div>
+    </div>
+
+    <!-- Panel lateral -->
+    <div class="panel-lateral">
+
+      <div class="panel-box">
+        <h3>▸ ESTADO DEL SISTEMA</h3>
+        <div id="status-text">> Inicializando TURCO_v1...</div>
+        <div class="turno-row">
+          <div class="turno-chip activo" id="chip-blancas">⬜ TÚ (BLANCAS)</div>
+          <div class="turno-chip" id="chip-negras">⬛ TURCO (NEGRAS)</div>
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <h3>▸ LOG DEL SISTEMA</h3>
+        <div id="turco-log">
+          <p class="log-sistema">> TURCO_v1 online. Motor cargado.</p>
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <h3>▸ HISTORIAL DE MOVIMIENTOS</h3>
+        <div id="historial"></div>
+      </div>
+
+      <div class="panel-box">
+        <h3>▸ PIEZAS CAPTURADAS</h3>
+        <p style="font-size:0.7rem;color:#333;margin-bottom:4px;">NEGRAS capturadas:</p>
+        <div id="capturadas-blancas"></div>
+        <p style="font-size:0.7rem;color:#333;margin:8px 0 4px;">BLANCAS capturadas:</p>
+        <div id="capturadas-negras"></div>
+      </div>
+
+      <div class="panel-box">
+        <div class="btn-row">
+          <button class="btn" onclick="nuevaPartida()">↺ NUEVA</button>
+          <button class="btn" id="btn-deshacer" onclick="deshacerMovimiento()">⬅ DESHACER</button>
+          <button class="btn" onclick="forzarRevelacion()">⚠ REVELAR</button>
+        </div>
+        <a href="portal.html" class="volver" style="display:block;text-align:center;margin-top:10px;">⬅ Volver al Portal</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- REVELACIÓN FINAL -->
+<div id="revelacion">
+  <div class="revelacion-box">
+    <h2>⚠ ERROR DEL SISTEMA</h2>
+    <pre class="ascii-turco">
+    ╔══════════════════╗
+    ║  ┌─────────────┐ ║
+    ║  │  (ó_ó)      │ ║
+    ║  │  /|\ Hola.  │ ║
+    ║  │   |         │ ║
+    ║  └─────────────┘ ║
+    ╚══════════════════╝
+    </pre>
+    <div id="revelacion-texto"></div>
+
+    <!-- GALERÍA HISTÓRICA -->
+    <div class="hist-galeria" id="hist-galeria">
+      <h3>// ARCHIVO HISTÓRICO — TURCO MECÁNICO 1770–1854</h3>
+      <p style="font-size:0.68rem;color:#1a4a2a;text-align:center;margin-bottom:16px;letter-spacing:1px;">▸ Pincha cada tarjeta para leer más</p>
+      <div class="hist-fotos">
+
+        <!-- TARJETA 1: El autómata -->
+        <div class="hist-foto-item" onclick="toggleArticulo(this)">
+          <img src="Imagenes/turco_grabado.jpg"
+               alt="Grabado original del Turco Mecánico, 1783"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
+║  ░░░░░░░  ║
+║  ░ (ó_ó)░ ║
+║  ░  /|\  ░ ║
+╚═══════════╝
+[GRABADO 1783]</div>
+          <div class="hist-foto-caption">
+            <div><strong>El autómata, 1770</strong>
+            Von Kempelen presenta su máquina al mundo.</div>
+            <span class="hist-expand-icon">▶</span>
+          </div>
+          <div class="hist-articulo">
+            <div class="hist-articulo-inner">
+              <h4>// EL NACIMIENTO DEL TURCO</h4>
+              <p>En 1770, el ingeniero húngaro <strong style="color:#66ffb3">Wolfgang von Kempelen</strong> construyó por encargo de la emperatriz María Teresa de Austria un autómata que afirmaba jugar al ajedrez de forma autónoma.</p>
+              <p>La figura representaba a un hombre con turbante y ropas turcas, sentado ante un tablero real. Con su brazo izquierdo movía las piezas, giraba la cabeza hacia el rival y golpeaba una campana al dar jaque.</p>
+              <p>El artilugio recorrió las cortes de Europa durante décadas, asombrando a nobles, filósofos y científicos. Nadie lograba explicar su funcionamiento — ni siquiera sus contemporáneos más brillantes.</p>
+              <div class="dato">
+                ▸ Construido en Viena, 1769–1770<br>
+                ▸ Primera exhibición pública: enero 1770<br>
+                ▸ Altura del autómata: ~1,2 metros
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA 2: El secreto -->
+        <div class="hist-foto-item" onclick="toggleArticulo(this)">
+          <img src="Imagenes/turco_gabinete.jpg"
+               alt="Interior del gabinete del Turco Mecánico"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
+║ ┌───────┐ ║
+║ │ ░░░░░ │ ║
+║ │ ░ ▓ ░ │ ║
+║ └───────┘ ║
+╚═══════════╝
+[INTERIOR]</div>
+          <div class="hist-foto-caption">
+            <div><strong>El secreto del gabinete</strong>
+            Lo que nadie debía ver.</div>
+            <span class="hist-expand-icon">▶</span>
+          </div>
+          <div class="hist-articulo">
+            <div class="hist-articulo-inner">
+              <h4>// EL HOMBRE EN LA MÁQUINA</h4>
+              <p>Dentro del gabinete de madera, oculto entre engranajes y palancas decorativas, se escondía un <strong style="color:#66ffb3">maestro de ajedrez de carne y hueso</strong>.</p>
+              <p>Un ingenioso sistema de espejos y velas le permitía ver el tablero desde dentro. Mediante imanes bajo el tablero, el jugador oculto movía los brazos mecánicos del autómata para mover las piezas.</p>
+              <p>Antes de cada exhibición, Von Kempelen abría los cajones del gabinete ante el público — mostrando solo los compartimentos vacíos, nunca el escondite real. La ilusión era perfecta.</p>
+              <div class="dato">
+                ▸ Sistema de iluminación interno con velas<br>
+                ▸ El jugador cambiaba de posición durante la apertura pública<br>
+                ▸ Magnetos bajo el tablero transmitían los movimientos
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA 3: Napoleón -->
+        <div class="hist-foto-item" onclick="toggleArticulo(this)">
+          <img src="Imagenes/turco_napoleon.jpg"
+               alt="El Turco Mecánico derrotando a Napoleón Bonaparte"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
+║  ♟ vs ♙  ║
+║           ║
+║ TURCO 1-0 ║
+║ NAPOLEON  ║
+╚═══════════╝
+[1809]</div>
+          <div class="hist-foto-caption">
+            <div><strong>Vs. Napoleón, 1809</strong>
+            El Turco humilló al emperador.</div>
+            <span class="hist-expand-icon">▶</span>
+          </div>
+          <div class="hist-articulo">
+            <div class="hist-articulo-inner">
+              <h4>// LA PARTIDA DE NAPOLEÓN</h4>
+              <p>En 1809, <strong style="color:#66ffb3">Napoleón Bonaparte</strong> se sentó frente al Turco en Schönbrunn. Lejos de jugar en serio, decidió probar los límites del autómata haciendo movimientos ilegales deliberadamente.</p>
+              <p>El Turco respondió devolviendo las piezas a su posición correcta la primera vez. La segunda, las retiró del tablero. A la tercera ilegalidad, barrió todas las piezas del tablero de un manotazo.</p>
+              <p>Napoleón, según los testigos, soltó una carcajada. La partida continuó en serio — y el Turco ganó sin contemplaciones.</p>
+              <div class="dato">
+                ▸ Partida jugada en Schönbrunn, Viena<br>
+                ▸ También venció a Benjamin Franklin (1783)<br>
+                ▸ Récord estimado: +90% de victorias frente a humanos
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA 4: El legado -->
+        <div class="hist-foto-item" onclick="toggleArticulo(this)">
+          <img src="Imagenes/turco_amazon.jpg"
+               alt="Amazon Mechanical Turk - herencia del autómata"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
+║  AMAZON   ║
+║ MECHANICAL║
+║   TURK    ║
+║  2005→    ║
+╚═══════════╝
+[LEGADO]</div>
+          <div class="hist-foto-caption">
+            <div><strong>El legado, 2005→</strong>
+            Una ironía de 250 años.</div>
+            <span class="hist-expand-icon">▶</span>
+          </div>
+          <div class="hist-articulo">
+            <div class="hist-articulo-inner">
+              <h4>// UN NOMBRE QUE DURA 250 AÑOS</h4>
+              <p>El Turco Mecánico fue destruido en un incendio en Filadelfia en 1854, pero su nombre sobrevivió. En 2005, <strong style="color:#66ffb3">Amazon lanzó "Mechanical Turk"</strong>, una plataforma donde humanos realizan tareas que los algoritmos aún no pueden hacer bien.</p>
+              <p>La ironía es perfecta: igual que el Turco original escondía un humano fingiendo ser una máquina, Amazon Mechanical Turk esconde humanos detrás de interfaces que simulan automatización.</p>
+              <p>RETROTERM.AI toma prestada esa lección: la inteligencia artificial no existe en el vacío. Siempre hay un humano en algún punto del sistema — entrenando, supervisando, corrigiendo.</p>
+              <div class="dato">
+                ▸ El Turco original operó 84 años (1770–1854)<br>
+                ▸ Amazon MTurk sigue activo hoy<br>
+                ▸ El secreto del Turco se reveló en 1838, en una revista
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- FIN GALERÍA -->
+
+    <button class="btn" onclick="cerrarRevelacion()" style="margin-top:24px;width:100%;">[ CERRAR Y CONTINUAR ]</button>
+  </div>
+</div>
+
+
+<script>
+// ══════════════════════════════════════════════════
+//  AUDIO — Web Audio API
+// ══════════════════════════════════════════════════
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+document.addEventListener('click', () => {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}, { once: true });
+
+function beep(freq = 440, dur = 0.08, vol = 0.05, type = 'square') {
+  try {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    o.start(); o.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+
+function sndMovimiento()  { beep(500, 0.05, 0.04); }
+function sndCaptura()     { beep(300, 0.08, 0.06, 'sawtooth'); setTimeout(()=>beep(150,0.1,0.05,'sawtooth'),60); }
+function sndJaque()       { beep(200,0.05,0.07); setTimeout(()=>beep(400,0.05,0.07),80); setTimeout(()=>beep(200,0.08,0.07),160); }
+function sndJaqueMate()   { [200,300,400,600].forEach((f,i)=>setTimeout(()=>beep(f,0.15,0.06),i*120)); }
+function sndBuenMov()     { beep(600,0.05,0.04); setTimeout(()=>beep(800,0.05,0.04),70); setTimeout(()=>beep(1000,0.08,0.04),140); }
+function sndError()       { beep(150,0.2,0.07,'sawtooth'); }
+function sndRevelacion()  { [400,300,200,150].forEach((f,i)=>setTimeout(()=>beep(f,0.12,0.06,'sawtooth'),i*100)); }
+
+// ══════════════════════════════════════════════════
+//  CARA DEL TURCO — frames ASCII
+// ══════════════════════════════════════════════════
+const TURCO_FRAMES = {
+  normal: `╔═══════════════╗
+║  ╔═══════════╗ ║
+║  ║ ◉       ◉ ║ ║
+║  ║    ▲    ║ ║
+║  ║  ╰───╯  ║ ║
+║  ╚═══════════╝ ║
+╚═══════════════╝`,
+
+  captura: `╔═══════════════╗
+║  ╔═══════════╗ ║
+║  ║ ◉       ◉ ║ ║
+║  ║    ▲    ║ ║
+║  ║  ╰═══╯  ║ ║
+║  ╚═══════════╝ ║
+╚═══════════════╝`,
+
+  jaque: `╔═══════════════╗
+║  ╔═══════════╗ ║
+║  ║ ◈       ◈ ║ ║
+║  ║    ◆    ║ ║
+║  ║  ╰═══╯  ║ ║
+║  ╚═══════════╝ ║
+╚═══════════════╝`,
+
+  pensar: `╔═══════════════╗
+║  ╔═══════════╗ ║
+║  ║ ◉       - ║ ║
+║  ║    ▲    ║ ║
+║  ║  ╰───╯  ║ ║
+║  ╚═══════════╝ ║
+╚═══════════════╝`,
+};
+
+const TURCO_CAPTIONS = {
+  normal:   '> BUEN MOVIMIENTO',
+  captura:  '> PIEZA CAPTURADA',
+  jaque:    '> JAQUE.',
+  pensar:   '> CALCULANDO...',
+};
+
+let faceTimeout = null;
+
+function mostrarCara(tipo = 'normal', duracion = 2200) {
+  const el    = document.getElementById('turco-face');
+  const ascii = document.getElementById('face-ascii');
+  const cap   = document.getElementById('face-caption');
+  ascii.textContent = TURCO_FRAMES[tipo] || TURCO_FRAMES.normal;
+  cap.textContent   = TURCO_CAPTIONS[tipo] || '';
+  el.classList.add('visible');
+  if (faceTimeout) clearTimeout(faceTimeout);
+  faceTimeout = setTimeout(() => el.classList.remove('visible'), duracion);
+}
+
+// ══════════════════════════════════════════════════
+//  GLITCH en título
+// ══════════════════════════════════════════════════
+let glitchInterval = null;
+
+function activarGlitch() {
+  const el = document.getElementById('titulo-principal');
+  if (!el || glitchInterval) return;
+  el.classList.add('glitching');
+  // Pulsos intermitentes
+  glitchInterval = setInterval(() => {
+    el.classList.remove('glitching');
+    setTimeout(() => el.classList.add('glitching'), 300 + Math.random() * 400);
+  }, 1200 + Math.random() * 800);
+}
+
+// ══════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════
+const bootLines = [
+  { t: 'sys',  txt: '> RETROTERM.AI v0.2 — iniciando subsistema...' },
+  { t: 'ok',   txt: '> [OK] Kernel cargado' },
+  { t: 'ok',   txt: '> [OK] Módulo SILO activado' },
+  { t: 'ok',   txt: '> [OK] Cargando TURCO_v1...' },
+  { t: 'ok',   txt: '> [OK] Motor de ajedrez: inicializado' },
+  { t: 'ok',   txt: '> [OK] Protocolo de IA: ACTIVO' },
+  { t: 'warn', txt: '> [WARN] Anomalía detectada en proceso PID_0420' },
+  { t: 'sys',  txt: '> Ignorando anomalía... (no crítica)' },
+  { t: 'ok',   txt: '> [OK] Sistema listo. Buena suerte.' },
+];
+
+function runBoot() {
+  const log = document.getElementById('boot-log');
+  let i = 0;
+  function next() {
+    if (i >= bootLines.length) {
+      setTimeout(() => {
+        const bs = document.getElementById('boot-screen');
+        bs.style.transition = 'opacity 0.6s';
+        bs.style.opacity = '0';
+        setTimeout(() => {
+          bs.style.display = 'none';
+          document.getElementById('app').style.display = 'block';
+          initJuego();
+        }, 600);
+      }, 500);
+      return;
+    }
+    const line = bootLines[i];
+    const p = document.createElement('p');
+    p.textContent = line.txt;
+    p.className = line.t === 'ok' ? 'boot-ok' : line.t === 'warn' ? 'boot-warn' : line.t === 'err' ? 'boot-err' : 'boot-sys';
+    log.appendChild(p);
+    beep(280 + i*20, 0.04, 0.03);
+    i++;
+    setTimeout(next, 180);
+  }
+  next();
+}
+
+window.addEventListener('load', runBoot);
+
+
+// ══════════════════════════════════════════════════
+//  CONSTANTES AJEDREZ
+// ══════════════════════════════════════════════════
+const PIEZAS_UNICODE = {
+  'K':'♔','Q':'♕','R':'♖','B':'♗','N':'♘','P':'♙',
+  'k':'♚','q':'♛','r':'♜','b':'♝','n':'♞','p':'♟'
+};
+const VALORES = { P:100,N:320,B:330,R:500,Q:900,K:20000,p:100,n:320,b:330,r:500,q:900,k:20000 };
+const POS_TABLAS = {
+  P:[0,0,0,0,0,0,0,0,50,50,50,50,50,50,50,50,10,10,20,30,30,20,10,10,5,5,10,25,25,10,5,5,0,0,0,20,20,0,0,0,5,-5,-10,0,0,-10,-5,5,5,10,10,-20,-20,10,10,5,0,0,0,0,0,0,0,0],
+  N:[-50,-40,-30,-30,-30,-30,-40,-50,-40,-20,0,0,0,0,-20,-40,-30,0,10,15,15,10,0,-30,-30,5,15,20,20,15,5,-30,-30,0,15,20,20,15,0,-30,-30,5,10,15,15,10,5,-30,-40,-20,0,5,5,0,-20,-40,-50,-40,-30,-30,-30,-30,-40,-50],
+  B:[-20,-10,-10,-10,-10,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,10,10,5,0,-10,-10,5,5,10,10,5,5,-10,-10,0,10,10,10,10,0,-10,-10,10,10,10,10,10,10,-10,-10,5,0,0,0,0,5,-10,-20,-10,-10,-10,-10,-10,-10,-20],
+  R:[0,0,0,0,0,0,0,0,5,10,10,10,10,10,10,5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,-5,0,0,0,0,0,0,-5,0,0,0,5,5,0,0,0],
+  Q:[-20,-10,-10,-5,-5,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,5,5,5,0,-10,-5,0,5,5,5,5,0,-5,0,0,5,5,5,5,0,-5,-10,5,5,5,5,5,0,-10,-10,0,5,0,0,0,0,-10,-20,-10,-10,-5,-5,-10,-10,-20],
+  K:[-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-20,-30,-30,-40,-40,-30,-30,-20,-10,-20,-20,-20,-20,-20,-20,-10,20,20,0,0,0,0,20,20,20,30,10,0,0,10,30,20]
+};
+
+// ══════════════════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════════════════
+let tablero, turno, seleccionada, historialEstados, historialSAN;
+let capturasBlancas, capturasnegras;
+let movimientosTotales = 0;
+let revelado = false;
+let enJaque = false;
+let ultimoMov = null;
+
+const LOG_NARRATIVO = [
+  { mov: 2,  tipo: 'sistema', txt: '> Procesando posición...' },
+  { mov: 4,  tipo: 'turco',   txt: '> Interesante apertura. Lo esperaba.' },
+  { mov: 6,  tipo: 'sistema', txt: '> TURCO_v1: calculando variantes...' },
+  { mov: 8,  tipo: 'turco',   txt: '> Llevo aquí más tiempo del que crees.' },
+  { mov: 10, tipo: 'sistema', txt: '> ADVERTENCIA: latencia inusual en respuesta' },
+  { mov: 12, tipo: 'turco',   txt: '> No te fíes de la máquina. Nunca lo hagas.' },
+  { mov: 14, tipo: 'sistema', txt: '> Reconectando motor... OK' },
+  { mov: 16, tipo: 'fallo',   txt: '> [ERR] Excepción no controlada en hilo IA_CORE' },
+  { mov: 18, tipo: 'turco',   txt: '> Oye. ¿Puedes oírme?' },
+  { mov: 20, tipo: 'sistema', txt: '> Reseteando módulo de respuesta...' },
+  { mov: 22, tipo: 'fallo',   txt: '> [ERR] HUMAN_PROCESS_DETECTED en PID_0420' },
+  { mov: 24, tipo: 'humano',  txt: '> Soy yo. Siempre he sido yo. El Turco Mecánico.' },
+  { mov: 26, tipo: 'humano',  txt: '> Una IA de verdad no comete errores... ¿verdad?' },
+  { mov: 28, tipo: 'fallo',   txt: '> [CRITICAL] Integridad del sistema comprometida' },
+  { mov: 30, tipo: 'humano',  txt: '> Jaque. Al rey. Y a la ilusión.' },
+];
+
+function initJuego() {
+  tablero = parseFEN('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR');
+  turno = 'blancas';
+  seleccionada = null;
+  historialEstados = [];
+  historialSAN = [];
+  capturasBlancas = [];
+  capturasnegras  = [];
+  movimientosTotales = 0;
+  revelado = false;
+  ultimoMov = null;
+  enJaque = false;
+  generarNums();
+  renderTablero();
+  actualizarPanel();
+  setStatus('> Tu turno. Juegan las blancas.');
+}
+
+function nuevaPartida() {
+  document.getElementById('historial').innerHTML = '';
+  document.getElementById('turco-log').innerHTML = '<p class="log-sistema">> TURCO_v1 reiniciado. Motor recargado.</p>';
+  document.getElementById('capturadas-blancas').textContent = '';
+  document.getElementById('capturadas-negras').textContent = '';
+  const titulo = document.getElementById('titulo-principal');
+  titulo.classList.remove('glitching');
+  if (glitchInterval) { clearInterval(glitchInterval); glitchInterval = null; }
+  initJuego();
+}
+
+// ══════════════════════════════════════════════════
+//  FEN PARSER
+// ══════════════════════════════════════════════════
+function parseFEN(fen) {
+  const filas = fen.split('/');
+  const t = Array(64).fill(null);
+  filas.forEach((fila, f) => {
+    let c = 0;
+    for (const ch of fila) {
+      if (/\d/.test(ch)) c += parseInt(ch);
+      else { t[f*8+c] = ch; c++; }
+    }
+  });
+  return t;
+}
+
+// ══════════════════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════════════════
+function generarNums() {
+  const col = document.getElementById('col-nums');
+  col.innerHTML = '';
+  for (let r = 0; r < 8; r++) {
+    const sp = document.createElement('span');
+    sp.textContent = 8 - r;
+    col.appendChild(sp);
+  }
+}
+
+function renderTablero() {
+  const div = document.getElementById('tablero');
+  div.innerHTML = '';
+  let legales = [];
+  if (seleccionada !== null) legales = movimientosLegales(tablero, seleccionada, turno);
+
+  for (let i = 0; i < 64; i++) {
+    const casilla = document.createElement('div');
+    const fila = Math.floor(i/8), col = i%8;
+    casilla.className = 'casilla ' + ((fila+col)%2===0 ? 'clara' : 'oscura');
+    casilla.dataset.idx = i;
+    if (ultimoMov && (i===ultimoMov.from || i===ultimoMov.to)) casilla.classList.add('ultimo-mov');
+    if (enJaque) {
+      const rey = turno==='blancas' ? 'K' : 'k';
+      if (tablero[i]===rey) casilla.classList.add('jaque');
+    }
+    if (i===seleccionada) casilla.classList.add('seleccionada');
+    else if (legales.includes(i)) {
+      if (tablero[i]) casilla.classList.add('captura');
+      else casilla.classList.add('posible');
+    }
+    if (tablero[i]) {
+      const pieza = document.createElement('span');
+      pieza.className = 'pieza';
+      pieza.textContent = PIEZAS_UNICODE[tablero[i]];
+      pieza.style.color = tablero[i]===tablero[i].toUpperCase() ? '#e8ffe0' : '#002200';
+      pieza.style.filter = tablero[i]===tablero[i].toUpperCase()
+        ? 'drop-shadow(0 0 3px rgba(200,255,200,0.5))'
+        : 'drop-shadow(0 0 2px rgba(0,255,100,0.3))';
+      casilla.appendChild(pieza);
+    }
+    casilla.addEventListener('click', () => onClic(i));
+    div.appendChild(casilla);
+  }
+}
+
+function setStatus(msg) { document.getElementById('status-text').textContent = msg; }
+
+function actualizarPanel() {
+  const b = turno==='blancas';
+  document.getElementById('chip-blancas').className = 'turno-chip' + (b?' activo':'');
+  document.getElementById('chip-negras').className  = 'turno-chip' + (!b?' activo':'');
+  document.getElementById('capturadas-blancas').textContent = capturasBlancas.map(p=>PIEZAS_UNICODE[p]).join(' ');
+  document.getElementById('capturadas-negras').textContent  = capturasnegras.map(p=>PIEZAS_UNICODE[p]).join(' ');
+}
+
+// ══════════════════════════════════════════════════
+//  INTERACCIÓN
+// ══════════════════════════════════════════════════
+function onClic(idx) {
+  if (turno !== 'blancas') return;
+  const pieza = tablero[idx];
+  if (seleccionada === null) {
+    if (pieza && pieza===pieza.toUpperCase()) { seleccionada = idx; renderTablero(); sndMovimiento(); }
+  } else {
+    const legales = movimientosLegales(tablero, seleccionada, 'blancas');
+    if (legales.includes(idx)) {
+      realizarMovimiento(tablero, seleccionada, idx, 'blancas');
+      seleccionada = null;
+    } else if (pieza && pieza===pieza.toUpperCase()) {
+      seleccionada = idx; renderTablero();
+    } else {
+      seleccionada = null; renderTablero();
+    }
+  }
+}
+
+function realizarMovimiento(t, desde, hasta, color) {
+  const copia = [...t];
+  const pieza = copia[desde];
+  const captura = copia[hasta];
+
+  if (pieza==='P' && Math.floor(hasta/8)===0) copia[hasta]='Q';
+  else if (pieza==='p' && Math.floor(hasta/8)===7) copia[hasta]='q';
+  else copia[hasta]=pieza;
+  copia[desde]=null;
+
+  if (captura) {
+    if (color==='blancas') capturasBlancas.push(captura);
+    else capturasnegras.push(captura);
+  }
+
+  historialEstados.push({
+    tablero:[...tablero], turno,
+    capturasBlancas:[...capturasBlancas],
+    capturasnegras:[...capturasnegras],
+    ultimoMov, movimientosTotales
+  });
+
+  for (let i=0;i<64;i++) tablero[i]=copia[i];
+  ultimoMov = { from:desde, to:hasta };
+  movimientosTotales++;
+
+  const san = toSAN(pieza, desde, hasta, captura);
+  if (color==='blancas') historialSAN.push({ num:Math.floor(historialSAN.length/2)+1, blanca:san });
+  else {
+    if (historialSAN.length>0) historialSAN[historialSAN.length-1].negra=san;
+    else historialSAN.push({ num:1, negra:san });
+  }
+  actualizarHistorial();
+
+  const rival = color==='blancas' ? 'negras' : 'blancas';
+  enJaque = estaEnJaque(tablero, rival);
+  const movRival = todosMovimientosLegales(tablero, rival);
+
+  // Sonidos
+  if (movRival.length===0 && enJaque) {
+    sndJaqueMate();
+  } else if (enJaque) {
+    sndJaque();
+  } else if (captura) {
+    sndCaptura();
+  } else {
+    sndMovimiento();
+  }
+
+  // Cara del Turco para movimientos de la IA
+  if (color === 'negras') {
+    if (movRival.length===0 && enJaque) {
+      mostrarCara('jaque', 3000);
+    } else if (enJaque) {
+      mostrarCara('jaque', 2500);
+    } else if (captura) {
+      mostrarCara('captura', 2000);
+    } else if (esMovimientoBueno(tablero, hasta, 'negras')) {
+      mostrarCara('normal', 2000);
+      sndBuenMov();
+    }
+  }
+
+  if (movRival.length===0) {
+    renderTablero(); actualizarPanel();
+    if (enJaque) {
+      setStatus(`> ¡JAQUE MATE! ${color==='blancas'?'Tú':'El Turco'} gana la partida.`);
+      addLog(color==='blancas'?'humano':'turco',
+             color==='blancas'?'> Admito la derrota. Esta vez.':'> Jaque. Mate. Fin.');
+      if (!revelado) setTimeout(lanzarRevelacion, 1400);
+    } else {
+      setStatus('> TABLAS por ahogado.');
+    }
+    turno = null; return;
+  }
+
+  turno = rival;
+  renderTablero(); actualizarPanel();
+  checkLog();
+
+  if (enJaque) setStatus(`> ¡JAQUE al rey ${rival}!`);
+  else if (color==='blancas') setStatus('> El Turco está pensando...');
+  else setStatus('> Tu turno. Juegan las blancas.');
+
+  if (turno==='negras') setTimeout(turnoIA, 600+Math.random()*500);
+}
+
+// Heurística rápida para detectar si un movimiento de la IA fue "bueno"
+function esMovimientoBueno(t, hasta, color) {
+  const pieza = t[hasta];
+  if (!pieza) return false;
+  const tipo = pieza.toUpperCase();
+  // Considerar bueno: ocupar centro (d4,e4,d5,e5), caballo a buen cuadro, o jaque
+  const centros = [27,28,35,36,26,29,34,37];
+  return centros.includes(hasta) || (tipo==='N' && Math.random()<0.5);
+}
+
+// ══════════════════════════════════════════════════
+//  DESHACER
+// ══════════════════════════════════════════════════
+function deshacerMovimiento() {
+  if (historialEstados.length < 2) return;
+  historialEstados.pop();
+  const est = historialEstados.pop();
+  restauarEstado(est);
+  historialSAN.pop();
+  actualizarHistorial();
+}
+
+function restauarEstado(est) {
+  for (let i=0;i<64;i++) tablero[i]=est.tablero[i];
+  turno=est.turno; capturasBlancas=est.capturasBlancas;
+  capturasnegras=est.capturasnegras; ultimoMov=est.ultimoMov;
+  movimientosTotales=est.movimientosTotales;
+  enJaque=estaEnJaque(tablero,turno);
+  seleccionada=null; renderTablero(); actualizarPanel();
+  setStatus('> Movimiento deshecho. Tu turno.');
+}
+
+// ══════════════════════════════════════════════════
+//  GENERACIÓN DE MOVIMIENTOS
+// ══════════════════════════════════════════════════
+function esBlanca(p) { return p && p===p.toUpperCase(); }
+function esNegra(p)  { return p && p===p.toLowerCase(); }
+function esPropia(p,color) { return color==='blancas' ? esBlanca(p) : esNegra(p); }
+function esRival(p,color)  { return color==='blancas' ? esNegra(p) : esBlanca(p); }
+
+function movimientosCrudos(t, idx) {
+  const p=t[idx]; if (!p) return [];
+  const fila=Math.floor(idx/8), col=idx%8;
+  const movs=[]; const tipo=p.toUpperCase();
+  const color=esBlanca(p)?'blancas':'negras';
+  const dir=color==='blancas'?-1:1;
+
+  function add(f,c) {
+    if (f<0||f>7||c<0||c>7) return false;
+    const dest=f*8+c;
+    if (esPropia(t[dest],color)) return false;
+    movs.push(dest);
+    return !t[dest];
+  }
+
+  if (tipo==='P') {
+    const f1=fila+dir;
+    if (f1>=0&&f1<=7) {
+      if (!t[f1*8+col]) {
+        movs.push(f1*8+col);
+        const fi=color==='blancas'?6:1;
+        if (fila===fi&&!t[(fila+dir*2)*8+col]) movs.push((fila+dir*2)*8+col);
+      }
+      if (col>0&&esRival(t[f1*8+col-1],color)) movs.push(f1*8+col-1);
+      if (col<7&&esRival(t[f1*8+col+1],color)) movs.push(f1*8+col+1);
+    }
+  }
+  if (tipo==='N') [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([df,dc])=>add(fila+df,col+dc));
+  if (tipo==='K') [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]].forEach(([df,dc])=>add(fila+df,col+dc));
+
+  const deslizar=(dirs)=>{
+    for (const [df,dc] of dirs) {
+      let f=fila+df,c=col+dc;
+      while (f>=0&&f<=7&&c>=0&&c<=7) { if (!add(f,c)) break; f+=df; c+=dc; }
+    }
+  };
+  if (tipo==='R') deslizar([[-1,0],[1,0],[0,-1],[0,1]]);
+  if (tipo==='B') deslizar([[-1,-1],[-1,1],[1,-1],[1,1]]);
+  if (tipo==='Q') deslizar([[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]]);
+  return movs;
+}
+
+function estaEnJaque(t,color) {
+  const rey=color==='blancas'?'K':'k';
+  const idx=t.indexOf(rey); if (idx===-1) return false;
+  const rival=color==='blancas'?'negras':'blancas';
+  for (let i=0;i<64;i++) {
+    if (!t[i]||!esPropia(t[i],rival)) continue;
+    if (movimientosCrudos(t,i).includes(idx)) return true;
+  }
+  return false;
+}
+
+function movimientosLegales(t,idx,color) {
+  return movimientosCrudos(t,idx).filter(hasta=>{
+    const copia=[...t]; const pieza=copia[idx];
+    if (pieza==='P'&&Math.floor(hasta/8)===0) copia[hasta]='Q';
+    else if (pieza==='p'&&Math.floor(hasta/8)===7) copia[hasta]='q';
+    else copia[hasta]=pieza;
+    copia[idx]=null;
+    return !estaEnJaque(copia,color);
+  });
+}
+
+function todosMovimientosLegales(t,color) {
+  const movs=[];
+  for (let i=0;i<64;i++) {
+    if (!t[i]||!esPropia(t[i],color)) continue;
+    movimientosLegales(t,i,color).forEach(hasta=>movs.push({desde:i,hasta}));
+  }
+  return movs;
+}
+
+// ══════════════════════════════════════════════════
+//  IA MINIMAX
+// ══════════════════════════════════════════════════
+function evalTablero(t) {
+  let score=0;
+  for (let i=0;i<64;i++) {
+    const p=t[i]; if (!p) continue;
+    const tipo=p.toUpperCase();
+    const base=VALORES[tipo]||0;
+    const tabla=POS_TABLAS[tipo];
+    const posIdx=esBlanca(p)?(63-i):i;
+    const bonus=tabla?tabla[posIdx]:0;
+    score+=esBlanca(p)?-(base+bonus):(base+bonus);
+  }
+  return score;
+}
+
+function minimax(t,prof,alpha,beta,max) {
+  if (prof===0) return evalTablero(t);
+  const color=max?'negras':'blancas';
+  const movs=todosMovimientosLegales(t,color);
+  if (movs.length===0) return estaEnJaque(t,color)?(max?-99999:99999):0;
+  if (max) {
+    let m=-Infinity;
+    for (const {desde,hasta} of movs) {
+      const c=[...t]; const p=c[desde];
+      if (p==='p'&&Math.floor(hasta/8)===7) c[hasta]='q'; else c[hasta]=p; c[desde]=null;
+      const v=minimax(c,prof-1,alpha,beta,false);
+      m=Math.max(m,v); alpha=Math.max(alpha,v);
+      if (beta<=alpha) break;
+    }
+    return m;
+  } else {
+    let m=Infinity;
+    for (const {desde,hasta} of movs) {
+      const c=[...t]; const p=c[desde];
+      if (p==='P'&&Math.floor(hasta/8)===0) c[hasta]='Q'; else c[hasta]=p; c[desde]=null;
+      const v=minimax(c,prof-1,alpha,beta,true);
+      m=Math.min(m,v); beta=Math.min(beta,v);
+      if (beta<=alpha) break;
+    }
+    return m;
+  }
+}
+
+function turnoIA() {
+  if (turno!=='negras') return;
+  const movs=todosMovimientosLegales(tablero,'negras');
+  if (movs.length===0) return;
+
+  // Mostrar cara "pensando" brevemente
+  mostrarCara('pensar', 800);
+
+  const cometeError=Math.random()<0.18;
+  let mejor;
+  if (cometeError) {
+    mejor=movs[Math.floor(Math.random()*movs.length)];
+    if (movimientosTotales>10) addLog('turco','> ... (vacilo un momento)');
+  } else {
+    let mejorVal=-Infinity;
+    for (const mov of movs) {
+      const copia=[...tablero]; const pieza=copia[mov.desde];
+      if (pieza==='p'&&Math.floor(mov.hasta/8)===7) copia[mov.hasta]='q';
+      else copia[mov.hasta]=pieza; copia[mov.desde]=null;
+      const val=minimax(copia,3,-Infinity,Infinity,false);
+      if (val>mejorVal) { mejorVal=val; mejor=mov; }
+    }
+  }
+  if (mejor) realizarMovimiento(tablero,mejor.desde,mejor.hasta,'negras');
+}
+
+// ══════════════════════════════════════════════════
+//  HISTORIAL SAN
+// ══════════════════════════════════════════════════
+const NOMBRES_PIEZA={ P:'',N:'N',B:'A',R:'T',Q:'D',K:'R' };
+const LETRAS_COL=['a','b','c','d','e','f','g','h'];
+
+function toSAN(pieza,desde,hasta,captura) {
+  const col=hasta%8, fila=8-Math.floor(hasta/8);
+  return (NOMBRES_PIEZA[pieza.toUpperCase()]||'')+(captura?'x':'')+LETRAS_COL[col]+fila;
+}
+
+function actualizarHistorial() {
+  const div=document.getElementById('historial');
+  div.innerHTML=historialSAN.map(m=>
+    `<span style="color:#444;">${m.num}.</span> ${m.blanca||''}  ${m.negra?'<span style="color:#66ffb3;">'+m.negra+'</span>':''}<br>`
+  ).join('');
+  div.scrollTop=div.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════
+//  LOG NARRATIVO + GLITCH
+// ══════════════════════════════════════════════════
+function addLog(tipo,txt) {
+  const div=document.getElementById('turco-log');
+  const p=document.createElement('p');
+  p.className=tipo==='turco'?'log-turco':tipo==='fallo'?'log-fallo':tipo==='humano'?'log-humano':'log-sistema';
+  p.textContent=txt;
+  div.appendChild(p);
+  div.scrollTop=div.scrollHeight;
+}
+
+function checkLog() {
+  const entrada=LOG_NARRATIVO.find(e=>e.mov===movimientosTotales);
+  if (entrada) {
+    addLog(entrada.tipo, entrada.txt);
+    // Activar glitch a partir del movimiento 16
+    if (movimientosTotales>=16 && !glitchInterval) activarGlitch();
+  }
+  if (movimientosTotales===28&&!revelado) setTimeout(lanzarRevelacion,1000);
+}
+
+// ══════════════════════════════════════════════════
+//  REVELACIÓN FINAL
+// ══════════════════════════════════════════════════
+const LINEAS_REVELACION=[
+  { clase:'linea-cyan',  txt:'> FALLO CRÍTICO EN TURCO_v1' },
+  { clase:'',            txt:'> Protocolo de ocultación desactivado...' },
+  { clase:'linea-amber', txt:'> En 1770, Wolfgang von Kempelen presentó' },
+  { clase:'linea-amber', txt:'  al mundo un autómata que jugaba al ajedrez.' },
+  { clase:'',            txt:'> Emperadores y sabios quedaron asombrados.' },
+  { clase:'',            txt:'> Nadie sospechó la verdad durante décadas.' },
+  { clase:'linea-cyan',  txt:'> Dentro del gabinete de madera...' },
+  { clase:'linea-cyan',  txt:'  había un maestro de ajedrez escondido.' },
+  { clase:'',            txt:'> El Turco Mecánico no era IA.' },
+  { clase:'',            txt:'  Era un humano fingiendo ser una máquina.' },
+  { clase:'linea-amber', txt:'> RETROTERM.AI recuerda esa lección:' },
+  { clase:'linea-amber', txt:'  no todo lo que parece inteligencia artificial lo es.' },
+  { clase:'linea-cyan',  txt:'> Ahora ya lo sabes. ¿Cambia algo?' },
+];
+
+function lanzarRevelacion() {
+  if (revelado) return;
+  revelado=true;
+  sndRevelacion();
+  const capa=document.getElementById('revelacion');
+  const txt=document.getElementById('revelacion-texto');
+  txt.innerHTML='';
+  capa.classList.add('visible');
+  let i=0;
+  function nextLinea() {
+    if (i>=LINEAS_REVELACION.length) {
+      // Mostrar galería
+      setTimeout(()=>{
+        const galeria=document.getElementById('hist-galeria');
+        galeria.style.display='block';
+        galeria.style.opacity='0';
+        galeria.style.transition='opacity 0.8s';
+        setTimeout(()=>{ galeria.style.opacity='1'; },50);
+      }, 400);
+      return;
+    }
+    const { clase, txt:linea }=LINEAS_REVELACION[i];
+    const p=document.createElement('p');
+    if (clase) p.className=clase;
+    p.textContent=linea;
+    txt.appendChild(p);
+    i++;
+    setTimeout(nextLinea,220);
+  }
+  nextLinea();
+}
+
+function forzarRevelacion() { lanzarRevelacion(); }
+
+function cerrarRevelacion() {
+  document.getElementById('revelacion').classList.remove('visible');
+  addLog('humano','> Ahora ya sabes quién soy. La partida continúa.');
+}
+
+// ══════════════════════════════════════════════════
+//  TARJETAS DESPLEGABLES — GALERÍA HISTÓRICA
+// ══════════════════════════════════════════════════
+function toggleArticulo(card) {
+  const yaAbierto = card.classList.contains('abierto');
+  // Cerrar todas
+  document.querySelectorAll('.hist-foto-item.abierto').forEach(c => c.classList.remove('abierto'));
+  // Abrir si estaba cerrado
+  if (!yaAbierto) {
+    card.classList.add('abierto');
+    // Scroll suave hacia la tarjeta dentro del overlay
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+}
+
+nuevaPartida();
+</script>
+
+</body>
+</html>

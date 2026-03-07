@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RETROTERM.AI</title>
+  <meta name="description" content="Entorno web retrofuturista de administración, desarrollo y comunicación entre usuarios. Combina estética de terminal clásica de los 80/90 con funcionalidad moderna.">
+  <link rel="canonical" href="https://ivanchux.github.io/">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta name="robots" content="index,follow">
+  <meta property="og:title" content="Retroterm.ai">
+  <meta property="og:description" content="El futuro de la edición en código">
+  <meta property="og:image" content="/Imagenes/retroterm_ai.jpg">
+  <meta property="og:url" content="https://ivanchux.github.io/">
+  <meta property="og:type" content="website">
+</head>
+<body>
+
+  <!-- ===== HUB PRINCIPAL ===== -->
+  <section id="inicio" class="pantalla seccion activa">
+    <header class="cabecera">
+      <h1>RETROTERM.AI<a href="portal.html" class="cursor-link cursor-blink">|</a></h1>
+      <p class="subtitulo">SISTEMA RETROFUTURISTA DE ADMINISTRACIÓN Y DESARROLLO, GAMING Y DeFi</p>
+    </header>
+
+    <nav class="menu">
+      <a href="editor.html" class="opcion">💻 MODO DESARROLLO</a>
+      <a href="asistente.html" class="opcion">🤖 ASISTENTE IA</a>
+      <a href="#gaming" class="opcion">🎮 GAMING</a>
+      <a href="#crypto" class="opcion">💰 DeFi</a>
+      <a href="articulos.html" class="opcion">📚 VER ARTÍCULOS</a>
+      <a href="red.html" class="opcion">🌐 RED DE PROYECTOS</a>
+    </nav>
+
+    <footer class="pie">
+      <div class="share-bar">
+        <a href="https://twitter.com/intent/tweet?text=Echa%20un%20vistazo%20a%20RETROTERM.AI&url=https://ivanchux.github.io" target="_blank" class="share-btn">𝕏 COMPARTIR</a>
+        <a href="https://t.me/share/url?url=https://ivanchux.github.io&text=Echa%20un%20vistazo%20a%20RETROTERM.AI" target="_blank" class="share-btn">✈ TELEGRAM</a>
+      </div>
+      <p>RETROTERM.AI v0.1 © 2025 | Creado por Iván Brihuega Crespo</p>
+    </footer>
+  </section>
+
+
+  <!-- ===== GAMING ===== -->
+  <section id="gaming" class="pantalla seccion">
+    <header class="cabecera">
+      <h2>🎮 GAMING</h2>
+      <p class="subtitulo">Minijuegos en terminal retro</p>
+    </header>
+
+    <div class="gaming-grid">
+
+      <div class="articulo">
+        <h3>🐍 SNAKE_CRT</h3>
+        <p>Juega al Snake clásico en modo terminal. Usa las teclas de dirección.</p>
+        <canvas id="snake-canvas" width="300" height="300" class="snake-canvas"></canvas>
+        <div class="snake-info">
+          <span class="estado-activo">Puntuación: </span><span id="snake-score">0</span>
+          <br><button onclick="iniciarSnake()">▶ INICIAR</button>
+        </div>
+      </div>
+
+      <div class="articulo">
+        <h3>⌨️ TYPE_CRT</h3>
+        <p>Escribe el texto lo más rápido posible. Se mide en WPM.</p>
+        <div class="typing-wrap">
+          <div id="typing-frase" class="typing-frase"></div>
+          <input type="text" id="typing-input" class="ia-input typing-input" placeholder="Empieza a escribir..." disabled>
+          <div class="typing-stats">
+            <span>Tiempo: <span id="typing-tiempo">0s</span></span>
+            <span>WPM: <span id="typing-wpm">—</span></span>
+            <span>Precisión: <span id="typing-precision">—</span></span>
+          </div>
+          <button onclick="iniciarTyping()" id="btn-typing">▶ INICIAR</button>
+        </div>
+      </div>
+
+    </div>
+
+    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
+  </section>
+
+
+  <!-- ===== DEFI / CRYPTO ===== -->
+  <section id="crypto" class="pantalla seccion">
+    <header class="cabecera">
+      <h2>💰 PRECIOS DE CRIPTOMONEDAS</h2>
+      <p class="subtitulo">Consulta los precios en tiempo real usando CoinGecko API</p>
+    </header>
+
+    <div id="crypto-prices" class="lista-articulos">
+      <p class="text-center">Cargando datos...</p>
+    </div>
+
+    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
+  </section>
+
+
+  <!-- ===== SILO ===== -->
+  <section id="silo" class="pantalla seccion">
+    <header class="cabecera">
+      <h2>🗄️ SILO DEL SISTEMA</h2>
+      <p class="subtitulo">Zona interna de RETROTERM.AI</p>
+    </header>
+
+    <div class="articulo silo-estado">
+      <h3>📋 Estado del sistema</h3>
+      <table class="silo-tabla">
+        <thead>
+          <tr>
+            <th>Módulo</th>
+            <th>Estado</th>
+            <th>Versión</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>HUB Principal</td><td class="estado-activo">● ACTIVO</td><td>v0.1</td></tr>
+          <tr><td>Editor CODE_CRT</td><td class="estado-activo">● ACTIVO</td><td>v0.1</td></tr>
+          <tr><td>Asistente IA</td><td class="estado-dev">◑ EN DESARROLLO</td><td>v0.0</td></tr>
+          <tr><td>Gaming</td><td class="estado-activo">● ACTIVO</td><td>v0.1</td></tr>
+          <tr><td>DeFi / Crypto</td><td class="estado-activo">● ACTIVO</td><td>v0.1</td></tr>
+          <tr><td>Red de Proyectos</td><td class="estado-activo">● ACTIVO</td><td>v0.1</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
+  </section>
+
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    // ── Navegación hash ──────────────────────────────────────────
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.pantalla').forEach(s => s.classList.remove('activa'));
+      const sec = document.getElementById(id);
+      if (sec) sec.classList.add('activa');
+    }
+
+    window.addEventListener('load', () => {
+      const hash = location.hash ? location.hash.substring(1) : 'inicio';
+      mostrarSeccion(hash);
+      if (hash === 'crypto') obtenerPrecios();
+    });
+
+    window.addEventListener('hashchange', () => {
+      const hash = location.hash.substring(1);
+      mostrarSeccion(hash);
+      if (hash === 'crypto') obtenerPrecios();
+    });
+
+
+    // ── CoinGecko API ────────────────────────────────────────────
+    async function obtenerPrecios() {
+      const contenedor = document.getElementById('crypto-prices');
+      contenedor.innerHTML = '<p class="text-center">Cargando datos...</p>';
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,dogecoin,solana&order=market_cap_desc&sparkline=false');
+        const data = await res.json();
+        contenedor.innerHTML = data.map(moneda =>
+          `<div class="articulo crypto-card">
+            <img src="${moneda.image}" alt="${moneda.name}">
+            <span class="crypto-nombre">₿ ${moneda.name.toUpperCase()}</span>
+            <span>$${moneda.current_price.toLocaleString()} USD</span>
+          </div>`
+        ).join('');
+      } catch (e) {
+        contenedor.innerHTML = '<p class="text-center error-msg">Error al obtener datos. Comprueba tu conexión.</p>';
+      }
+    }
+
+
+    // ── Snake ─────────────────────────────────────────────────────
+    let snakeInterval = null;
+    function iniciarSnake() {
+      const canvas = document.getElementById('snake-canvas');
+      const ctx = canvas.getContext('2d');
+      const tam = 15, cols = canvas.width / tam, filas = canvas.height / tam;
+      let serpiente = [{x:10, y:10}], dir = {x:1, y:0}, comida = nuevaComida(), puntos = 0, viva = true;
+
+      function nuevaComida() {
+        return {x: Math.floor(Math.random()*cols), y: Math.floor(Math.random()*filas)};
+      }
+      function dibujar() {
+        ctx.fillStyle = '#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = '#00ff66';
+        serpiente.forEach(s => ctx.fillRect(s.x*tam, s.y*tam, tam-1, tam-1));
+        ctx.fillStyle = '#ff5555';
+        ctx.fillRect(comida.x*tam, comida.y*tam, tam-1, tam-1);
+      }
+      function tick() {
+        if (!viva) return;
+        const cab = {x: serpiente[0].x + dir.x, y: serpiente[0].y + dir.y};
+        if (cab.x<0||cab.x>=cols||cab.y<0||cab.y>=filas||serpiente.some(s=>s.x===cab.x&&s.y===cab.y)) {
+          viva = false;
+          ctx.fillStyle = '#ff5555'; ctx.font = '20px Courier New';
+          ctx.fillText('GAME OVER', canvas.width/2-60, canvas.height/2);
+          clearInterval(snakeInterval); return;
+        }
+        serpiente.unshift(cab);
+        if (cab.x===comida.x && cab.y===comida.y) { comida=nuevaComida(); puntos+=10; document.getElementById('snake-score').textContent=puntos; }
+        else serpiente.pop();
+        dibujar();
+      }
+      if (snakeInterval) clearInterval(snakeInterval);
+      snakeInterval = setInterval(tick, 120);
+      document.addEventListener('keydown', e => {
+        if(e.key==='ArrowUp'&&dir.y!==1) dir={x:0,y:-1};
+        else if(e.key==='ArrowDown'&&dir.y!==-1) dir={x:0,y:1};
+        else if(e.key==='ArrowLeft'&&dir.x!==1) dir={x:-1,y:0};
+        else if(e.key==='ArrowRight'&&dir.x!==-1) dir={x:1,y:0};
+      });
+      dibujar();
+    }
+
+
+    // ── Typing ────────────────────────────────────────────────────
+    const FRASES_TYPING = [
+      "el turco mecanico engano a napoleon bonaparte en 1809",
+      "retroterm ai es un sistema retrofuturista de administracion",
+      "la inteligencia artificial no siempre es lo que parece",
+      "dentro de la maquina habia un maestro de ajedrez escondido",
+      "amazon mechanical turk humanos haciendo trabajo de maquinas"
+    ];
+
+    let typingInicio = null, typingTimer = null;
+
+    function iniciarTyping() {
+      const frase = FRASES_TYPING[Math.floor(Math.random() * FRASES_TYPING.length)];
+      const display = document.getElementById('typing-frase');
+      const input = document.getElementById('typing-input');
+      document.getElementById('typing-tiempo').textContent = '0s';
+      document.getElementById('typing-wpm').textContent = '—';
+      document.getElementById('typing-precision').textContent = '—';
+
+      display.innerHTML = frase.split('').map(c => `<span>${c}</span>`).join('');
+      input.value = '';
+      input.disabled = false;
+      input.focus();
+      typingInicio = null;
+
+      input.oninput = () => {
+        if (!typingInicio) {
+          typingInicio = Date.now();
+          typingTimer = setInterval(() => {
+            document.getElementById('typing-tiempo').textContent =
+              ((Date.now() - typingInicio) / 1000).toFixed(1) + 's';
+          }, 100);
+        }
+        const escrito = input.value;
+        const spans = display.querySelectorAll('span');
+        spans.forEach((sp, i) => {
+          if (i < escrito.length) {
+            sp.style.color = escrito[i] === frase[i] ? '#00ff66' : '#ff5555';
+          } else {
+            sp.style.color = '#66ffb3';
+          }
+        });
+        if (escrito.length === frase.length) {
+          clearInterval(typingTimer);
+          input.disabled = true;
+          const segundos = (Date.now() - typingInicio) / 1000;
+          const palabras = frase.split(' ').length;
+          const wpm = Math.round((palabras / segundos) * 60);
+          const correctas = escrito.split('').filter((c, i) => c === frase[i]).length;
+          const precision = Math.round((correctas / frase.length) * 100);
+          document.getElementById('typing-wpm').textContent = wpm;
+          document.getElementById('typing-precision').textContent = precision + '%';
+        }
+      };
+    }
+  </script>
+
+</body>
+</html>

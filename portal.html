@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portal interactivo RETROTERM.AI con articulos, minijuegos y contenido secreto.">
+  <meta name="robots" content="index,follow">
+  <title>RETROTERM.AI — Portal</title>
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio",     "item": "https://ivanchux.github.io/portal.html" },
+      { "@type": "ListItem", "position": 2, "name": "Logs",       "item": "https://ivanchux.github.io/portal.html#logs" },
+      { "@type": "ListItem", "position": 3, "name": "Core",       "item": "https://ivanchux.github.io/portal.html#core" },
+      { "@type": "ListItem", "position": 4, "name": "Restricted", "item": "https://ivanchux.github.io/portal.html#restricted" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Retroterm.ai — Portal Interactivo",
+    "url": "https://ivanchux.github.io/portal.html",
+    "description": "Portal secreto de RETROTERM.AI con puzzles, contenido oculto y efectos de terminal retro.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "author": { "@type": "Person", "name": "Iván Chux" }
+  }
+  </script>
+
+  <style>
+    /* ══ BOOT SCREEN ══ */
+    #boot-screen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Courier New', monospace;
+      color: #00ff66;
+      padding: 30px;
+    }
+    #boot-screen.hidden {
+      animation: bootFade 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes bootFade { to { opacity: 0; visibility: hidden; } }
+    .boot-logo {
+      font-size: clamp(1.2rem, 4vw, 2rem);
+      letter-spacing: 6px;
+      text-shadow: 0 0 20px #00ff66;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .boot-log {
+      width: 100%;
+      max-width: 600px;
+      font-size: 0.78rem;
+      line-height: 2;
+      letter-spacing: 1px;
+    }
+    .boot-log .ok   { color: #00ff66; }
+    .boot-log .warn { color: #ffaa00; }
+    .boot-log .line { color: #1a5a2a; opacity: 0; }
+    .boot-log .line.show { animation: bootLine 0.1s forwards; }
+    @keyframes bootLine { to { opacity: 1; } }
+    .boot-bar-wrap {
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+      border: 1px solid #00ff66;
+      height: 6px;
+      background: #000;
+    }
+    .boot-bar-fill {
+      height: 100%;
+      background: #00ff66;
+      box-shadow: 0 0 8px #00ff66;
+      width: 0%;
+      transition: width 0.15s linear;
+    }
+    .boot-bar-label {
+      font-size: 0.68rem;
+      color: #1a4a2a;
+      margin-top: 6px;
+      letter-spacing: 2px;
+    }
+
+    /* ══ SECCIONES ══ */
+    .portal-section {
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .portal-section.activa { opacity: 1; }
+
+    /* ══ BREADCRUMB ══ */
+    .silo-breadcrumb {
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+      color: #1a4a2a;
+    }
+    .silo-breadcrumb a { color: #00ff66; text-decoration: none; transition: color 0.2s; }
+    .silo-breadcrumb a:hover { color: #66ffb3; }
+    .silo-breadcrumb .sep    { margin: 0 6px; color: #1a4a2a; }
+    .silo-breadcrumb .actual { color: #66ffb3; }
+
+    /* ══ CURSOR TYPEWRITER ══ */
+    .tw-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: #00ff66;
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 0.8s infinite;
+    }
+
+    /* ══ GLITCH ══ */
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      overflow: hidden;
+    }
+    .glitch::before {
+      color: #ff0040;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+      transform: translateX(-2px);
+      animation: glitch1 3s infinite linear;
+    }
+    .glitch::after {
+      color: #00ffff;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+      transform: translateX(2px);
+      animation: glitch2 3s infinite linear;
+    }
+    @keyframes glitch1 {
+      0%,90%  { transform: translateX(-2px); opacity: 1; }
+      91%     { transform: translateX(4px) skewX(2deg); opacity: 0.8; }
+      92%     { transform: translateX(-4px); opacity: 0.6; }
+      93%     { transform: translateX(2px); opacity: 1; }
+      94%,100%{ transform: translateX(-2px); opacity: 1; }
+    }
+    @keyframes glitch2 {
+      0%,90%  { transform: translateX(2px); opacity: 1; }
+      91%     { transform: translateX(-4px) skewX(-2deg); opacity: 0.8; }
+      92%     { transform: translateX(4px); opacity: 0.6; }
+      93%     { transform: translateX(-2px); opacity: 1; }
+      94%,100%{ transform: translateX(2px); opacity: 1; }
+    }
+
+    /* ══ PUZZLE ══ */
+    .puzzle-wrap {
+      border: 1px solid #00ff66;
+      background: rgba(0, 15, 0, 0.9);
+      padding: 20px 24px;
+      margin: 20px 0;
+      max-width: 440px;
+    }
+    .puzzle-wrap > p { color: #66ffb3; font-size: 0.85rem; margin-bottom: 14px; letter-spacing: 1px; }
+    .puzzle-input-row { display: flex; gap: 10px; align-items: center; }
+    .puzzle-input {
+      background: #000;
+      border: 1px solid #00ff66;
+      color: #00ff66;
+      font-family: 'Courier New', monospace;
+      font-size: 1.4rem;
+      letter-spacing: 8px;
+      padding: 8px 14px;
+      width: 120px;
+      text-align: center;
+      outline: none;
+      transition: box-shadow 0.2s;
+    }
+    .puzzle-input:focus { box-shadow: 0 0 10px #00ff66; }
+    .puzzle-input.error {
+      border-color: #ff5555;
+      animation: shake 0.4s ease;
+      box-shadow: 0 0 10px #ff5555;
+    }
+    .puzzle-input.success { border-color: #00ffff; box-shadow: 0 0 14px #00ffff; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-6px); }
+      40%     { transform: translateX(6px); }
+      60%     { transform: translateX(-4px); }
+      80%     { transform: translateX(4px); }
+    }
+    .puzzle-btn {
+      background: #001a00;
+      border: 1px solid #00ff66;
+      color: #00ff66;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      margin-top: 0;
+    }
+    .puzzle-btn:hover:not(:disabled) { background: #00ff66; color: #000; }
+    .puzzle-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .puzzle-msg { margin-top: 12px; font-size: 0.8rem; letter-spacing: 1px; min-height: 18px; }
+    .puzzle-intentos { font-size: 0.72rem; color: #1a4a2a; margin-top: 8px; letter-spacing: 1px; }
+    .puzzle-intentos.warn   { color: #ffaa00; }
+    .puzzle-intentos.danger { color: #ff5555; }
+
+    /* ══ HACK OVERLAY ══ */
+    #hack-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 8888;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      color: #00ff66;
+      padding: 30px;
+      overflow: hidden;
+    }
+    #hack-overlay.visible { display: block; }
+    #hack-text { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
+    .hack-final {
+      color: #00ffff;
+      font-size: 1.1rem;
+      letter-spacing: 3px;
+      text-shadow: 0 0 10px #00ffff;
+      margin-top: 20px;
+      display: block;
+    }
+
+    /* ══ MENÚ SILO ══ */
+    .silo-menu { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    .silo-menu a {
+      padding: 9px 20px;
+      border: 1px solid #00ff66;
+      border-radius: 4px;
+      background: rgba(0,20,0,0.7);
+      color: #00ff66;
+      text-decoration: none;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 1px;
+      transition: all 0.25s;
+    }
+    .silo-menu a:hover { background: #00ff66; color: #000; box-shadow: 0 0 12px #00ff66; }
+    .silo-menu-cyan a { border-color: #00ffff; color: #00ffff; }
+    .silo-menu-cyan a:hover { background: #00ffff; color: #000; box-shadow: 0 0 12px #00ffff; }
+
+    /* ══ ARTÍCULOS HORIZONTALES ══ */
+    .core-articles-horizontal { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 16px; }
+    .core-articles-horizontal .articulo { width: 280px; box-sizing: border-box; border-radius: 6px; }
+    .core-articles-horizontal .articulo table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .core-articles-horizontal .articulo th,
+    .core-articles-horizontal .articulo td { border: 1px solid #00ff66; padding: 5px 8px; text-align: center; color: #e0e0e0; font-size: 0.82rem; }
+    .core-articles-horizontal .articulo th { color: #00ff66; background: rgba(0,255,102,0.07); }
+
+    /* ══ VIDEO ══ */
+    .portal-video { width: 100%; border-radius: 6px; margin-top: 10px; border: 1px solid #00ff66; }
+
+    /* ══ RESTRICTED BANNER ══ */
+    .restricted-banner {
+      border: 1px solid #00ffff;
+      background: rgba(0,30,40,0.8);
+      padding: 16px 20px;
+      margin: 16px 0;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,255,255,0.15);
+    }
+    .restricted-banner p { color: #66ffee; font-size: 0.85rem; letter-spacing: 1px; line-height: 1.8; }
+
+    /* ══ PÁRRAFOS OCULTOS HASTA ANIMAR ══ */
+    .p-hidden { opacity: 0; transition: opacity 0.5s; }
+    .p-hidden.show { opacity: 1; }
+
+    /* ══ SCANLINES OVERLAY ══ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0,0,0,0.07) 3px);
+      pointer-events: none;
+      z-index: 10000;
+    }
+
+    @media (max-width: 600px) {
+      .core-articles-horizontal .articulo { width: 100%; }
+      .puzzle-wrap { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOOT SCREEN -->
+  <div id="boot-screen">
+    <div class="boot-logo">RETROTERM.AI<span class="tw-cursor"></span></div>
+    <div class="boot-log" id="boot-log"></div>
+    <div class="boot-bar-wrap"><div class="boot-bar-fill" id="boot-bar"></div></div>
+    <div class="boot-bar-label" id="boot-label">INICIANDO...</div>
+  </div>
+
+  <!-- HACK OVERLAY -->
+  <div id="hack-overlay"><div id="hack-text"></div></div>
+
+  <!-- ══ INICIO ══ -->
+  <section id="inicio" class="pantalla portal-section activa">
+    <nav class="silo-breadcrumb"><span class="actual">// INICIO</span></nav>
+    <h1><span id="tw-inicio"></span></h1>
+    <p class="p-hidden" id="p-inicio">Zona interna no documentada. Explora los módulos y descubre secretos.</p>
+
+    <div class="core-articles-horizontal">
+      <article class="articulo">
+        <h3>🖼 Bienvenido a Retroterm.ai</h3>
+        <p>Explora el universo retrofuturista inspirado en terminales clásicas y juegos tipo Fallout.</p>
+        <video src="Videos/video_inicio.mp4" autoplay muted loop playsinline class="portal-video"></video>
+      </article>
+      <article class="articulo">
+        <h3>🎮 Minijuegos y Puzzles</h3>
+        <p>Encuentra minijuegos interactivos, códigos secretos y contenido oculto dentro del sistema.</p>
+        <video src="Videos/video_maquina.mp4" autoplay muted loop playsinline class="portal-video"></video>
+      </article>
+    </div>
+
+    <div class="silo-menu">
+      <a href="#logs" onclick="irA('logs');return false;">▶ ACCEDER A LOGS</a>
+      <a href="index.html">⬅ VOLVER AL HUB</a>
+    </div>
+  </section>
+
+  <!-- ══ LOGS ══ -->
+  <section id="logs" class="pantalla portal-section">
+    <nav class="silo-breadcrumb">
+      <a href="#inicio" onclick="irA('inicio');return false;">INICIO</a>
+      <span class="sep">›</span>
+      <span class="actual">// LOGS</span>
+    </nav>
+    <h1><span id="tw-logs"></span></h1>
+    <p class="p-hidden" id="p-logs">Introduce el código de acceso para continuar al núcleo del sistema.</p>
+
+    <div class="puzzle-wrap">
+      <p>> AUTENTICACIÓN REQUERIDA — Introduce el código de 4 dígitos:</p>
+      <div class="puzzle-input-row">
+        <input type="text" id="codigo" class="puzzle-input" maxlength="4" placeholder="····" autocomplete="off">
+        <button class="puzzle-btn" id="puzzle-btn" onclick="verificarCodigo()">[ VERIFICAR ]</button>
+      </div>
+      <div class="puzzle-msg" id="msgPuzzle"></div>
+      <div class="puzzle-intentos" id="intentos-label">Intentos restantes: 5</div>
+    </div>
+
+    <div class="silo-menu">
+      <a href="#inicio" onclick="irA('inicio');return false;">⬅ VOLVER</a>
+    </div>
+  </section>
+
+  <!-- ══ CORE ══ -->
+  <section id="core" class="pantalla portal-section">
+    <nav class="silo-breadcrumb">
+      <a href="#inicio" onclick="irA('inicio');return false;">INICIO</a>
+      <span class="sep">›</span>
+      <a href="#logs" onclick="irA('logs');return false;">LOGS</a>
+      <span class="sep">›</span>
+      <span class="actual">// CORE</span>
+    </nav>
+    <h1><span id="tw-core"></span></h1>
+    <p class="p-hidden" id="p-core">Bienvenido al núcleo del sistema RETROTERM.AI. Datos y recursos principales.</p>
+
+    <div class="core-articles-horizontal">
+      <article class="articulo">
+        <h3>📝 Historia del Sistema</h3>
+        <p>Retroterm.ai nace como un entorno retrofuturista inspirado en terminales clásicas y sistemas tipo Fallout.</p>
+        <div class="imagen-articulo">
+          <img src="Imagenes/terminal.jpg" alt="Terminal estilo Fallout">
+        </div>
+      </article>
+      <article class="articulo">
+        <h3>📊 Estadísticas del Proyecto</h3>
+        <p>Datos internos sobre la actividad del sistema.</p>
+        <table>
+          <thead><tr><th>Módulo</th><th>Usuarios</th><th>Proyectos</th></tr></thead>
+          <tbody>
+            <tr><td>Editor</td><td>120</td><td>45</td></tr>
+            <tr><td>IA</td><td>80</td><td>30</td></tr>
+            <tr><td>Gaming</td><td>65</td><td>20</td></tr>
+          </tbody>
+        </table>
+      </article>
+    </div>
+
+    <div class="silo-menu">
+      <a href="#restricted" onclick="irA('restricted');return false;">🔒 ACCESO RESTRINGIDO</a>
+      <a href="#inicio" onclick="irA('inicio');return false;">⬅ VOLVER</a>
+    </div>
+  </section>
+
+  <!-- ══ RESTRICTED ══ -->
+  <section id="restricted" class="pantalla portal-section">
+    <nav class="silo-breadcrumb">
+      <a href="#inicio" onclick="irA('inicio');return false;">INICIO</a>
+      <span class="sep">›</span>
+      <a href="#logs" onclick="irA('logs');return false;">LOGS</a>
+      <span class="sep">›</span>
+      <a href="#core" onclick="irA('core');return false;">CORE</a>
+      <span class="sep">›</span>
+      <span class="actual">// RESTRICTED</span>
+    </nav>
+    <h1><span class="glitch" data-text="ACCESS GRANTED">ACCESS GRANTED</span></h1>
+
+    <div class="restricted-banner">
+      <p>⚠ ZONA CLASIFICADA — NIVEL 4 ⚠<br>
+      Acceso concedido. Has desbloqueado el contenido restringido de RETROTERM.AI.<br>
+      Procede con cautela.</p>
+    </div>
+
+    <div class="silo-menu silo-menu-cyan">
+      <a href="turco.html">♟ TURCO_v1 — ACCESO RESTRINGIDO</a>
+    </div>
+    <div class="silo-menu">
+      <a href="#inicio" onclick="irA('inicio');return false;">⬅ VOLVER AL INICIO</a>
+    </div>
+  </section>
+
+
+  <script>
+    // ══ AUDIO (Web Audio API) ══════════════════════════════════════
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function beep(freq = 440, dur = 0.08, vol = 0.05, type = 'square') {
+      try {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.type = type; o.frequency.value = freq;
+        g.gain.setValueAtTime(vol, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+      } catch(e) {}
+    }
+    function beepNav()   { beep(300,0.05,0.04); setTimeout(()=>beep(600,0.07,0.04),60); }
+    function beepError() { beep(150,0.18,0.07,'sawtooth'); }
+    function beepOk()    { beep(400,0.06,0.05); setTimeout(()=>beep(600,0.06,0.05),80); setTimeout(()=>beep(900,0.1,0.05),160); }
+    function beepKey()   { beep(700+Math.random()*300, 0.03, 0.03); }
+
+    document.addEventListener('click', () => {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }, { once: true });
+
+    // ══ TYPEWRITER ═════════════════════════════════════════════════
+    function typewriter(elId, texto, vel = 55, cb) {
+      const el = document.getElementById(elId);
+      if (!el) { if(cb) cb(); return; }
+      el.textContent = '';
+      const cursor = document.createElement('span');
+      cursor.className = 'tw-cursor';
+      el.parentNode.appendChild(cursor);
+      let i = 0;
+      const iv = setInterval(() => {
+        el.textContent += texto[i];
+        beepKey();
+        i++;
+        if (i >= texto.length) {
+          clearInterval(iv);
+          cursor.remove();
+          if (cb) cb();
+        }
+      }, vel);
+    }
+
+    function mostrarParrafo(id, delay = 0) {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('show');
+      }, delay);
+    }
+
+    // ══ NAVEGACIÓN ══════════════════════════════════════════════════
+    function irA(id) {
+      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
+      const sec = document.getElementById(id);
+      if (!sec) return;
+      sec.classList.add('activa');
+      window.scrollTo(0, 0);
+      history.pushState(null, '', '#' + id);
+      iniciarSeccion(id);
+      beepNav();
+    }
+
+    function iniciarSeccion(id) {
+      if (id === 'inicio') {
+        typewriter('tw-inicio', 'PORTAL // INICIO', 60, () => mostrarParrafo('p-inicio', 150));
+      } else if (id === 'logs') {
+        typewriter('tw-logs', 'SYSTEM LOGS', 70, () => mostrarParrafo('p-logs', 150));
+      } else if (id === 'core') {
+        typewriter('tw-core', 'CORE MODULE', 70, () => mostrarParrafo('p-core', 150));
+      }
+    }
+
+    // ══ PUZZLE ══════════════════════════════════════════════════════
+    const HASH_CORRECTO = "5335c1c78b99ea77b73cc03f735adc472835dc47c10e553d20f6e7ba338c0da3";
+    let intentos = 5;
+    let bloqueado = false;
+
+    async function hashear(txt) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt));
+      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function verificarCodigo() {
+      if (bloqueado) return;
+      const inputEl = document.getElementById('codigo');
+      const msg     = document.getElementById('msgPuzzle');
+      const label   = document.getElementById('intentos-label');
+      const btn     = document.getElementById('puzzle-btn');
+      const codigo  = inputEl.value.trim();
+      if (!codigo) return;
+
+      const hash = await hashear(codigo);
+
+      if (hash === HASH_CORRECTO) {
+        beepOk();
+        inputEl.classList.add('success');
+        msg.textContent = '> Código correcto. Acceso concedido. Iniciando protocolo...';
+        msg.style.color = '#00ffff';
+        bloqueado = true;
+        setTimeout(lanzarHackOverlay, 700);
+      } else {
+        beepError();
+        intentos--;
+        inputEl.classList.add('error');
+        setTimeout(() => inputEl.classList.remove('error'), 500);
+        inputEl.value = '';
+
+        if (intentos <= 0) {
+          bloqueado = true;
+          btn.disabled = true;
+          inputEl.disabled = true;
+          msg.textContent = '> ACCESO DENEGADO. Sistema bloqueado temporalmente.';
+          msg.style.color = '#ff5555';
+          label.textContent = 'BLOQUEADO — Espera 30 segundos';
+          label.className = 'puzzle-intentos danger';
+
+          let seg = 30;
+          const timer = setInterval(() => {
+            seg--;
+            label.textContent = `BLOQUEADO — ${seg}s restantes`;
+            if (seg <= 0) {
+              clearInterval(timer);
+              bloqueado = false; intentos = 5;
+              btn.disabled = false; inputEl.disabled = false;
+              msg.textContent = '> Sistema desbloqueado. Puedes intentarlo de nuevo.';
+              msg.style.color = '#66ffb3';
+              label.textContent = 'Intentos restantes: 5';
+              label.className = 'puzzle-intentos';
+            }
+          }, 1000);
+        } else {
+          msg.textContent = `> Código incorrecto. ${intentos} intento${intentos!==1?'s':''} restante${intentos!==1?'s':''}.`;
+          msg.style.color = '#ff5555';
+          label.textContent = `Intentos restantes: ${intentos}`;
+          label.className = 'puzzle-intentos' + (intentos<=2?' danger':intentos<=3?' warn':'');
+        }
+      }
+    }
+
+    document.getElementById('codigo').addEventListener('keydown', e => {
+      if (e.key === 'Enter') verificarCodigo();
+    });
+
+    // ══ HACK OVERLAY ════════════════════════════════════════════════
+    const HACK_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*[]{}|<>';
+
+    function lanzarHackOverlay() {
+      const overlay = document.getElementById('hack-overlay');
+      const textEl  = document.getElementById('hack-text');
+      overlay.classList.add('visible');
+
+      const FILAS = 20, COLS = 62;
+      let matriz = Array.from({length: FILAS}, () =>
+        Array.from({length: COLS}, () => HACK_CHARS[Math.floor(Math.random()*HACK_CHARS.length)])
+      );
+
+      let ciclo = 0;
+      const MAX = 28;
+
+      const iv = setInterval(() => {
+        // Mutar chars aleatoriamente
+        matriz = matriz.map(row =>
+          row.map(c => Math.random() < 0.12 ? HACK_CHARS[Math.floor(Math.random()*HACK_CHARS.length)] : c)
+        );
+        textEl.textContent = matriz.map(r => r.join('')).join('\n');
+        beep(80 + Math.random()*500, 0.03, 0.03, 'square');
+        ciclo++;
+
+        if (ciclo >= MAX) {
+          clearInterval(iv);
+          textEl.innerHTML = matriz.map(r=>r.join('')).join('\n') +
+            '\n\n<span class="hack-final">> ACCESO CONCEDIDO — CARGANDO CORE MODULE...</span>';
+          beepOk();
+          setTimeout(() => {
+            overlay.classList.remove('visible');
+            irA('core');
+          }, 1400);
+        }
+      }, 75);
+    }
+
+    // ══ BOOT SCREEN ═════════════════════════════════════════════════
+    const BOOT_LINES = [
+      { txt: 'RETROTERM.AI OS v0.2 — Iniciando kernel...',   cls: '' },
+      { txt: '[OK] Módulo de red cargado',                    cls: 'ok' },
+      { txt: '[OK] Interfaz de usuario inicializada',         cls: 'ok' },
+      { txt: '[OK] Base de datos conectada',                  cls: 'ok' },
+      { txt: '[WARN] Módulo IA operando en modo seguro',      cls: 'warn' },
+      { txt: '[OK] Sistema de autenticación SHA-256 activo',  cls: 'ok' },
+      { txt: '[OK] Portal de acceso restringido montado',     cls: 'ok' },
+      { txt: 'Cargando interfaz...',                          cls: '' },
+    ];
+
+    function runBoot() {
+      const logEl = document.getElementById('boot-log');
+      const bar   = document.getElementById('boot-bar');
+      const label = document.getElementById('boot-label');
+
+      logEl.innerHTML = BOOT_LINES.map(l =>
+        `<div class="line${l.cls ? ' ' + l.cls : ''}">&nbsp;</div>`
+      ).join('');
+      const divs = logEl.querySelectorAll('.line');
+      let i = 0;
+
+      const iv = setInterval(() => {
+        if (i < BOOT_LINES.length) {
+          divs[i].textContent = BOOT_LINES[i].txt;
+          divs[i].classList.add('show');
+          beep(280 + i*25, 0.04, 0.04);
+          bar.style.width = ((i+1) / BOOT_LINES.length * 100) + '%';
+          label.textContent = `CARGANDO... ${Math.round((i+1)/BOOT_LINES.length*100)}%`;
+          i++;
+        } else {
+          clearInterval(iv);
+          label.textContent = 'SISTEMA LISTO';
+          beepOk();
+          setTimeout(() => {
+            document.getElementById('boot-screen').classList.add('hidden');
+            const hash = location.hash ? location.hash.substring(1) : 'inicio';
+            iniciarSeccion(hash);
+          }, 500);
+        }
+      }, 210);
+    }
+
+    // ══ INIT ════════════════════════════════════════════════════════
+    window.addEventListener('load', () => {
+      const hash = location.hash ? location.hash.substring(1) : 'inicio';
+      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
+      const sec = document.getElementById(hash) || document.getElementById('inicio');
+      sec.classList.add('activa');
+      runBoot();
+    });
+
+    window.addEventListener('popstate', () => {
+      const hash = location.hash ? location.hash.substring(1) : 'inicio';
+      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
+      const sec = document.getElementById(hash);
+      if (sec) { sec.classList.add('activa'); iniciarSeccion(hash); }
+    });
+  </script>
+
+</body>
+</html>

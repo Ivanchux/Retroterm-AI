@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CODE_CRT — Editor Retro | RETROTERM.AI</title>
+  <link rel="stylesheet" href="estilos.css" />
+  <link rel="icon" href="favicon.ico" />
+  <style>
+    /* ── LAYOUT GENERAL ── */
+    .editor-marco {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* ── BARRA SUPERIOR ── */
+    .editor-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: #001a00;
+      border-bottom: 2px solid #00ff66;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .editor-topbar-title {
+      color: #66ffb3;
+      font-size: 0.88rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 6px #00ff66;
+      font-weight: bold;
+    }
+    .editor-topbar-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .editor-tag {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 3px;
+      letter-spacing: 1px;
+      border: 1px solid currentColor;
+    }
+    .tag-html { color: #ff8c42; border-color: #ff8c42; }
+    .tag-css  { color: #4ecdc4; border-color: #4ecdc4; }
+    .tag-js   { color: #ffe66d; border-color: #ffe66d; }
+
+    /* ── INDICADOR CAMBIOS ── */
+    .unsaved-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ffaa00;
+      display: none;
+      box-shadow: 0 0 6px #ffaa00;
+    }
+    .unsaved-dot.visible { display: inline-block; }
+
+    /* ── PANELES EDITOR ── */
+    .editor-contenedor {
+      display: flex;
+      gap: 0;
+      border: 2px solid #00ff66;
+      border-top: none;
+    }
+
+    .editor-panel {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #00ff66;
+      min-width: 0;
+    }
+    .editor-panel:last-child { border-right: none; }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 10px;
+      background: #000d00;
+      border-bottom: 1px solid #00ff66;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+    }
+    .panel-header-html { color: #ff8c42; border-bottom-color: #ff8c42; background: rgba(255,140,66,0.05); }
+    .panel-header-css  { color: #4ecdc4; border-bottom-color: #4ecdc4; background: rgba(78,205,196,0.05); }
+    .panel-header-js   { color: #ffe66d; border-bottom-color: #ffe66d; background: rgba(255,230,109,0.05); }
+
+    .panel-linecount {
+      font-size: 0.68rem;
+      color: #1a4a2a;
+      letter-spacing: 0;
+    }
+
+    /* ── WRAPPER NUMERACIÓN + TEXTAREA ── */
+    .panel-body {
+      display: flex;
+      flex: 1;
+      position: relative;
+    }
+
+    .line-numbers {
+      padding: 12px 6px 12px 8px;
+      background: #000800;
+      color: #1a4a2a;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      text-align: right;
+      user-select: none;
+      border-right: 1px solid #001a00;
+      min-width: 32px;
+      overflow: hidden;
+      white-space: pre;
+    }
+
+    .editor-crt {
+      flex: 1;
+      min-height: 280px;
+      background: #000;
+      color: #00ff66;
+      font-family: 'Courier New', monospace;
+      font-size: 0.88rem;
+      border: none;
+      outline: none;
+      padding: 12px 10px;
+      resize: none;
+      box-sizing: border-box;
+      caret-color: #00ff66;
+      line-height: 1.5;
+      tab-size: 2;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 255, 102, 0.018) 0px,
+        rgba(0, 255, 102, 0.018) 1px,
+        transparent 2px
+      );
+    }
+    .editor-crt:focus { box-shadow: inset 0 0 10px rgba(0,255,102,0.08); }
+
+    /* Colores por panel */
+    #html-editor { color: #ffb380; caret-color: #ff8c42; }
+    #html-editor:focus { box-shadow: inset 0 0 10px rgba(255,140,66,0.08); }
+    #css-editor  { color: #80e8e3; caret-color: #4ecdc4; }
+    #css-editor:focus  { box-shadow: inset 0 0 10px rgba(78,205,196,0.08); }
+    #js-editor   { color: #fff0a0; caret-color: #ffe66d; }
+    #js-editor:focus   { box-shadow: inset 0 0 10px rgba(255,230,109,0.08); }
+
+    /* ── BOTONES ── */
+    .editor-botones {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 12px;
+      border: 2px solid #00ff66;
+      border-top: none;
+      background: #000800;
+    }
+    .editor-botones button {
+      padding: 7px 16px;
+      border: 1px solid #00ff66;
+      background: #001a00;
+      color: #00ff66;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      border-radius: 3px;
+      margin-top: 0;
+    }
+    .editor-botones button:hover {
+      background: #00ff66;
+      color: #000;
+      box-shadow: 0 0 10px #00ff66;
+    }
+    .btn-ejecutar { border-color: #00ff66 !important; }
+    .btn-guardar  { border-color: #66ffb3 !important; color: #66ffb3 !important; }
+    .btn-guardar:hover { background: #66ffb3 !important; }
+    .btn-descargar { border-color: #4ecdc4 !important; color: #4ecdc4 !important; }
+    .btn-descargar:hover { background: #4ecdc4 !important; }
+    .btn-limpiar  { border-color: #ff5555 !important; color: #ff5555 !important; }
+    .btn-limpiar:hover { background: #ff5555 !important; }
+    .btn-fullscreen { border-color: #ffe66d !important; color: #ffe66d !important; }
+    .btn-fullscreen:hover { background: #ffe66d !important; }
+
+    /* ── PREVIEW ── */
+    .preview-wrap {
+      margin-top: 16px;
+      border: 2px solid #00ff66;
+      box-shadow: 0 0 15px #00ff66;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      background: #001a00;
+      border-bottom: 1px solid #00ff66;
+      font-size: 0.75rem;
+      color: #66ffb3;
+      letter-spacing: 2px;
+    }
+    .preview-dots { display: flex; gap: 5px; }
+    .preview-dot  { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-r { background: #ff5555; }
+    .dot-y { background: #ffaa00; }
+    .dot-g { background: #00ff66; }
+
+    #preview {
+      width: 100%;
+      height: 320px;
+      border: none;
+      background: #fff;
+      display: block;
+    }
+    #preview.fullscreen-preview {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      border: none;
+    }
+
+    /* ── BARRA DE ESTADO ── */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 12px;
+      background: #000800;
+      border: 2px solid #00ff66;
+      border-top: 1px solid #001a00;
+      font-size: 0.68rem;
+      color: #1a5a2a;
+      letter-spacing: 1px;
+      flex-wrap: wrap;
+      gap: 6px;
+      border-radius: 0 0 3px 3px;
+    }
+    .status-bar span { color: #1a5a2a; }
+    .status-bar .status-ok  { color: #00ff66; }
+    .status-bar .status-warn { color: #ffaa00; }
+    .status-autosave { transition: color 0.3s; }
+
+    /* ── TOAST NOTIFICACIÓN ── */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #001a00;
+      border: 1px solid #00ff66;
+      color: #00ff66;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      padding: 10px 18px;
+      border-radius: 3px;
+      box-shadow: 0 0 12px #00ff66;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 1000;
+      letter-spacing: 1px;
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 750px) {
+      .editor-contenedor { flex-direction: column; }
+      .editor-panel { border-right: none; border-bottom: 1px solid #00ff66; }
+      .editor-panel:last-child { border-bottom: none; }
+      .editor-crt { min-height: 160px; }
+      .line-numbers { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<section class="pantalla seccion activa">
+
+  <header class="cabecera">
+    <h1>MODO DESARROLLO <span class="cursor-blink">|</span></h1>
+    <p class="subtitulo">CODE_CRT — Editor retro integrado</p>
+  </header>
+
+  <div class="editor-marco">
+
+    <!-- Barra superior -->
+    <div class="editor-topbar">
+      <span class="editor-topbar-title">CODE_CRT v0.2</span>
+      <div class="editor-topbar-actions">
+        <span class="editor-tag tag-html">HTML</span>
+        <span class="editor-tag tag-css">CSS</span>
+        <span class="editor-tag tag-js">JS</span>
+        <span class="unsaved-dot" id="unsaved-dot" title="Cambios sin guardar"></span>
+      </div>
+    </div>
+
+    <!-- Paneles de código -->
+    <div class="editor-contenedor">
+
+      <!-- HTML -->
+      <div class="editor-panel">
+        <div class="panel-header panel-header-html">
+          <span>◆ HTML</span>
+          <span class="panel-linecount" id="html-lines">1 línea</span>
+        </div>
+        <div class="panel-body">
+          <div class="line-numbers" id="html-ln">1</div>
+          <textarea id="html-editor" class="editor-crt" spellcheck="false"><!-- HTML -->
+<h1>Hola RetroTerm</h1>
+<p>Escribe HTML, CSS y JS a la vez</p></textarea>
+        </div>
+      </div>
+
+      <!-- CSS -->
+      <div class="editor-panel">
+        <div class="panel-header panel-header-css">
+          <span>◆ CSS</span>
+          <span class="panel-linecount" id="css-lines">1 línea</span>
+        </div>
+        <div class="panel-body">
+          <div class="line-numbers" id="css-ln">1</div>
+          <textarea id="css-editor" class="editor-crt" spellcheck="false">/* CSS */
+body {
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+}
+h1 { text-shadow: 0 0 6px #00ff66; }</textarea>
+        </div>
+      </div>
+
+      <!-- JS -->
+      <div class="editor-panel">
+        <div class="panel-header panel-header-js">
+          <span>◆ JS</span>
+          <span class="panel-linecount" id="js-lines">1 línea</span>
+        </div>
+        <div class="panel-body">
+          <div class="line-numbers" id="js-ln">1</div>
+          <textarea id="js-editor" class="editor-crt" spellcheck="false">// JS
+console.log("RetroCRT v0.2 listo!");</textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Botones -->
+    <div class="editor-botones">
+      <button class="btn-ejecutar" id="btn-ejecutar">▶ EJECUTAR</button>
+      <button class="btn-guardar"  id="btn-guardar">💾 GUARDAR</button>
+      <button class="btn-descargar" id="btn-descargar">⬇ DESCARGAR</button>
+      <button class="btn-limpiar"  id="btn-limpiar">✕ LIMPIAR</button>
+      <button class="btn-fullscreen" id="btn-fullscreen">⛶ PANTALLA COMPLETA</button>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-wrap">
+      <div class="preview-header">
+        <div class="preview-dots">
+          <div class="preview-dot dot-r"></div>
+          <div class="preview-dot dot-y"></div>
+          <div class="preview-dot dot-g"></div>
+        </div>
+        <span>// PREVIEW — LIVE OUTPUT</span>
+        <span id="preview-status" class="status-ok">● ACTIVO</span>
+      </div>
+      <iframe id="preview"></iframe>
+    </div>
+
+    <!-- Barra de estado -->
+    <div class="status-bar">
+      <span>CODE_CRT v0.2 — RETROTERM.AI</span>
+      <span id="status-chars">HTML: 0c · CSS: 0c · JS: 0c</span>
+      <span class="status-autosave" id="status-autosave">AUTOGUARDADO: —</span>
+    </div>
+
+  </div>
+
+  <a href="index.html" class="volver">⬅ Volver al HUB</a>
+
+</section>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Referencias ───────────────────────────────────────────────
+  const htmlEditor  = document.getElementById('html-editor');
+  const cssEditor   = document.getElementById('css-editor');
+  const jsEditor    = document.getElementById('js-editor');
+  const preview     = document.getElementById('preview');
+  const unsavedDot  = document.getElementById('unsaved-dot');
+  const statusChars = document.getElementById('status-chars');
+  const statusAS    = document.getElementById('status-autosave');
+
+  let autoguardadoTimer = null;
+
+  // ── Actualizar preview ────────────────────────────────────────
+  function actualizarPreview() {
+    const html = htmlEditor.value;
+    const css  = '<style>' + cssEditor.value + '</style>';
+    const js   = '<script>' + jsEditor.value + '<\/script>';
+    preview.srcdoc = html + css + js;
+    actualizarStatusChars();
+  }
+
+  // ── Números de línea ──────────────────────────────────────────
+  function actualizarLineas(textarea, lnDiv, contadorId) {
+    const lineas = textarea.value.split('\n').length;
+    lnDiv.textContent = Array.from({length: lineas}, (_, i) => i + 1).join('\n');
+    document.getElementById(contadorId).textContent =
+      lineas + (lineas === 1 ? ' línea' : ' líneas');
+
+    // Sincronizar scroll
+    lnDiv.scrollTop = textarea.scrollTop;
+  }
+
+  // ── Contadores de caracteres ──────────────────────────────────
+  function actualizarStatusChars() {
+    statusChars.textContent =
+      `HTML: ${htmlEditor.value.length}c · CSS: ${cssEditor.value.length}c · JS: ${jsEditor.value.length}c`;
+  }
+
+  // ── Tab key → 2 espacios ──────────────────────────────────────
+  function handleTab(e) {
+    if (e.key !== 'Tab') return;
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end   = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '  ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 2;
+    marcarCambios();
+  }
+
+  // ── Marcar cambios sin guardar ────────────────────────────────
+  function marcarCambios() {
+    unsavedDot.classList.add('visible');
+
+    // Autoguardado a los 3 segundos de inactividad
+    clearTimeout(autoguardadoTimer);
+    autoguardadoTimer = setTimeout(() => {
+      autoguardar();
+    }, 3000);
+  }
+
+  // ── Autoguardado ─────────────────────────────────────────────
+  function autoguardar() {
+    localStorage.setItem('htmlCRT', htmlEditor.value);
+    localStorage.setItem('cssCRT',  cssEditor.value);
+    localStorage.setItem('jsCRT',   jsEditor.value);
+    unsavedDot.classList.remove('visible');
+    const hora = new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    statusAS.textContent = `AUTOGUARDADO: ${hora}`;
+    statusAS.classList.add('status-ok');
+  }
+
+  // ── Guardar manual ────────────────────────────────────────────
+  function guardarManual() {
+    clearTimeout(autoguardadoTimer);
+    autoguardar();
+    mostrarToast('💾 Código guardado correctamente');
+  }
+
+  // ── Descargar como .html ──────────────────────────────────────
+  function descargar() {
+    const html = htmlEditor.value;
+    const css  = cssEditor.value;
+    const js   = jsEditor.value;
+    const contenido = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exportado desde CODE_CRT — RETROTERM.AI</title>
+  <style>
+${css}
+  </style>
+</head>
+<body>
+${html}
+  <script>
+${js}
+  <\/script>
+</body>
+</html>`;
+
+    const blob = new Blob([contenido], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'retroterm_export.html';
+    a.click();
+    URL.revokeObjectURL(url);
+    mostrarToast('⬇ Archivo descargado');
+  }
+
+  // ── Limpiar preview ───────────────────────────────────────────
+  function limpiarPreview() {
+    preview.srcdoc = '';
+    mostrarToast('✕ Preview limpiado');
+  }
+
+  // ── Pantalla completa ─────────────────────────────────────────
+  let fullscreen = false;
+  function toggleFullscreen() {
+    fullscreen = !fullscreen;
+    preview.classList.toggle('fullscreen-preview', fullscreen);
+    document.getElementById('btn-fullscreen').textContent =
+      fullscreen ? '✕ CERRAR' : '⛶ PANTALLA COMPLETA';
+    if (fullscreen) {
+      // Cerrar con Escape
+      document.addEventListener('keydown', cerrarFullscreenEsc);
+    } else {
+      document.removeEventListener('keydown', cerrarFullscreenEsc);
+    }
+  }
+  function cerrarFullscreenEsc(e) {
+    if (e.key === 'Escape') toggleFullscreen();
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────
+  let toastTimer = null;
+  function mostrarToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('visible'), 2200);
+  }
+
+  // ── Event listeners ───────────────────────────────────────────
+  const paneles = [
+    { ta: htmlEditor, ln: document.getElementById('html-ln'), cid: 'html-lines' },
+    { ta: cssEditor,  ln: document.getElementById('css-ln'),  cid: 'css-lines'  },
+    { ta: jsEditor,   ln: document.getElementById('js-ln'),   cid: 'js-lines'   },
+  ];
+
+  paneles.forEach(({ ta, ln, cid }) => {
+    ta.addEventListener('input', () => {
+      actualizarPreview();
+      actualizarLineas(ta, ln, cid);
+      marcarCambios();
+    });
+    ta.addEventListener('keydown', handleTab);
+    ta.addEventListener('scroll', () => { ln.scrollTop = ta.scrollTop; });
+  });
+
+  document.getElementById('btn-ejecutar').addEventListener('click', actualizarPreview);
+  document.getElementById('btn-guardar').addEventListener('click', guardarManual);
+  document.getElementById('btn-descargar').addEventListener('click', descargar);
+  document.getElementById('btn-limpiar').addEventListener('click', limpiarPreview);
+  document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+
+  // ── Cargar al iniciar ─────────────────────────────────────────
+  window.addEventListener('load', () => {
+    const h = localStorage.getItem('htmlCRT');
+    const c = localStorage.getItem('cssCRT');
+    const j = localStorage.getItem('jsCRT');
+    if (h) htmlEditor.value = h;
+    if (c) cssEditor.value  = c;
+    if (j) jsEditor.value   = j;
+
+    paneles.forEach(({ ta, ln, cid }) => actualizarLineas(ta, ln, cid));
+    actualizarPreview();
+
+    if (h || c || j) {
+      statusAS.textContent = 'AUTOGUARDADO: sesión anterior cargada';
+      statusAS.classList.add('status-ok');
+    }
+  });
+</script>
+
+</body>
+</html>

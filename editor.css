@@ -1,0 +1,112 @@
+/* ===== editor.css — Solo reglas exclusivas del editor CODE_CRT ===== */
+/* Las reglas globales (body, .pantalla, .activa, .seccion, etc.)
+   ya están definidas en estilos.css y no se repiten aquí.          */
+
+/* ===== Contenedor principal del editor ===== */
+.editor-marco {
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  background: #000;
+  box-shadow: 0 0 15px #00ff66;
+  padding: 15px;
+}
+
+.editor-barra {
+  padding: 8px 12px;
+  background: #001a00;
+  border-bottom: 2px solid #00ff66;
+  color: #66ffb3;
+  font-size: 0.9rem;
+  text-shadow: 0 0 6px #00ff66;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.editor-contenedor {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin-top: 15px;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ===== Paneles textarea del editor ===== */
+.editor-crt {
+  flex: 1 1 0;
+  min-height: 350px;
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  border: 2px solid #00ff66;
+  outline: none;
+  padding: 12px;
+  resize: vertical;
+  box-sizing: border-box;
+  caret-color: #00ff66;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 102, 0.05) 0px,
+    rgba(0, 255, 102, 0.05) 2px,
+    rgba(0, 0, 0, 0.3) 3px
+  );
+}
+
+.editor-crt:focus {
+  box-shadow: inset 0 0 12px #00ff66;
+}
+
+/* ===== Botones del editor ===== */
+.editor-botones {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.editor-botones button {
+  padding: 10px 22px;
+  border: 1px solid #00ff66;
+  background: #001a00;
+  color: #00ff66;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.editor-botones button:hover {
+  background: #00ff66;
+  color: #000;
+  box-shadow: 0 0 12px #00ff66;
+}
+
+/* ===== Preview iframe ===== */
+#preview {
+  width: 100%;
+  height: 350px;
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  background: #000;
+  border-radius: 4px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .editor-contenedor {
+    flex-wrap: wrap;
+  }
+  .editor-crt {
+    width: 100%;
+    min-height: 200px;
+  }
+  #preview {
+    height: 250px;
+  }
+}

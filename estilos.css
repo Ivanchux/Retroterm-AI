@@ -1,0 +1,898 @@
+/* =========== PANTALLA PRINCIPAL ===================== */
+
+body {
+  background-color: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  scroll-behavior: smooth;
+}
+
+
+.pantalla {
+  width: 90%;
+  max-width: 900px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  padding: 20px;
+  background: radial-gradient(circle at center, #001800 0%, #000 80%);
+  margin: 40px auto;
+  display: none; 
+}
+
+
+.activa,
+:target {
+  display: block;
+}
+
+
+.cabecera {
+  text-align: center;
+}
+h1 {
+  font-size: 2rem;
+  text-shadow: 0 0 8px #00ff66;
+}
+.subtitulo {
+  color: #66ffb3;
+  font-size: 0.9rem;
+}
+
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;              
+  justify-content: center;      
+  align-items: center;
+  gap: 25px;                    
+  margin-top: 40px;
+}
+
+.opcion {
+  border: 2px solid #00ff66;
+  padding: 20px 30px;           
+  text-align: center;
+  text-decoration: none;
+  color: #00ff66;
+  background: rgba(0, 30, 0, 0.6);
+  transition: all 0.3s ease;
+  border-radius: 10px;          
+  flex: 1 1 200px;              
+  max-width: 250px;
+}
+
+.opcion:hover {
+  background-color: #00aa44;
+  color: #00ff66;
+  box-shadow: 0 0 10px #00ff66;
+  text-shadow: 0 0 10px #00ff66;
+  transform: scale(1.05);
+
+}
+
+
+
+.volver {
+  display: inline-block;
+  text-decoration: none;
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 6px 10px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+.volver:hover {
+  background-color: #00ff66;
+  color: #000;
+}
+
+
+.pie {
+  text-align: center;
+  border-top: 1px solid #00ff66;
+  margin-top: 30px;
+  padding-top: 10px;
+  color: #66ffb3;
+}
+
+
+
+/* Textareas y botones globales */
+textarea {
+  width: 100%;
+  height: 200px;
+  background: #000;
+  color: #00ff66;
+  border: 2px solid #00ff66;
+  font-family: 'Courier New', monospace;
+  padding: 10px;
+  resize: vertical;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #00ff66;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+}
+button:hover { 
+  box-shadow: 0 0 10px #00ff66; 
+  background: #00ff66;
+}
+
+
+
+/* ================ SUBSECCIÓN RED DE ARTICULOS =============== */
+
+
+.lista-articulos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.articulo {
+  border: 1px solid #00ff66;
+  padding: 15px;
+  background: rgba(0, 20, 0, 0.8);
+  box-shadow: 0 0 10px #00ff66;
+}
+
+.articulo h3 {
+  color: #66ffb3;
+  margin-bottom: 10px;
+}
+
+.articulo p {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.imagen-articulo {
+  text-align: center;
+  margin: 15px 0 20px 0;
+}
+
+.imagen-articulo img {
+  width: 100%;
+  max-width: 200px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  border-radius: 8px;
+}
+
+
+
+
+/* =============== SUBSECCIÓN RED DE PROYECTOS =========== */
+
+
+.red-page {
+  background: radial-gradient(circle at center, #000 60%, #001122 100%);
+  color: #00ffff;
+  text-align: center;
+  padding: 40px;
+}
+
+.red-page h1 {
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff;
+}
+
+.lista-proyectos {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0;
+}
+
+.lista-proyectos li {
+  margin: 15px 0;
+}
+
+.red-page .proyecto {
+  display: inline-block;
+  padding: 12px 25px;
+  border: 1px solid #00ffff;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #00ffff;
+  font-family: "Courier New", monospace;
+  transition: all 0.3s ease;
+}
+
+.red-page .proyecto:hover {
+  background-color: #00ffff;
+  color: #000;
+  box-shadow: 0 0 10px #00ffff;
+}
+
+.red-page .volver {
+  display: inline-block;
+  margin-top: 30px;
+  color: #00ffff;
+  text-decoration: none;
+  border: 1px solid #00ffff;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.red-page .volver:hover {
+  background-color: #00ffff;
+  color: #000;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1;}
+  51%, 100% { opacity: 0;}
+}
+
+
+
+/*============Cursor blink INICIO & SILO===============*/
+.cursor-link {
+  text-decoration: none;
+  color: #00ff66;
+}
+
+.cursor-blink {
+  position: relative;
+  display: inline-block;
+  margin-left: 6px;
+  color: #00ff66;
+  animation: blink 1.5s infinite;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+
+.cursor-blink:hover {
+  animation: none;              
+  transform: scaleY(1.3);       
+  text-shadow:
+    0 0 6px #00ff66,
+    0 0 12px rgba(0, 255, 102, 0.6),
+    0 0 20px rgba(0, 255, 102, 0.3);
+}
+
+
+
+
+.seccion{
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1;}
+}
+
+
+
+/* ======================= MÓDULO EDITOR RETRO CRT ======================= */
+
+.editor-marco {
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  background: #000;
+  box-shadow: 0 0 15px #00ff66;
+}
+
+.editor-barra {
+  padding: 8px 12px;
+  background: #001a00;
+  border-bottom: 2px solid #00ff66;
+  color: #66ffb3;
+  font-size: 0.9rem;
+  text-shadow: 0 0 6px #00ff66;
+  letter-spacing: 1px;
+}
+
+.editor-contenedor {
+  width: 100%;
+  overflow: hidden;
+}
+
+textarea#editor-crt {
+  width: 100%;
+  min-height: 420px;
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  padding: 12px;
+  resize: vertical;
+  box-sizing: border-box;
+  caret-color: #00ff66;
+
+  /* Scanlines CRT */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 102, 0.04) 0px,
+    rgba(0, 255, 102, 0.04) 2px,
+    rgba(0, 0, 0, 0.25) 3px
+  );
+}
+
+textarea#editor-crt:focus {
+  box-shadow: inset 0 0 10px #00ff66;
+}
+
+/* ===== Editor CODE_CRT ===== */
+
+.editor-marco {
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  background: #000;
+  box-shadow: 0 0 15px #00ff66;
+  padding: 15px;
+}
+
+.editor-barra {
+  padding: 8px 12px;
+  background: #001a00;
+  border-bottom: 2px solid #00ff66;
+  color: #66ffb3;
+  font-size: 0.9rem;
+  text-shadow: 0 0 6px #00ff66;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.editor-contenedor {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.editor-crt {
+  flex: 1 1 0;
+  min-height: 350px;
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  border: 2px solid #00ff66;
+  outline: none;
+  padding: 12px;
+  resize: vertical;
+  box-sizing: border-box;
+  caret-color: #00ff66;
+
+  /* Efecto scanlines */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 102, 0.05) 0px,
+    rgba(0, 255, 102, 0.05) 2px,
+    rgba(0, 0, 0, 0.3) 3px
+  );
+}
+
+.editor-crt:focus {
+  box-shadow: inset 0 0 12px #00ff66;
+}
+
+.editor-botones {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.editor-botones button {
+  padding: 10px 22px;
+  border: 1px solid #00ff66;
+  background: #001a00;
+  color: #00ff66;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.editor-botones button:hover {
+  background: #00ff66;
+  color: #000;
+  box-shadow: 0 0 12px #00ff66;
+}
+
+#preview {
+  width: 100%;
+  height: 350px;
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  background: #000;
+  border-radius: 4px;
+}
+
+/* Ajuste responsive */
+@media (max-width: 900px) {
+  .editor-contenedor {
+    flex-wrap: wrap;
+  }
+
+  .editor-crt {
+    width: 100%;
+    min-height: 200px;
+  }
+
+  #preview {
+    height: 250px;
+  }
+}
+
+
+
+
+
+
+
+/* =============== SECCIÓN GAMING =============== */
+.gaming-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+  justify-content: center;
+}
+.gaming-grid .articulo {
+  flex: 1 1 300px;
+  max-width: 360px;
+}
+
+/* =============== ASISTENTE IA =============== */
+.ia-chat {
+  margin-top: 20px;
+  border: 1px solid #00ff66;
+  background: rgba(0,20,0,0.8);
+  padding: 15px;
+}
+.ia-output {
+  min-height: 120px;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+.ia-msg { margin: 4px 0; }
+.ia-msg.sistema { color: #66ffb3; }
+.ia-msg.usuario { color: #00ff66; }
+.ia-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ia-prompt { color: #00ff66; font-size: 1.1rem; }
+.ia-input {
+  flex: 1;
+  background: #000;
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 6px 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  outline: none;
+}
+.ia-input:focus { box-shadow: 0 0 6px #00ff66; }
+
+
+/* =============== ARTÍCULOS — ESTILOS EXTENDIDOS =============== */
+
+/* Filtros */
+.filtros {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+  justify-content: center;
+}
+.filtro-btn {
+  padding: 6px 14px;
+  border: 1px solid #00ff66;
+  background: transparent;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.filtro-btn:hover,
+.filtro-btn.activo {
+  background: #00ff66;
+  color: #000;
+}
+
+/* Meta y tags */
+.articulo-meta {
+  font-size: 0.75rem;
+  color: #66ffb3;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.articulo-tag {
+  display: inline-block;
+  border: 1px solid #00ff66;
+  color: #00ff66;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 3px;
+  margin-right: 6px;
+}
+
+/* Mejoras sobre .articulo base */
+.articulo {
+  border-radius: 4px;
+  transition: box-shadow 0.3s;
+  padding: 20px;
+  gap: 24px;
+}
+.articulo:hover {
+  box-shadow: 0 0 20px #00ff66;
+}
+.articulo h4 {
+  color: #00ff66;
+  margin: 14px 0 8px;
+  font-size: 0.95rem;
+}
+.articulo ul,
+.articulo ol {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  padding-left: 20px;
+  line-height: 1.8;
+}
+.articulo h3 {
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+.articulo p {
+  line-height: 1.7;
+}
+
+/* Lista artículos con mayor gap */
+.lista-articulos {
+  gap: 24px;
+}
+
+/* Imagen artículo mejorada */
+.imagen-articulo img {
+  max-width: 300px;
+}
+
+/* Tabla retro */
+.tabla-retro {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+.tabla-retro th,
+.tabla-retro td {
+  border: 1px solid #00ff66;
+  padding: 8px 12px;
+  text-align: left;
+}
+.tabla-retro th {
+  background: rgba(0,255,102,0.1);
+  color: #00ff66;
+}
+.tabla-retro td {
+  color: #e0e0e0;
+}
+.tabla-retro tr:hover td {
+  background: rgba(0,255,102,0.05);
+}
+
+/* Cita destacada */
+.cita {
+  border-left: 3px solid #00ff66;
+  padding: 10px 16px;
+  margin: 14px 0;
+  color: #66ffb3;
+  font-style: italic;
+  background: rgba(0,255,102,0.04);
+}
+
+/* Bloque de código */
+.code-block {
+  background: #000;
+  border: 1px solid #00ff66;
+  padding: 12px;
+  margin: 12px 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #00ff66;
+  overflow-x: auto;
+  border-radius: 4px;
+  white-space: pre;
+}
+
+/* Enlace de texto */
+.texto-link {
+  color: #00ff66;
+  text-decoration: underline;
+}
+.texto-link:hover {
+  color: #66ffb3;
+}
+
+/* Footer artículos */
+.footer-articulos {
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px solid #00ff66;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #66ffb3;
+}
+
+
+/* =============== INDEX — BOTONES COMPARTIR =============== */
+.share-bar {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.share-btn {
+  border: 1px solid #00ff66;
+  color: #00ff66;
+  padding: 6px 14px;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+  background: transparent;
+}
+.share-btn:hover {
+  background: #00ff66;
+  color: #000;
+}
+
+/* =============== INDEX — SILO TABLA ESTADO =============== */
+.silo-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.silo-tabla th,
+.silo-tabla td {
+  border: 1px solid #00ff66;
+  padding: 8px;
+}
+.silo-tabla th {
+  background: rgba(0,255,102,0.1);
+  color: #00ff66;
+}
+.silo-tabla td {
+  color: #e0e0e0;
+}
+.estado-activo   { color: #00ff66; }
+.estado-dev      { color: #ffaa00; }
+
+/* =============== INDEX — CRYPTO =============== */
+.crypto-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 20px;
+}
+.crypto-card img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #00ff66;
+}
+.crypto-nombre { flex: 1; font-size: 1rem; }
+
+/* =============== PORTAL =============== */
+.portal-body {
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  scroll-behavior: smooth;
+}
+.portal-body h1,
+.portal-body h2 {
+  text-shadow: 0 0 6px #00ff66;
+}
+
+/* Breadcrumb */
+.silo-breadcrumb { margin-bottom: 15px; font-size: 0.9rem; }
+.silo-breadcrumb a { color: #00ff66; text-decoration: none; }
+.silo-breadcrumb .sep { margin: 0 5px; }
+.silo-breadcrumb .actual { color: #66ffb3; }
+
+/* Menú silo */
+.silo-menu { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.silo-menu a { padding: 8px 18px; border: 1px solid #00ff66; border-radius: 5px; background: rgba(0,20,0,0.6); color: #00ff66; text-decoration: none; transition: 0.3s; }
+.silo-menu a:hover { background: #00ff66; color: #000; box-shadow: 0 0 10px #00ff66; }
+.silo-menu-cyan a { border-color: #00ffff; color: #00ffff; }
+.silo-menu-cyan a:hover { background: #00ffff; color: #000; box-shadow: 0 0 10px #00ffff; }
+
+/* Mini puzzle */
+#puzzle { background: #001a00; border: 2px solid #00ff66; padding: 10px; margin-top: 20px; text-align: center; }
+#puzzle input { background: #000; color: #00ff66; border: 1px solid #00ff66; padding: 5px 8px; width: 60px; font-family: 'Courier New', monospace; }
+#puzzle button { padding: 5px 10px; margin-left: 5px; background: #00ff66; border: none; color: #000; cursor: pointer; font-family: 'Courier New', monospace; }
+#puzzle button:hover { box-shadow: 0 0 6px #00ff66; }
+#puzzle .msg { margin-top: 10px; color: #66ffb3; }
+
+/* Artículos horizontales portal */
+.core-articles-horizontal { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.core-articles-horizontal .articulo { width: 280px; box-sizing: border-box; border-radius: 8px; }
+.core-articles-horizontal .articulo table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.core-articles-horizontal .articulo th,
+.core-articles-horizontal .articulo td { border: 1px solid #00ff66; padding: 5px; text-align: center; color: #e0e0e0; }
+.core-articles-horizontal .articulo th { color: #00ff66; background: rgba(0,255,102,0.1); }
+
+
+/* =============== GAMING — SNAKE & TYPING =============== */
+.snake-canvas {
+  border: 2px solid #00ff66;
+  display: block;
+  margin: 10px auto;
+  background: #000;
+}
+.snake-info {
+  text-align: center;
+  margin-top: 8px;
+}
+.typing-wrap { margin-top: 15px; }
+.typing-frase {
+  color: #66ffb3;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  letter-spacing: 1px;
+  border: 1px solid #003300;
+  padding: 10px;
+  min-height: 50px;
+}
+.typing-input { width: 100%; margin-top: 10px; }
+.typing-stats {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+/* =============== PORTAL — VIDEO =============== */
+.portal-video {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* =============== UTILIDADES =============== */
+.text-center { text-align: center; }
+.error-msg { color: #ff5555; }
+
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE GLOBAL — Mobile first
+   Breakpoints: 600px (móvil) · 768px (tablet)
+   Solo añade reglas, no sobreescribe nada crítico
+═══════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── Contenedor principal ── */
+  .pantalla {
+    width: 95%;
+    padding: 14px;
+    margin: 16px auto;
+  }
+
+  /* ── Tipografía ── */
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  .subtitulo { font-size: 0.82rem; }
+
+  /* ── Menú HUB (index) ── */
+  .menu {
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .opcion {
+    flex: 1 1 140px;
+    max-width: 100%;
+    padding: 14px 16px;
+    font-size: 0.85rem;
+  }
+
+  /* ── Artículos ── */
+  .lista-articulos { gap: 16px; }
+  .articulo { padding: 14px; }
+  .articulo h3 { font-size: 1rem; }
+  .articulo p  { font-size: 0.85rem; }
+
+  /* ── Tabla retro ── */
+  .tabla-retro { font-size: 0.78rem; }
+  .tabla-retro th,
+  .tabla-retro td { padding: 6px 8px; }
+
+  /* ── Filtros artículos ── */
+  .filtros { gap: 6px; }
+  .filtro-btn { font-size: 0.78rem; padding: 5px 10px; }
+
+  /* ── Gaming grid ── */
+  .gaming-grid { flex-direction: column; align-items: center; }
+  .gaming-grid .articulo { max-width: 100%; width: 100%; }
+
+  /* ── Snake canvas ── */
+  .snake-canvas { width: 260px !important; height: 260px !important; }
+
+  /* ── Typing stats ── */
+  .typing-stats { flex-direction: column; gap: 4px; font-size: 0.75rem; }
+
+  /* ── Crypto cards ── */
+  .crypto-card { padding: 10px 14px; gap: 10px; }
+  .crypto-nombre { font-size: 0.88rem; }
+
+  /* ── Share bar ── */
+  .share-bar { gap: 8px; }
+  .share-btn  { font-size: 0.75rem; padding: 5px 10px; }
+
+  /* ── Silo tabla ── */
+  .silo-tabla { font-size: 0.78rem; }
+  .silo-tabla th,
+  .silo-tabla td { padding: 6px; }
+
+  /* ── Footer artículos ── */
+  .footer-articulos { font-size: 0.78rem; }
+
+  /* ── Código ── */
+  .code-block { font-size: 0.78rem; }
+
+  /* ── Volver ── */
+  .volver { font-size: 0.82rem; margin-top: 14px; }
+}
+
+@media (max-width: 480px) {
+
+  /* ── Pantalla más ajustada ── */
+  .pantalla { width: 98%; padding: 10px; margin: 8px auto; }
+
+  /* ── Menú HUB en columna ── */
+  .opcion {
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding: 12px;
+    font-size: 0.82rem;
+    text-align: center;
+  }
+
+  /* ── H1 más pequeño ── */
+  h1 { font-size: 1.25rem; letter-spacing: 2px; }
+
+  /* ── Tabla retro scroll horizontal ── */
+  .tabla-retro-wrap { overflow-x: auto; }
+  .tabla-retro { min-width: 340px; }
+
+  /* ── Imagen artículo ── */
+  .imagen-articulo img { max-width: 200px; }
+
+  /* ── Code block scroll ── */
+  .code-block { font-size: 0.72rem; }
+
+  /* ── Gaming canvas pequeño ── */
+  .snake-canvas { width: 220px !important; height: 220px !important; }
+
+  /* ── Botón global ── */
+  button { padding: 8px 14px; font-size: 0.82rem; }
+}
