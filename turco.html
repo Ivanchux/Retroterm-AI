@@ -410,10 +410,11 @@
       width: 100%;
       display: block;
       filter: sepia(0.4) hue-rotate(90deg) brightness(0.8) contrast(1.1);
-      transition: filter 0.3s;
+      transition: filter 0.3s, transform 0.3s;
     }
     .hist-foto-item:hover img {
       filter: sepia(0.2) hue-rotate(90deg) brightness(0.9) contrast(1.1);
+      transform: scale(1.02);
     }
     .hist-foto-caption {
       padding: 8px 10px;
@@ -431,9 +432,7 @@
       color: var(--cyan);
       font-size: 0.75rem;
       flex-shrink: 0;
-      transition: transform 0.3s;
     }
-    .hist-foto-item.abierto .hist-expand-icon { transform: rotate(90deg); }
 
     /* Placeholder para cuando no hay imagen real */
     .hist-foto-placeholder {
@@ -452,41 +451,104 @@
       line-height: 1.3;
     }
 
-    /* Artículo desplegable */
-    .hist-articulo {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s ease;
-      background: rgba(0,20,20,0.6);
+    /* ══ MODAL DE ARTÍCULO ══ */
+    #articulo-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.96);
+      z-index: 9000;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
     }
-    .hist-foto-item.abierto .hist-articulo {
-      max-height: 700px;
-      border-top: 1px solid #003333;
+    #articulo-modal.visible { display: flex; }
+    .articulo-modal-box {
+      border: 2px solid var(--cyan);
+      max-width: 640px;
+      width: 100%;
+      background: #000;
+      padding: 28px 32px;
+      box-shadow: 0 0 40px rgba(0,255,255,0.15);
+      margin: auto;
+      animation: modalEntrada 0.25s ease;
     }
-    .hist-articulo-inner {
-      padding: 14px;
-      font-size: 0.78rem;
-      color: #aaa;
-      line-height: 1.9;
+    @keyframes modalEntrada {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    .hist-articulo-inner h4 {
-      color: var(--cyan);
-      font-size: 0.78rem;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
+    .articulo-modal-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
       border-bottom: 1px solid #003333;
-      padding-bottom: 6px;
+      padding-bottom: 14px;
     }
-    .hist-articulo-inner p { margin-bottom: 10px; }
-    .hist-articulo-inner p:last-child { margin-bottom: 0; }
-    .hist-articulo-inner .dato {
+    .articulo-modal-top h3 {
+      color: var(--cyan);
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      text-shadow: 0 0 8px var(--cyan);
+      line-height: 1.4;
+    }
+    .articulo-modal-cerrar {
+      background: none;
+      border: 1px solid #003333;
+      color: #444;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+    }
+    .articulo-modal-cerrar:hover { border-color: var(--rojo); color: var(--rojo); }
+    .articulo-modal-img {
+      width: 100%;
+      margin-bottom: 18px;
+      border: 1px solid #003333;
+      display: block;
+      filter: sepia(0.4) hue-rotate(90deg) brightness(0.8) contrast(1.1);
+    }
+    .articulo-modal-img-placeholder {
+      width: 100%;
+      background: #001200;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.65rem;
+      color: #003300;
+      white-space: pre;
+      line-height: 1.4;
+      margin-bottom: 18px;
+      border: 1px solid #003333;
+    }
+    .articulo-modal-body {
+      font-size: 0.85rem;
+      color: #aaa;
+      line-height: 2;
+    }
+    .articulo-modal-body p { margin-bottom: 14px; }
+    .articulo-modal-body p:last-child { margin-bottom: 0; }
+    .articulo-modal-dato {
       color: var(--amber);
-      font-size: 0.7rem;
-      margin-top: 10px;
+      font-size: 0.75rem;
+      margin-top: 18px;
       border-left: 2px solid var(--amber);
-      padding-left: 10px;
-      line-height: 1.8;
+      padding-left: 14px;
+      line-height: 2;
     }
+    .articulo-modal-nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      border-top: 1px solid #003333;
+      padding-top: 16px;
+    }
+    .articulo-modal-nav .btn { font-size: 0.72rem; }
 
     .ascii-turco {
       font-size: 0.6rem;
@@ -629,13 +691,11 @@
     <!-- GALERÍA HISTÓRICA -->
     <div class="hist-galeria" id="hist-galeria">
       <h3>// ARCHIVO HISTÓRICO — TURCO MECÁNICO 1770–1854</h3>
-      <p style="font-size:0.68rem;color:#1a4a2a;text-align:center;margin-bottom:16px;letter-spacing:1px;">▸ Pincha cada tarjeta para leer más</p>
+      <p style="font-size:0.68rem;color:#1a4a2a;text-align:center;margin-bottom:16px;letter-spacing:1px;">▸ Pincha cada tarjeta para leer el artículo</p>
       <div class="hist-fotos">
 
-        <!-- TARJETA 1: El autómata -->
-        <div class="hist-foto-item" onclick="toggleArticulo(this)">
-          <img src="Imagenes/turco_grabado.jpg"
-               alt="Grabado original del Turco Mecánico, 1783"
+        <div class="hist-foto-item" onclick="abrirArticulo(0)">
+          <img src="Imagenes/turco_grabado.jpg" alt="Grabado original del Turco Mecánico"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
 ║  ░░░░░░░  ║
@@ -644,29 +704,13 @@
 ╚═══════════╝
 [GRABADO 1783]</div>
           <div class="hist-foto-caption">
-            <div><strong>El autómata, 1770</strong>
-            Von Kempelen presenta su máquina al mundo.</div>
+            <div><strong>El autómata, 1770</strong>Von Kempelen presenta su máquina.</div>
             <span class="hist-expand-icon">▶</span>
-          </div>
-          <div class="hist-articulo">
-            <div class="hist-articulo-inner">
-              <h4>// EL NACIMIENTO DEL TURCO</h4>
-              <p>En 1770, el ingeniero húngaro <strong style="color:#66ffb3">Wolfgang von Kempelen</strong> construyó por encargo de la emperatriz María Teresa de Austria un autómata que afirmaba jugar al ajedrez de forma autónoma.</p>
-              <p>La figura representaba a un hombre con turbante y ropas turcas, sentado ante un tablero real. Con su brazo izquierdo movía las piezas, giraba la cabeza hacia el rival y golpeaba una campana al dar jaque.</p>
-              <p>El artilugio recorrió las cortes de Europa durante décadas, asombrando a nobles, filósofos y científicos. Nadie lograba explicar su funcionamiento — ni siquiera sus contemporáneos más brillantes.</p>
-              <div class="dato">
-                ▸ Construido en Viena, 1769–1770<br>
-                ▸ Primera exhibición pública: enero 1770<br>
-                ▸ Altura del autómata: ~1,2 metros
-              </div>
-            </div>
           </div>
         </div>
 
-        <!-- TARJETA 2: El secreto -->
-        <div class="hist-foto-item" onclick="toggleArticulo(this)">
-          <img src="Imagenes/turco_gabinete.jpg"
-               alt="Interior del gabinete del Turco Mecánico"
+        <div class="hist-foto-item" onclick="abrirArticulo(1)">
+          <img src="Imagenes/turco_gabinete.jpg" alt="Interior del gabinete"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
 ║ ┌───────┐ ║
@@ -676,29 +720,13 @@
 ╚═══════════╝
 [INTERIOR]</div>
           <div class="hist-foto-caption">
-            <div><strong>El secreto del gabinete</strong>
-            Lo que nadie debía ver.</div>
+            <div><strong>El secreto, ~1770</strong>Lo que nadie debía ver.</div>
             <span class="hist-expand-icon">▶</span>
-          </div>
-          <div class="hist-articulo">
-            <div class="hist-articulo-inner">
-              <h4>// EL HOMBRE EN LA MÁQUINA</h4>
-              <p>Dentro del gabinete de madera, oculto entre engranajes y palancas decorativas, se escondía un <strong style="color:#66ffb3">maestro de ajedrez de carne y hueso</strong>.</p>
-              <p>Un ingenioso sistema de espejos y velas le permitía ver el tablero desde dentro. Mediante imanes bajo el tablero, el jugador oculto movía los brazos mecánicos del autómata para mover las piezas.</p>
-              <p>Antes de cada exhibición, Von Kempelen abría los cajones del gabinete ante el público — mostrando solo los compartimentos vacíos, nunca el escondite real. La ilusión era perfecta.</p>
-              <div class="dato">
-                ▸ Sistema de iluminación interno con velas<br>
-                ▸ El jugador cambiaba de posición durante la apertura pública<br>
-                ▸ Magnetos bajo el tablero transmitían los movimientos
-              </div>
-            </div>
           </div>
         </div>
 
-        <!-- TARJETA 3: Napoleón -->
-        <div class="hist-foto-item" onclick="toggleArticulo(this)">
-          <img src="Imagenes/turco_napoleon.jpg"
-               alt="El Turco Mecánico derrotando a Napoleón Bonaparte"
+        <div class="hist-foto-item" onclick="abrirArticulo(2)">
+          <img src="Imagenes/turco_napoleon.jpg" alt="El Turco vs Napoleón"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
 ║  ♟ vs ♙  ║
@@ -708,29 +736,13 @@
 ╚═══════════╝
 [1809]</div>
           <div class="hist-foto-caption">
-            <div><strong>Vs. Napoleón, 1809</strong>
-            El Turco humilló al emperador.</div>
+            <div><strong>Vs. Napoleón, 1809</strong>El Turco humilló al emperador.</div>
             <span class="hist-expand-icon">▶</span>
-          </div>
-          <div class="hist-articulo">
-            <div class="hist-articulo-inner">
-              <h4>// LA PARTIDA DE NAPOLEÓN</h4>
-              <p>En 1809, <strong style="color:#66ffb3">Napoleón Bonaparte</strong> se sentó frente al Turco en Schönbrunn. Lejos de jugar en serio, decidió probar los límites del autómata haciendo movimientos ilegales deliberadamente.</p>
-              <p>El Turco respondió devolviendo las piezas a su posición correcta la primera vez. La segunda, las retiró del tablero. A la tercera ilegalidad, barrió todas las piezas del tablero de un manotazo.</p>
-              <p>Napoleón, según los testigos, soltó una carcajada. La partida continuó en serio — y el Turco ganó sin contemplaciones.</p>
-              <div class="dato">
-                ▸ Partida jugada en Schönbrunn, Viena<br>
-                ▸ También venció a Benjamin Franklin (1783)<br>
-                ▸ Récord estimado: +90% de victorias frente a humanos
-              </div>
-            </div>
           </div>
         </div>
 
-        <!-- TARJETA 4: El legado -->
-        <div class="hist-foto-item" onclick="toggleArticulo(this)">
-          <img src="Imagenes/turco_amazon.jpg"
-               alt="Amazon Mechanical Turk - herencia del autómata"
+        <div class="hist-foto-item" onclick="abrirArticulo(3)">
+          <img src="Imagenes/turco_amazon.jpg" alt="Amazon Mechanical Turk"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="hist-foto-placeholder" style="display:none">╔═══════════╗
 ║  AMAZON   ║
@@ -740,22 +752,8 @@
 ╚═══════════╝
 [LEGADO]</div>
           <div class="hist-foto-caption">
-            <div><strong>El legado, 2005→</strong>
-            Una ironía de 250 años.</div>
+            <div><strong>El legado, 2005→</strong>Una ironía de 250 años.</div>
             <span class="hist-expand-icon">▶</span>
-          </div>
-          <div class="hist-articulo">
-            <div class="hist-articulo-inner">
-              <h4>// UN NOMBRE QUE DURA 250 AÑOS</h4>
-              <p>El Turco Mecánico fue destruido en un incendio en Filadelfia en 1854, pero su nombre sobrevivió. En 2005, <strong style="color:#66ffb3">Amazon lanzó "Mechanical Turk"</strong>, una plataforma donde humanos realizan tareas que los algoritmos aún no pueden hacer bien.</p>
-              <p>La ironía es perfecta: igual que el Turco original escondía un humano fingiendo ser una máquina, Amazon Mechanical Turk esconde humanos detrás de interfaces que simulan automatización.</p>
-              <p>RETROTERM.AI toma prestada esa lección: la inteligencia artificial no existe en el vacío. Siempre hay un humano en algún punto del sistema — entrenando, supervisando, corrigiendo.</p>
-              <div class="dato">
-                ▸ El Turco original operó 84 años (1770–1854)<br>
-                ▸ Amazon MTurk sigue activo hoy<br>
-                ▸ El secreto del Turco se reveló en 1838, en una revista
-              </div>
-            </div>
           </div>
         </div>
 
@@ -764,6 +762,24 @@
     <!-- FIN GALERÍA -->
 
     <button class="btn" onclick="cerrarRevelacion()" style="margin-top:24px;width:100%;">[ CERRAR Y CONTINUAR ]</button>
+  </div>
+</div>
+
+<!-- MODAL ARTÍCULO HISTÓRICO -->
+<div id="articulo-modal">
+  <div class="articulo-modal-box">
+    <div class="articulo-modal-top">
+      <h3 id="modal-titulo"></h3>
+      <button class="articulo-modal-cerrar" onclick="cerrarArticulo()">[ × CERRAR ]</button>
+    </div>
+    <img id="modal-img" class="articulo-modal-img" src="" alt=""
+         onerror="this.style.display='none';document.getElementById('modal-img-ph').style.display='block'">
+    <div id="modal-img-ph" class="articulo-modal-img-placeholder" style="display:none"></div>
+    <div class="articulo-modal-body" id="modal-body"></div>
+    <div class="articulo-modal-nav">
+      <button class="btn" id="modal-prev" onclick="navegarArticulo(-1)">◀ ANTERIOR</button>
+      <button class="btn" id="modal-next" onclick="navegarArticulo(1)">SIGUIENTE ▶</button>
+    </div>
   </div>
 </div>
 
@@ -1458,19 +1474,116 @@ function cerrarRevelacion() {
 }
 
 // ══════════════════════════════════════════════════
-//  TARJETAS DESPLEGABLES — GALERÍA HISTÓRICA
+//  MODAL DE ARTÍCULOS HISTÓRICOS
 // ══════════════════════════════════════════════════
-function toggleArticulo(card) {
-  const yaAbierto = card.classList.contains('abierto');
-  // Cerrar todas
-  document.querySelectorAll('.hist-foto-item.abierto').forEach(c => c.classList.remove('abierto'));
-  // Abrir si estaba cerrado
-  if (!yaAbierto) {
-    card.classList.add('abierto');
-    // Scroll suave hacia la tarjeta dentro del overlay
-    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+const ARTICULOS = [
+  {
+    titulo: '// EL NACIMIENTO DEL TURCO — 1770',
+    img: 'Imagenes/turco_grabado.jpg',
+    imgAlt: 'Grabado original del Turco Mecánico, 1783',
+    imgPh: `╔══════════════════╗\n║   ░░░░░░░░░░░    ║\n║   ░  (ó_ó)  ░    ║\n║   ░   /|\\   ░    ║\n║   ░░░░░░░░░░░    ║\n╚══════════════════╝\n     [GRABADO 1783]`,
+    cuerpo: `En 1770, el ingeniero húngaro <span style="color:#66ffb3">Wolfgang von Kempelen</span> construyó por encargo de la emperatriz María Teresa de Austria un autómata que afirmaba jugar al ajedrez de forma autónoma.
+
+La figura representaba a un hombre con turbante y ropas turcas, sentado ante un tablero real. Con su brazo izquierdo movía las piezas, giraba la cabeza hacia el rival y golpeaba una campana al dar jaque.
+
+El artilugio recorrió las cortes de Europa durante décadas, asombrando a nobles, filósofos y científicos. Nadie lograba explicar su funcionamiento — ni siquiera los contemporáneos más brillantes de la época.
+
+Von Kempelen era consciente de que la ilusión debía ser total. Antes de cada partida, abría los cajones del gabinete ante el público para demostrar que no había nadie dentro — pero el mecanismo que permitía reorganizar el espacio interior mientras se hacía la demostración era parte del truco.`,
+    dato: '▸ Construido en Viena, 1769–1770\n▸ Primera exhibición pública: enero 1770\n▸ Altura del autómata: ~1,2 metros\n▸ Operó durante 84 años en distintas manos'
+  },
+  {
+    titulo: '// EL HOMBRE EN LA MÁQUINA',
+    img: 'Imagenes/turco_gabinete.jpg',
+    imgAlt: 'Interior del gabinete del Turco Mecánico',
+    imgPh: `╔══════════════════╗\n║  ┌────────────┐   ║\n║  │  ░░░░░░░  │   ║\n║  │  ░  ▓  ░  │   ║\n║  │  ░░░░░░░  │   ║\n║  └────────────┘   ║\n╚══════════════════╝\n      [INTERIOR]`,
+    cuerpo: `Dentro del gabinete de madera, oculto entre engranajes y palancas decorativas, se escondía un <span style="color:#66ffb3">maestro de ajedrez de carne y hueso</span>.
+
+Un ingenioso sistema de espejos y velas le permitía ver el tablero desde el interior. Mediante imanes colocados bajo el tablero, el jugador oculto controlaba los brazos mecánicos del autómata para mover las piezas.
+
+Antes de cada exhibición, Von Kempelen abría los cajones del gabinete ante el público mostrando solo los compartimentos con engranajes visibles — el jugador se desplazaba de uno a otro mientras se hacía la demostración. La ilusión era perfecta desde fuera.
+
+Entre los maestros que se sabe que operaron el Turco se encuentra <span style="color:#66ffb3">Johann Allgaier</span>, uno de los mejores jugadores de ajedrez de su época. Más tarde el autómata fue operado por otros jugadores de élite, lo que explica su impresionante historial de victorias.`,
+    dato: '▸ Sistema de iluminación interno con velas\n▸ El jugador se desplazaba durante la apertura pública\n▸ Magnetos bajo el tablero transmitían los movimientos\n▸ Johann Allgaier fue uno de sus operadores conocidos'
+  },
+  {
+    titulo: '// LA PARTIDA DE NAPOLEÓN — 1809',
+    img: 'Imagenes/turco_napoleon.jpg',
+    imgAlt: 'El Turco Mecánico derrotando a Napoleón Bonaparte',
+    imgPh: `╔══════════════════╗\n║    ♟  vs  ♙      ║\n║                  ║\n║   TURCO  1 - 0   ║\n║   NAPOLEÓN       ║\n║   Schönbrunn     ║\n╚══════════════════╝\n         [1809]`,
+    cuerpo: `En 1809, <span style="color:#66ffb3">Napoleón Bonaparte</span> se sentó frente al Turco en el palacio de Schönbrunn. Lejos de jugar en serio, decidió probar los límites del autómata haciendo movimientos ilegales deliberadamente.
+
+El Turco respondió devolviendo las piezas a su posición correcta la primera vez. La segunda ilegalidad, retiró directamente la pieza del tablero. A la tercera, según los testigos presentes, barrió todas las piezas del tablero de un manotazo.
+
+Napoleón, sorprendido, soltó una carcajada. La partida continuó en serio — y el Turco ganó sin contemplaciones.
+
+El Turco también venció a <span style="color:#66ffb3">Benjamin Franklin</span> en 1783 cuando este era embajador en París. Franklin era conocido aficionado al ajedrez y quedó desconcertado por la derrota. Ninguno de los dos sospechó en ningún momento que había un humano al otro lado.`,
+    dato: '▸ Partida jugada en Schönbrunn, Viena, 1809\n▸ También venció a Benjamin Franklin (París, 1783)\n▸ Récord estimado: +90% de victorias frente a humanos\n▸ Solo perdía cuando el operador interior cometía errores'
+  },
+  {
+    titulo: '// UN NOMBRE QUE DURA 250 AÑOS — 1854 / 2005',
+    img: 'Imagenes/turco_amazon.jpg',
+    imgAlt: 'Amazon Mechanical Turk',
+    imgPh: `╔══════════════════╗\n║    A M A Z O N   ║\n║   MECHANICAL     ║\n║      TURK        ║\n║    2005  →  hoy  ║\n╚══════════════════╝\n        [LEGADO]`,
+    cuerpo: `El Turco Mecánico fue destruido en un incendio en Filadelfia en 1854, pero su nombre sobrevivió durante más de un siglo y medio. En 2005, <span style="color:#66ffb3">Amazon lanzó "Mechanical Turk"</span>, una plataforma de microtareas donde personas reales realizan trabajos que los algoritmos aún no pueden hacer bien.
+
+La ironía es perfecta: igual que el Turco original escondía un humano fingiendo ser una máquina, Amazon Mechanical Turk esconde humanos detrás de interfaces que simulan automatización completa. Los trabajadores se llaman "turkers" y completan tareas por céntimos — transcripción, etiquetado de imágenes, moderación de contenido.
+
+El secreto del Turco original se reveló finalmente en 1838 en un artículo de la revista <span style="color:#66ffb3">The Chess Player's Chronicle</span>, décadas después de que el autómata dejara de funcionar. Hasta entonces, incluso mentes como la de Edgar Allan Poe intentaron — sin éxito completo — descifrar el mecanismo.
+
+<span style="color:#ffaa00">RETROTERM.AI toma prestada esa lección</span>: la inteligencia artificial no existe en el vacío. Siempre hay un humano en algún punto del sistema — entrenando, supervisando, corrigiendo.`,
+    dato: '▸ El Turco operó 84 años (1770–1854)\n▸ Destruido en el incendio del Peale Museum, Filadelfia\n▸ El secreto se publicó en 1838 en una revista de ajedrez\n▸ Amazon MTurk sigue activo hoy con millones de tareas'
   }
+];
+
+let articuloActual = 0;
+
+function abrirArticulo(idx) {
+  articuloActual = idx;
+  renderModalArticulo(idx);
+  document.getElementById('articulo-modal').classList.add('visible');
+  document.getElementById('articulo-modal').scrollTop = 0;
+  beep(500, 0.05, 0.04);
 }
+
+function cerrarArticulo() {
+  document.getElementById('articulo-modal').classList.remove('visible');
+}
+
+function navegarArticulo(dir) {
+  articuloActual = (articuloActual + dir + ARTICULOS.length) % ARTICULOS.length;
+  renderModalArticulo(articuloActual);
+  document.getElementById('articulo-modal').scrollTop = 0;
+  beep(400, 0.04, 0.03);
+}
+
+function renderModalArticulo(idx) {
+  const a = ARTICULOS[idx];
+  document.getElementById('modal-titulo').textContent = a.titulo;
+
+  const img = document.getElementById('modal-img');
+  const ph  = document.getElementById('modal-img-ph');
+  img.src = a.img;
+  img.alt = a.imgAlt;
+  img.style.display = 'block';
+  ph.style.display = 'none';
+  ph.textContent = a.imgPh;
+
+  // Construir body con párrafos
+  const body = document.getElementById('modal-body');
+  body.innerHTML = a.cuerpo.split('\n\n').map(p =>
+    `<p>${p}</p>`
+  ).join('') +
+  `<div class="articulo-modal-dato">${a.dato.replace(/\n/g,'<br>')}</div>`;
+
+  // Botones anterior/siguiente
+  document.getElementById('modal-prev').textContent = `◀ ${ARTICULOS[(idx - 1 + ARTICULOS.length) % ARTICULOS.length].titulo.split('//')[1].split('—')[0].trim()}`;
+  document.getElementById('modal-next').textContent = `${ARTICULOS[(idx + 1) % ARTICULOS.length].titulo.split('//')[1].split('—')[0].trim()} ▶`;
+}
+
+// Cerrar modal con Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') cerrarArticulo();
+});
 
 nuevaPartida();
 </script>
