@@ -285,6 +285,57 @@
     }
     .restricted-banner p { color: #66ffee; font-size: 0.85rem; letter-spacing: 1px; line-height: 1.8; }
 
+    /* ══ CORE — MONITOR GLOBAL ══ */
+    .core-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .core-modulo { display: flex; flex-direction: column; gap: 4px; }
+    .core-modulo h3 {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: #00ff66;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .core-live {
+      font-size: 0.58rem;
+      color: #ff5555;
+      letter-spacing: 1px;
+      animation: pulse-live 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+    .core-fila {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid #0a1a0a;
+      font-family: 'Courier New', monospace;
+    }
+    .core-fila:last-child { border-bottom: none; }
+    .btn-core {
+      margin-top: 10px;
+      width: 100%;
+      background: none;
+      border: 1px solid #003300;
+      color: #1a4a2a;
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      padding: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-core:hover { border-color: #00ff66; color: #00ff66; }
+
     /* ══ PÁRRAFOS OCULTOS HASTA ANIMAR ══ */
     .p-hidden { opacity: 0; transition: opacity 0.5s; }
     .p-hidden.show { opacity: 1; }
@@ -300,7 +351,7 @@
     }
 
     @media (max-width: 600px) {
-      .core-articles-horizontal .articulo { width: 100%; }
+      .core-grid { grid-template-columns: 1fr; }
       .puzzle-wrap { max-width: 100%; }
     }
   </style>
@@ -378,28 +429,38 @@
       <span class="actual">// CORE</span>
     </nav>
     <h1><span id="tw-core"></span></h1>
-    <p class="p-hidden" id="p-core">Bienvenido al núcleo del sistema RETROTERM.AI. Datos y recursos principales.</p>
+    <p class="p-hidden" id="p-core">Módulo de inteligencia operacional. Datos en tiempo real del sistema global.</p>
 
-    <div class="core-articles-horizontal">
-      <article class="articulo">
-        <h3>📝 Historia del Sistema</h3>
-        <p>Retroterm.ai nace como un entorno retrofuturista inspirado en terminales clásicas y sistemas tipo Fallout.</p>
-        <div class="imagen-articulo">
-          <img src="Imagenes/terminal.jpg" alt="Terminal estilo Fallout">
-        </div>
-      </article>
-      <article class="articulo">
-        <h3>📊 Estadísticas del Proyecto</h3>
-        <p>Datos internos sobre la actividad del sistema.</p>
-        <table>
-          <thead><tr><th>Módulo</th><th>Usuarios</th><th>Proyectos</th></tr></thead>
-          <tbody>
-            <tr><td>Editor</td><td>120</td><td>45</td></tr>
-            <tr><td>IA</td><td>80</td><td>30</td></tr>
-            <tr><td>Gaming</td><td>65</td><td>20</td></tr>
-          </tbody>
-        </table>
-      </article>
+    <div class="core-grid">
+
+      <div class="articulo core-modulo">
+        <h3>🔴 ACTIVIDAD SÍSMICA <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Últimos terremotos M2.5+ — USGS</p>
+        <div id="core-sismos"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
+        <button class="btn-core" onclick="cargarSismos()">↺ ACTUALIZAR</button>
+      </div>
+
+      <div class="articulo core-modulo">
+        <h3>🌤 CLIMA <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Condiciones actuales — Open-Meteo</p>
+        <div id="core-clima"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
+        <button class="btn-core" onclick="cargarClima()">↺ ACTUALIZAR</button>
+      </div>
+
+      <div class="articulo core-modulo">
+        <h3>🛰 ISS POSICIÓN <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Estación Espacial Internacional</p>
+        <div id="core-iss"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
+        <button class="btn-core" onclick="cargarISS()">↺ ACTUALIZAR</button>
+      </div>
+
+      <div class="articulo core-modulo">
+        <h3>₿ MERCADOS CRYPTO <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Top 4 por capitalización — CoinGecko</p>
+        <div id="core-crypto"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
+        <button class="btn-core" onclick="cargarCryptoCore()">↺ ACTUALIZAR</button>
+      </div>
+
     </div>
 
     <div class="silo-menu">
@@ -502,22 +563,24 @@
     }
 
     function resetPuzzle() {
-      // Resetear si estaba bloqueado por éxito (intentos > 0 significa que no se agotaron)
-      if (bloqueado && intentos > 0) {
-        bloqueado = false;
-        const inputEl = document.getElementById('codigo');
-        const btn     = document.getElementById('puzzle-btn');
-        const msg     = document.getElementById('msgPuzzle');
-        const label   = document.getElementById('intentos-label');
-        inputEl.value = '';
-        inputEl.disabled = false;
-        inputEl.classList.remove('success', 'error');
-        btn.disabled = false;
-        msg.textContent = '> Sistema de autenticación listo.';
-        msg.style.color = '#66ffb3';
-        label.textContent = `Intentos restantes: ${intentos}`;
-        label.className = 'puzzle-intentos';
-      }
+      const inputEl = document.getElementById('codigo');
+      const btn     = document.getElementById('puzzle-btn');
+      const msg     = document.getElementById('msgPuzzle');
+      const label   = document.getElementById('intentos-label');
+
+      // Si está en cuenta atrás por fallos agotados, no interrumpir
+      if (bloqueado && intentos <= 0) return;
+
+      // En cualquier otro caso: limpiar estado visual y variables
+      bloqueado = false;
+      inputEl.value = '';
+      inputEl.disabled = false;
+      inputEl.classList.remove('success', 'error');
+      btn.disabled = false;
+      msg.textContent = '';
+      msg.style.color = '#66ffb3';
+      label.textContent = `Intentos restantes: ${intentos}`;
+      label.className = 'puzzle-intentos';
     }
 
     // Interceptar también navegación por hash nativa (botón atrás del navegador)
@@ -539,6 +602,7 @@
         typewriter('tw-logs', 'SYSTEM LOGS', 70, () => mostrarParrafo('p-logs', 150));
       } else if (id === 'core') {
         typewriter('tw-core', 'CORE MODULE', 70, () => mostrarParrafo('p-core', 150));
+        cargarCore();
       }
     }
 
@@ -693,6 +757,91 @@
           }, 500);
         }
       }, 210);
+    }
+
+    // ══ CORE — APIs en tiempo real ══════════════════════════════════
+    function cargarCore() {
+      cargarSismos(); cargarClima(); cargarISS(); cargarCryptoCore();
+    }
+
+    async function cargarSismos() {
+      const el = document.getElementById('core-sismos');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Consultando USGS...</p>';
+      try {
+        const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
+        const data = await res.json();
+        el.innerHTML = data.features.slice(0,6).map(s => {
+          const mag = s.properties.mag.toFixed(1);
+          const lugar = s.properties.place;
+          const tiempo = new Date(s.properties.time).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+          const color = mag >= 5 ? '#ff5555' : mag >= 4 ? '#ffaa00' : '#00ff66';
+          return `<div class="core-fila">
+            <span style="color:${color};font-size:0.88rem;font-weight:bold;min-width:38px;">M${mag}</span>
+            <span style="color:#aaa;font-size:0.7rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${lugar}</span>
+            <span style="color:#333;font-size:0.65rem;flex-shrink:0;">${tiempo}</span>
+          </div>`;
+        }).join('');
+      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
+    }
+
+    async function cargarClima() {
+      const el = document.getElementById('core-clima');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Obteniendo ubicación...</p>';
+      try {
+        let lat = 40.4168, lon = -3.7038, ciudad = 'Madrid, ES';
+        if (navigator.geolocation) {
+          await new Promise(r => navigator.geolocation.getCurrentPosition(
+            p => { lat=p.coords.latitude; lon=p.coords.longitude; ciudad='Tu ubicación'; r(); },
+            () => r(), { timeout: 3000 }
+          ));
+        }
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,weathercode&wind_speed_unit=kmh`);
+        const d = await res.json();
+        const c = d.current;
+        const icono = c.weathercode===0?'☀️':c.weathercode<=3?'⛅':c.weathercode<=67?'🌧️':c.weathercode<=77?'❄️':'⛈️';
+        el.innerHTML = `<div style="text-align:center;padding:8px 0;">
+          <div style="font-size:2.2rem;line-height:1;">${icono}</div>
+          <div style="font-size:1.5rem;color:#00ff66;margin:6px 0;text-shadow:0 0 8px #00ff66;">${c.temperature_2m}°C</div>
+          <div style="font-size:0.7rem;color:#666;letter-spacing:1px;">${ciudad}</div>
+          <div style="font-size:0.7rem;color:#444;margin-top:4px;">Viento: ${c.wind_speed_10m} km/h</div>
+        </div>`;
+      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
+    }
+
+    async function cargarISS() {
+      const el = document.getElementById('core-iss');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Localizando ISS...</p>';
+      try {
+        const res = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+        const d = await res.json();
+        const lat = parseFloat(d.latitude).toFixed(2);
+        const lon = parseFloat(d.longitude).toFixed(2);
+        el.innerHTML = `<div style="font-size:0.76rem;line-height:2.2;color:#aaa;">
+          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">LAT</span>${Math.abs(lat)}° ${lat>=0?'N':'S'}</div>
+          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">LON</span>${Math.abs(lon)}° ${lon>=0?'E':'O'}</div>
+          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">ALTITUD</span>${parseFloat(d.altitude).toFixed(0)} km</div>
+          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">VELOCIDAD</span>${parseInt(d.velocity).toLocaleString()} km/h</div>
+        </div>
+        <div style="font-size:0.6rem;color:#1a4a2a;margin-top:6px;letter-spacing:1px;">${new Date().toLocaleTimeString('es-ES')}</div>`;
+      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
+    }
+
+    async function cargarCryptoCore() {
+      const el = document.getElementById('core-crypto');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Consultando mercados...</p>';
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,dogecoin&order=market_cap_desc&sparkline=false');
+        const data = await res.json();
+        el.innerHTML = data.map(m => {
+          const cambio = m.price_change_percentage_24h;
+          const color = cambio >= 0 ? '#00ff66' : '#ff5555';
+          return `<div class="core-fila">
+            <span style="color:#66ffb3;font-size:0.76rem;min-width:40px;">${m.symbol.toUpperCase()}</span>
+            <span style="color:#e0e0e0;font-size:0.76rem;flex:1;">$${m.current_price.toLocaleString()}</span>
+            <span style="color:${color};font-size:0.7rem;">${cambio>=0?'▲':'▼'} ${Math.abs(cambio).toFixed(2)}%</span>
+          </div>`;
+        }).join('');
+      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
     }
 
     // ══ INIT ════════════════════════════════════════════════════════
