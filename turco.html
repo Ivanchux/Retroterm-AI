@@ -585,9 +585,20 @@
       :root { --cell: 38px; }
       .turco-header h1 { font-size: 1.3rem; letter-spacing: 2px; }
       #turco-face { bottom: 10px; right: 10px; font-size: 0.58rem; }
+      /* Modal en móvil vertical */
+      #articulo-modal { padding: 10px; }
+      .articulo-modal-box { padding: 16px; }
+      .articulo-modal-top { flex-direction: column; gap: 10px; }
+      .articulo-modal-top h3 { font-size: 0.78rem; letter-spacing: 1px; }
+      .articulo-modal-cerrar { width: 100%; text-align: center; }
+      .articulo-modal-body { font-size: 0.8rem; line-height: 1.8; }
+      .articulo-modal-nav { flex-direction: column; gap: 8px; }
+      .articulo-modal-nav .btn { font-size: 0.68rem; white-space: normal; text-align: center; }
+      .hist-fotos { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 380px) {
       :root { --cell: 32px; }
+      .hist-fotos { grid-template-columns: 1fr; }
     }
   </style>
 </head>

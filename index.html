@@ -29,6 +29,7 @@
       <a href="asistente.html" class="opcion">🤖 ASISTENTE IA</a>
       <a href="#gaming" class="opcion">🎮 GAMING</a>
       <a href="#crypto" class="opcion">💰 DeFi</a>
+      <a href="#core" class="opcion">🌍 CORE</a>
       <a href="articulos.html" class="opcion">📚 VER ARTÍCULOS</a>
       <a href="red.html" class="opcion">🌐 RED DE PROYECTOS</a>
     </nav>
@@ -47,34 +48,160 @@
   <section id="gaming" class="pantalla seccion">
     <header class="cabecera">
       <h2>🎮 GAMING</h2>
-      <p class="subtitulo">Minijuegos en terminal retro</p>
+      <p class="subtitulo">Arcade retro · Guías · Estadísticas</p>
     </header>
 
-    <div class="gaming-grid">
+    <!-- Pestañas -->
+    <div class="gaming-tabs">
+      <button class="gaming-tab activa-tab" onclick="gamingTab('arcade')">▶ ARCADE</button>
+      <button class="gaming-tab" onclick="gamingTab('guias')">📖 GUÍAS</button>
+    </div>
 
-      <div class="articulo">
-        <h3>🐍 SNAKE_CRT</h3>
-        <p>Juega al Snake clásico en modo terminal. Usa las teclas de dirección.</p>
-        <canvas id="snake-canvas" width="300" height="300" class="snake-canvas"></canvas>
-        <div class="snake-info">
-          <span class="estado-activo">Puntuación: </span><span id="snake-score">0</span>
-          <br><button onclick="iniciarSnake()">▶ INICIAR</button>
+    <!-- PESTAÑA ARCADE -->
+    <div id="gaming-arcade" class="gaming-panel">
+      <div class="gaming-grid">
+
+        <!-- Snake -->
+        <div class="articulo">
+          <h3>🐍 SNAKE_CRT</h3>
+          <p>Usa las flechas del teclado o los botones táctiles. Come sin chocar.</p>
+          <canvas id="snake-canvas" width="300" height="300" class="snake-canvas"></canvas>
+          <div class="snake-info">
+            <span class="estado-activo">Puntuación: </span><span id="snake-score">0</span>
+            <br><button onclick="iniciarSnake()" id="btn-snake">▶ INICIAR</button>
+          </div>
+          <!-- Controles táctiles -->
+          <div class="snake-dpad">
+            <div class="dpad-row"><button class="dpad-btn" id="dpad-up">▲</button></div>
+            <div class="dpad-row">
+              <button class="dpad-btn" id="dpad-left">◀</button>
+              <button class="dpad-btn dpad-center" disabled>·</button>
+              <button class="dpad-btn" id="dpad-right">▶</button>
+            </div>
+            <div class="dpad-row"><button class="dpad-btn" id="dpad-down">▼</button></div>
+          </div>
         </div>
+
+        <!-- Typing -->
+        <div class="articulo">
+          <h3>⌨️ TYPE_CRT</h3>
+          <p>Escribe el texto lo más rápido posible. Medido en WPM.</p>
+          <div class="typing-wrap">
+            <div id="typing-frase" class="typing-frase"></div>
+            <input type="text" id="typing-input" class="ia-input typing-input" placeholder="Empieza a escribir..." disabled>
+            <div class="typing-stats">
+              <span>Tiempo: <span id="typing-tiempo">0s</span></span>
+              <span>WPM: <span id="typing-wpm">—</span></span>
+              <span>Precisión: <span id="typing-precision">—</span></span>
+            </div>
+            <button onclick="iniciarTyping()" id="btn-typing">▶ INICIAR</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PESTAÑA GUÍAS -->
+    <div id="gaming-guias" class="gaming-panel" style="display:none">
+      <div class="lista-articulos">
+
+        <div class="articulo">
+          <h3>🐍 Guía — SNAKE_CRT</h3>
+          <div class="articulo-meta">
+            <span class="articulo-tag">ARCADE</span>
+            <span class="articulo-tag">BÁSICO</span>
+          </div>
+          <p>Snake clásico en modo terminal. La serpiente se mueve continuamente — tu objetivo es comer la comida roja sin chocar con las paredes ni contigo mismo.</p>
+          <h4 style="color:#66ffb3;margin:12px 0 6px;font-size:0.85rem;letter-spacing:1px;">CONTROLES</h4>
+          <table class="tabla-retro" style="margin-bottom:10px;">
+            <thead><tr><th>Tecla / Botón</th><th>Acción</th></tr></thead>
+            <tbody>
+              <tr><td>↑ ↓ ← →</td><td>Cambiar dirección</td></tr>
+              <tr><td>Botones D-PAD</td><td>Control táctil (móvil)</td></tr>
+              <tr><td>▶ INICIAR</td><td>Nueva partida</td></tr>
+            </tbody>
+          </table>
+          <h4 style="color:#66ffb3;margin:12px 0 6px;font-size:0.85rem;letter-spacing:1px;">CONSEJOS</h4>
+          <p>Mantén la serpiente cerca de los bordes al principio para ganar espacio. Cada comida suma 10 puntos. La velocidad no aumenta — la dificultad viene de tu propia longitud.</p>
+          <div class="cita">> "La serpiente más peligrosa es la que ya has creado tú mismo."</div>
+        </div>
+
+        <div class="articulo">
+          <h3>⌨️ Guía — TYPE_CRT</h3>
+          <div class="articulo-meta">
+            <span class="articulo-tag">TYPING</span>
+            <span class="articulo-tag">PRECISIÓN</span>
+          </div>
+          <p>Test de velocidad de escritura en terminal. Se mide en WPM (palabras por minuto) y precisión porcentual. Las frases están temáticamente relacionadas con RETROTERM.AI.</p>
+          <h4 style="color:#66ffb3;margin:12px 0 6px;font-size:0.85rem;letter-spacing:1px;">CÓMO FUNCIONA</h4>
+          <p>Pulsa INICIAR, aparece la frase en verde. El cronómetro arranca con tu primera pulsación. Las letras correctas se mantienen verdes, las incorrectas se vuelven rojas. Al terminar la frase se calculan WPM y precisión.</p>
+          <h4 style="color:#66ffb3;margin:12px 0 6px;font-size:0.85rem;letter-spacing:1px;">RANGOS DE VELOCIDAD</h4>
+          <table class="tabla-retro">
+            <thead><tr><th>WPM</th><th>Nivel</th></tr></thead>
+            <tbody>
+              <tr><td>&lt; 30</td><td style="color:#ff5555">NOVATO</td></tr>
+              <tr><td>30 – 50</td><td style="color:#ffaa00">INTERMEDIO</td></tr>
+              <tr><td>50 – 80</td><td style="color:#00ff66">AVANZADO</td></tr>
+              <tr><td>&gt; 80</td><td style="color:#00ffff">ÉLITE</td></tr>
+            </tbody>
+          </table>
+          <div class="cita">> "La velocidad sin precisión es solo ruido en el sistema."</div>
+        </div>
+
+      </div>
+    </div>
+
+    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
+  </section>
+
+
+  <!-- ===== CORE ===== -->
+  <section id="core" class="pantalla seccion">
+    <header class="cabecera">
+      <h2>🌍 CORE — MONITOR GLOBAL</h2>
+      <p class="subtitulo">Datos en tiempo real · Actualización automática</p>
+    </header>
+
+    <div class="core-grid">
+
+      <!-- Sismos recientes -->
+      <div class="articulo core-modulo">
+        <h3>🔴 ACTIVIDAD SÍSMICA <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Últimos terremotos M2.5+ — USGS</p>
+        <div id="core-sismos">
+          <p class="text-center" style="color:#333;font-size:0.8rem;">Cargando...</p>
+        </div>
+        <button class="btn-core" onclick="cargarSismos()">↺ ACTUALIZAR</button>
       </div>
 
-      <div class="articulo">
-        <h3>⌨️ TYPE_CRT</h3>
-        <p>Escribe el texto lo más rápido posible. Se mide en WPM.</p>
-        <div class="typing-wrap">
-          <div id="typing-frase" class="typing-frase"></div>
-          <input type="text" id="typing-input" class="ia-input typing-input" placeholder="Empieza a escribir..." disabled>
-          <div class="typing-stats">
-            <span>Tiempo: <span id="typing-tiempo">0s</span></span>
-            <span>WPM: <span id="typing-wpm">—</span></span>
-            <span>Precisión: <span id="typing-precision">—</span></span>
-          </div>
-          <button onclick="iniciarTyping()" id="btn-typing">▶ INICIAR</button>
+      <!-- Clima -->
+      <div class="articulo core-modulo">
+        <h3>🌤 CLIMA <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Condiciones actuales por ubicación</p>
+        <div id="core-clima">
+          <p class="text-center" style="color:#333;font-size:0.8rem;">Cargando...</p>
         </div>
+        <button class="btn-core" onclick="cargarClima()">↺ ACTUALIZAR</button>
+      </div>
+
+      <!-- ISS posición -->
+      <div class="articulo core-modulo">
+        <h3>🛰 ESTACIÓN ESPACIAL ISS <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Posición actual sobre la Tierra</p>
+        <div id="core-iss">
+          <p class="text-center" style="color:#333;font-size:0.8rem;">Cargando...</p>
+        </div>
+        <button class="btn-core" onclick="cargarISS()">↺ ACTUALIZAR</button>
+      </div>
+
+      <!-- Criptos resumen -->
+      <div class="articulo core-modulo">
+        <h3>₿ MERCADOS CRYPTO <span class="core-live">● LIVE</span></h3>
+        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Top 4 por capitalización — CoinGecko</p>
+        <div id="core-crypto">
+          <p class="text-center" style="color:#333;font-size:0.8rem;">Cargando...</p>
+        </div>
+        <button class="btn-core" onclick="cargarCryptoCore()">↺ ACTUALIZAR</button>
       </div>
 
     </div>
@@ -143,77 +270,113 @@
       const hash = location.hash ? location.hash.substring(1) : 'inicio';
       mostrarSeccion(hash);
       if (hash === 'crypto') obtenerPrecios();
+      if (hash === 'core')   cargarCore();
     });
 
     window.addEventListener('hashchange', () => {
       const hash = location.hash.substring(1);
       mostrarSeccion(hash);
       if (hash === 'crypto') obtenerPrecios();
+      if (hash === 'core')   cargarCore();
     });
 
 
-    // ── CoinGecko API ────────────────────────────────────────────
+    // ── GAMING — Pestañas ────────────────────────────────────────
+    function gamingTab(tab) {
+      document.getElementById('gaming-arcade').style.display = tab === 'arcade' ? 'block' : 'none';
+      document.getElementById('gaming-guias').style.display  = tab === 'guias'  ? 'block' : 'none';
+      document.querySelectorAll('.gaming-tab').forEach(b => b.classList.remove('activa-tab'));
+      event.target.classList.add('activa-tab');
+    }
+
+
+    // ── CoinGecko API (sección DeFi) ─────────────────────────────
     async function obtenerPrecios() {
       const contenedor = document.getElementById('crypto-prices');
       contenedor.innerHTML = '<p class="text-center">Cargando datos...</p>';
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,dogecoin,solana&order=market_cap_desc&sparkline=false');
         const data = await res.json();
-        contenedor.innerHTML = data.map(moneda =>
+        contenedor.innerHTML = data.map(m =>
           `<div class="articulo crypto-card">
-            <img src="${moneda.image}" alt="${moneda.name}">
-            <span class="crypto-nombre">₿ ${moneda.name.toUpperCase()}</span>
-            <span>$${moneda.current_price.toLocaleString()} USD</span>
+            <img src="${m.image}" alt="${m.name}">
+            <span class="crypto-nombre">₿ ${m.name.toUpperCase()}</span>
+            <span>$${m.current_price.toLocaleString()} USD</span>
           </div>`
         ).join('');
       } catch (e) {
-        contenedor.innerHTML = '<p class="text-center error-msg">Error al obtener datos. Comprueba tu conexión.</p>';
+        contenedor.innerHTML = '<p class="text-center error-msg">Error al obtener datos.</p>';
       }
     }
 
 
     // ── Snake ─────────────────────────────────────────────────────
     let snakeInterval = null;
+    let snakeDir = {x:1, y:0};
+
     function iniciarSnake() {
       const canvas = document.getElementById('snake-canvas');
       const ctx = canvas.getContext('2d');
-      const tam = 15, cols = canvas.width / tam, filas = canvas.height / tam;
-      let serpiente = [{x:10, y:10}], dir = {x:1, y:0}, comida = nuevaComida(), puntos = 0, viva = true;
+      const tam = 15, cols = canvas.width/tam, filas = canvas.height/tam;
+      let serpiente = [{x:10,y:10}];
+      snakeDir = {x:1, y:0};
+      let comida = nuevaComida(), puntos = 0, viva = true;
 
       function nuevaComida() {
-        return {x: Math.floor(Math.random()*cols), y: Math.floor(Math.random()*filas)};
+        return {x:Math.floor(Math.random()*cols), y:Math.floor(Math.random()*filas)};
       }
       function dibujar() {
-        ctx.fillStyle = '#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = '#00ff66';
-        serpiente.forEach(s => ctx.fillRect(s.x*tam, s.y*tam, tam-1, tam-1));
-        ctx.fillStyle = '#ff5555';
-        ctx.fillRect(comida.x*tam, comida.y*tam, tam-1, tam-1);
+        ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle='#00ff66';
+        serpiente.forEach(s=>ctx.fillRect(s.x*tam,s.y*tam,tam-1,tam-1));
+        ctx.fillStyle='#ff5555';
+        ctx.fillRect(comida.x*tam,comida.y*tam,tam-1,tam-1);
       }
       function tick() {
         if (!viva) return;
-        const cab = {x: serpiente[0].x + dir.x, y: serpiente[0].y + dir.y};
+        const cab={x:serpiente[0].x+snakeDir.x, y:serpiente[0].y+snakeDir.y};
         if (cab.x<0||cab.x>=cols||cab.y<0||cab.y>=filas||serpiente.some(s=>s.x===cab.x&&s.y===cab.y)) {
-          viva = false;
-          ctx.fillStyle = '#ff5555'; ctx.font = '20px Courier New';
+          viva=false;
+          ctx.fillStyle='#ff5555'; ctx.font='20px Courier New';
           ctx.fillText('GAME OVER', canvas.width/2-60, canvas.height/2);
           clearInterval(snakeInterval); return;
         }
         serpiente.unshift(cab);
-        if (cab.x===comida.x && cab.y===comida.y) { comida=nuevaComida(); puntos+=10; document.getElementById('snake-score').textContent=puntos; }
-        else serpiente.pop();
+        if (cab.x===comida.x&&cab.y===comida.y) {
+          comida=nuevaComida(); puntos+=10;
+          document.getElementById('snake-score').textContent=puntos;
+        } else serpiente.pop();
         dibujar();
       }
       if (snakeInterval) clearInterval(snakeInterval);
       snakeInterval = setInterval(tick, 120);
-      document.addEventListener('keydown', e => {
-        if(e.key==='ArrowUp'&&dir.y!==1) dir={x:0,y:-1};
-        else if(e.key==='ArrowDown'&&dir.y!==-1) dir={x:0,y:1};
-        else if(e.key==='ArrowLeft'&&dir.x!==1) dir={x:-1,y:0};
-        else if(e.key==='ArrowRight'&&dir.x!==-1) dir={x:1,y:0};
-      });
       dibujar();
     }
+
+    // Controles teclado
+    document.addEventListener('keydown', e => {
+      if(e.key==='ArrowUp'    && snakeDir.y!==1)  snakeDir={x:0,y:-1};
+      else if(e.key==='ArrowDown'  && snakeDir.y!==-1) snakeDir={x:0,y:1};
+      else if(e.key==='ArrowLeft'  && snakeDir.x!==1)  snakeDir={x:-1,y:0};
+      else if(e.key==='ArrowRight' && snakeDir.x!==-1) snakeDir={x:1,y:0};
+    });
+
+    // Controles D-PAD táctil
+    document.addEventListener('DOMContentLoaded', () => {
+      const dpad = {
+        'dpad-up':    () => { if(snakeDir.y!==1)  snakeDir={x:0,y:-1}; },
+        'dpad-down':  () => { if(snakeDir.y!==-1) snakeDir={x:0,y:1}; },
+        'dpad-left':  () => { if(snakeDir.x!==1)  snakeDir={x:-1,y:0}; },
+        'dpad-right': () => { if(snakeDir.x!==-1) snakeDir={x:1,y:0}; },
+      };
+      Object.entries(dpad).forEach(([id, fn]) => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.addEventListener('touchstart', e => { e.preventDefault(); fn(); }, {passive:false});
+          btn.addEventListener('click', fn);
+        }
+      });
+    });
 
 
     // ── Typing ────────────────────────────────────────────────────
@@ -224,53 +387,158 @@
       "dentro de la maquina habia un maestro de ajedrez escondido",
       "amazon mechanical turk humanos haciendo trabajo de maquinas"
     ];
-
-    let typingInicio = null, typingTimer = null;
+    let typingInicio=null, typingTimer=null;
 
     function iniciarTyping() {
-      const frase = FRASES_TYPING[Math.floor(Math.random() * FRASES_TYPING.length)];
-      const display = document.getElementById('typing-frase');
-      const input = document.getElementById('typing-input');
-      document.getElementById('typing-tiempo').textContent = '0s';
-      document.getElementById('typing-wpm').textContent = '—';
-      document.getElementById('typing-precision').textContent = '—';
-
-      display.innerHTML = frase.split('').map(c => `<span>${c}</span>`).join('');
-      input.value = '';
-      input.disabled = false;
-      input.focus();
-      typingInicio = null;
-
-      input.oninput = () => {
-        if (!typingInicio) {
-          typingInicio = Date.now();
-          typingTimer = setInterval(() => {
-            document.getElementById('typing-tiempo').textContent =
-              ((Date.now() - typingInicio) / 1000).toFixed(1) + 's';
-          }, 100);
+      const frase=FRASES_TYPING[Math.floor(Math.random()*FRASES_TYPING.length)];
+      const display=document.getElementById('typing-frase');
+      const input=document.getElementById('typing-input');
+      document.getElementById('typing-tiempo').textContent='0s';
+      document.getElementById('typing-wpm').textContent='—';
+      document.getElementById('typing-precision').textContent='—';
+      display.innerHTML=frase.split('').map(c=>`<span>${c}</span>`).join('');
+      input.value=''; input.disabled=false; input.focus();
+      typingInicio=null;
+      input.oninput=()=>{
+        if(!typingInicio){
+          typingInicio=Date.now();
+          typingTimer=setInterval(()=>{
+            document.getElementById('typing-tiempo').textContent=
+              ((Date.now()-typingInicio)/1000).toFixed(1)+'s';
+          },100);
         }
-        const escrito = input.value;
-        const spans = display.querySelectorAll('span');
-        spans.forEach((sp, i) => {
-          if (i < escrito.length) {
-            sp.style.color = escrito[i] === frase[i] ? '#00ff66' : '#ff5555';
-          } else {
-            sp.style.color = '#66ffb3';
-          }
+        const escrito=input.value;
+        display.querySelectorAll('span').forEach((sp,i)=>{
+          sp.style.color=i<escrito.length?(escrito[i]===frase[i]?'#00ff66':'#ff5555'):'#66ffb3';
         });
-        if (escrito.length === frase.length) {
-          clearInterval(typingTimer);
-          input.disabled = true;
-          const segundos = (Date.now() - typingInicio) / 1000;
-          const palabras = frase.split(' ').length;
-          const wpm = Math.round((palabras / segundos) * 60);
-          const correctas = escrito.split('').filter((c, i) => c === frase[i]).length;
-          const precision = Math.round((correctas / frase.length) * 100);
-          document.getElementById('typing-wpm').textContent = wpm;
-          document.getElementById('typing-precision').textContent = precision + '%';
+        if(escrito.length===frase.length){
+          clearInterval(typingTimer); input.disabled=true;
+          const seg=(Date.now()-typingInicio)/1000;
+          const wpm=Math.round((frase.split(' ').length/seg)*60);
+          const prec=Math.round((escrito.split('').filter((c,i)=>c===frase[i]).length/frase.length)*100);
+          document.getElementById('typing-wpm').textContent=wpm;
+          document.getElementById('typing-precision').textContent=prec+'%';
         }
       };
     }
+
+
+    // ══════════════════════════════════════════════════
+    //  CORE — APIs en tiempo real
+    // ══════════════════════════════════════════════════
+    function cargarCore() {
+      cargarSismos();
+      cargarClima();
+      cargarISS();
+      cargarCryptoCore();
+    }
+
+    // Sismos — USGS
+    async function cargarSismos() {
+      const el = document.getElementById('core-sismos');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Consultando USGS...</p>';
+      try {
+        const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
+        const data = await res.json();
+        const sismos = data.features.slice(0, 6);
+        el.innerHTML = sismos.map(s => {
+          const mag = s.properties.mag.toFixed(1);
+          const lugar = s.properties.place;
+          const tiempo = new Date(s.properties.time).toLocaleTimeString('es-ES', {hour:'2-digit',minute:'2-digit'});
+          const color = mag >= 5 ? '#ff5555' : mag >= 4 ? '#ffaa00' : '#00ff66';
+          return `<div class="core-fila">
+            <span style="color:${color};font-size:0.9rem;font-weight:bold;min-width:36px;">M${mag}</span>
+            <span style="color:#aaa;font-size:0.72rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${lugar}</span>
+            <span style="color:#333;font-size:0.68rem;flex-shrink:0;">${tiempo}</span>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        el.innerHTML = '<p class="error-msg" style="font-size:0.75rem;">No se pudo cargar.</p>';
+      }
+    }
+
+    // Clima — Open-Meteo (sin API key)
+    async function cargarClima() {
+      const el = document.getElementById('core-clima');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Obteniendo ubicación...</p>';
+      try {
+        // Coordenadas por defecto: Madrid
+        let lat = 40.4168, lon = -3.7038, ciudad = 'Madrid, ES';
+        // Intentar geolocalización
+        if (navigator.geolocation) {
+          await new Promise(resolve => {
+            navigator.geolocation.getCurrentPosition(
+              pos => { lat=pos.coords.latitude; lon=pos.coords.longitude; ciudad='Tu ubicación'; resolve(); },
+              () => resolve(),
+              { timeout: 3000 }
+            );
+          });
+        }
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,weathercode&wind_speed_unit=kmh`);
+        const data = await res.json();
+        const c = data.current;
+        const wcode = c.weathercode;
+        const icono = wcode === 0 ? '☀️' : wcode <= 3 ? '⛅' : wcode <= 67 ? '🌧️' : wcode <= 77 ? '❄️' : '⛈️';
+        el.innerHTML = `
+          <div style="text-align:center;padding:10px 0;">
+            <div style="font-size:2.5rem;line-height:1;">${icono}</div>
+            <div style="font-size:1.6rem;color:#00ff66;margin:6px 0;text-shadow:0 0 8px #00ff66;">${c.temperature_2m}°C</div>
+            <div style="font-size:0.72rem;color:#666;letter-spacing:1px;">${ciudad}</div>
+            <div style="font-size:0.72rem;color:#444;margin-top:6px;">Viento: ${c.wind_speed_10m} km/h</div>
+          </div>`;
+      } catch(e) {
+        el.innerHTML = '<p class="error-msg" style="font-size:0.75rem;">No se pudo cargar.</p>';
+      }
+    }
+
+    // ISS — Open Notify
+    async function cargarISS() {
+      const el = document.getElementById('core-iss');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Localizando ISS...</p>';
+      try {
+        const res = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
+        const d = await res.json();
+        const lat = parseFloat(d.latitude).toFixed(2);
+        const lon = parseFloat(d.longitude).toFixed(2);
+        const alt = parseFloat(d.altitude).toFixed(0);
+        const vel = parseFloat(d.velocity).toFixed(0);
+        const latDir = lat >= 0 ? 'N' : 'S';
+        const lonDir = lon >= 0 ? 'E' : 'O';
+        el.innerHTML = `
+          <div style="font-size:0.78rem;line-height:2.2;color:#aaa;">
+            <div><span style="color:#00ff66;min-width:80px;display:inline-block;">LAT</span>${Math.abs(lat)}° ${latDir}</div>
+            <div><span style="color:#00ff66;min-width:80px;display:inline-block;">LON</span>${Math.abs(lon)}° ${lonDir}</div>
+            <div><span style="color:#00ff66;min-width:80px;display:inline-block;">ALTITUD</span>${alt} km</div>
+            <div><span style="color:#00ff66;min-width:80px;display:inline-block;">VELOCIDAD</span>${parseInt(vel).toLocaleString()} km/h</div>
+          </div>
+          <div style="font-size:0.62rem;color:#1a4a2a;margin-top:8px;letter-spacing:1px;">Actualizado: ${new Date().toLocaleTimeString('es-ES')}</div>`;
+      } catch(e) {
+        el.innerHTML = '<p class="error-msg" style="font-size:0.75rem;">No se pudo cargar.</p>';
+      }
+    }
+
+    // Crypto resumen para Core
+    async function cargarCryptoCore() {
+      const el = document.getElementById('core-crypto');
+      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Consultando mercados...</p>';
+      try {
+        const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,dogecoin&order=market_cap_desc&sparkline=false');
+        const data = await res.json();
+        el.innerHTML = data.map(m => {
+          const cambio = m.price_change_percentage_24h;
+          const color = cambio >= 0 ? '#00ff66' : '#ff5555';
+          const signo = cambio >= 0 ? '▲' : '▼';
+          return `<div class="core-fila">
+            <span style="color:#66ffb3;font-size:0.78rem;min-width:40px;">${m.symbol.toUpperCase()}</span>
+            <span style="color:#e0e0e0;font-size:0.78rem;flex:1;">$${m.current_price.toLocaleString()}</span>
+            <span style="color:${color};font-size:0.72rem;">${signo} ${Math.abs(cambio).toFixed(2)}%</span>
+          </div>`;
+        }).join('');
+      } catch(e) {
+        el.innerHTML = '<p class="error-msg" style="font-size:0.75rem;">No se pudo cargar.</p>';
+      }
+    }
+
   </script>
 
 </body>

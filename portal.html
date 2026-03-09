@@ -494,11 +494,43 @@
       const sec = document.getElementById(id);
       if (!sec) return;
       sec.classList.add('activa');
-      window.scrollTo(0, 0);
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
       history.pushState(null, '', '#' + id);
       iniciarSeccion(id);
       beepNav();
+      if (id === 'logs') resetPuzzle();
     }
+
+    function resetPuzzle() {
+      // Resetear si estaba bloqueado por éxito (intentos > 0 significa que no se agotaron)
+      if (bloqueado && intentos > 0) {
+        bloqueado = false;
+        const inputEl = document.getElementById('codigo');
+        const btn     = document.getElementById('puzzle-btn');
+        const msg     = document.getElementById('msgPuzzle');
+        const label   = document.getElementById('intentos-label');
+        inputEl.value = '';
+        inputEl.disabled = false;
+        inputEl.classList.remove('success', 'error');
+        btn.disabled = false;
+        msg.textContent = '> Sistema de autenticación listo.';
+        msg.style.color = '#66ffb3';
+        label.textContent = `Intentos restantes: ${intentos}`;
+        label.className = 'puzzle-intentos';
+      }
+    }
+
+    // Interceptar también navegación por hash nativa (botón atrás del navegador)
+    window.addEventListener('hashchange', () => {
+      const hash = location.hash ? location.hash.substring(1) : 'inicio';
+      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
+      const sec = document.getElementById(hash);
+      if (sec) {
+        sec.classList.add('activa');
+        iniciarSeccion(hash);
+        if (hash === 'logs') resetPuzzle();
+      }
+    });
 
     function iniciarSeccion(id) {
       if (id === 'inicio') {
@@ -670,13 +702,6 @@
       const sec = document.getElementById(hash) || document.getElementById('inicio');
       sec.classList.add('activa');
       runBoot();
-    });
-
-    window.addEventListener('popstate', () => {
-      const hash = location.hash ? location.hash.substring(1) : 'inicio';
-      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
-      const sec = document.getElementById(hash);
-      if (sec) { sec.classList.add('activa'); iniciarSeccion(hash); }
     });
   </script>
 

@@ -6,7 +6,7 @@ body {
   font-family: 'Courier New', monospace;
   margin: 0;
   padding: 0;
-  height: 100vh;
+  min-height: 100vh;
   scroll-behavior: smooth;
 }
 
@@ -895,4 +895,144 @@ textarea#editor-crt:focus {
 
   /* ── Botón global ── */
   button { padding: 8px 14px; font-size: 0.82rem; }
+}
+
+/* ══════════════════════════════════════════════
+   GAMING — PESTAÑAS
+══════════════════════════════════════════════ */
+.gaming-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #003300;
+  padding-bottom: 10px;
+}
+.gaming-tab {
+  background: none;
+  border: 1px solid #003300;
+  color: #1a4a2a;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 2px;
+  padding: 7px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.gaming-tab:hover {
+  border-color: #00ff66;
+  color: #00ff66;
+}
+.gaming-tab.activa-tab {
+  border-color: #00ff66;
+  color: #00ff66;
+  background: rgba(0,255,102,0.06);
+  box-shadow: 0 0 8px rgba(0,255,102,0.1);
+}
+.gaming-panel { width: 100%; }
+
+/* ══ D-PAD TÁCTIL SNAKE ══ */
+.snake-dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+}
+.dpad-row {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.dpad-btn {
+  width: 44px;
+  height: 44px;
+  background: rgba(0,20,0,0.8);
+  border: 1px solid #003300;
+  color: #00ff66;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.dpad-btn:active {
+  background: #00ff66;
+  color: #000;
+}
+.dpad-btn:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+/* Ocultar dpad en desktop */
+@media (hover: hover) and (pointer: fine) {
+  .snake-dpad { display: none; }
+}
+
+/* ══════════════════════════════════════════════
+   CORE — MONITOR GLOBAL
+══════════════════════════════════════════════ */
+.core-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+.core-modulo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.core-modulo h3 {
+  font-size: 0.82rem;
+  letter-spacing: 2px;
+  color: #00ff66;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.core-live {
+  font-size: 0.6rem;
+  color: #ff5555;
+  letter-spacing: 1px;
+  animation: pulse-live 1.5s ease-in-out infinite;
+}
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+.core-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid #0a1a0a;
+  font-family: 'Courier New', monospace;
+}
+.core-fila:last-child { border-bottom: none; }
+.btn-core {
+  margin-top: 10px;
+  width: 100%;
+  background: none;
+  border: 1px solid #003300;
+  color: #1a4a2a;
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-core:hover {
+  border-color: #00ff66;
+  color: #00ff66;
+}
+@media (max-width: 480px) {
+  .core-grid { grid-template-columns: 1fr; }
+  .gaming-tabs { flex-wrap: wrap; }
+  .gaming-tab { flex: 1; text-align: center; font-size: 0.72rem; padding: 8px; }
 }
