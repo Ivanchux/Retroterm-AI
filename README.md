@@ -55,9 +55,44 @@ No es una web. Es un sistema.
 - Historial de conversación, typing indicator y protección XSS
 
 ### Editor (`editor.html`)
-- Editor de código **CODE_CRT v0.2** con numeración de líneas
-- Autoguardado en localStorage, exportación de archivos
-- Resaltado de sintaxis básico en estética terminal
+- Editor de código **CODE_CRT v0.3** — archivo único autocontenido sin dependencias externas
+- **Tres paneles editables** independientes: HTML (naranja), CSS (cyan), JS (amarillo)
+- **Sistema multi-archivo** — pestañas de proyectos independientes, cada una con su HTML+CSS+JS propio. Crear, cerrar y cambiar entre proyectos sin perder el trabajo
+- **Preview en vivo** con actualización automática 800ms tras dejar de escribir, expandible y a pantalla completa
+- **Autocompletado inteligente** con más de 370 sugerencias organizadas por lenguaje:
+  - HTML: etiquetas simples y variantes con atributos (`div`, `div.class`, `div#id`...)
+  - CSS: propiedades con valores por defecto, snippets de layout (`centering`, `media`, `keyframes`...)
+  - JS: métodos DOM, eventos, async/await, snippets (`qs`, `gid`, `DOMContentLoaded`...)
+  - Navegación con `↑↓`, aceptar con `Tab` o `Enter`, forzar con `Ctrl+Espacio`
+- **Auto-cierre de pares** — `(`, `[`, `{`, `"`, `'` se cierran solos; en HTML cierra etiquetas automáticamente al escribir `>`
+- **Backspace inteligente** — borra el par completo si el cursor está entre `()`, `[]`, `{}`
+- **Snippet `!` + Tab** — genera el boilerplate HTML completo al instante
+- **Sidebar colapsable** — se comprime con un clic para ganar espacio en pantallas pequeñas, con resaltado correcto del icono activo
+- **Indicador de cambios sin guardar** — bolita en la pestaña activa al estilo VS Code; desaparece al guardar
+- **Números de línea** sincronizados con scroll y contador de líneas por panel
+- **Buscar y reemplazar** (Ctrl+F) con contador de resultados
+- **Atajos de teclado** completos:
+
+| Atajo | Acción |
+|---|---|
+| `Ctrl+S` | Guardar |
+| `Ctrl+Enter` | Ejecutar preview |
+| `Ctrl+Z` / `Ctrl+Y` | Deshacer / Rehacer |
+| `Ctrl+L` | Duplicar línea |
+| `Ctrl+Shift+K` | Eliminar línea |
+| `Alt+↑` / `Alt+↓` | Mover línea arriba/abajo |
+| `Ctrl+/` | Comentar/descomentar línea |
+| `Ctrl+F` | Buscar y reemplazar |
+| `Ctrl+N` | Nueva pestaña |
+| `Ctrl+W` | Cerrar pestaña |
+| `Ctrl+D` | Descargar proyecto como `.html` |
+| `Ctrl+Home/End` | Ir al inicio/fin del archivo |
+| `Ctrl+Espacio` | Forzar autocompletado |
+
+- **Modal de ajustes** — tamaño de fuente, interlineado, sangría (2/4 espacios), tema verde/ámbar, toggles de autorun/autoguardado/números de línea
+- **Reordenar paneles** por drag & drop desde los ajustes
+- **Autoguardado** cada 3 segundos (configurable)
+- **Descarga** del proyecto combinado HTML+CSS+JS en un único archivo
 
 ### El Turco Mecánico (`turco.html`)
 - Partida de ajedrez contra una IA con motor minimax (profundidad 3, alpha-beta pruning)
@@ -100,7 +135,7 @@ retroterm-ai/
 ├── portal.html             # SILO — puzzle, CORE y zona RESTRICTED
 ├── turco.html              # Ajedrez con IA y narrativa histórica
 ├── asistente.html          # Chat con ARIA (IA)
-├── editor.html             # Editor de código CODE_CRT
+├── editor.html             # Editor de código CODE_CRT v0.3
 ├── articulos.html          # Artículos con filtros por categoría
 ├── red.html                # Red de proyectos
 ├── estilos.css             # CSS global compartido con responsive
