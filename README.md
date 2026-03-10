@@ -50,49 +50,25 @@ No es una web. Es un sistema.
 - Zona RESTRICTED con acceso al Turco Mecánico
 
 ### Asistente IA (`asistente.html`)
-- Interfaz de chat con **ARIA**, asistente de inteligencia artificial
-- Conectado a modelo LLaMA 3.1 vía Cloudflare Workers + Groq API
-- Historial de conversación, typing indicator y protección XSS
+- Interfaz de chat con **ARIA** — *"A girl has no name"*
+- Avatar pixel art de Arya Stark generado e integrado como identidad visual del sistema
+- **Historial persistente** en localStorage — hasta 15 conversaciones guardadas, 30 mensajes por conversación
+- Panel lateral con lista de conversaciones, título automático, eliminación individual y borrado total
+- Contexto enviado a la IA limitado a 20 mensajes para optimizar tokens
+- Conectado a modelo **LLaMA 3.1 8B Instant** vía Cloudflare Workers + Groq API (128k contexto, 500k tokens/día gratuitos)
+- Typing indicator, protección XSS, contador de uso de localStorage en KB
+- Responsive: sidebar colapsable en escritorio, overlay en móvil
 
 ### Editor (`editor.html`)
-- Editor de código **CODE_CRT v0.3** — archivo único autocontenido sin dependencias externas
-- **Tres paneles editables** independientes: HTML (naranja), CSS (cyan), JS (amarillo)
-- **Sistema multi-archivo** — pestañas de proyectos independientes, cada una con su HTML+CSS+JS propio. Crear, cerrar y cambiar entre proyectos sin perder el trabajo
-- **Preview en vivo** con actualización automática 800ms tras dejar de escribir, expandible y a pantalla completa
-- **Autocompletado inteligente** con más de 370 sugerencias organizadas por lenguaje:
-  - HTML: etiquetas simples y variantes con atributos (`div`, `div.class`, `div#id`...)
-  - CSS: propiedades con valores por defecto, snippets de layout (`centering`, `media`, `keyframes`...)
-  - JS: métodos DOM, eventos, async/await, snippets (`qs`, `gid`, `DOMContentLoaded`...)
-  - Navegación con `↑↓`, aceptar con `Tab` o `Enter`, forzar con `Ctrl+Espacio`
-- **Auto-cierre de pares** — `(`, `[`, `{`, `"`, `'` se cierran solos; en HTML cierra etiquetas automáticamente al escribir `>`
-- **Backspace inteligente** — borra el par completo si el cursor está entre `()`, `[]`, `{}`
-- **Snippet `!` + Tab** — genera el boilerplate HTML completo al instante
-- **Sidebar colapsable** — se comprime con un clic para ganar espacio en pantallas pequeñas, con resaltado correcto del icono activo
-- **Indicador de cambios sin guardar** — bolita en la pestaña activa al estilo VS Code; desaparece al guardar
-- **Números de línea** sincronizados con scroll y contador de líneas por panel
-- **Buscar y reemplazar** (Ctrl+F) con contador de resultados
-- **Atajos de teclado** completos:
-
-| Atajo | Acción |
-|---|---|
-| `Ctrl+S` | Guardar |
-| `Ctrl+Enter` | Ejecutar preview |
-| `Ctrl+Z` / `Ctrl+Y` | Deshacer / Rehacer |
-| `Ctrl+L` | Duplicar línea |
-| `Ctrl+Shift+K` | Eliminar línea |
-| `Alt+↑` / `Alt+↓` | Mover línea arriba/abajo |
-| `Ctrl+/` | Comentar/descomentar línea |
-| `Ctrl+F` | Buscar y reemplazar |
-| `Ctrl+N` | Nueva pestaña |
-| `Ctrl+W` | Cerrar pestaña |
-| `Ctrl+D` | Descargar proyecto como `.html` |
-| `Ctrl+Home/End` | Ir al inicio/fin del archivo |
-| `Ctrl+Espacio` | Forzar autocompletado |
-
-- **Modal de ajustes** — tamaño de fuente, interlineado, sangría (2/4 espacios), tema verde/ámbar, toggles de autorun/autoguardado/números de línea
-- **Reordenar paneles** por drag & drop desde los ajustes
-- **Autoguardado** cada 3 segundos (configurable)
-- **Descarga** del proyecto combinado HTML+CSS+JS en un único archivo
+- Editor de código **CODE_CRT v0.3** — HTML, CSS y JavaScript en pestañas simultáneas
+- Menubar con 4 menús desplegables: FILE, EDIT, VIEW, RUN
+- Sidebar con iconos colapsable: explorador, búsqueda, snippets, tema, atajos, config
+- **Autocompletado** con posicionamiento real de caret — tags HTML, propiedades CSS, funciones JS
+- Auto-cierre de pares (`()`, `[]`, `{}`, `""`, `''`) y etiquetas HTML
+- Buscar y reemplazar (Ctrl+F), highlights, anterior/siguiente
+- Preview en tiempo real con botón de pantalla completa
+- Statusbar: línea/columna, modo INSERT/NORMAL, hora de autoguardado
+- Exportación de archivos, autoguardado en localStorage
 
 ### El Turco Mecánico (`turco.html`)
 - Partida de ajedrez contra una IA con motor minimax (profundidad 3, alpha-beta pruning)
@@ -135,7 +111,7 @@ retroterm-ai/
 ├── portal.html             # SILO — puzzle, CORE y zona RESTRICTED
 ├── turco.html              # Ajedrez con IA y narrativa histórica
 ├── asistente.html          # Chat con ARIA (IA)
-├── editor.html             # Editor de código CODE_CRT v0.3
+├── editor.html             # Editor de código CODE_CRT
 ├── articulos.html          # Artículos con filtros por categoría
 ├── red.html                # Red de proyectos
 ├── estilos.css             # CSS global compartido con responsive
@@ -188,6 +164,10 @@ npx serve .
 
 ## Roadmap
 
+- [x] Historial persistente de conversaciones en ARIA
+- [x] Avatar pixel art de Arya Stark en ARIA
+- [x] Editor CODE_CRT v0.3 con autocompletado y sidebar
+- [x] Fix navegación HUB — eliminado flash negro al volver de módulos externos
 - [ ] Controles táctiles swipe para Snake en móvil
 - [ ] Gráficos de precio histórico en modal de moneda (DEFI_TERMINAL)
 - [ ] Modo estética ámbar — toggle verde / ámbar en todo el sistema
@@ -198,7 +178,7 @@ npx serve .
 
 ## Autor
 
-**Ivan Brihuega Crespo** — Proyecto personal desarrollado durante el primer año de ASIR Grado Superior.
+**Ivan Brihuega Crespo** — Proyecto personal desarrollado durante el Grado Superior de ASIR.
 
 - GitHub: [@Ivanchux](https://github.com/Ivanchux)
 - Web: [ivanchux.github.io/retroterm-ai](https://ivanchux.github.io/retroterm-ai)
@@ -207,7 +187,7 @@ npx serve .
 
 ## Licencia
 
-© 2025 Ivan Brihuega Crespo. Todos los derechos reservados.
+© 2025–2026 Ivan Brihuega Crespo. Todos los derechos reservados.
 
 Este proyecto es de autoría propia e intelectual del autor. Queda expresamente prohibida su copia total o parcial, distribución, modificación o uso comercial sin autorización escrita del autor.
 
