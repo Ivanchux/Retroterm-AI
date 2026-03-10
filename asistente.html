@@ -9,218 +9,356 @@
   <link rel="stylesheet" href="estilos.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
-    /* ── LAYOUT ASISTENTE ── */
-    .asistente-wrap {
+    /* ── LAYOUT RAÍZ ── */
+    body { overflow: hidden; }
+
+    .aria-root {
       display: flex;
-      flex-direction: column;
-      height: calc(100vh - 160px);
-      min-height: 420px;
+      height: 100vh;
+      width: 100%;
+      position: fixed;
+      top: 0; left: 0;
+      background: #000;
+      font-family: 'Courier New', monospace;
     }
 
-    /* ── CABECERA ARIA ── */
-    .aria-header {
+    /* ══════════════════════════════════════
+       SIDEBAR — historial de conversaciones
+    ══════════════════════════════════════ */
+    .aria-sidebar {
+      width: 240px;
+      background: #040804;
+      border-right: 1px solid #0a2a0a;
       display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 12px 16px;
-      border: 1px solid #00ff66;
-      background: rgba(0, 20, 0, 0.9);
-      margin-bottom: 4px;
-      border-radius: 4px 4px 0 0;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.2s ease, padding 0.2s ease;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
     }
-    .aria-avatar {
-      width: 38px;
-      height: 38px;
-      border: 2px solid #00ff66;
-      border-radius: 50%;
+    .aria-sidebar.collapsed { width: 0; border-right: none; }
+
+    .sb-header {
+      padding: 12px 12px 8px;
+      border-bottom: 1px solid #0a2a0a;
+      flex-shrink: 0;
+    }
+    .sb-title {
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: #1a5a2a;
+      margin-bottom: 8px;
+      white-space: nowrap;
+    }
+    .sb-new-btn {
+      width: 100%;
+      background: none;
+      border: 1px solid #003300;
+      color: #1a5a2a;
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      padding: 7px 0;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .sb-new-btn:hover {
+      border-color: #00ff66;
+      color: #00ff66;
+      background: rgba(0,255,102,0.04);
+    }
+
+    .sb-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 0;
+      scrollbar-width: thin;
+      scrollbar-color: #003300 #000;
+    }
+    .sb-list::-webkit-scrollbar { width: 3px; }
+    .sb-list::-webkit-scrollbar-thumb { background: #003300; }
+
+    .sb-conv {
+      padding: 9px 12px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+      position: relative;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .sb-conv:hover { background: rgba(0,255,102,0.03); border-left-color: #003300; }
+    .sb-conv.active { background: rgba(0,255,102,0.06); border-left-color: #00ff66; }
+    .sb-conv-title {
+      font-size: 0.67rem;
+      color: #888;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 3px;
+    }
+    .sb-conv.active .sb-conv-title { color: #00ff66; }
+    .sb-conv-meta {
+      font-size: 0.57rem;
+      color: #1a4a2a;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sb-conv-del {
+      opacity: 0;
+      color: #ff5555;
+      font-size: 0.6rem;
+      padding: 0 2px;
+      transition: opacity 0.15s;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .sb-conv:hover .sb-conv-del { opacity: 1; }
+
+    .sb-footer {
+      padding: 8px 12px;
+      border-top: 1px solid #0a2a0a;
+      font-size: 0.57rem;
+      color: #1a3a1a;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .sb-footer span { color: #1a5a2a; }
+
+    /* Toggle sidebar */
+    .sb-toggle {
+      position: absolute;
+      top: 50%;
+      right: -11px;
+      transform: translateY(-50%);
+      width: 11px;
+      height: 36px;
+      background: #0a0a0a;
+      border: 1px solid #0a2a0a;
+      border-left: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
-      box-shadow: 0 0 10px #00ff66;
-      flex-shrink: 0;
-      animation: pulse-avatar 3s ease-in-out infinite;
-    }
-    @keyframes pulse-avatar {
-      0%, 100% { box-shadow: 0 0 8px #00ff66; }
-      50%       { box-shadow: 0 0 20px #00ff66, 0 0 40px rgba(0,255,102,0.3); }
-    }
-    .aria-info { flex: 1; }
-    .aria-name {
-      color: #00ff66;
-      font-size: 0.95rem;
-      font-weight: bold;
-      letter-spacing: 2px;
-      text-shadow: 0 0 8px #00ff66;
-    }
-    .aria-status {
-      font-size: 0.72rem;
-      color: #66ffb3;
-      letter-spacing: 1px;
-    }
-    .aria-status::before {
-      content: '● ';
-      color: #00ff66;
-      animation: blink 1.5s infinite;
-    }
-    .aria-clear-btn {
-      background: transparent;
-      border: 1px solid #00ff66;
-      color: #00ff66;
-      font-family: 'Courier New', monospace;
-      font-size: 0.72rem;
-      padding: 4px 10px;
       cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      margin-top: 0;
+      font-size: 0.5rem;
+      color: #1a4a2a;
+      z-index: 20;
+      transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
     }
-    .aria-clear-btn:hover {
-      background: #00ff66;
-      color: #000;
-      box-shadow: 0 0 8px #00ff66;
+    .sb-toggle:hover { color: #00ff66; background: rgba(0,255,102,0.06); }
+
+    /* ══════════════════════════════════════
+       ÁREA PRINCIPAL
+    ══════════════════════════════════════ */
+    .aria-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
     }
 
-    /* ── HISTORIAL ── */
-    .chat-historial {
+    /* TOPBAR */
+    .aria-topbar {
+      background: #030803;
+      border-bottom: 1px solid #0a2a0a;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .aria-avatar {
+      width: 54px; height: 72px;
+      border: 1px solid #00ff66;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 0 8px rgba(0,255,102,0.3);
+      flex-shrink: 0;
+      animation: pulse-avatar 3s ease-in-out infinite;
+      background: #050808;
+    }
+    @keyframes pulse-avatar {
+      0%,100% { box-shadow: 0 0 6px rgba(0,255,102,0.3); }
+      50%      { box-shadow: 0 0 16px rgba(0,255,102,0.6); }
+    }
+    .aria-info { flex: 1; min-width: 0; }
+    .aria-name {
+      color: #00ff66;
+      font-size: 0.82rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 6px #00ff66;
+    }
+    .aria-tagline {
+      font-size: 0.58rem;
+      color: #1a4a2a;
+      letter-spacing: 2px;
+      font-style: italic;
+      margin-bottom: 2px;
+    }
+    .aria-status {
+      font-size: 0.63rem;
+      color: #1a5a2a;
+      letter-spacing: 1px;
+    }
+    .aria-status::before { content: '● '; color: #00ff66; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .aria-topbar-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .topbar-btn {
+      background: none;
+      border: 1px solid #0a2a0a;
+      color: #1a4a2a;
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      padding: 4px 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .topbar-btn:hover { border-color: #00ff66; color: #00ff66; }
+    .topbar-btn.danger:hover { border-color: #ff5555; color: #ff5555; }
+    .mob-menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid #0a2a0a;
+      color: #1a4a2a;
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      padding: 4px 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mob-menu-btn:hover { border-color: #00ff66; color: #00ff66; }
+
+    /* CHAT AREA */
+    .chat-area {
       flex: 1;
       overflow-y: auto;
       padding: 16px;
-      border: 1px solid #00ff66;
-      border-top: none;
-      border-bottom: none;
-      background: rgba(0, 8, 0, 0.95);
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       scroll-behavior: smooth;
-
-      /* Scanlines CRT */
       background-image: repeating-linear-gradient(
         to bottom,
-        rgba(0, 255, 102, 0.015) 0px,
-        rgba(0, 255, 102, 0.015) 1px,
+        rgba(0,255,102,0.012) 0px,
+        rgba(0,255,102,0.012) 1px,
         transparent 2px
       );
     }
-    .chat-historial::-webkit-scrollbar { width: 4px; }
-    .chat-historial::-webkit-scrollbar-track { background: #000; }
-    .chat-historial::-webkit-scrollbar-thumb { background: #00ff66; border-radius: 2px; }
+    .chat-area::-webkit-scrollbar { width: 4px; }
+    .chat-area::-webkit-scrollbar-thumb { background: #003300; border-radius: 2px; }
 
-    /* ── MENSAJES ── */
+    .msg-sistema {
+      text-align: center;
+      font-size: 0.67rem;
+      color: #1a4a2a;
+      letter-spacing: 2px;
+      padding: 4px 0 10px;
+      border-bottom: 1px solid #0a1a0a;
+    }
+
+    /* MENSAJES */
     .msg-row {
       display: flex;
       gap: 10px;
       align-items: flex-start;
-      animation: fadeSlideIn 0.25s ease-out;
+      animation: msgIn 0.2s ease-out;
     }
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes msgIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
     .msg-row.usuario { flex-direction: row-reverse; }
-
     .msg-icon {
-      width: 28px;
-      height: 28px;
-      border: 1px solid #00ff66;
+      width: 26px; height: 26px;
+      border: 1px solid #003300;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
       flex-shrink: 0;
       margin-top: 2px;
     }
-    .msg-row.usuario .msg-icon {
-      border-color: #66ffb3;
-      color: #66ffb3;
-    }
-
+    .msg-row.usuario .msg-icon { border-color: #1a4a2a; }
     .msg-burbuja {
-      max-width: 78%;
-      padding: 10px 14px;
-      border-radius: 2px;
-      font-size: 0.88rem;
+      max-width: 76%;
+      padding: 9px 13px;
+      font-size: 0.85rem;
       line-height: 1.65;
-      position: relative;
     }
     .msg-row.aria .msg-burbuja {
-      border: 1px solid #00ff66;
-      background: rgba(0, 30, 0, 0.8);
-      color: #e0e0e0;
-      border-left: 3px solid #00ff66;
+      border: 1px solid #003300;
+      border-left: 2px solid #00ff66;
+      background: rgba(0,20,0,0.7);
+      color: #ddd;
     }
     .msg-row.usuario .msg-burbuja {
-      border: 1px solid #66ffb3;
-      background: rgba(0, 40, 20, 0.6);
+      border: 1px solid #1a4a2a;
+      border-right: 2px solid #66ffb3;
+      background: rgba(0,30,15,0.5);
       color: #66ffb3;
-      border-right: 3px solid #66ffb3;
       text-align: right;
     }
     .msg-prefix {
-      color: #00ff66;
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       letter-spacing: 1px;
       margin-bottom: 4px;
       display: block;
+      color: #00ff66;
     }
     .msg-row.usuario .msg-prefix { color: #66ffb3; }
     .msg-timestamp {
-      font-size: 0.65rem;
-      color: #444;
-      margin-top: 4px;
+      font-size: 0.6rem;
+      color: #333;
+      margin-top: 5px;
       display: block;
     }
     .msg-row.usuario .msg-timestamp { text-align: right; }
 
-    /* ── TYPING INDICATOR ── */
+    /* TYPING */
     .typing-indicator {
       display: none;
       gap: 4px;
       align-items: center;
-      padding: 8px 14px;
+      padding: 8px 12px;
     }
     .typing-indicator.visible { display: flex; }
     .typing-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px; height: 5px;
       background: #00ff66;
       border-radius: 50%;
-      animation: typingBounce 1.2s infinite;
+      animation: typeBounce 1.2s infinite;
     }
     .typing-dot:nth-child(2) { animation-delay: 0.2s; }
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typingBounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-      30%            { transform: translateY(-6px); opacity: 1; }
+    @keyframes typeBounce {
+      0%,60%,100% { transform:translateY(0); opacity:0.4; }
+      30%          { transform:translateY(-5px); opacity:1; }
     }
-    .typing-text {
-      font-size: 0.75rem;
-      color: #00ff66;
-      letter-spacing: 1px;
-      margin-left: 6px;
-    }
+    .typing-text { font-size: 0.68rem; color: #00ff66; letter-spacing: 1px; margin-left: 6px; }
 
-    /* ── INPUT AREA ── */
+    /* INPUT */
     .chat-input-area {
-      border: 1px solid #00ff66;
-      border-top: 2px solid #00ff66;
-      background: rgba(0, 15, 0, 0.95);
-      padding: 12px 16px;
-      border-radius: 0 0 4px 4px;
+      border-top: 1px solid #0a2a0a;
+      background: #020602;
+      padding: 10px 16px;
+      flex-shrink: 0;
     }
     .chat-input-row {
       display: flex;
       align-items: center;
       gap: 10px;
+      border: 1px solid #003300;
+      padding: 6px 12px;
+      transition: border-color 0.2s;
     }
-    .chat-prompt {
-      color: #00ff66;
-      font-size: 1rem;
-      text-shadow: 0 0 6px #00ff66;
-      flex-shrink: 0;
-    }
+    .chat-input-row:focus-within { border-color: #00ff66; }
+    .chat-prompt { color: #00ff66; font-size: 0.9rem; flex-shrink: 0; }
     .chat-input {
       flex: 1;
       background: transparent;
@@ -228,275 +366,538 @@
       outline: none;
       color: #00ff66;
       font-family: 'Courier New', monospace;
-      font-size: 0.92rem;
+      font-size: 0.88rem;
       caret-color: #00ff66;
-      letter-spacing: 0.5px;
     }
-    .chat-input::placeholder { color: #1a4a2a; }
+    .chat-input::placeholder { color: #1a3a1a; }
     .chat-input:disabled { opacity: 0.4; }
     .chat-send-btn {
-      background: transparent;
-      border: 1px solid #00ff66;
-      color: #00ff66;
+      background: none;
+      border: 1px solid #003300;
+      color: #1a5a2a;
       font-family: 'Courier New', monospace;
-      font-size: 0.8rem;
-      padding: 6px 14px;
+      font-size: 0.7rem;
+      padding: 5px 12px;
       cursor: pointer;
       letter-spacing: 1px;
       transition: all 0.2s;
-      margin-top: 0;
       flex-shrink: 0;
     }
     .chat-send-btn:hover:not(:disabled) {
-      background: #00ff66;
+      border-color: #00ff66;
       color: #000;
-      box-shadow: 0 0 10px #00ff66;
+      background: #00ff66;
     }
-    .chat-send-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-    .chat-hint {
-      font-size: 0.68rem;
-      color: #1a4a2a;
-      margin-top: 6px;
+    .chat-send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .chat-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      font-size: 0.6rem;
+      color: #1a3a1a;
       letter-spacing: 1px;
     }
+    .chat-counter.warn { color: #ffaa00; }
 
-    /* ── MENSAJE BIENVENIDA ── */
-    .msg-sistema {
-      text-align: center;
-      font-size: 0.75rem;
-      color: #1a5a2a;
-      letter-spacing: 2px;
-      padding: 6px 0;
-      border-bottom: 1px solid #0a2a10;
-      margin-bottom: 4px;
-    }
-
-    /* ── CONTADOR ── */
-    .chat-counter {
-      font-size: 0.68rem;
+    /* EMPTY STATE */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       color: #1a4a2a;
-      text-align: right;
-      letter-spacing: 1px;
     }
-    .chat-counter.warning { color: #ffaa00; }
+    .empty-state .es-icon { font-size: 2.5rem; opacity: 0.3; }
+    .empty-state .es-txt  { font-size: 0.72rem; letter-spacing: 2px; }
+    .empty-state .es-sub  { font-size: 0.62rem; color: #0f2a0f; letter-spacing: 1px; }
+
+    /* MOBILE OVERLAY sidebar */
+    .sb-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 9;
+    }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      .msg-burbuja { max-width: 90%; font-size: 0.83rem; }
-      .aria-name { font-size: 0.85rem; }
+    @media (max-width: 640px) {
+      .aria-sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        height: 100vh;
+        z-index: 10;
+        width: 0;
+      }
+      .aria-sidebar.mob-open { width: 240px; }
+      .sb-toggle { display: none; }
+      .mob-menu-btn { display: flex; align-items: center; }
+      .sb-overlay.visible { display: block; }
+      .msg-burbuja { max-width: 88%; font-size: 0.82rem; }
     }
   </style>
 </head>
 <body>
 
-  <section class="pantalla seccion activa">
-    <header class="cabecera">
-      <h1>🤖 ASISTENTE IA</h1>
-      <p class="subtitulo">ARIA — Adaptive Retro Intelligence Assistant</p>
-    </header>
+<div class="aria-root">
 
-    <div class="asistente-wrap">
+  <!-- ══ SIDEBAR ══ -->
+  <div class="aria-sidebar" id="sidebar">
+    <div class="sb-header">
+      <div class="sb-title">// CONVERSACIONES</div>
+      <button class="sb-new-btn" onclick="nuevaConversacion()">[ + NUEVA CONVERSACIÓN ]</button>
+    </div>
+    <div class="sb-list" id="sb-list">
+      <!-- se rellena dinámicamente -->
+    </div>
+    <div class="sb-footer">
+      ARIA v1.0 · <span id="sb-count">0</span>/15 conversaciones<br>
+      <span id="sb-size">localStorage: 0 KB</span>
+    </div>
+    <div class="sb-toggle" id="sb-toggle" onclick="toggleSidebar()" title="Colapsar">◀</div>
+  </div>
 
-      <!-- Cabecera ARIA -->
-      <div class="aria-header">
-        <div class="aria-avatar">🤖</div>
-        <div class="aria-info">
-          <div class="aria-name">ARIA // RETROTERM.AI</div>
-          <div class="aria-status" id="aria-status-text">SISTEMA EN LÍNEA</div>
-        </div>
-        <button class="aria-clear-btn" onclick="limpiarChat()">[ LIMPIAR ]</button>
+  <!-- Overlay móvil -->
+  <div class="sb-overlay" id="sb-overlay" onclick="cerrarSidebarMob()"></div>
+
+  <!-- ══ MAIN ══ -->
+  <div class="aria-main">
+
+    <!-- Topbar -->
+    <div class="aria-topbar">
+      <button class="mob-menu-btn" onclick="abrirSidebarMob()">☰</button>
+      <div class="aria-avatar" id="aria-avatar-wrap" title="A girl has no name" style="width:48px;height:64px;border:none;border-radius:0;background:none;box-shadow:none;animation:none;padding:0;overflow:visible;flex-shrink:0;image-rendering:pixelated;">
+        <img src="data:image/png;base64,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" width="48" height="64" style="image-rendering:pixelated;display:block;" alt="ARIA"></div>
+      <div class="aria-info">
+        <div class="aria-name">ARIA // RETROTERM.AI</div>
+        <div class="aria-tagline">// a girl has no name</div>
+        <div class="aria-status" id="aria-status">SIN NOMBRE · EN LÍNEA</div>
       </div>
-
-      <!-- Historial -->
-      <div class="chat-historial" id="chat-historial">
-        <div class="msg-sistema">// SESIÓN INICIADA — ARIA v1.0 — RETROTERM.AI //</div>
-
-        <!-- Mensaje inicial de ARIA -->
-        <div class="msg-row aria">
-          <div class="msg-icon">🤖</div>
-          <div class="msg-burbuja">
-            <span class="msg-prefix">ARIA &gt;</span>
-            Sistema operativo. Soy ARIA, el asistente integrado de RETROTERM.AI. Puedo ayudarte con el proyecto, programación, redes, sistemas o cualquier consulta técnica. ¿En qué puedo asistirte?
-            <span class="msg-timestamp" id="ts-init"></span>
-          </div>
-        </div>
-
-        <!-- Typing indicator -->
-        <div class="typing-indicator" id="typing-indicator">
-          <div class="msg-icon">🤖</div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <span class="typing-text">PROCESANDO...</span>
-        </div>
+      <div class="aria-topbar-btns">
+        <button class="topbar-btn" onclick="nuevaConversacion()">[ NUEVA ]</button>
+        <button class="topbar-btn danger" onclick="confirmarBorrarTodo()">[ BORRAR TODO ]</button>
+        <a href="index.html" style="text-decoration:none;">
+          <button class="topbar-btn">[ HUB ]</button>
+        </a>
       </div>
-
-      <!-- Input -->
-      <div class="chat-input-area">
-        <div class="chat-input-row">
-          <span class="chat-prompt">&gt;_</span>
-          <input
-            type="text"
-            id="chat-input"
-            class="chat-input"
-            placeholder="Escribe tu consulta..."
-            maxlength="500"
-            autocomplete="off"
-          >
-          <button class="chat-send-btn" id="send-btn" onclick="enviar()">ENVIAR</button>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-top:6px;">
-          <span class="chat-hint">// ENTER para enviar · SHIFT+ENTER nueva línea</span>
-          <span class="chat-counter" id="char-counter">0 / 500</span>
-        </div>
-      </div>
-
     </div>
 
-    <a href="index.html" class="volver">⬅ Volver al HUB</a>
-  </section>
-
-  <script>
-    // ── Estado ────────────────────────────────────────────────────
-    const WORKER_URL = 'https://divine-river-2557.ivan-asir2-cdm.workers.dev/';
-    let historial = [];       // { role, content }
-    let enviando  = false;
-
-    // ── Init ──────────────────────────────────────────────────────
-    document.getElementById('ts-init').textContent = horaActual();
-
-    const inputEl   = document.getElementById('chat-input');
-    const sendBtn   = document.getElementById('send-btn');
-    const histEl    = document.getElementById('chat-historial');
-    const typingEl  = document.getElementById('typing-indicator');
-    const counterEl = document.getElementById('char-counter');
-    const statusEl  = document.getElementById('aria-status-text');
-
-    inputEl.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); }
-    });
-    inputEl.addEventListener('input', () => {
-      const len = inputEl.value.length;
-      counterEl.textContent = `${len} / 500`;
-      counterEl.classList.toggle('warning', len > 400);
-    });
-    inputEl.focus();
-
-    // ── Enviar mensaje ────────────────────────────────────────────
-    async function enviar() {
-      const texto = inputEl.value.trim();
-      if (!texto || enviando) return;
-
-      enviando = true;
-      inputEl.disabled = true;
-      sendBtn.disabled = true;
-      statusEl.textContent = 'PROCESANDO...';
-
-      // Añadir burbuja usuario
-      agregarMensaje('usuario', texto);
-      inputEl.value = '';
-      counterEl.textContent = '0 / 500';
-
-      // Guardar en historial
-      historial.push({ role: 'user', content: texto });
-
-      // Mostrar typing
-      mostrarTyping(true);
-
-      try {
-        const res = await fetch(WORKER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mensaje: texto, historial: historial.slice(0, -1) })
-        });
-        const data = await res.json();
-        const respuesta = data.respuesta || '[ERROR] Sin respuesta.';
-
-        mostrarTyping(false);
-        agregarMensaje('aria', respuesta);
-
-        // Guardar respuesta en historial
-        historial.push({ role: 'assistant', content: respuesta });
-
-        // Limitar historial a 20 entradas (10 intercambios) en memoria
-        if (historial.length > 20) historial = historial.slice(-20);
-
-        statusEl.textContent = 'SISTEMA EN LÍNEA';
-
-      } catch (e) {
-        mostrarTyping(false);
-        agregarMensaje('aria', '[ERROR] Fallo de conexión con el sistema. Comprueba tu red e inténtalo de nuevo.');
-        statusEl.textContent = 'ERROR — REINTENTANDO...';
-        setTimeout(() => { statusEl.textContent = 'SISTEMA EN LÍNEA'; }, 3000);
-      }
-
-      enviando = false;
-      inputEl.disabled = false;
-      sendBtn.disabled = false;
-      inputEl.focus();
-    }
-
-    // ── Agregar burbuja al DOM ─────────────────────────────────────
-    function agregarMensaje(rol, texto) {
-      mostrarTyping(false);
-
-      const row = document.createElement('div');
-      row.className = `msg-row ${rol}`;
-
-      const icono = rol === 'aria' ? '🤖' : '👤';
-      const prefijo = rol === 'aria' ? 'ARIA &gt;' : 'USR &gt;';
-
-      row.innerHTML = `
-        <div class="msg-icon">${icono}</div>
-        <div class="msg-burbuja">
-          <span class="msg-prefix">${prefijo}</span>
-          ${escaparHTML(texto)}
-          <span class="msg-timestamp">${horaActual()}</span>
+    <!-- Chat area -->
+    <div class="chat-area" id="chat-area">
+      <div class="empty-state" id="empty-state">
+        <div class="es-icon" style="font-size:0;opacity:0.25;">
+          <img src="data:image/png;base64,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" width="96" height="128" style="image-rendering:pixelated;display:block;" alt="ARIA">
         </div>
-      `;
+        <div class="es-txt">ARIA LISTA</div>
+        <div class="es-sub">// a girl has no name · inicia una conversación</div>
+      </div>
+      <!-- Typing indicator -->
+      <div class="typing-indicator" id="typing-indicator">
+        <div class="msg-icon" style="width:26px;height:28px;border:none;background:none;overflow:visible;">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAADi0lEQVR4nJVUXWhbZRh+vpMsOaeuVFlPuv4gtmw3Nk1sMzOmbq0Z2rCuNYPFZpRNQv0Bb8XrIcxLb8a88AcUJTAEMbZKN1Cb+sNiJA1JOnoR1kahbcyhkNqRc5am5/XiS89pzirDc/V+73me93m+97zvYTqR5BTBAOiAgP/zCP8RP/LRAQiSKKoPtEfiAL0RkKlkbwAIYE2Ecb/XUmO9ak8vZfbDBACS2GIRH/d7Z1N3OWG92hDoaqkDgo5mMvezu7uXJ8z9nrVTfY8Agw/U9zeGOZ1Ozqzt1CRRNF743IPffPrefjsXXr8KIJtP15nQRAagahonj/sH1qt2CxNApai4I9MCBEDnPTJdTEamVU2zoPtOngfQd/J8pai0HT0iQN/drQON7prkmXjMiN8afZ40PXrtxr2FGQD3Fmb6w1EAOgSb7aE7G84BSGJL7uYnANqOHrE47zk9ETrlnU3l+bFpqvYaVuc6AJgobJU2mSgA2CptOgXE72QNvHUkJbFF1Wp+ry967cZWadN0KAruyHQdgt/rO9i2YV4SRUAY8J2JvXv58afkSlHxTE43j+BByjyjalpw+DQR+sPRSlEZmowOnBhxD41MhKbMWXqILASCF8dCV8rJWz8k5vue7H7GHwDwQIcsu2RZ3lZrL41FAsFXeQnTts89aGvreOxwK2Ps+/gXAF44car72NPbaq20sdbZ1UNEjDEARJRL/djZ6zGV00uZqqrN3/6aiM69crkQj6WyaQCtkqOzq8eAEVFpY62z17O0+HOTbcYQCF5UFIUxdjw0Vdup3dd2ADjUvwFw2dLGmv2QgzE0LcmLo2FemB/HQlcK8RgRFVZWHU/0/DT3Fc8v55J8HALBiLXbvLyilPnxkrtjOZcsrKxOXJg6LB4ql8sDvjN8EImoidzeLt/f/ofHkX6XJ/JGMPzyuL8fQGFlldZzvfbNvZuDMWa5M6uqWm4xkU0nPrr920ToEoAPr7+/nPv1mLjNMdl0or1dPkCZiFwu19nRsNc3YmvrMPJ/Jb/7NpVnXZ7Z1N2zo2HGmMvlUhTF/M7uoRHecEPhWfdgce3PzNznPPPa1S9bJcdMPGYgTeWlxQRjIALvt0BI5zPPHe+uFBXSGiNZWFnVAVmWAeTTCcti6Pz/eG542EjdWpjP3fws+Udm9peF+J2szWbqHbBV1oEnHUz4+J233/zgOmAH6cZ6/QtVVHfB0naRnAAAAABJRU5ErkJggg==" width="20" height="28" style="image-rendering:pixelated;display:block;" alt="ARIA"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <span class="typing-text">PROCESANDO...</span>
+      </div>
+    </div>
 
-      // Insertar antes del typing indicator
-      histEl.insertBefore(row, typingEl);
-      histEl.scrollTop = histEl.scrollHeight;
+    <!-- Input -->
+    <div class="chat-input-area">
+      <div class="chat-input-row">
+        <span class="chat-prompt">&gt;_</span>
+        <input
+          type="text"
+          id="chat-input"
+          class="chat-input"
+          placeholder="Escribe tu consulta..."
+          maxlength="500"
+          autocomplete="off"
+          disabled
+        >
+        <button class="chat-send-btn" id="send-btn" onclick="enviar()" disabled>ENVIAR</button>
+      </div>
+      <div class="chat-meta">
+        <span>// ENTER para enviar · conversación activa: <span id="conv-titulo">—</span></span>
+        <span class="chat-counter" id="char-counter">0 / 500</span>
+      </div>
+    </div>
+
+  </div><!-- /aria-main -->
+</div><!-- /aria-root -->
+
+<script>
+// ══════════════════════════════════════════════════
+//  CONSTANTES Y ESTADO
+// ══════════════════════════════════════════════════
+const WORKER_URL   = 'https://divine-river-2557.ivan-asir2-cdm.workers.dev/';
+const MAX_CONVS    = 15;   // máx conversaciones guardadas
+const MAX_MSGS     = 30;   // máx mensajes por conversación
+const MAX_CTX      = 20;   // máx mensajes enviados a la IA
+const LS_KEY       = 'aria_convs';
+
+let convs       = [];   // array de conversaciones guardadas
+let convActual  = null; // id de la conversación activa
+let historialIA = [];   // mensajes enviados a la IA (en memoria)
+let enviando    = false;
+
+// ══════════════════════════════════════════════════
+//  REFERENCIAS DOM
+// ══════════════════════════════════════════════════
+const chatArea   = document.getElementById('chat-area');
+const typingEl   = document.getElementById('typing-indicator');
+const inputEl    = document.getElementById('chat-input');
+const sendBtn    = document.getElementById('send-btn');
+const counterEl  = document.getElementById('char-counter');
+const statusEl   = document.getElementById('aria-status');
+const sbList     = document.getElementById('sb-list');
+const emptyState = document.getElementById('empty-state');
+const convTitulo = document.getElementById('conv-titulo');
+
+// ══════════════════════════════════════════════════
+//  LOCALSTORAGE
+// ══════════════════════════════════════════════════
+function cargarLS() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    convs = raw ? JSON.parse(raw) : [];
+  } catch(e) { convs = []; }
+}
+
+function guardarLS() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(convs));
+    actualizarFooter();
+  } catch(e) {
+    // Storage lleno — eliminar la conversación más antigua
+    if (convs.length > 1) {
+      const idActual = convActual;
+      const masAntigua = convs.filter(c => c.id !== idActual)
+        .sort((a,b) => a.ts - b.ts)[0];
+      if (masAntigua) {
+        convs = convs.filter(c => c.id !== masAntigua.id);
+        guardarLS();
+      }
+    }
+  }
+}
+
+function actualizarFooter() {
+  document.getElementById('sb-count').textContent = convs.length;
+  try {
+    const bytes = new Blob([localStorage.getItem(LS_KEY)||'']).size;
+    document.getElementById('sb-size').textContent =
+      `localStorage: ${(bytes/1024).toFixed(1)} KB`;
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════
+//  GESTIÓN DE CONVERSACIONES
+// ══════════════════════════════════════════════════
+function nuevaConversacion() {
+  // Si hay límite, eliminar la más antigua (que no sea la activa)
+  if (convs.length >= MAX_CONVS) {
+    const masAntigua = [...convs]
+      .filter(c => c.id !== convActual)
+      .sort((a,b) => a.ts - b.ts)[0];
+    if (masAntigua) convs = convs.filter(c => c.id !== masAntigua.id);
+  }
+
+  const id = 'conv_' + Date.now();
+  const conv = {
+    id,
+    titulo: 'Nueva conversación',
+    ts: Date.now(),
+    msgs: []  // { rol, texto, hora }
+  };
+  convs.unshift(conv);
+  guardarLS();
+  cargarConversacion(id);
+  renderSidebar();
+  cerrarSidebarMob();
+}
+
+function cargarConversacion(id) {
+  const conv = convs.find(c => c.id === id);
+  if (!conv) return;
+
+  convActual = id;
+  historialIA = [];
+
+  // Limpiar chat area (excepto typing)
+  Array.from(chatArea.children).forEach(el => {
+    if (!el.classList.contains('typing-indicator') && !el.classList.contains('empty-state')) {
+      el.remove();
+    }
+  });
+  emptyState.style.display = 'none';
+
+  // Renderizar mensajes guardados
+  if (conv.msgs.length === 0) {
+    // Conversación nueva — mostrar bienvenida
+    const sys = document.createElement('div');
+    sys.className = 'msg-sistema';
+    sys.textContent = `// SESIÓN ${conv.id.split('_')[1]} — ARIA v1.0 — RETROTERM.AI //`;
+    chatArea.insertBefore(sys, typingEl);
+
+    agregarMsgDOM('aria', 'Un hombre no tiene nombre. Pero yo sí tengo respuestas.\n\nSoy ARIA, el sistema integrado de RETROTERM.AI. Puedo ayudarte con programación, redes, sistemas o cualquier consulta técnica.\n\n¿Cuáles son tus preguntas?');
+  } else {
+    const sys = document.createElement('div');
+    sys.className = 'msg-sistema';
+    sys.textContent = `// SESIÓN ${conv.id.split('_')[1]} — ARIA v1.0 — RETROTERM.AI //`;
+    chatArea.insertBefore(sys, typingEl);
+
+    conv.msgs.forEach(m => {
+      agregarMsgDOM(m.rol, m.texto, m.hora, false);
+      if (m.rol === 'usuario') historialIA.push({ role:'user',      content: m.texto });
+      else                     historialIA.push({ role:'assistant', content: m.texto });
+    });
+
+    // Limitar historialIA al contexto máximo
+    if (historialIA.length > MAX_CTX) historialIA = historialIA.slice(-MAX_CTX);
+  }
+
+  // Habilitar input
+  inputEl.disabled = false;
+  sendBtn.disabled = false;
+  convTitulo.textContent = conv.titulo;
+  chatArea.scrollTop = chatArea.scrollHeight;
+  inputEl.focus();
+
+  renderSidebar();
+}
+
+function eliminarConversacion(id, e) {
+  e.stopPropagation();
+  convs = convs.filter(c => c.id !== id);
+  guardarLS();
+
+  if (convActual === id) {
+    convActual = null;
+    historialIA = [];
+    // Limpiar chat
+    Array.from(chatArea.children).forEach(el => {
+      if (!el.classList.contains('typing-indicator') && !el.classList.contains('empty-state')) el.remove();
+    });
+    emptyState.style.display = 'flex';
+    inputEl.disabled = true;
+    sendBtn.disabled = true;
+    convTitulo.textContent = '—';
+  }
+
+  renderSidebar();
+}
+
+function confirmarBorrarTodo() {
+  if (!convs.length) return;
+  if (!confirm('¿Borrar todas las conversaciones? Esta acción no se puede deshacer.')) return;
+  convs = [];
+  convActual = null;
+  historialIA = [];
+  guardarLS();
+  Array.from(chatArea.children).forEach(el => {
+    if (!el.classList.contains('typing-indicator') && !el.classList.contains('empty-state')) el.remove();
+  });
+  emptyState.style.display = 'flex';
+  inputEl.disabled = true;
+  sendBtn.disabled = true;
+  convTitulo.textContent = '—';
+  renderSidebar();
+}
+
+// ══════════════════════════════════════════════════
+//  RENDER SIDEBAR
+// ══════════════════════════════════════════════════
+function renderSidebar() {
+  actualizarFooter();
+  if (!convs.length) {
+    sbList.innerHTML = `<div style="padding:16px 12px;font-size:0.62rem;color:#0f2a0f;letter-spacing:1px;line-height:1.8;">
+      Sin conversaciones.<br>Pulsa [ + NUEVA ] para empezar.
+    </div>`;
+    return;
+  }
+  sbList.innerHTML = convs.map(c => `
+    <div class="sb-conv ${c.id === convActual ? 'active' : ''}" onclick="cargarConversacion('${c.id}')">
+      <div class="sb-conv-title">${escHTML(c.titulo)}</div>
+      <div class="sb-conv-meta">
+        <span>${fFecha(c.ts)}</span>
+        <span>${c.msgs.length} msg</span>
+        <span class="sb-conv-del" onclick="eliminarConversacion('${c.id}', event)" title="Eliminar">✕</span>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════
+//  ENVIAR MENSAJE
+// ══════════════════════════════════════════════════
+async function enviar() {
+  const texto = inputEl.value.trim();
+  if (!texto || enviando || !convActual) return;
+
+  enviando = true;
+  inputEl.disabled = true;
+  sendBtn.disabled = true;
+  statusEl.textContent = 'PROCESANDO...';
+
+  // Añadir al DOM
+  agregarMsgDOM('usuario', texto);
+  inputEl.value = '';
+  counterEl.textContent = '0 / 500';
+  counterEl.className = 'chat-counter';
+
+  // Guardar en conversación
+  const conv = convs.find(c => c.id === convActual);
+  if (conv) {
+    conv.msgs.push({ rol:'usuario', texto, hora: horaActual() });
+    // Actualizar título con el primer mensaje del usuario
+    if (conv.msgs.filter(m => m.rol === 'usuario').length === 1) {
+      conv.titulo = texto.slice(0, 38) + (texto.length > 38 ? '…' : '');
+      convTitulo.textContent = conv.titulo;
+    }
+    conv.ts = Date.now();
+    // Límite de mensajes
+    if (conv.msgs.length > MAX_MSGS) conv.msgs = conv.msgs.slice(-MAX_MSGS);
+  }
+
+  // Añadir al contexto IA
+  historialIA.push({ role:'user', content: texto });
+  if (historialIA.length > MAX_CTX) historialIA = historialIA.slice(-MAX_CTX);
+
+  mostrarTyping(true);
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mensaje: texto, historial: historialIA.slice(0,-1) })
+    });
+    const data = await res.json();
+    const respuesta = data.respuesta || '[ERROR] Sin respuesta del sistema.';
+
+    mostrarTyping(false);
+    agregarMsgDOM('aria', respuesta);
+
+    // Guardar respuesta
+    if (conv) {
+      conv.msgs.push({ rol:'aria', texto: respuesta, hora: horaActual() });
+      if (conv.msgs.length > MAX_MSGS) conv.msgs = conv.msgs.slice(-MAX_MSGS);
+      guardarLS();
     }
 
-    // ── Typing indicator ──────────────────────────────────────────
-    function mostrarTyping(visible) {
-      typingEl.classList.toggle('visible', visible);
-      if (visible) histEl.scrollTop = histEl.scrollHeight;
-    }
+    historialIA.push({ role:'assistant', content: respuesta });
+    if (historialIA.length > MAX_CTX) historialIA = historialIA.slice(-MAX_CTX);
 
-    // ── Limpiar chat ──────────────────────────────────────────────
-    function limpiarChat() {
-      historial = [];
-      // Borrar todos los mensajes excepto el sistema y el mensaje inicial
-      const msgs = histEl.querySelectorAll('.msg-row:not(:first-of-type)');
-      // Mantener solo el primer msg-row (bienvenida de ARIA)
-      const todos = histEl.querySelectorAll('.msg-row');
-      todos.forEach((m, i) => { if (i > 0) m.remove(); });
-      mostrarTyping(false);
-      statusEl.textContent = 'SESIÓN REINICIADA';
-      setTimeout(() => { statusEl.textContent = 'SISTEMA EN LÍNEA'; }, 1500);
-      inputEl.focus();
-    }
+    statusEl.textContent = 'SIN NOMBRE · EN LÍNEA';
+    renderSidebar();
 
-    // ── Utilidades ────────────────────────────────────────────────
-    function horaActual() {
-      const d = new Date();
-      return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
-    }
+  } catch(e) {
+    mostrarTyping(false);
+    agregarMsgDOM('aria', '[ERROR] Fallo de conexión con el sistema. Comprueba tu red e inténtalo de nuevo.');
+    statusEl.textContent = 'ERROR DE CONEXIÓN';
+    setTimeout(() => { statusEl.textContent = 'SIN NOMBRE · EN LÍNEA'; }, 3000);
+    if (conv) guardarLS();
+  }
 
-    function escaparHTML(str) {
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\n/g, '<br>');
-    }
-  </script>
+  enviando = false;
+  inputEl.disabled = false;
+  sendBtn.disabled = false;
+  inputEl.focus();
+}
 
+// ══════════════════════════════════════════════════
+//  DOM HELPERS
+// ══════════════════════════════════════════════════
+function agregarMsgDOM(rol, texto, hora, scroll = true) {
+  mostrarTyping(false);
+  const row = document.createElement('div');
+  row.className = `msg-row ${rol}`;
+  const icono = rol === 'aria'
+    ? '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAADi0lEQVR4nJVUXWhbZRh+vpMsOaeuVFlPuv4gtmw3Nk1sMzOmbq0Z2rCuNYPFZpRNQv0Bb8XrIcxLb8a88AcUJTAEMbZKN1Cb+sNiJA1JOnoR1kahbcyhkNqRc5am5/XiS89pzirDc/V+73me93m+97zvYTqR5BTBAOiAgP/zCP8RP/LRAQiSKKoPtEfiAL0RkKlkbwAIYE2Ecb/XUmO9ak8vZfbDBACS2GIRH/d7Z1N3OWG92hDoaqkDgo5mMvezu7uXJ8z9nrVTfY8Agw/U9zeGOZ1Ozqzt1CRRNF743IPffPrefjsXXr8KIJtP15nQRAagahonj/sH1qt2CxNApai4I9MCBEDnPTJdTEamVU2zoPtOngfQd/J8pai0HT0iQN/drQON7prkmXjMiN8afZ40PXrtxr2FGQD3Fmb6w1EAOgSb7aE7G84BSGJL7uYnANqOHrE47zk9ETrlnU3l+bFpqvYaVuc6AJgobJU2mSgA2CptOgXE72QNvHUkJbFF1Wp+ry967cZWadN0KAruyHQdgt/rO9i2YV4SRUAY8J2JvXv58afkSlHxTE43j+BByjyjalpw+DQR+sPRSlEZmowOnBhxD41MhKbMWXqILASCF8dCV8rJWz8k5vue7H7GHwDwQIcsu2RZ3lZrL41FAsFXeQnTts89aGvreOxwK2Ps+/gXAF44car72NPbaq20sdbZ1UNEjDEARJRL/djZ6zGV00uZqqrN3/6aiM69crkQj6WyaQCtkqOzq8eAEVFpY62z17O0+HOTbcYQCF5UFIUxdjw0Vdup3dd2ADjUvwFw2dLGmv2QgzE0LcmLo2FemB/HQlcK8RgRFVZWHU/0/DT3Fc8v55J8HALBiLXbvLyilPnxkrtjOZcsrKxOXJg6LB4ql8sDvjN8EImoidzeLt/f/ofHkX6XJ/JGMPzyuL8fQGFlldZzvfbNvZuDMWa5M6uqWm4xkU0nPrr920ToEoAPr7+/nPv1mLjNMdl0or1dPkCZiFwu19nRsNc3YmvrMPJ/Jb/7NpVnXZ7Z1N2zo2HGmMvlUhTF/M7uoRHecEPhWfdgce3PzNznPPPa1S9bJcdMPGYgTeWlxQRjIALvt0BI5zPPHe+uFBXSGiNZWFnVAVmWAeTTCcti6Pz/eG542EjdWpjP3fws+Udm9peF+J2szWbqHbBV1oEnHUz4+J233/zgOmAH6cZ6/QtVVHfB0naRnAAAAABJRU5ErkJggg==" width="20" height="28" style="image-rendering:pixelated;display:block;" alt="ARIA">'
+    : '👤';
+  const prefijo = rol === 'aria' ? 'ARIA &gt;' : 'USR &gt;';
+  row.innerHTML = `
+    <div class="msg-icon">${icono}</div>
+    <div class="msg-burbuja">
+      <span class="msg-prefix">${prefijo}</span>
+      ${escHTML(texto)}
+      <span class="msg-timestamp">${hora || horaActual()}</span>
+    </div>`;
+  chatArea.insertBefore(row, typingEl);
+  if (scroll) chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function mostrarTyping(v) {
+  typingEl.classList.toggle('visible', v);
+  if (v) chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════
+//  SIDEBAR TOGGLE
+// ══════════════════════════════════════════════════
+let sidebarCollapsed = false;
+function toggleSidebar() {
+  sidebarCollapsed = !sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
+  document.getElementById('sb-toggle').textContent = sidebarCollapsed ? '▶' : '◀';
+}
+function abrirSidebarMob() {
+  document.getElementById('sidebar').classList.add('mob-open');
+  document.getElementById('sb-overlay').classList.add('visible');
+}
+function cerrarSidebarMob() {
+  document.getElementById('sidebar').classList.remove('mob-open');
+  document.getElementById('sb-overlay').classList.remove('visible');
+}
+
+// ══════════════════════════════════════════════════
+//  UTILIDADES
+// ══════════════════════════════════════════════════
+function horaActual() {
+  const d = new Date();
+  return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2,'0')}`;
+}
+
+function fFecha(ts) {
+  const d = new Date(ts);
+  const hoy = new Date();
+  if (d.toDateString() === hoy.toDateString()) return horaActual().slice(0,5);
+  return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}`;
+}
+
+function escHTML(str) {
+  return str
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\n/g,'<br>');
+}
+
+// ══════════════════════════════════════════════════
+//  INPUT EVENTS
+// ══════════════════════════════════════════════════
+inputEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); }
+});
+inputEl.addEventListener('input', () => {
+  const len = inputEl.value.length;
+  counterEl.textContent = `${len} / 500`;
+  counterEl.className = 'chat-counter' + (len > 400 ? ' warn' : '');
+});
+
+// ══════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════
+cargarLS();
+renderSidebar();
+actualizarFooter();
+
+// Si hay conversaciones, cargar la más reciente automáticamente
+if (convs.length > 0) {
+  cargarConversacion(convs[0].id);
+} else {
+  // Sin conversaciones — autocrear una nueva
+  nuevaConversacion();
+}
+</script>
 </body>
 </html>
