@@ -28,7 +28,7 @@
       <a href="editor.html" class="opcion">💻 MODO DESARROLLO</a>
       <a href="asistente.html" class="opcion">🤖 ASISTENTE IA</a>
       <a href="#gaming" class="opcion">🎮 GAMING</a>
-      <a href="#crypto" class="opcion">💰 DeFi</a>
+      <a href="defi.html" class="opcion">💰 DeFi</a>
       <a href="articulos.html" class="opcion">📚 VER ARTÍCULOS</a>
       <a href="red.html" class="opcion">🌐 RED DE PROYECTOS</a>
     </nav>
@@ -154,19 +154,6 @@
   </section>
 
 
-  <!-- ===== DEFI / CRYPTO ===== -->
-  <section id="crypto" class="pantalla seccion">
-    <header class="cabecera">
-      <h2>💰 PRECIOS DE CRIPTOMONEDAS</h2>
-      <p class="subtitulo">Consulta los precios en tiempo real usando CoinGecko API</p>
-    </header>
-
-    <div id="crypto-prices" class="lista-articulos">
-      <p class="text-center">Cargando datos...</p>
-    </div>
-
-    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
-  </section>
 
 
   <!-- ===== SILO ===== -->
@@ -213,13 +200,11 @@
     window.addEventListener('load', () => {
       const hash = location.hash ? location.hash.substring(1) : 'inicio';
       mostrarSeccion(hash);
-      if (hash === 'crypto') obtenerPrecios();
     });
 
     window.addEventListener('hashchange', () => {
       const hash = location.hash.substring(1);
       mostrarSeccion(hash);
-      if (hash === 'crypto') obtenerPrecios();
     });
 
 
@@ -229,26 +214,6 @@
       document.getElementById('gaming-guias').style.display  = tab === 'guias'  ? 'block' : 'none';
       document.querySelectorAll('.gaming-tab').forEach(b => b.classList.remove('activa-tab'));
       event.target.classList.add('activa-tab');
-    }
-
-
-    // ── CoinGecko API (sección DeFi) ─────────────────────────────
-    async function obtenerPrecios() {
-      const contenedor = document.getElementById('crypto-prices');
-      contenedor.innerHTML = '<p class="text-center">Cargando datos...</p>';
-      try {
-        const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,dogecoin,solana&order=market_cap_desc&sparkline=false');
-        const data = await res.json();
-        contenedor.innerHTML = data.map(m =>
-          `<div class="articulo crypto-card">
-            <img src="${m.image}" alt="${m.name}">
-            <span class="crypto-nombre">₿ ${m.name.toUpperCase()}</span>
-            <span>$${m.current_price.toLocaleString()} USD</span>
-          </div>`
-        ).join('');
-      } catch (e) {
-        contenedor.innerHTML = '<p class="text-center error-msg">Error al obtener datos.</p>';
-      }
     }
 
 

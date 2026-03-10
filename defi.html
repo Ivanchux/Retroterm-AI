@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEFI_TERMINAL — RETROTERM.AI</title>
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    :root {
+      --verde: #00ff66; --verde-dim: #66ffb3; --verde-dark: #003300;
+      --rojo: #ff5555; --amber: #ffaa00; --bg: #000; --bg2: #010f01;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--verde); font-family: 'Courier New', monospace; min-height: 100vh; }
+
+    /* TICKER */
+    .ticker-wrap {
+      position: sticky; top: 0; z-index: 200; background: #000;
+      border-bottom: 1px solid var(--verde-dark); overflow: hidden;
+      height: 32px; display: flex; align-items: center;
+    }
+    .ticker-label {
+      flex-shrink: 0; background: var(--verde); color: #000;
+      font-size: 0.65rem; font-weight: bold; letter-spacing: 2px;
+      padding: 0 10px; height: 100%; display: flex; align-items: center;
+    }
+    .ticker-overflow { overflow: hidden; flex: 1; }
+    .ticker-track { display: flex; white-space: nowrap; animation: ticker-scroll 100s linear infinite; }
+    .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+    @keyframes ticker-scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .ticker-item {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 0 16px; font-size: 0.68rem; border-right: 1px solid #0a1a0a; height: 32px;
+    }
+    .tsym { color: var(--verde); font-weight: bold; letter-spacing: 1px; }
+    .tprice { color: #ccc; }
+    .tup { color: var(--verde); } .tdown { color: var(--rojo); }
+
+    /* LAYOUT */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+    /* CABECERA */
+    .dhead {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px; margin-bottom: 20px;
+      padding-bottom: 16px; border-bottom: 1px solid var(--verde-dark);
+    }
+    .dhead h1 { font-size: 1.6rem; letter-spacing: 4px; text-shadow: 0 0 10px var(--verde); }
+    .dhead .sub { font-size: 0.7rem; color: #1a4a2a; letter-spacing: 2px; margin-top: 4px; }
+    .stats-row { display: flex; gap: 20px; flex-wrap: wrap; }
+    .schip { font-size: 0.67rem; letter-spacing: 1px; color: #aaa; line-height: 1.9; }
+    .schip span { color: var(--verde); font-size: 0.82rem; display: block; }
+
+    /* WS STATUS */
+    .wss {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.62rem; letter-spacing: 2px; color: #1a4a2a; margin-bottom: 14px;
+    }
+    .wsdot { width: 7px; height: 7px; border-radius: 50%; background: #1a4a2a; flex-shrink:0; }
+    .wsdot.on  { background: var(--verde); box-shadow: 0 0 6px var(--verde); animation: pdot 2s ease infinite; }
+    .wsdot.err { background: var(--rojo); }
+    @keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* TABS */
+    .tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--verde-dark); flex-wrap: wrap; }
+    .tab {
+      background: none; border: none; border-bottom: 2px solid transparent;
+      color: #1a4a2a; font-family: 'Courier New', monospace; font-size: 0.73rem;
+      letter-spacing: 2px; padding: 8px 14px; cursor: pointer; transition: all 0.2s; margin-bottom: -1px;
+    }
+    .tab:hover { color: var(--verde-dim); }
+    .tab.on { color: var(--verde); border-bottom-color: var(--verde); }
+    .panel { display: none; }
+    .panel.on { display: block; }
+
+    /* TOOLBAR */
+    .tb { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+    .tbsearch {
+      background: var(--bg2); border: 1px solid var(--verde-dark); color: var(--verde);
+      font-family: 'Courier New', monospace; font-size: 0.78rem; padding: 7px 12px;
+      flex: 1; min-width: 140px; outline: none; transition: border-color 0.2s;
+    }
+    .tbsearch:focus { border-color: var(--verde); }
+    .tbsearch::placeholder { color: #1a4a2a; }
+    .tbtn {
+      background: none; border: 1px solid var(--verde-dark); color: #1a4a2a;
+      font-family: 'Courier New', monospace; font-size: 0.67rem; letter-spacing: 1px;
+      padding: 7px 11px; cursor: pointer; transition: all 0.2s;
+    }
+    .tbtn:hover, .tbtn.on { border-color: var(--verde); color: var(--verde); }
+    .tbtn.ml { margin-left: auto; }
+
+    /* TABLA */
+    .twrap { overflow-x: auto; }
+    .mtbl { width: 100%; border-collapse: collapse; font-size: 0.77rem; }
+    .mtbl th {
+      color: #1a4a2a; font-size: 0.63rem; letter-spacing: 2px; padding: 8px 10px;
+      text-align: right; border-bottom: 1px solid var(--verde-dark);
+      cursor: pointer; white-space: nowrap; user-select: none;
+    }
+    .mtbl th:first-child, .mtbl th:nth-child(2) { text-align: left; }
+    .mtbl th:hover { color: var(--verde); }
+    .mtbl td { padding: 9px 10px; border-bottom: 1px solid #050f05; text-align: right; white-space: nowrap; }
+    .mtbl td:first-child, .mtbl td:nth-child(2) { text-align: left; }
+    .mtbl tr { cursor: pointer; transition: background 0.12s; }
+    .mtbl tr:hover td { background: rgba(0,255,102,0.04); }
+    .crank { color: #1a4a2a; font-size: 0.68rem; min-width: 26px; display: inline-block; }
+    .cinfo { display: flex; align-items: center; gap: 9px; }
+    .cicon { width: 22px; height: 22px; border-radius: 50%; }
+    .cname { color: var(--verde); font-weight: bold; font-size: 0.8rem; }
+    .csym  { color: #333; font-size: 0.65rem; display: block; }
+    .pcell { color: #e0e0e0; font-size: 0.82rem; transition: color 0.4s; }
+    .fup   { color: var(--verde) !important; }
+    .fdown { color: var(--rojo) !important; }
+    .capcell, .volcell { color: #777; font-size: 0.71rem; }
+    .up { color: var(--verde); } .down { color: var(--rojo); }
+    .spark { font-size: 0.65rem; letter-spacing: -1px; }
+    .cargando { color: #1a4a2a; font-size: 0.76rem; letter-spacing: 2px; padding: 20px 0; }
+    .errmsg   { color: var(--rojo); font-size: 0.73rem; padding: 10px 0; }
+
+    /* MODAL */
+    #cmodal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.96); z-index: 9000;
+      overflow-y: auto; padding: 20px; align-items: flex-start; justify-content: center;
+    }
+    #cmodal.on { display: flex; }
+    .mbox {
+      max-width: 700px; width: 100%; border: 2px solid var(--verde);
+      background: #000; padding: 26px; box-shadow: 0 0 40px rgba(0,255,102,0.1);
+      margin: auto; animation: mIn 0.18s ease;
+    }
+    @keyframes mIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+    .mtop {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--verde-dark); gap: 12px;
+    }
+    .mnomwrap { display: flex; align-items: center; gap: 12px; }
+    .mnomwrap img { width: 38px; height: 38px; border-radius: 50%; }
+    .mnomwrap h2 { font-size: 1.15rem; letter-spacing: 2px; color: var(--verde); text-shadow: 0 0 8px var(--verde); }
+    .mnomwrap .msym { font-size: 0.7rem; color: #333; letter-spacing: 2px; }
+    .mcerrar {
+      background: none; border: 1px solid #1a2a1a; color: #444;
+      font-family: 'Courier New', monospace; font-size: 0.72rem;
+      padding: 6px 12px; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .mcerrar:hover { border-color: var(--rojo); color: var(--rojo); }
+    .mprecio { font-size: 2rem; color: var(--verde); text-shadow: 0 0 10px var(--verde); margin-bottom: 4px; }
+    .mstats { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 9px; margin: 16px 0; }
+    .mst { border: 1px solid var(--verde-dark); background: var(--bg2); padding: 9px 13px; }
+    .mst-l { font-size: 0.6rem; color: #1a4a2a; letter-spacing: 2px; margin-bottom: 3px; }
+    .mst-v { font-size: 0.86rem; color: #ccc; }
+    .mdesc { font-size: 0.77rem; color: #888; line-height: 1.9; margin: 12px 0; border-left: 2px solid var(--verde-dark); padding-left: 13px; }
+    .mntit { font-size: 0.75rem; letter-spacing: 2px; color: var(--verde-dim); margin: 16px 0 10px; }
+    .mnitem { border-bottom: 1px solid #050f05; padding: 9px 0; text-decoration: none; display: block; transition: padding-left 0.15s; }
+    .mnitem:hover { padding-left: 6px; }
+    .mnitem:last-child { border-bottom: none; }
+    .mntitulo { font-size: 0.77rem; color: var(--verde-dim); line-height: 1.5; margin-bottom: 3px; }
+    .mnmeta   { font-size: 0.61rem; color: #333; letter-spacing: 1px; }
+
+    /* DOMINANCIA */
+    .domgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; margin-bottom: 16px; }
+    .domcard { border: 1px solid var(--verde-dark); background: var(--bg2); padding: 14px; }
+    .domhead { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .domsym  { font-size: 0.75rem; letter-spacing: 2px; color: var(--verde-dim); }
+    .dompct  { font-size: 1.3rem; color: var(--verde); text-shadow: 0 0 8px var(--verde); }
+    .dombar  { background: #0a1a0a; height: 6px; width: 100%; }
+    .domfill { height: 100%; background: var(--verde); box-shadow: 0 0 5px var(--verde); transition: width 1s ease; }
+    .domsub  { font-size: 0.63rem; color: #1a4a2a; margin-top: 5px; }
+    .fgcard  { border: 1px solid var(--verde-dark); background: var(--bg2); padding: 20px; text-align: center; margin-top: 16px; }
+    .fgtit   { font-size: 0.68rem; letter-spacing: 3px; color: #1a4a2a; margin-bottom: 8px; }
+    .fgnum   { font-size: 3rem; font-weight: bold; text-shadow: 0 0 14px currentColor; line-height: 1; margin: 8px 0; }
+    .fglabel { font-size: 0.82rem; letter-spacing: 3px; }
+    .fgbarra { display: flex; height: 5px; margin: 14px 0 4px; border-radius: 3px; overflow: hidden; }
+    .fgbarra div { flex: 1; }
+    .fgneedle { width: 10px; height: 10px; background: #fff; border-radius: 50%; margin: 0 auto; position: relative; top: -3px; box-shadow: 0 0 6px #fff; transition: margin-left 1s ease; }
+    .fghist   { display: flex; justify-content: space-between; font-size: 0.63rem; color: #333; margin-top: 10px; }
+    .fgsub    { font-size: 0.62rem; color: #1a4a2a; margin-top: 8px; letter-spacing: 1px; }
+
+    /* NOTICIAS */
+    .nhead    { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+    .nhead h3 { font-size: 0.82rem; letter-spacing: 3px; color: var(--verde); }
+    .nfiltros { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .ngrid    { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 12px; }
+    .ncard {
+      border: 1px solid var(--verde-dark); background: var(--bg2); padding: 14px;
+      text-decoration: none; display: block; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .ncard:hover { border-color: var(--verde); box-shadow: 0 0 10px rgba(0,255,102,0.08); }
+    .nfuente { font-size: 0.6rem; color: #1a4a2a; letter-spacing: 2px; margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .ntitulo { font-size: 0.8rem; color: var(--verde-dim); line-height: 1.6; margin-bottom: 6px; }
+    .ndesc   { font-size: 0.71rem; color: #555; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .nimg    { width: 100%; height: 120px; object-fit: cover; margin-bottom: 10px; filter: grayscale(50%) brightness(0.7); }
+
+    /* GLOSARIO */
+    .gsearch {
+      width: 100%; background: var(--bg2); border: 1px solid var(--verde-dark);
+      color: var(--verde); font-family: 'Courier New', monospace; font-size: 0.8rem;
+      padding: 10px 14px; outline: none; margin-bottom: 14px; transition: border-color 0.2s;
+    }
+    .gsearch:focus { border-color: var(--verde); }
+    .gsearch::placeholder { color: #1a4a2a; }
+    .ggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 10px; }
+    .gitem { border: 1px solid var(--verde-dark); background: var(--bg2); padding: 13px; transition: border-color 0.2s; }
+    .gitem:hover { border-color: var(--verde); }
+    .gterm { color: var(--verde); font-size: 0.83rem; letter-spacing: 1px; margin-bottom: 5px; }
+    .gdef  { font-size: 0.73rem; color: #888; line-height: 1.7; }
+
+    .live { font-size: 0.6rem; color: var(--rojo); letter-spacing: 1px; animation: pdot 1.5s ease infinite; }
+
+    /* FOOTER */
+    .footer {
+      margin-top: 30px; padding-top: 16px; border-top: 1px solid var(--verde-dark);
+      text-align: center; font-size: 0.66rem; color: #1a4a2a; letter-spacing: 1px; line-height: 2.2;
+    }
+    .footer a { color: var(--verde); text-decoration: none; }
+    .footer a:hover { color: var(--verde-dim); }
+
+    @media (max-width: 600px) {
+      .dhead { flex-direction: column; }
+      .mbox  { padding: 16px; }
+      .mprecio { font-size: 1.5rem; }
+      .ngrid, .ggrid { grid-template-columns: 1fr; }
+      .mtbl th:nth-child(5), .mtbl td:nth-child(5),
+      .mtbl th:nth-child(6), .mtbl td:nth-child(6) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">LIVE</div>
+  <div class="ticker-overflow">
+    <div class="ticker-track" id="ticker-track">
+      <span class="ticker-item" style="color:#1a4a2a;font-size:0.68rem;letter-spacing:1px;">Conectando a Binance WebSocket...</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="dhead">
+    <div>
+      <h1>₿ DEFI_TERMINAL</h1>
+      <p class="sub">// MERCADOS GLOBALES EN TIEMPO REAL — RETROTERM.AI <span class="live">● LIVE</span></p>
+    </div>
+    <div class="stats-row">
+      <div class="schip">CAP TOTAL<span id="s-cap">—</span></div>
+      <div class="schip">VOLUMEN 24H<span id="s-vol">—</span></div>
+      <div class="schip">MONEDAS<span id="s-coins">—</span></div>
+      <div class="schip">DOM BTC<span id="s-btc">—</span></div>
+    </div>
+  </div>
+
+  <div class="wss"><div class="wsdot" id="wsdot"></div><span id="wslabel">Conectando...</span></div>
+
+  <div class="tabs">
+    <button class="tab on"  onclick="goTab('mercado',this)">📊 MERCADO</button>
+    <button class="tab"     onclick="goTab('dominancia',this)">🥧 DOMINANCIA</button>
+    <button class="tab"     onclick="goTab('noticias',this)">📰 NOTICIAS</button>
+    <button class="tab"     onclick="goTab('glosario',this)">📖 GLOSARIO</button>
+  </div>
+
+  <!-- MERCADO -->
+  <div id="p-mercado" class="panel on">
+    <div class="tb">
+      <input type="text" class="tbsearch" id="buscar" placeholder="> Buscar moneda..." oninput="renderTabla()">
+      <button class="tbtn on"  onclick="setCat('all',this)">TODO</button>
+      <button class="tbtn"     onclick="setCat('l1',this)">L1</button>
+      <button class="tbtn"     onclick="setCat('l2',this)">L2</button>
+      <button class="tbtn"     onclick="setCat('defi',this)">DeFi</button>
+      <button class="tbtn"     onclick="setCat('meme',this)">MEME</button>
+      <button class="tbtn"     onclick="setCat('stables',this)">STABLE</button>
+    </div>
+    <div class="twrap">
+      <table class="mtbl">
+        <thead><tr>
+          <th onclick="sortBy('rank')"># ⇅</th>
+          <th onclick="sortBy('name')">MONEDA ⇅</th>
+          <th onclick="sortBy('price')">PRECIO ⇅</th>
+          <th onclick="sortBy('change24h')">24H % ⇅</th>
+          <th onclick="sortBy('cap')">CAPITALIZACIÓN ⇅</th>
+          <th onclick="sortBy('vol')">VOLUMEN 24H ⇅</th>
+          <th>TENDENCIA</th>
+        </tr></thead>
+        <tbody id="tbody"><tr><td colspan="7" class="cargando" style="text-align:center;padding:30px;">Conectando a mercados...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DOMINANCIA -->
+  <div id="p-dominancia" class="panel">
+    <div class="domgrid" id="domgrid"><div class="cargando">Cargando dominancia...</div></div>
+    <div id="fgwrap"></div>
+  </div>
+
+  <!-- NOTICIAS -->
+  <div id="p-noticias" class="panel">
+    <div class="nhead">
+      <h3>📰 NOTICIAS CRYPTO <span class="live">● LIVE</span></h3>
+      <button class="tbtn" onclick="cargarNoticias()">↺ ACTUALIZAR</button>
+    </div>
+    <div class="nfiltros" id="nfiltros">
+      <button class="tbtn on" onclick="setFuente('todas',this)">TODAS</button>
+      <button class="tbtn"    onclick="setFuente('coindesk',this)">COINDESK</button>
+      <button class="tbtn"    onclick="setFuente('cointelegraph',this)">COINTELEGRAPH</button>
+      <button class="tbtn"    onclick="setFuente('decrypt',this)">DECRYPT</button>
+    </div>
+    <div class="ngrid" id="ngrid"><div class="cargando">Cargando noticias...</div></div>
+  </div>
+
+  <!-- GLOSARIO -->
+  <div id="p-glosario" class="panel">
+    <input type="text" class="gsearch" placeholder="> Buscar término DeFi..." oninput="filtrarG(this.value)">
+    <div class="ggrid" id="ggrid"></div>
+  </div>
+
+  <div class="footer">
+    <a href="index.html">⬅ Volver al HUB</a> · Precios: Binance WebSocket · Meta: CoinGecko API · Noticias: CoinDesk · CoinTelegraph · Decrypt (RSS)<br>
+    Los precios son orientativos. RETROTERM.AI no ofrece asesoramiento financiero de ningún tipo.<br>
+    RETROTERM.AI v0.2 © 2025
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="cmodal">
+  <div class="mbox">
+    <div class="mtop">
+      <div class="mnomwrap">
+        <img id="micon" src="" alt="">
+        <div><h2 id="mnom"></h2><div class="msym" id="msym"></div></div>
+      </div>
+      <button class="mcerrar" onclick="cerrar()">[ × CERRAR ]</button>
+    </div>
+    <div class="mprecio" id="mprec"></div>
+    <div id="mcambio" style="font-size:0.83rem;margin-bottom:12px;"></div>
+    <div class="mstats" id="mstats"></div>
+    <div class="mdesc"  id="mdesc"></div>
+    <div class="mntit">// NOTICIAS RELACIONADAS</div>
+    <div id="mnots"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  TOP 50 — Binance pairs + CoinGecko IDs
+// ═══════════════════════════════════════════
+const COINS = [
+  {sym:'BTC',  name:'Bitcoin',          cg:'bitcoin',                    rank:1,  cat:'l1'},
+  {sym:'ETH',  name:'Ethereum',         cg:'ethereum',                   rank:2,  cat:'l1'},
+  {sym:'BNB',  name:'BNB',              cg:'binancecoin',                rank:3,  cat:'l1'},
+  {sym:'SOL',  name:'Solana',           cg:'solana',                     rank:4,  cat:'l1'},
+  {sym:'XRP',  name:'XRP',              cg:'ripple',                     rank:5,  cat:'l1'},
+  {sym:'DOGE', name:'Dogecoin',         cg:'dogecoin',                   rank:6,  cat:'meme'},
+  {sym:'ADA',  name:'Cardano',          cg:'cardano',                    rank:7,  cat:'l1'},
+  {sym:'AVAX', name:'Avalanche',        cg:'avalanche-2',                rank:8,  cat:'l1'},
+  {sym:'TRX',  name:'TRON',             cg:'tron',                       rank:9,  cat:'l1'},
+  {sym:'DOT',  name:'Polkadot',         cg:'polkadot',                   rank:10, cat:'l1'},
+  {sym:'LINK', name:'Chainlink',        cg:'chainlink',                  rank:11, cat:'defi'},
+  {sym:'MATIC',name:'Polygon',          cg:'matic-network',              rank:12, cat:'l2'},
+  {sym:'SHIB', name:'Shiba Inu',        cg:'shiba-inu',                  rank:13, cat:'meme'},
+  {sym:'UNI',  name:'Uniswap',          cg:'uniswap',                    rank:14, cat:'defi'},
+  {sym:'LTC',  name:'Litecoin',         cg:'litecoin',                   rank:15, cat:'l1'},
+  {sym:'NEAR', name:'NEAR Protocol',    cg:'near',                       rank:16, cat:'l1'},
+  {sym:'ATOM', name:'Cosmos',           cg:'cosmos',                     rank:17, cat:'l1'},
+  {sym:'XLM',  name:'Stellar',          cg:'stellar',                    rank:18, cat:'l1'},
+  {sym:'XMR',  name:'Monero',           cg:'monero',                     rank:19, cat:'l1'},
+  {sym:'AAVE', name:'Aave',             cg:'aave',                       rank:20, cat:'defi'},
+  {sym:'ARB',  name:'Arbitrum',         cg:'arbitrum',                   rank:21, cat:'l2'},
+  {sym:'OP',   name:'Optimism',         cg:'optimism',                   rank:22, cat:'l2'},
+  {sym:'MKR',  name:'Maker',            cg:'maker',                      rank:23, cat:'defi'},
+  {sym:'GRT',  name:'The Graph',        cg:'the-graph',                  rank:24, cat:'defi'},
+  {sym:'ALGO', name:'Algorand',         cg:'algorand',                   rank:25, cat:'l1'},
+  {sym:'VET',  name:'VeChain',          cg:'vechain',                    rank:26, cat:'l1'},
+  {sym:'FIL',  name:'Filecoin',         cg:'filecoin',                   rank:27, cat:'l1'},
+  {sym:'APT',  name:'Aptos',            cg:'aptos',                      rank:28, cat:'l1'},
+  {sym:'SUI',  name:'Sui',              cg:'sui',                        rank:29, cat:'l1'},
+  {sym:'INJ',  name:'Injective',        cg:'injective-protocol',         rank:30, cat:'defi'},
+  {sym:'RUNE', name:'THORChain',        cg:'thorchain',                  rank:31, cat:'defi'},
+  {sym:'CRV',  name:'Curve DAO',        cg:'curve-dao-token',            rank:32, cat:'defi'},
+  {sym:'SNX',  name:'Synthetix',        cg:'havven',                     rank:33, cat:'defi'},
+  {sym:'COMP', name:'Compound',         cg:'compound-governance-token',  rank:34, cat:'defi'},
+  {sym:'1INCH',name:'1inch',            cg:'1inch',                      rank:35, cat:'defi'},
+  {sym:'SAND', name:'The Sandbox',      cg:'the-sandbox',                rank:36, cat:'l1'},
+  {sym:'MANA', name:'Decentraland',     cg:'decentraland',               rank:37, cat:'l1'},
+  {sym:'AXS',  name:'Axie Infinity',    cg:'axie-infinity',              rank:38, cat:'l1'},
+  {sym:'FLOKI',name:'Floki',            cg:'floki',                      rank:39, cat:'meme'},
+  {sym:'PEPE', name:'Pepe',             cg:'pepe',                       rank:40, cat:'meme'},
+  {sym:'WIF',  name:'Dogwifhat',        cg:'dogwifcoin',                 rank:41, cat:'meme'},
+  {sym:'BONK', name:'Bonk',             cg:'bonk',                       rank:42, cat:'meme'},
+  {sym:'IMX',  name:'Immutable X',      cg:'immutable-x',                rank:43, cat:'l2'},
+  {sym:'LRC',  name:'Loopring',         cg:'loopring',                   rank:44, cat:'l2'},
+  {sym:'STX',  name:'Stacks',           cg:'blockstack',                 rank:45, cat:'l2'},
+  {sym:'FTM',  name:'Fantom',           cg:'fantom',                     rank:46, cat:'l1'},
+  {sym:'HBAR', name:'Hedera',           cg:'hedera-hashgraph',           rank:47, cat:'l1'},
+  {sym:'ICP',  name:'Internet Computer',cg:'internet-computer',          rank:48, cat:'l1'},
+  {sym:'USDT', name:'Tether',           cg:'tether',                     rank:49, cat:'stables'},
+  {sym:'USDC', name:'USD Coin',         cg:'usd-coin',                   rank:50, cat:'stables'},
+];
+
+// Mapa de datos
+const D = {};
+COINS.forEach(c => { D[c.sym] = {...c, price:null, change24h:null, cap:null, vol:null, high24h:null, low24h:null, supply:null, icon:null}; });
+
+// ═══════════════════════════════════════════
+//  UTILIDADES
+// ═══════════════════════════════════════════
+function fUSD(n) {
+  if (n===null||n===undefined) return '—';
+  if (n>=1e12) return '$'+(n/1e12).toFixed(2)+'T';
+  if (n>=1e9)  return '$'+(n/1e9).toFixed(2)+'B';
+  if (n>=1e6)  return '$'+(n/1e6).toFixed(2)+'M';
+  if (n>=1)    return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return '$'+n.toFixed(6);
+}
+function spark(pct) {
+  if (pct===null) return '<span style="color:#1a1a1a">— — —</span>';
+  const c=['▁','▂','▃','▄','▅','▆','▇','█'], col=pct>=0?'var(--verde)':'var(--rojo)';
+  let s=''; for(let i=0;i<8;i++) s+=c[Math.floor(Math.random()*c.length)];
+  return `<span style="color:${col}">${s}</span>`;
+}
+function tRel(ds) {
+  const d=Math.floor((Date.now()-new Date(ds))/1000);
+  if(d<60) return `hace ${d}s`;
+  if(d<3600) return `hace ${Math.floor(d/60)}min`;
+  if(d<86400) return `hace ${Math.floor(d/3600)}h`;
+  return `hace ${Math.floor(d/86400)}d`;
+}
+
+// ═══════════════════════════════════════════
+//  BINANCE WEBSOCKET
+// ═══════════════════════════════════════════
+let ws=null, wsRec=false;
+let tickerPending=false;
+
+function wsConnect() {
+  const pairs = COINS.filter(c=>!['USDT','USDC'].includes(c.sym))
+    .map(c=>`${c.sym.toLowerCase()}usdt@ticker`).join('/');
+  ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${pairs}`);
+
+  ws.onopen = () => {
+    document.getElementById('wsdot').className='wsdot on';
+    document.getElementById('wslabel').textContent='Binance WebSocket · Actualizando en tiempo real';
+    wsRec=false;
+  };
+  ws.onmessage = (e) => {
+    try {
+      const d = JSON.parse(e.data).data;
+      if (!d) return;
+      const sym = d.s.replace('USDT','');
+      if (!D[sym]) return;
+      const prev = D[sym].price;
+      D[sym].price    = parseFloat(d.c);
+      D[sym].change24h = parseFloat(d.P);
+      D[sym].high24h  = parseFloat(d.h);
+      D[sym].low24h   = parseFloat(d.l);
+      D[sym].vol      = parseFloat(d.q);
+      // Flash en celda
+      if (prev!==null && prev!==D[sym].price) {
+        const el=document.getElementById('p-'+sym);
+        if(el){ const cls=D[sym].price>prev?'fup':'fdown'; el.classList.add(cls); setTimeout(()=>el.classList.remove(cls),600); }
+      }
+      // Actualizar modal abierto
+      if (modalOpen===sym) document.getElementById('mprec').textContent=fUSD(D[sym].price);
+      // Ticker throttled
+      if (!tickerPending) { tickerPending=true; setTimeout(renderTicker,3000); }
+    } catch(err) {}
+  };
+  ws.onerror = () => { document.getElementById('wsdot').className='wsdot err'; document.getElementById('wslabel').textContent='Error WebSocket'; };
+  ws.onclose = () => {
+    document.getElementById('wsdot').className='wsdot';
+    document.getElementById('wslabel').textContent='Reconectando...';
+    if (!wsRec) { wsRec=true; setTimeout(wsConnect,4000); }
+  };
+}
+
+// ═══════════════════════════════════════════
+//  COINGECKO — meta datos
+// ═══════════════════════════════════════════
+async function cgMeta() {
+  try {
+    const ids = COINS.map(c=>c.cg).join(',');
+    const r = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=50&page=1&sparkline=false`);
+    if (!r.ok) return;
+    const data = await r.json();
+    data.forEach(d => {
+      const coin = COINS.find(c=>c.cg===d.id);
+      if (!coin) return;
+      D[coin.sym].cap    = d.market_cap;
+      D[coin.sym].supply = d.circulating_supply;
+      D[coin.sym].rank   = d.market_cap_rank || coin.rank;
+      D[coin.sym].icon   = d.image;
+      if (D[coin.sym].price===null) {
+        D[coin.sym].price    = d.current_price;
+        D[coin.sym].change24h = d.price_change_percentage_24h;
+        D[coin.sym].high24h  = d.high_24h;
+        D[coin.sym].low24h   = d.low_24h;
+        D[coin.sym].vol      = d.total_volume;
+      }
+    });
+    renderTabla();
+  } catch(e) {}
+}
+
+async function cgGlobal() {
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/global');
+    if (!r.ok) return;
+    const d = (await r.json()).data;
+    document.getElementById('s-cap').textContent   = fUSD(d.total_market_cap.usd);
+    document.getElementById('s-vol').textContent   = fUSD(d.total_volume.usd);
+    document.getElementById('s-coins').textContent = d.active_cryptocurrencies.toLocaleString();
+    document.getElementById('s-btc').textContent   = d.market_cap_percentage.btc.toFixed(1)+'%';
+    window._gdata = d;
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+//  TICKER
+// ═══════════════════════════════════════════
+function renderTicker() {
+  tickerPending=false;
+  const items = COINS.filter(c=>D[c.sym].price!==null).map(c=>{
+    const m=D[c.sym], cls=m.change24h>=0?'tup':'tdown', s=m.change24h>=0?'▲':'▼';
+    return `<span class="ticker-item"><span class="tsym">${c.sym}</span><span class="tprice">${fUSD(m.price)}</span><span class="${cls}">${s}${Math.abs(m.change24h||0).toFixed(2)}%</span></span>`;
+  }).join('');
+  if (!items) return;
+  document.getElementById('ticker-track').innerHTML = items+items;
+}
+
+// ═══════════════════════════════════════════
+//  TABLA
+// ═══════════════════════════════════════════
+let sortCol='rank', sortAsc=true, catActual='all';
+
+function renderTabla() {
+  let rows = COINS.map(c=>({...c,...D[c.sym]}));
+  if (catActual!=='all') rows=rows.filter(c=>c.cat===catActual);
+  const q=(document.getElementById('buscar')?.value||'').toLowerCase();
+  if (q) rows=rows.filter(c=>c.name.toLowerCase().includes(q)||c.sym.toLowerCase().includes(q));
+  rows.sort((a,b)=>{
+    let va=a[sortCol]??9999, vb=b[sortCol]??9999;
+    if(typeof va==='string') return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
+    return sortAsc?va-vb:vb-va;
+  });
+  const tbody=document.getElementById('tbody');
+  if (!rows.length){ tbody.innerHTML=`<tr><td colspan="7" class="cargando" style="text-align:center;padding:24px;">Sin resultados.</td></tr>`; return; }
+  tbody.innerHTML=rows.map((c,i)=>{
+    const ch=c.change24h, cls=ch>=0?'up':'down', s=ch>=0?'▲':'▼';
+    const ico=c.icon?`<img class="cicon" src="${c.icon}" alt="${c.sym}" onerror="this.style.display='none'">`:`<span style="color:var(--verde)">◈</span>`;
+    return `<tr onclick="abrirModal('${c.sym}')">
+      <td><span class="crank">${c.rank||i+1}</span></td>
+      <td><div class="cinfo">${ico}<div><span class="cname">${c.name}</span><span class="csym">${c.sym}</span></div></div></td>
+      <td class="pcell" id="p-${c.sym}">${c.price!==null?fUSD(c.price):'<span style="color:#1a4a2a">—</span>'}</td>
+      <td class="${cls}">${ch!==null?s+' '+Math.abs(ch).toFixed(2)+'%':'—'}</td>
+      <td class="capcell">${fUSD(c.cap)}</td>
+      <td class="volcell">${fUSD(c.vol)}</td>
+      <td class="spark">${spark(ch)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function setCat(cat,btn) {
+  catActual=cat;
+  document.querySelectorAll('.tb .tbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTabla();
+}
+function sortBy(col) {
+  if(sortCol===col) sortAsc=!sortAsc; else {sortCol=col; sortAsc=col==='rank';}
+  renderTabla();
+}
+
+// ═══════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════
+let modalOpen=null;
+function abrirModal(sym) {
+  const c=D[sym]; if(!c) return;
+  modalOpen=sym;
+  document.getElementById('micon').src=c.icon||'';
+  document.getElementById('mnom').textContent=c.name;
+  document.getElementById('msym').textContent=sym;
+  document.getElementById('mprec').textContent=fUSD(c.price);
+  const ch=c.change24h, el=document.getElementById('mcambio');
+  if(ch!==null){el.textContent=(ch>=0?'▲ +':'▼ ')+ch.toFixed(2)+'% últimas 24h'; el.style.color=ch>=0?'var(--verde)':'var(--rojo)';}
+  document.getElementById('mstats').innerHTML=`
+    <div class="mst"><div class="mst-l">CAP. MERCADO</div><div class="mst-v">${fUSD(c.cap)}</div></div>
+    <div class="mst"><div class="mst-l">VOLUMEN 24H</div><div class="mst-v">${fUSD(c.vol)}</div></div>
+    <div class="mst"><div class="mst-l">MÁX 24H</div><div class="mst-v">${fUSD(c.high24h)}</div></div>
+    <div class="mst"><div class="mst-l">MÍN 24H</div><div class="mst-v">${fUSD(c.low24h)}</div></div>
+    <div class="mst"><div class="mst-l">SUMINISTRO</div><div class="mst-v">${c.supply?Math.round(c.supply).toLocaleString():'—'}</div></div>
+    <div class="mst"><div class="mst-l">RANKING</div><div class="mst-v">#${c.rank||'—'}</div></div>`;
+  document.getElementById('mdesc').textContent=DESCS[sym]||`${c.name} (${sym}) es una criptomoneda activa en mercados globales.`;
+  document.getElementById('cmodal').classList.add('on');
+  document.getElementById('cmodal').scrollTop=0;
+  cargarNoticiasModal(sym, c.name);
+}
+function cerrar() { document.getElementById('cmodal').classList.remove('on'); modalOpen=null; }
+document.getElementById('cmodal').addEventListener('click',e=>{ if(e.target===document.getElementById('cmodal')) cerrar(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') cerrar(); });
+
+async function cargarNoticiasModal(sym, nombre) {
+  const el=document.getElementById('mnots');
+
+  // Si ya tenemos noticias cargadas en memoria, filtrar directamente sin nueva petición
+  if (allNots.length) {
+    mostrarNoticiasModal(el, sym, nombre, allNots);
+    return;
+  }
+
+  // Si no hay noticias aún, cargar en background y mostrar al terminar
+  el.innerHTML='<div class="cargando">Buscando noticias...</div>';
+  try {
+    const ps = Object.entries(RSS).map(async([fuente,url])=>{
+      try {
+        const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=10`);
+        const d=await r.json();
+        if(d.status!=='ok') return [];
+        return (d.items||[]).map(n=>({...n,fuente}));
+      } catch(e){return [];}
+    });
+    const res=await Promise.all(ps);
+    allNots=res.flat().sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+    mostrarNoticiasModal(el, sym, nombre, allNots);
+  } catch(e) { el.innerHTML='<div class="errmsg">No se pudieron cargar noticias.</div>'; }
+}
+
+function mostrarNoticiasModal(el, sym, nombre, noticias) {
+  const RNAMES={coindesk:'CoinDesk',cointelegraph:'CoinTelegraph',decrypt:'Decrypt'};
+  const q1=sym.toLowerCase(), q2=nombre.toLowerCase();
+  const filtradas=noticias.filter(n=>
+    n.title.toLowerCase().includes(q1)||n.title.toLowerCase().includes(q2)
+  ).slice(0,5);
+  const show=filtradas.length?filtradas:noticias.slice(0,4);
+  if(!show.length){ el.innerHTML='<div class="errmsg">Sin noticias disponibles.</div>'; return; }
+  el.innerHTML=show.map(n=>`
+    <a href="${n.link}" target="_blank" rel="noopener" class="mnitem">
+      <div class="mntitulo">${n.title}</div>
+      <div class="mnmeta">${RNAMES[n.fuente]||n.fuente} · ${tRel(n.pubDate)}</div>
+    </a>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  DOMINANCIA + FEAR & GREED
+// ═══════════════════════════════════════════
+async function cargarDominancia() {
+  if (!window._gdata) {
+    document.getElementById('domgrid').innerHTML='<div class="cargando">Cargando...</div>';
+    await cgGlobal();
+  }
+  if (window._gdata) renderDom(window._gdata);
+  cargarFG();
+}
+
+function renderDom(d) {
+  const p=d.market_cap_percentage;
+  const top=['btc','eth','bnb','sol','xrp','usdt','doge','ada','avax','trx'];
+  document.getElementById('domgrid').innerHTML=top.filter(k=>p[k]).map(k=>{
+    const pct=p[k].toFixed(2);
+    return `<div class="domcard">
+      <div class="domhead"><span class="domsym">${k.toUpperCase()}</span><span class="dompct">${pct}%</span></div>
+      <div class="dombar"><div class="domfill" style="width:${Math.min(pct*2,100)}%"></div></div>
+      <div class="domsub">Dominancia del mercado global</div>
+    </div>`;
+  }).join('');
+}
+
+async function cargarFG() {
+  try {
+    const r=await fetch('https://api.alternative.me/fng/?limit=3');
+    const d=(await r.json()).data;
+    const v=parseInt(d[0].value);
+    const col=v<=25?'#ff5555':v<=45?'#ff8800':v<=55?'#ffaa00':v<=75?'#aacc00':'#00ff66';
+    document.getElementById('fgwrap').innerHTML=`
+      <div class="fgcard">
+        <div class="fgtit">FEAR & GREED INDEX — ALTERNATIVE.ME</div>
+        <div class="fgnum" style="color:${col}">${v}</div>
+        <div class="fglabel" style="color:${col}">${d[0].value_classification.toUpperCase()}</div>
+        <div class="fgbarra">
+          <div style="background:#ff5555"></div><div style="background:#ff8800"></div>
+          <div style="background:#ffaa00"></div><div style="background:#aacc00"></div>
+          <div style="background:#00ff66"></div>
+        </div>
+        <div class="fgneedle" style="margin-left:calc(${v}% - 5px)"></div>
+        <div class="fghist">${d.map((x,i)=>{const l=['HOY','AYER','HACE 7D'],c2=parseInt(x.value)>50?'var(--verde)':'var(--rojo)';return `<span>${l[i]||''}: <span style="color:${c2}">${x.value}</span></span>`;}).join('')}</div>
+        <div class="fgsub">Escala 0 (miedo extremo) → 100 (codicia extrema) · Actualizado diariamente</div>
+      </div>`;
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════
+//  NOTICIAS — rss2json tres fuentes reales
+// ═══════════════════════════════════════════
+const RSS = {
+  coindesk:      'https://www.coindesk.com/arc/outboundfeeds/rss/',
+  cointelegraph: 'https://cointelegraph.com/rss',
+  decrypt:       'https://decrypt.co/feed',
+};
+const RNAMES = {coindesk:'CoinDesk', cointelegraph:'CoinTelegraph', decrypt:'Decrypt'};
+let allNots=[], fuenteActual='todas';
+
+async function cargarNoticias() {
+  document.getElementById('ngrid').innerHTML='<div class="cargando" style="padding:20px;">Cargando noticias desde CoinDesk, CoinTelegraph y Decrypt...</div>';
+  allNots=[];
+  const ps=Object.entries(RSS).map(async([fuente,url])=>{
+    try {
+      const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=10`);
+      const d=await r.json();
+      if(d.status!=='ok') return [];
+      return (d.items||[]).map(n=>({...n,fuente}));
+    } catch(e){return [];}
+  });
+  const res=await Promise.all(ps);
+  allNots=res.flat().sort((a,b)=>new Date(b.pubDate)-new Date(a.pubDate));
+  renderNots();
+}
+
+function renderNots() {
+  const el=document.getElementById('ngrid');
+  let items=fuenteActual==='todas'?allNots:allNots.filter(n=>n.fuente===fuenteActual);
+  if(!items.length){ el.innerHTML='<div class="errmsg">No se pudieron cargar noticias. Comprueba tu conexión.</div>'; return; }
+  el.innerHTML=items.slice(0,18).map(n=>{
+    const img=n.thumbnail||(n.enclosure?.link);
+    const desc=(n.description||'').replace(/<[^>]*>/g,'').slice(0,180);
+    return `<a href="${n.link}" target="_blank" rel="noopener" class="ncard">
+      ${img?`<img class="nimg" src="${img}" alt="" onerror="this.style.display='none'">` : ''}
+      <div class="nfuente"><span>${RNAMES[n.fuente]||n.fuente}</span><span>${tRel(n.pubDate)}</span></div>
+      <div class="ntitulo">${n.title}</div>
+      ${desc?`<div class="ndesc">${desc}</div>`:''}
+    </a>`;
+  }).join('');
+}
+
+function setFuente(f,btn) {
+  fuenteActual=f;
+  document.querySelectorAll('#nfiltros .tbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderNots();
+}
+
+// ═══════════════════════════════════════════
+//  GLOSARIO
+// ═══════════════════════════════════════════
+const GL=[
+  {t:'DeFi',d:'Finanzas Descentralizadas. Ecosistema de apps financieras sobre blockchain sin intermediarios tradicionales como bancos o brokers.'},
+  {t:'Blockchain',d:'Cadena de bloques. BD distribuida e inmutable donde se registran transacciones verificadas por consenso de la red.'},
+  {t:'Smart Contract',d:'Contrato inteligente. Programa autoejecutado en blockchain que activa condiciones predefinidas automáticamente, sin intermediarios.'},
+  {t:'Wallet',d:'Cartera digital con claves criptográficas para acceder a activos en blockchain. Custodial (tercero guarda las claves) o no custodial (tú las controlas).'},
+  {t:'DEX',d:'Exchange Descentralizado. Plataforma de intercambio sin intermediario central. Los usuarios operan entre sí mediante smart contracts.'},
+  {t:'CEX',d:'Exchange Centralizado. Plataforma gestionada por una empresa intermediaria. Mayor liquidez pero menor control sobre fondos. Ej: Binance, Coinbase.'},
+  {t:'Gas',d:'Coste en ETH para ejecutar operaciones en la red Ethereum. Varía según la congestión de red y la complejidad computacional de la transacción.'},
+  {t:'NFT',d:'Token No Fungible. Activo digital único registrado en blockchain. No puede reemplazarse por otro idéntico, al contrario que las criptomonedas estándar.'},
+  {t:'Staking',d:'Bloquear criptomonedas en una red para validar transacciones y recibir recompensas. Alternativa ecológica al minado. Usado en redes Proof of Stake.'},
+  {t:'Yield Farming',d:'Proporcionar liquidez a protocolos DeFi a cambio de rendimientos. Puede combinar múltiples protocolos para maximizar el APY con mayor riesgo.'},
+  {t:'Liquidity Pool',d:'Par de tokens en un smart contract que permite intercambios en un DEX sin compradores/vendedores directos. Los proveedores ganan comisiones.'},
+  {t:'APY',d:'Annual Percentage Yield. Rendimiento porcentual anual incluyendo interés compuesto. Métrica clave en DeFi para comparar oportunidades de inversión.'},
+  {t:'Market Cap',d:'Capitalización de mercado. Precio × monedas en circulación. Indica el tamaño relativo de un activo en el mercado.'},
+  {t:'Dominancia BTC',d:'Porcentaje de Bitcoin sobre el mercado total. Al subir indica flujo hacia BTC; al bajar indica interés en altcoins (temporada altcoin).'},
+  {t:'Altcoin',d:'Cualquier criptomoneda que no sea Bitcoin. "Alternative coin". Incluye proyectos serios como ETH hasta tokens especulativos sin utilidad.'},
+  {t:'Stablecoin',d:'Criptomoneda de valor estable, generalmente vinculada al dólar. Tipos: colateralizadas fiat (USDC), cripto-colateralizadas (DAI), algorítmicas.'},
+  {t:'Halving',d:'Evento en Bitcoin que reduce a la mitad la recompensa de minado. Cada ~4 años. Limita la inflación y históricamente precede ciclos alcistas.'},
+  {t:'HODL',d:'Mantener criptomonedas a largo plazo sin vender independientemente de la volatilidad. Originado en 2013 por un error tipográfico de "hold".'},
+  {t:'FUD',d:'Fear, Uncertainty and Doubt. Información negativa que genera miedo en el mercado. Puede ser orgánica o como táctica de manipulación de precio.'},
+  {t:'FOMO',d:'Fear Of Missing Out. Miedo a perderse una ganancia. Suele provocar compras impulsivas en máximos históricos con resultados negativos.'},
+  {t:'Pump & Dump',d:'Manipulación: inflar artificialmente el precio de forma coordinada (pump) para vender masivamente (dump), dejando a otros con pérdidas.'},
+  {t:'Oracle',d:'Sistema que conecta datos del mundo real con smart contracts. Sin oráculos, los contratos solo ven datos on-chain. Chainlink es el más adoptado.'},
+  {t:'Layer 1',d:'Blockchain principal que procesa y finaliza transacciones por sí misma. Base de la jerarquía. Ej: Bitcoin, Ethereum, Solana, Cardano, Avalanche.'},
+  {t:'Layer 2',d:'Solución sobre un L1 para escalar y reducir costes. Los datos se anclan al L1 periódicamente. Ej: Polygon, Arbitrum, Optimism, zkSync.'},
+  {t:'Proof of Work',d:'Consenso que requiere resolver problemas matemáticos complejos para validar bloques. Alto consumo energético. Usado por Bitcoin desde 2009.'},
+  {t:'Proof of Stake',d:'Los validadores bloquean monedas como garantía para validar bloques. Más eficiente que PoW. Ethereum migró a PoS en "The Merge" (2022).'},
+  {t:'Seed Phrase',d:'12 o 24 palabras que permiten recuperar una cartera. Es la clave maestra de tus fondos. Nunca la compartas ni la almacenes en dispositivos conectados.'},
+  {t:'Rug Pull',d:'Estafa donde los developers abandonan retirando toda la liquidez. Los inversores quedan con tokens sin valor. Común en proyectos DeFi sin auditar.'},
+  {t:'Whitepaper',d:'Documento técnico que describe propósito, tecnología y economía de un proyecto blockchain. Bitcoin Whitepaper: Satoshi Nakamoto, octubre 2008.'},
+  {t:'Cold Wallet',d:'Cartera sin conexión permanente a internet. La forma más segura de guardar cripto a largo plazo. Hardware wallet (Ledger, Trezor) o papel.'},
+  {t:'Hot Wallet',d:'Cartera con conexión constante a internet. Más cómoda para operar frecuentemente pero más vulnerable a ataques. Ej: MetaMask, Trust Wallet.'},
+  {t:'Bridge',d:'Protocolo para transferir activos entre diferentes blockchains. Puntos críticos de seguridad — han sido objetivo de los mayores hacks en DeFi.'},
+  {t:'Impermanent Loss',d:'Pérdida temporal para proveedores de liquidez cuando el ratio de precio entre dos tokens del pool cambia respecto al momento del depósito.'},
+  {t:'TVL',d:'Total Value Locked. Valor total de activos depositados en un protocolo DeFi. Principal métrica para evaluar tamaño y adopción de un protocolo.'},
+  {t:'Flash Loan',d:'Préstamo sin colateral que debe devolverse en la misma transacción. Permite arbitraje instantáneo sin capital inicial. Exclusivo de blockchain.'},
+  {t:'Tokenomics',d:'Economía de un token: distribución, inflación, casos de uso, mecanismos de quema y vesting. Factor clave para evaluar la salud a largo plazo.'},
+  {t:'Vesting',d:'Liberación gradual de tokens con el tiempo. Protege a inversores asegurando que el equipo y early investors no vendan todo de golpe al lanzamiento.'},
+  {t:'AMM',d:'Automated Market Maker. Protocolo de intercambio automático con fórmulas matemáticas en lugar de libro de órdenes. Base de DEXs como Uniswap.'},
+  {t:'Whale',d:'Inversor o entidad con grandes cantidades de cripto. Sus movimientos pueden mover el mercado. Sus wallets públicas son monitoreadas continuamente.'},
+  {t:'Liquidación',d:'Cuando una posición de préstamo cae por debajo del ratio de colateral requerido, el protocolo vende automáticamente el colateral para cubrir la deuda.'},
+];
+
+function renderGlosario() {
+  document.getElementById('ggrid').innerHTML=GL.map(g=>`
+    <div class="gitem" data-t="${g.t.toLowerCase()}" data-d="${g.d.toLowerCase()}">
+      <div class="gterm">> ${g.t}</div>
+      <div class="gdef">${g.d}</div>
+    </div>`).join('');
+}
+function filtrarG(q) {
+  q=q.toLowerCase();
+  document.querySelectorAll('.gitem').forEach(el=>{
+    el.style.display=(el.dataset.t.includes(q)||el.dataset.d.includes(q))?'':'none';
+  });
+}
+
+// ═══════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════
+function goTab(id,btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  btn.classList.add('on');
+  if(id==='dominancia') cargarDominancia();
+  if(id==='noticias'&&!allNots.length) cargarNoticias();
+  if(id==='glosario') renderGlosario();
+}
+
+// ═══════════════════════════════════════════
+//  DESCRIPCIONES
+// ═══════════════════════════════════════════
+const DESCS={
+  BTC:  'Bitcoin es la primera criptomoneda descentralizada del mundo, creada en 2009 por Satoshi Nakamoto. Funciona sin banco central mediante una red peer-to-peer con Proof of Work.',
+  ETH:  'Ethereum es la plataforma blockchain para smart contracts y dApps más usada. Tras The Merge (2022) usa Proof of Stake, reduciendo su consumo energético un 99.9%.',
+  BNB:  'BNB es el token nativo de Binance. Se usa para pagar comisiones con descuento, participar en launchpads y como gas en la BNB Chain (anteriormente Binance Smart Chain).',
+  SOL:  'Solana combina Proof of History con Proof of Stake logrando hasta 65.000 TPS con comisiones de fracciones de céntimo. Es la plataforma preferida para memecoins y NFTs.',
+  XRP:  'XRP es el token de Ripple Labs para pagos internacionales instantáneos entre bancos. Su largo litigio con la SEC (2020-2023) marcó un precedente regulatorio clave en cripto.',
+  DOGE: 'Dogecoin nació en 2013 como una broma basada en el meme Shiba Inu. A pesar de sus orígenes humorísticos se convirtió en una de las criptomonedas más populares del mundo.',
+  ADA:  'Cardano fue fundada por Charles Hoskinson, cofundador de Ethereum. Se distingue por su enfoque académico: cada actualización es revisada por pares antes de implementarse.',
+  AVAX: 'Avalanche usa una arquitectura de tres cadenas (X/P/C) para procesar hasta 4.500 TPS con finalidad sub-segundo. Su ecosistema de subnets permite blockchains personalizadas.',
+  DOT:  'Polkadot es un protocolo multi-cadena que permite transferir mensajes y activos entre blockchains. Fundada por Gavin Wood, cofundador de Ethereum y creador de Solidity.',
+  LINK: 'Chainlink es la red de oráculos descentralizados más adoptada. Conecta smart contracts con datos del mundo real, APIs externas y sistemas de pago tradicionales.',
+  MATIC:'Polygon es la solución de escalabilidad para Ethereum más adoptada. Ofrece transacciones rápidas y económicas mientras mantiene su seguridad anclada en Ethereum.',
+  SHIB: 'Shiba Inu se autodenomina "asesino de Dogecoin". Su ecosistema incluye el DEX ShibaSwap, la capa 2 Shibarium y múltiples tokens de gobernanza y utilidad.',
+  UNI:  'Uniswap es el DEX más grande de Ethereum. Inventó el modelo AMM (Automated Market Maker) que revolucionó el trading descentralizado eliminando el libro de órdenes.',
+  AAVE: 'Aave es el protocolo de préstamos DeFi más grande. Permite depositar activos para ganar intereses o pedir prestado usando crypto como colateral con tasas dinámicas.',
+  NEAR: 'NEAR Protocol usa sharding dinámico (Nightshade) para escalar horizontalmente. Su enfoque en UX con nombres de cuenta legibles lo hace accesible para usuarios no técnicos.',
+  ATOM: 'Cosmos es el ecosistema de blockchains interconectadas. Su protocolo IBC (Inter-Blockchain Communication) permite transferir activos entre más de 50 cadenas del ecosistema.',
+  PEPE: 'Pepe es una memecoin basada en el meme de la rana Pepe. Lanzada en 2023 en Ethereum, alcanzó capitalización multimillonaria en días convirtiéndose en referente de memecoins.',
+  ARB:  'Arbitrum es la solución Layer 2 de Ethereum basada en Optimistic Rollups más usada. Reduce costes de gas hasta un 90% manteniendo la seguridad y descentralización de Ethereum.',
+  OP:   'Optimism usa Optimistic Rollups para escalar Ethereum. Su Superchain — red de L2 interoperables — y su modelo de gobernanza descentralizada lo convierten en un ecosistema único.',
+  MKR:  'Maker es el protocolo detrás de DAI, la stablecoin descentralizada más usada. Los holders de MKR gobiernan el protocolo y absorben el riesgo del sistema como prestamistas de último recurso.',
+};
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+(async function init(){
+  // 1. WebSocket Binance — precios en tiempo real inmediato
+  wsConnect();
+  // 2. CoinGecko global stats
+  await cgGlobal();
+  // 3. CoinGecko meta con pequeño delay para no solapar
+  setTimeout(cgMeta, 1200);
+  // 4. Actualizar meta CoinGecko cada 5 minutos
+  setInterval(async()=>{ await cgGlobal(); await cgMeta(); }, 300000);
+  // 5. Render inicial tabla
+  renderTabla();
+  // 6. Glosario en background
+  setTimeout(renderGlosario, 1500);
+  // 7. Precargar noticias en background para que estén listas en los modales
+  setTimeout(cargarNoticias, 3000);
+})();
+</script>
+</body>
+</html>
