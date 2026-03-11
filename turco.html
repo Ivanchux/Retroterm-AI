@@ -193,8 +193,8 @@
       transition: background 0.15s;
       user-select: none;
     }
-    .casilla.clara  { background: #0a1a0a; }
-    .casilla.oscura { background: #001200; }
+    .casilla.clara  { background: #0d2a0d; }
+    .casilla.oscura { background: #020e02; }
     .casilla.seleccionada { background: rgba(0,255,102,0.25) !important; box-shadow: inset 0 0 8px var(--verde); }
     .casilla.posible      { background: rgba(0,255,102,0.12) !important; }
     .casilla.posible::after {
@@ -221,7 +221,7 @@
       from { box-shadow: inset 0 0 8px rgba(255,85,85,0.5); }
       to   { box-shadow: inset 0 0 18px rgba(255,85,85,0.9); }
     }
-    .pieza { text-shadow: 0 1px 3px rgba(0,0,0,0.8); line-height: 1; }
+    .pieza { text-shadow: 0 2px 6px rgba(0,0,0,0.9), 0 0 2px rgba(0,0,0,1); line-height: 1; }
 
     /* ── Panel lateral ── */
     .panel-lateral { display: flex; flex-direction: column; gap: 14px; }
@@ -1072,10 +1072,10 @@ function renderTablero() {
       const pieza = document.createElement('span');
       pieza.className = 'pieza';
       pieza.textContent = PIEZAS_UNICODE[tablero[i]];
-      pieza.style.color = tablero[i]===tablero[i].toUpperCase() ? '#e8ffe0' : '#002200';
+      pieza.style.color = tablero[i]===tablero[i].toUpperCase() ? '#ffffff' : '#00ff66';
       pieza.style.filter = tablero[i]===tablero[i].toUpperCase()
-        ? 'drop-shadow(0 0 3px rgba(200,255,200,0.5))'
-        : 'drop-shadow(0 0 2px rgba(0,255,100,0.3))';
+        ? 'drop-shadow(0 0 4px rgba(255,255,255,0.8))'
+        : 'drop-shadow(0 0 4px rgba(0,255,102,0.9))';
       casilla.appendChild(pieza);
     }
     casilla.addEventListener('click', () => onClic(i));
