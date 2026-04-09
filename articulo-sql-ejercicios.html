@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL — Ejercicios resueltos | RETROTERM.AI</title>
+  <meta name="description" content="Ejercicios resueltos de SQL para ASIR con dos bases de datos: tienda y RRHH.">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "SQL — Ejercicios resueltos para ASIR",
+    "author": { "@type": "Person", "name": "Iván Brihuega Crespo" },
+    "publisher": { "@type": "Organization", "name": "RETROTERM.AI", "url": "https://ivanchux.github.io/" },
+    "datePublished": "2026-02-05",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://ivanchux.github.io/articulo-sql-ejercicios.html" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio",    "item": "https://ivanchux.github.io/" },
+      { "@type": "ListItem", "position": 2, "name": "Artículos", "item": "https://ivanchux.github.io/articulos.html" },
+      { "@type": "ListItem", "position": 3, "name": "SQL — Ejercicios", "item": "https://ivanchux.github.io/articulo-sql-ejercicios.html" }
+    ]
+  }
+  </script>
+  <style>
+    .breadcrumbs{ 
+      font-size:.72rem; 
+      color:#00ff6655; 
+      margin-bottom:18px; 
+      letter-spacing:1px; 
+    }
+    .breadcrumbs a{ 
+      color:#00ff6688; 
+      text-decoration:none; 
+    }
+    .breadcrumbs a:hover{ 
+      color:#00ff66; 
+    }
+    .breadcrumbs span{ 
+      color:#00ff6633; 
+      margin:0 6px; 
+    }
+
+    .bloque{ 
+      border:1px solid #003300; 
+      background:rgba(0,20,0,0.6); 
+      margin:18px 0; 
+      overflow:hidden; 
+    }
+
+    .bloque-titulo{ 
+      padding:8px 14px; 
+      font-size:.72rem; 
+      letter-spacing:2px; 
+      border-bottom:1px solid #003300; 
+    }
+    .bloque-titulo.tienda{ 
+      color:#f0db4f; 
+      background:rgba(240,219,79,0.04); 
+    }
+    .bloque-titulo.rrhh{ 
+      color:#4fc3ff; 
+      background:rgba(79,195,255,0.04); 
+    }
+    .bloque-titulo.esquema{ 
+      color:#00ff66; 
+      background:rgba(0,255,102,0.04); 
+    }
+    .bloque-body{ 
+      padding:14px; 
+    }
+
+    .etiqueta{ 
+      font-size:.65rem; 
+      color:#00ff6677; 
+      letter-spacing:2px; 
+      margin:14px 0 4px; 
+      display:block; 
+    }
+    .num-ej{ 
+      color:#ffffff; 
+      font-size:.68rem; 
+      letter-spacing:1px; 
+      display:block; 
+      margin-bottom:3px; 
+    }
+
+    .codigo-bloque {
+      background:#000; 
+      border:1px solid #003300; 
+      border-left:2px solid #00ff6655;
+      padding:10px 14px; 
+      font-family:'Courier New',monospace; 
+      font-size:.82rem;
+      line-height:1.7; 
+      overflow-x:auto; 
+      white-space:pre; 
+      margin:6px 0 14px; 
+      color:#00ff66;
+    }
+
+    .kw{ 
+      color:#ff79c6; 
+      font-weight:bold; 
+    }
+    .fn{
+      color:#00ff66; 
+    }
+    .str{ 
+      color:#f1fa8c; 
+    }
+    .num{ 
+      color:#bd93f9; 
+    }
+    .cmt{ 
+      color:#555; 
+      font-style:italic; 
+    }
+    .tbl{ 
+      color:#4fc3ff; 
+    }
+    .op{ 
+      color:#ffb86c; 
+    }
+
+    .tabla-sql{ 
+      width:100%; 
+      border-collapse:collapse; 
+      font-size:.78rem; 
+      margin:10px 0; 
+    }
+    .tabla-sql th{ 
+      background:rgba(0,255,102,.06); 
+      color:#00ff66; 
+      padding:6px 10px; 
+      text-align:left; 
+      border-bottom:1px solid #003300; 
+      font-size:.7rem; 
+      letter-spacing:1px; 
+    }
+
+    .tabla-sql td{ 
+      padding:6px 10px; 
+      border-bottom:1px solid #001a00; 
+      color:#ccc; 
+      font-family:'Courier New',monospace; 
+      font-size:.75rem; 
+    }
+
+    .tabla-sql tr:last-child td{ 
+      border-bottom:none; 
+    }
+    .tabla-sql .k{ 
+      color:#00ff66; 
+    }
+
+    .ok-msg{ 
+      background:rgba(0,255,102,.04); 
+      border:1px solid rgba(0,255,102,.2); 
+      color:#66ffb3; 
+      padding:6px 12px; 
+      font-size:.78rem; 
+      margin:8px 0; 
+    }
+
+    @media (max-width:480px)
+    {.codigo-bloque{ 
+      font-size:.72rem; 
+    } 
+    }
+    .pantalla{ 
+      display: block !important; 
+    }
+    
+    .seccion{ 
+      opacity: 1 !important; 
+    }
+  
+  /* ── CANVAS FONDO ─── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  /* fondo transparente sobre canvas */
+  .pantalla, .pantalla-wide {
+    background: transparent !important;
+    border-color: #00ff6633 !important;
+    box-shadow: 0 0 15px #00ff6622 !important;
+  }
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<section class="pantalla seccion activa pantalla-wide">
+
+  <nav class="breadcrumbs">
+    <a href="index.html">INICIO</a><span>/</span>
+    <a href="articulos.html">ARTÍCULOS</a><span>/</span>
+    SQL EJERCICIOS
+  </nav>
+
+  <header class="cabecera">
+    <h1>📝 SQL — EJERCICIOS</h1>
+    <p class="subtitulo">// Dos bases de datos resueltas paso a paso</p>
+  </header>
+  <p class="articulo-meta"><span class="articulo-tag">BASES DE DATOS</span> // 2026-02-12 — Iván Brihuega</p>
+
+  <p style="color:#aaa;font-size:.85rem;line-height:1.6;margin:14px 0;">
+    Ejercicios resueltos sobre dos bases de datos típicas de examen: una tienda con
+    productos y fabricantes, y una empresa con empleados y departamentos.
+  </p>
+
+  <!-- ESQUEMA BD TIENDA -->
+  <div class="bloque">
+    <div class="bloque-titulo esquema">⬡ BD TIENDA — ESTRUCTURA</div>
+    <div class="bloque-body">
+      <table class="tabla-sql">
+        <tr><th>Tabla</th><th>Columnas</th></tr>
+        <tr><td class="k">fabricante</td><td>id, nombre</td></tr>
+        <tr><td class="k">producto</td><td>id, nombre, precio, id_fabricante</td></tr>
+      </table>
+      <div class="ok-msg">producto.id_fabricante → fabricante.id</div>
+    </div>
+  </div>
+
+  <!-- EJERCICIOS TIENDA -->
+  <div class="bloque">
+    <div class="bloque-titulo tienda">⬡ BD TIENDA — EJERCICIOS RESUELTOS</div>
+    <div class="bloque-body">
+
+      <span class="num-ej">// 01 — Lista nombres de productos</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> <span class="tbl">producto</span>;</div>
+
+      <span class="num-ej">// 02 — Productos con precio menor de 200</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">producto</span>
+<span class="kw">WHERE</span> precio <span class="op">&lt;</span> <span class="num">200</span>;</div>
+
+      <span class="num-ej">// 03 — Los 3 productos más caros</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> nombre, precio <span class="kw">FROM</span> <span class="tbl">producto</span>
+<span class="kw">ORDER BY</span> precio <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">3</span>;</div>
+
+      <span class="num-ej">// 04 — Nombres de fabricantes en mayúsculas</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> <span class="fn">UPPER</span>(nombre) <span class="kw">FROM</span> <span class="tbl">fabricante</span>;</div>
+
+      <span class="num-ej">// 05 — Precio medio por fabricante, solo si media mayor de 150</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> id_fabricante, <span class="fn">AVG</span>(precio) <span class="kw">AS</span> media
+<span class="kw">FROM</span> <span class="tbl">producto</span>
+<span class="kw">GROUP BY</span> id_fabricante
+<span class="kw">HAVING</span> <span class="fn">AVG</span>(precio) <span class="op">&gt;</span> <span class="num">150</span>;</div>
+
+      <span class="num-ej">// 06 — Total precios de productos que contienen 'Disco'</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> <span class="fn">SUM</span>(precio) <span class="kw">AS</span> total
+<span class="kw">FROM</span> <span class="tbl">producto</span>
+<span class="kw">WHERE</span> nombre <span class="op">LIKE</span> <span class="str">'%Disco%'</span>;</div>
+
+    </div>
+  </div>
+
+  <!-- ESQUEMA BD RRHH -->
+  <div class="bloque">
+    <div class="bloque-titulo esquema">⬡ BD RRHH — ESTRUCTURA</div>
+    <div class="bloque-body">
+      <table class="tabla-sql">
+        <tr><th>Tabla</th><th>Columnas</th></tr>
+        <tr><td class="k">departamento</td><td>id, nombre</td></tr>
+        <tr><td class="k">empleado</td><td>id, nombre, salario, id_departamento, fecha_ingreso</td></tr>
+      </table>
+      <div class="ok-msg">empleado.id_departamento → departamento.id</div>
+    </div>
+  </div>
+
+  <!-- EJERCICIOS RRHH -->
+  <div class="bloque">
+    <div class="bloque-titulo rrhh">⬡ BD RRHH — EJERCICIOS RESUELTOS</div>
+    <div class="bloque-body">
+
+      <span class="num-ej">// 01 — Lista nombres de empleados</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> nombre <span class="kw">FROM</span> <span class="tbl">empleado</span>;</div>
+
+      <span class="num-ej">// 02 — Empleados con salario menor de 3000</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">WHERE</span> salario <span class="op">&lt;</span> <span class="num">3000</span>;</div>
+
+      <span class="num-ej">// 03 — Los 3 empleados con mejor salario</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> nombre, salario <span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">ORDER BY</span> salario <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">3</span>;</div>
+
+      <span class="num-ej">// 04 — Nombres de departamentos en mayúsculas</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> <span class="fn">UPPER</span>(nombre) <span class="kw">FROM</span> <span class="tbl">departamento</span>;</div>
+
+      <span class="num-ej">// 05 — Nº de empleados por departamento (incluye los que no tienen ninguno)</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> d.nombre, <span class="fn">COUNT</span>(e.id) <span class="kw">AS</span> total_empleados
+<span class="kw">FROM</span> <span class="tbl">departamento</span> d
+<span class="kw">LEFT JOIN</span> <span class="tbl">empleado</span> e <span class="kw">ON</span> d.id <span class="op">=</span> e.id_departamento
+<span class="kw">GROUP BY</span> d.id, d.nombre;</div>
+
+      <span class="num-ej">// 06 — Salario medio por departamento, solo si media mayor de 3000</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> id_departamento, <span class="fn">AVG</span>(salario) <span class="kw">AS</span> media
+<span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">GROUP BY</span> id_departamento
+<span class="kw">HAVING</span> <span class="fn">AVG</span>(salario) <span class="op">&gt;</span> <span class="num">3000</span>;</div>
+
+      <span class="num-ej">// 07 — Total salarios de empleados con apellido García</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> <span class="fn">SUM</span>(salario) <span class="kw">AS</span> total
+<span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">WHERE</span> nombre <span class="op">LIKE</span> <span class="str">'%García%'</span>;</div>
+
+      <span class="num-ej">// 08 — Departamentos con más de 1 empleado</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> id_departamento, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total
+<span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">GROUP BY</span> id_departamento
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) <span class="op">&gt;</span> <span class="num">1</span>;</div>
+
+      <span class="num-ej">// 09 — Media y máximo de salarios</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> <span class="fn">AVG</span>(salario) <span class="kw">AS</span> media, <span class="fn">MAX</span>(salario) <span class="kw">AS</span> maximo
+<span class="kw">FROM</span> <span class="tbl">empleado</span>;</div>
+
+      <span class="num-ej">// 10 — Empleados en Informática o Ventas con salario mayor de 3000</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> e.nombre, e.salario, d.nombre <span class="kw">AS</span> departamento
+<span class="kw">FROM</span> <span class="tbl">empleado</span> e
+<span class="kw">INNER JOIN</span> <span class="tbl">departamento</span> d <span class="kw">ON</span> e.id_departamento <span class="op">=</span> d.id
+<span class="kw">WHERE</span> d.nombre <span class="op">IN</span> (<span class="str">'Informática'</span>,<span class="str">'Ventas'</span>)
+  <span class="op">AND</span> e.salario <span class="op">&gt;</span> <span class="num">3000</span>;</div>
+
+      <span class="num-ej">// 11 — Contratados antes de 2025-01-01 con salario menor de 3500</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">WHERE</span> fecha_ingreso <span class="op">&lt;</span> <span class="str">'2025-01-01'</span>
+  <span class="op">AND</span> salario <span class="op">&lt;</span> <span class="num">3500</span>;</div>
+
+      <span class="num-ej">// 12 — Días desde contratación para empleados en Marketing o RRHH</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> e.nombre,
+  <span class="fn">DATEDIFF</span>(<span class="fn">CURDATE</span>(), e.fecha_ingreso) <span class="kw">AS</span> dias
+<span class="kw">FROM</span> <span class="tbl">empleado</span> e
+<span class="kw">INNER JOIN</span> <span class="tbl">departamento</span> d <span class="kw">ON</span> e.id_departamento <span class="op">=</span> d.id
+<span class="kw">WHERE</span> d.nombre <span class="op">IN</span> (<span class="str">'Marketing'</span>,<span class="str">'Recursos Humanos'</span>);</div>
+
+      <span class="num-ej">// 13 — Nombre termina en 'a' y contratados después de marzo 2025</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">WHERE</span> nombre <span class="op">LIKE</span> <span class="str">'%a'</span>
+  <span class="op">AND</span> fecha_ingreso <span class="op">&gt;</span> <span class="str">'2025-03-31'</span>;</div>
+
+      <span class="num-ej">// 14 — Salario medio de contratados en 2025 en Informática</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> <span class="fn">AVG</span>(e.salario) <span class="kw">AS</span> media
+<span class="kw">FROM</span> <span class="tbl">empleado</span> e
+<span class="kw">INNER JOIN</span> <span class="tbl">departamento</span> d <span class="kw">ON</span> e.id_departamento <span class="op">=</span> d.id
+<span class="kw">WHERE</span> d.nombre <span class="op">=</span> <span class="str">'Informática'</span>
+  <span class="op">AND</span> <span class="fn">YEAR</span>(e.fecha_ingreso) <span class="op">=</span> <span class="num">2025</span>;</div>
+
+      <span class="num-ej">// 15 — Empleados con salario mayor que la media del departamento de Informática</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> nombre, salario <span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">WHERE</span> salario <span class="op">&gt;</span> (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(e2.salario)
+  <span class="kw">FROM</span> <span class="tbl">empleado</span> e2
+  <span class="kw">INNER JOIN</span> <span class="tbl">departamento</span> d
+    <span class="kw">ON</span> e2.id_departamento <span class="op">=</span> d.id
+  <span class="kw">WHERE</span> d.nombre <span class="op">=</span> <span class="str">'Informática'</span>
+);</div>
+
+    </div>
+  </div>
+
+  <a href="articulos.html" class="volver">⬅ Volver a Artículos</a>
+  <nav class="nav-pie">
+    <a href="articulo-sql.html">🗄️ SQL Guía</a>
+    <a href="articulo-sql-plantillas.html">📋 Plantillas</a>
+    <a href="index.html">🏠 HUB</a>
+  </nav>
+  <footer class="pie"><p>RETROTERM.AI v0.2 © 2025 | Iván Brihuega Crespo</p></footer>
+
+</section>
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var STAR_COUNT=90, WAVE_COUNT=5, CONN_DIST=180, SPEED=0.18, WAVE_SPEED=0.0004;
+  var COLOR_NODE_A="rgba(0, 255, 102,", COLOR_NODE_B="rgba(255, 176, 0,";
+  var COLOR_LINE="rgba(0, 220, 90,", COLOR_WAVE="rgba(255, 176, 0,";
+  var stars=[], waves=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(var i=0;i<STAR_COUNT;i++){
+      var a=Math.random()>0.75;
+      stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?COLOR_NODE_B:COLOR_NODE_A,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});
+    }
+  }
+  function initWaves(){
+    waves=[];
+    for(var i=0;i<WAVE_COUNT;i++){
+      waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});
+    }
+  }
+  function drawWaves(){
+    for(var w=0;w<waves.length;w++){
+      var wv=waves[w]; wv.phase+=wv.speed*60;
+      ctx.beginPath(); ctx.moveTo(0,H*wv.yBase);
+      for(var x=0;x<=W;x+=4){ ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp); }
+      ctx.strokeStyle=COLOR_WAVE+wv.alpha+")"; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+  function drawConnections(){
+    for(var i=0;i<stars.length;i++){
+      for(var j=i+1;j<stars.length;j++){
+        var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<CONN_DIST){ ctx.beginPath(); ctx.moveTo(stars[i].x,stars[i].y); ctx.lineTo(stars[j].x,stars[j].y); ctx.strokeStyle=COLOR_LINE+(1-dist/CONN_DIST)*0.18+")"; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+  }
+  function drawStars(){
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.phase+=s.pspeed;
+      var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);
+      var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);
+      grad.addColorStop(0,s.col+(alpha*0.5)+")"); grad.addColorStop(1,s.col+"0)");
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius*4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius,0,Math.PI*2); ctx.fillStyle=s.col+alpha+")"; ctx.fill();
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<-20)s.x=W+20; if(s.x>W+20)s.x=-20;
+      if(s.y<-20)s.y=H+20; if(s.y>H+20)s.y=-20;
+    }
+  }
+  function draw(){ ctx.clearRect(0,0,W,H); drawWaves(); drawConnections(); drawStars(); requestAnimationFrame(draw); }
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize",function(){ resize(); initStars(); initWaves(); });
+})();
+</script>
+
+</body>
+</html>

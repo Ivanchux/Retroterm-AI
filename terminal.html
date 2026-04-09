@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TERMINAL — RETROTERM.AI</title>
+  <meta name="description" content="Shell interactiva de RETROTERM.AI. Comandos, noticias tech en tiempo real y navegación del sistema.">
+  <link rel="canonical" href="https://ivanchux.github.io/terminal.html">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta name="robots" content="index,follow">
+
+  <style>
+  /* ═══════════════════════════════════════════════
+     TERMINAL — estilos propios
+     Acento principal: verde #00ff66
+  ═══════════════════════════════════════════════ */
+  * { box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: #00ff66;
+    font-family: 'Courier New', monospace;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  .term-root {
+    max-width: 960px;
+    width: 95%;
+    margin: 0 auto;
+    padding: 1.4rem 0 3rem;
+  }
+
+  /* ── CABECERA ── */
+  .term-header {
+    text-align: center;
+    padding: 1.2rem 0 1.6rem;
+  }
+  .term-breadcrumb {
+    font-size: 0.6rem;
+    color: #00ff6633;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.6rem;
+  }
+  .term-breadcrumb a {
+    color: #00ff6644;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .term-breadcrumb a:hover { color: #00ff66; }
+  .term-title {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: #00ff66;
+    letter-spacing: 0.2em;
+    margin: 0 0 0.3rem;
+    text-shadow: 0 0 18px #00ff6633;
+  }
+  .term-subtitle {
+    font-size: 0.6rem;
+    color: #00ff6622;
+    letter-spacing: 0.22em;
+  }
+
+  /* ── VENTANA ── */
+  .term-window {
+    border: 1px solid #0d2010;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #010601;
+    box-shadow: 0 0 40px rgba(0,255,102,0.06), inset 0 0 60px rgba(0,255,102,0.015);
+    cursor: text;
+  }
+
+  /* Barra de título tipo macOS */
+  .term-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    background: #040904;
+    border-bottom: 1px solid #0d2010;
+    user-select: none;
+  }
+  .td { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .td-r { background: #ff5f56; }
+  .td-y { background: #ffbd2e; }
+  .td-g { background: #27c93f; }
+  .term-tabname {
+    font-size: 0.63rem;
+    color: #00ff6644;
+    letter-spacing: 0.15em;
+    margin-left: 8px;
+  }
+
+  /* Área de output */
+  #term-output {
+    height: 430px;
+    overflow-y: auto;
+    padding: 14px 20px 8px;
+    font-size: 0.81rem;
+    line-height: 1.65;
+    scrollbar-width: thin;
+    scrollbar-color: #0d2010 transparent;
+  }
+  #term-output::-webkit-scrollbar { width: 4px; }
+  #term-output::-webkit-scrollbar-thumb { background: #0d2010; border-radius: 2px; }
+
+  /* Tipos de línea */
+  .tl       { color: #66ffb3; white-space: pre-wrap; word-break: break-word; }
+  .tl-cmd   { color: #00ff66; }
+  .tl-info  { color: #ffb000; }
+  .tl-err   { color: #ff4444; }
+  .tl-dim   { color: #1a3a22; }
+  .tl-cyan  { color: #00e5ff; }
+  .tl-white { color: #aaa; }
+  .tl-sec   { color: #ffb000; letter-spacing: 0.08em; }
+  .tl-ok    { color: #00ff66; }
+
+  /* Links en noticias */
+  .hn-link {
+    color: #00e5ff;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .hn-link:hover { color: #fff; text-decoration: underline; }
+  .hn-meta { color: #1a3a22; font-size: 0.73rem; }
+  .hn-num  { color: #ffb000; display: inline-block; min-width: 2.2ch; }
+
+  /* Efecto scanline sutil */
+  .term-window::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba(0,255,102,0.008) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 10px;
+  }
+
+  /* Área de input */
+  .term-inputbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px 11px;
+    border-top: 1px solid #0d2010;
+    background: #010601;
+  }
+  .term-ps {
+    font-size: 0.81rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .ps-host { color: #00e5ff; }
+  .ps-sep  { color: #66ffb3; }
+  .ps-path { color: #ffb000; }
+  .ps-dol  { color: #00ff66; }
+
+  #term-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #00ff66;
+    font-family: 'Courier New', monospace;
+    font-size: 0.81rem;
+    caret-color: #00ff66;
+    min-width: 0;
+  }
+  #term-input::selection { background: #00ff6622; }
+
+  /* ── CHIPS DE COMANDOS RÁPIDOS ── */
+  .term-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 12px;
+    padding: 0 2px;
+  }
+  .chip {
+    border: 1px solid #0d2010;
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 0.58rem;
+    color: #00ff6655;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.18s;
+    background: transparent;
+    font-family: 'Courier New', monospace;
+    line-height: 1.8;
+  }
+  .chip:hover {
+    border-color: #00ff66;
+    color: #00ff66;
+    background: rgba(0,255,102,0.04);
+  }
+
+  /* ── FOOTER ── */
+  .term-foot {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.58rem;
+    color: #00ff6618;
+    letter-spacing: 0.16em;
+    border-top: 1px solid #050f07;
+    padding-top: 1rem;
+  }
+  .term-foot a { color: #00ff6622; text-decoration: none; }
+  .term-foot a:hover { color: #00ff66; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 580px) {
+    #term-output { height: 340px; font-size: 0.74rem; }
+    .chip { font-size: 0.53rem; }
+  }
+  </style>
+</head>
+<body>
+
+<div class="term-root">
+
+  <header class="term-header">
+    <p class="term-breadcrumb"><a href="index.html">RETROTERM.AI</a> / TERMINAL</p>
+    <h1 class="term-title">SYS::TERMINAL</h1>
+    <p class="term-subtitle">INTERACTIVE SHELL v1.0 · HACKERNEWS LIVE · NAVEGACIÓN INTERNA</p>
+  </header>
+
+  <div class="term-window" id="term-window">
+    <div class="term-titlebar">
+      <span class="td td-r"></span>
+      <span class="td td-y"></span>
+      <span class="td td-g"></span>
+      <span class="term-tabname">retroterm@ivanchux:~</span>
+    </div>
+
+    <div id="term-output" role="log" aria-live="polite" aria-label="Salida del terminal"></div>
+
+    <div class="term-inputbar">
+      <span class="term-ps" aria-hidden="true">
+        <span class="ps-host">retroterm</span><span class="ps-sep">@</span><span class="ps-host">ivanchux</span><span class="ps-sep">:</span><span class="ps-path">~</span><span class="ps-dol">$</span>
+      </span>
+      <input
+        id="term-input"
+        type="text"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="Escribe un comando"
+      >
+    </div>
+  </div>
+
+  <div class="term-chips" role="toolbar" aria-label="Comandos rápidos">
+    <button class="chip" onclick="runCmd('help')">help</button>
+    <button class="chip" onclick="runCmd('news')">news</button>
+    <button class="chip" onclick="runCmd('news --top 20')">news --top 20</button>
+    <button class="chip" onclick="runCmd('news --ask')">news --ask</button>
+    <button class="chip" onclick="runCmd('ls')">ls</button>
+    <button class="chip" onclick="runCmd('whoami')">whoami</button>
+    <button class="chip" onclick="runCmd('sysinfo')">sysinfo</button>
+    <button class="chip" onclick="runCmd('skills')">skills</button>
+    <button class="chip" onclick="runCmd('neofetch')">neofetch</button>
+    <button class="chip" onclick="runCmd('ping retroterm.ai')">ping</button>
+    <button class="chip" onclick="runCmd('easter')">???</button>
+    <button class="chip" onclick="runCmd('clear')">clear</button>
+  </div>
+
+  <footer class="term-foot">
+    RETROTERM.AI v2.1 &nbsp;·&nbsp; <a href="index.html">← volver al HUB</a> &nbsp;·&nbsp; © 2025 Iván Brihuega Crespo
+  </footer>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   RETROTERM — SYS::TERMINAL v1.0
+   Comandos: help, ls, cd, open, whoami, sysinfo, date,
+             echo, news [--top N] [--ask], skills,
+             neofetch, ping, sudo, easter, clear, exit
+══════════════════════════════════════════════════════ */
+
+const out   = document.getElementById('term-output');
+const inp   = document.getElementById('term-input');
+
+let cmdHistory = [];
+let histIdx    = -1;
+let newsCache  = {};
+
+/* Mapa de secciones navegables */
+const PAGES = {
+  editor:       'editor.html',
+  desarrollo:   'editor.html',
+  asistente:    'asistente.html',
+  aria:         'asistente.html',
+  gaming:       'gaming.html',
+  defi:         'defi.html',
+  articulos:    'articulos.html',
+  red:          'red.html',
+  herramientas: 'herramientas.html',
+  tools:        'herramientas.html',
+  subnet:       'subnet.html',
+  roadmap:      'roadmap.html',
+  perfil:       'perfil.html',
+  terminal:     'terminal.html',
+  hub:          'index.html',
+  inicio:       'index.html',
+};
+
+/* ── Helpers de render ── */
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function addLine(html, cls = 'tl') {
+  const d = document.createElement('div');
+  d.className = cls;
+  d.innerHTML = html;
+  out.appendChild(d);
+}
+
+function blank() { addLine('', 'tl-dim'); }
+
+function scrollBottom() {
+  out.scrollTop = out.scrollHeight;
+}
+
+function printPrompt(cmd) {
+  addLine(
+    `<span class="ps-host">retroterm</span>` +
+    `<span class="ps-sep">@</span>` +
+    `<span class="ps-host">ivanchux</span>` +
+    `<span class="ps-sep">:</span>` +
+    `<span class="ps-path">~</span>` +
+    `<span class="ps-dol">$</span> ` +
+    `<span style="color:#00ff66">${esc(cmd)}</span>`,
+    'tl-cmd'
+  );
+}
+
+/* ── Banner de bienvenida ── */
+function printBanner() {
+  const banner = [
+    '╔═══════════════════════════════════════════════╗',
+    '║     RETROTERM.AI — SYS::TERMINAL v1.0         ║',
+    '║     Bienvenido, operador. Todos los           ║',
+    '║     sistemas operativos.                      ║',
+    '╚═══════════════════════════════════════════════╝',
+  ];
+  banner.forEach(l => addLine(esc(l), 'tl-sec'));
+  blank();
+  addLine('  Escribe <span style="color:#ffb000">help</span> para ver los comandos disponibles.', 'tl');
+  addLine('  Usa ↑ ↓ para el historial · Tab para autocompletar.', 'tl-dim');
+  blank();
+  scrollBottom();
+}
+
+/* ── Dispatcher ── */
+function runCmd(raw) {
+  const trimmed = raw.trim();
+  if (!trimmed) return;
+
+  cmdHistory.unshift(trimmed);
+  if (cmdHistory.length > 100) cmdHistory.pop();
+  histIdx = -1;
+
+  printPrompt(trimmed);
+
+  const parts = trimmed.split(/\s+/);
+  const cmd   = parts[0].toLowerCase();
+  const args  = parts.slice(1);
+
+  switch (cmd) {
+    case 'help':             cmdHelp();          break;
+    case 'ls':               cmdLs();            break;
+    case 'cd':
+    case 'open':             cmdCd(args);        break;
+    case 'whoami':           cmdWhoami();        break;
+    case 'sysinfo':          cmdSysinfo();       break;
+    case 'date':             cmdDate();          break;
+    case 'echo':             cmdEcho(args);      break;
+    case 'news':             cmdNews(args);      break;
+    case 'skills':           cmdSkills();        break;
+    case 'neofetch':         cmdNeofetch();      break;
+    case 'ping':             cmdPing(args);      break;
+    case 'sudo':             cmdSudo(args);      break;
+    case 'easter':           cmdEaster();        break;
+    case 'clear':            out.innerHTML = ''; break;
+    case 'exit':
+    case 'logout':
+      addLine('  Redirigiendo al HUB...', 'tl-info');
+      setTimeout(() => { window.location.href = 'index.html'; }, 700);
+      break;
+    default:
+      addLine(`  <span style="color:#ff4444">${esc(cmd)}: comando no encontrado.</span> Escribe <span style="color:#ffb000">help</span> para ver los disponibles.`, 'tl');
+  }
+
+  blank();
+  scrollBottom();
+}
+
+/* ══════════════════════════
+   COMANDOS
+══════════════════════════ */
+
+function cmdHelp() {
+  blank();
+  addLine('  COMANDOS DISPONIBLES', 'tl-sec');
+  addLine('  ──────────────────────────────────────────────────', 'tl-dim');
+  const rows = [
+    ['help',            'Muestra esta ayuda'],
+    ['ls',              'Lista las secciones del sistema'],
+    ['cd &lt;sección&gt;',   'Navega a una sección (abre la página)'],
+    ['open &lt;sección&gt;', 'Alias de cd'],
+    ['whoami',          'Información del operador activo'],
+    ['sysinfo',         'Estado del sistema en tiempo real'],
+    ['date',            'Fecha y hora actual'],
+    ['echo &lt;texto&gt;',   'Imprime texto en pantalla'],
+    ['news',            'Top 10 noticias de HackerNews'],
+    ['news --top &lt;N&gt;', 'Top N noticias (máx. 30)'],
+    ['news --ask',      'Preguntas Ask HN de la comunidad'],
+    ['skills',          'Stack tecnológico del proyecto'],
+    ['neofetch',        'Info del sistema al estilo neofetch'],
+    ['ping &lt;host&gt;',    'Simula ping a un host'],
+    ['sudo &lt;cmd&gt;',     '...inténtalo ;)'],
+    ['easter',          'Sector restringido'],
+    ['clear',           'Limpia la terminal'],
+    ['exit / logout',   'Volver al HUB'],
+  ];
+  rows.forEach(([c, d]) => {
+    addLine(
+      `  <span style="color:#ffb000;display:inline-block;min-width:24ch">${c}</span>` +
+      `<span style="color:#1a5a32">${d}</span>`,
+      'tl'
+    );
+  });
+  addLine('  ──────────────────────────────────────────────────', 'tl-dim');
+}
+
+function cmdLs() {
+  blank();
+  addLine('  /retroterm — SECCIONES DEL SISTEMA', 'tl-sec');
+  blank();
+  const sections = [
+    ['editor',       'Editor de código CODE_CRT'],
+    ['asistente',    'Asistente IA ARIA'],
+    ['gaming',       'Sección de videojuegos'],
+    ['defi',         'Terminal DeFi / criptomonedas'],
+    ['articulos',    'Publicaciones técnicas'],
+    ['red',          'Red de proyectos del ciclo'],
+    ['herramientas', 'Herramientas de sistema y red'],
+    ['subnet',       'Calculadora de subnetting'],
+    ['roadmap',      'Roadmap del proyecto'],
+    ['perfil',       'Perfil del autor'],
+    ['terminal',     'Esta terminal interactiva'],
+  ];
+  sections.forEach(([name, desc]) => {
+    addLine(
+      `  <span style="color:#00e5ff;display:inline-block;min-width:18ch">drwxr-xr-x  ${name}/</span>` +
+      `<span style="color:#0d3020">  ${desc}</span>`,
+      'tl'
+    );
+  });
+  blank();
+  addLine(`  <span style="color:#1a3a22">${sections.length} secciones · usa 'cd &lt;nombre&gt;' para navegar</span>`, 'tl');
+}
+
+function cmdCd(args) {
+  if (!args.length) {
+    addLine('  uso: cd &lt;sección&gt; &nbsp; — &nbsp; escribe <span style="color:#ffb000">ls</span> para ver las disponibles.', 'tl-err');
+    return;
+  }
+  const t = args[0].toLowerCase().replace(/\/$/, '');
+  const url = PAGES[t];
+  if (url) {
+    addLine(`  Navegando a <span style="color:#00e5ff">${esc(t)}</span>...`, 'tl-info');
+    setTimeout(() => { window.location.href = url; }, 500);
+  } else {
+    addLine(`  No existe la sección '<span style="color:#ff4444">${esc(t)}</span>'.`, 'tl-err');
+    addLine(`  Disponibles: ${Object.keys(PAGES).join(', ')}`, 'tl-dim');
+  }
+}
+
+function cmdWhoami() {
+  blank();
+  addLine('  OPERADOR ACTIVO', 'tl-sec');
+  addLine('  ────────────────────────────────', 'tl-dim');
+  const data = [
+    ['usuario',   'ivanchux'],
+    ['nombre',    'Iván Brihuega Crespo'],
+    ['ciclo',     '1º ASIR — CDM FP 2025/26'],
+    ['rol',       'admin · dev · creador'],
+    ['proyecto',  'RETROTERM.AI v2.1'],
+    ['host',      'ivanchux.github.io'],
+    ['shell',     '/bin/retroterm'],
+  ];
+  data.forEach(([k, v]) => {
+    addLine(
+      `  <span style="color:#ffb000;display:inline-block;min-width:12ch">${k}</span>` +
+      `<span style="color:#66ffb3">${esc(v)}</span>`,
+      'tl'
+    );
+  });
+}
+
+function cmdSysinfo() {
+  blank();
+  addLine('  SYSTEM STATUS', 'tl-sec');
+  addLine('  ────────────────────────────────────────────', 'tl-dim');
+  const uptime = Math.floor((Date.now() - performance.timing.navigationStart) / 1000);
+  const mem = performance.memory
+    ? (performance.memory.usedJSHeapSize / 1048576).toFixed(1) + ' MB'
+    : 'n/d';
+  const rows = [
+    ['OS',       'RetroOS 2.1 (GitHub Pages Kernel)'],
+    ['SHELL',    '/bin/retroterm v1.0'],
+    ['UPTIME',   uptime + 's desde carga de página'],
+    ['MEMORIA',  mem],
+    ['RED',      navigator.onLine ? '✓ ONLINE' : '✗ OFFLINE'],
+    ['IDIOMA',   navigator.language],
+    ['PANTALLA', screen.width + '×' + screen.height],
+    ['ESTADO',   'TODOS LOS SISTEMAS OPERATIVOS'],
+  ];
+  rows.forEach(([k, v]) => {
+    const color = k === 'ESTADO' ? '#00ff66' : '#66ffb3';
+    addLine(
+      `  <span style="color:#ffb000;display:inline-block;min-width:12ch">${k}</span>` +
+      `<span style="color:${color}">${esc(v)}</span>`,
+      'tl'
+    );
+  });
+}
+
+function cmdDate() {
+  const now = new Date();
+  addLine('  ' + now.toLocaleDateString('es-ES', { weekday:'long', year:'numeric', month:'long', day:'numeric' }), 'tl-info');
+  addLine('  ' + now.toLocaleTimeString('es-ES') + ' (hora local)', 'tl-info');
+  addLine('  Unix: ' + Math.floor(now / 1000), 'tl-dim');
+}
+
+function cmdEcho(args) {
+  addLine('  ' + esc(args.join(' ')), 'tl-white');
+}
+
+function cmdSkills() {
+  blank();
+  addLine('  STACK TECNOLÓGICO — RETROTERM.AI', 'tl-sec');
+  addLine('  ────────────────────────────────────────────────', 'tl-dim');
+  const s = [
+    ['HTML5',         '████████████  semántico · accesibilidad · SEO'],
+    ['CSS3',          '███████████░  flexbox · grid · animaciones'],
+    ['JavaScript',    '█████████░░░  vanilla · sin frameworks · workers'],
+    ['APIs REST',     '████████░░░░  CoinGecko · HackerNews · Radio Browser'],
+    ['Cloudflare',    '███████░░░░░  Workers · proxy IA para ARIA'],
+    ['Git/GitHub',    '████████░░░░  GitHub Pages · control de versiones'],
+    ['SEO técnico',   '███████████░  SILO · JSON-LD · sitemap · OG'],
+  ];
+  s.forEach(([tech, bar]) => {
+    addLine(
+      `  <span style="color:#00e5ff;display:inline-block;min-width:16ch">${tech}</span>` +
+      `<span style="color:#003a18">${bar}</span>`,
+      'tl'
+    );
+  });
+}
+
+function cmdNeofetch() {
+  blank();
+  const art = [
+    '       .´¨¨`.      ',
+    '      /  RT  \\     ',
+    '     | .----. |    ',
+    '     | | >_  | |    ',
+    '     | `----´ |    ',
+    '      \\______/     ',
+    '                   ',
+  ];
+  const nfo = [
+    `<span class="ps-host">retroterm</span><span class="ps-sep">@</span><span class="ps-host">ivanchux</span>`,
+    `<span style="color:#0d3020">─────────────────────</span>`,
+    `<span style="color:#ffb000">OS:</span>       <span style="color:#66ffb3">RetroOS 2.1</span>`,
+    `<span style="color:#ffb000">Host:</span>     <span style="color:#66ffb3">GitHub Pages</span>`,
+    `<span style="color:#ffb000">Shell:</span>    <span style="color:#66ffb3">/bin/retroterm</span>`,
+    `<span style="color:#ffb000">Autor:</span>    <span style="color:#66ffb3">Iván Brihuega Crespo</span>`,
+    `<span style="color:#ffb000">Ciclo:</span>    <span style="color:#66ffb3">1º ASIR — CDM FP</span>`,
+  ];
+  const max = Math.max(art.length, nfo.length);
+  for (let i = 0; i < max; i++) {
+    const a = esc(art[i] || '                   ');
+    const n = nfo[i] || '';
+    addLine(`  <span style="color:#00ff66;font-size:0.74rem">${a}</span>  ${n}`, 'tl');
+  }
+  blank();
+  addLine(
+    '  <span style="background:#ff5f56">&nbsp;&nbsp;&nbsp;</span>' +
+    '<span style="background:#ffbd2e">&nbsp;&nbsp;&nbsp;</span>' +
+    '<span style="background:#27c93f">&nbsp;&nbsp;&nbsp;</span>' +
+    '<span style="background:#00e5ff">&nbsp;&nbsp;&nbsp;</span>' +
+    '<span style="background:#cc66ff">&nbsp;&nbsp;&nbsp;</span>' +
+    '<span style="background:#ffb000">&nbsp;&nbsp;&nbsp;</span>',
+    'tl'
+  );
+}
+
+function cmdPing(args) {
+  const host = args[0] || 'retroterm.ai';
+  blank();
+  addLine(`  PING ${esc(host)} — enviando 4 paquetes...`, 'tl-sec');
+  const times = Array.from({length:4}, () => 10 + Math.floor(Math.random() * 8));
+  let i = 0;
+  const iv = setInterval(() => {
+    addLine(`  64 bytes de ${esc(host)}: icmp_seq=${i+1} ttl=64 time=${times[i]} ms`, 'tl');
+    scrollBottom();
+    if (++i >= 4) {
+      clearInterval(iv);
+      blank();
+      addLine(`  --- ${esc(host)} ping statistics ---`, 'tl-dim');
+      addLine(`  4 transmitidos, 4 recibidos, 0% pérdida`, 'tl-ok');
+      const avg = Math.round(times.reduce((a,b)=>a+b,0) / 4);
+      addLine(`  rtt min/avg/max = ${Math.min(...times)}/${avg}/${Math.max(...times)} ms`, 'tl-dim');
+      blank();
+      scrollBottom();
+    }
+  }, 320);
+}
+
+function cmdSudo(args) {
+  if (!args.length) { addLine('  sudo: falta el comando', 'tl-err'); return; }
+  const sub = args.join(' ').toLowerCase();
+  if (sub === 'rm -rf /') {
+    addLine('  sudo: operación bloqueada por el kernel de RETROTERM.', 'tl-err');
+    addLine('  Borrar el sistema es de mala educación.', 'tl-dim');
+  } else if (sub === 'make me a sandwich') {
+    addLine('  Okay.', 'tl-ok');
+  } else {
+    addLine('  [sudo] contraseña para ivanchux: ', 'tl-info');
+    setTimeout(() => {
+      addLine('  Lo sentimos, ivanchux no puede ejecutar eso como root en este kernel.', 'tl-err');
+      scrollBottom();
+    }, 900);
+  }
+}
+
+function cmdEaster() {
+  addLine('  Accediendo a sector restringido...', 'tl-dim');
+  setTimeout(() => {
+    blank();
+    addLine('  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓', 'tl-sec');
+    addLine('         RETROTERM — SECTOR OCULTO       ', 'tl-sec');
+    addLine('  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓', 'tl-sec');
+    blank();
+    addLine('  Has encontrado el Easter Egg. 🐣', 'tl-info');
+    blank();
+    addLine('  Datos clasificados:', 'tl-dim');
+    addLine('  · Este proyecto fue construido con mucho café ☕', 'tl-white');
+    addLine('  · La mascota oficial es un Turco Otomano 🐓', 'tl-white');
+    addLine('  · La estética está inspirada en Fallout + WarGames', 'tl-white');
+    addLine('  · v3.0 tendrá backend real con Supabase', 'tl-white');
+    addLine('  · Esta terminal fue añadida en la Fase 1 del roadmap', 'tl-white');
+    blank();
+    addLine('  Fin de transmisión cifrada.', 'tl-dim');
+    scrollBottom();
+  }, 750);
+}
+
+/* ══════════════════════════
+   NEWS — Algolia HN Search API
+   https://hn.algolia.com/api
+   100% gratuita, sin clave, CORS abierto
+══════════════════════════ */
+async function cmdNews(args) {
+  const topIdx = args.indexOf('--top');
+  const isAsk  = args.includes('--ask');
+  let limit = 10;
+  if (topIdx !== -1 && args[topIdx + 1]) {
+    limit = Math.min(Math.max(parseInt(args[topIdx + 1]) || 10, 1), 30);
+  }
+
+  blank();
+  addLine('  HACKERNEWS FEED', 'tl-sec');
+  addLine('  Conectando con hn.algolia.com...', 'tl-dim');
+  scrollBottom();
+
+  const cacheKey = (isAsk ? 'ask' : 'top') + '_' + limit;
+  const now = Date.now();
+  if (newsCache[cacheKey] && (now - newsCache[cacheKey].ts) < 300000) {
+    renderNews(newsCache[cacheKey].items, isAsk);
+    return;
+  }
+
+  try {
+    /* Algolia HN API: CORS abierto, sin clave, sin registro */
+    const tags    = isAsk ? 'ask_hn' : 'front_page';
+    const url     = `https://hn.algolia.com/api/v1/search?tags=${tags}&hitsPerPage=${limit}`;
+    const res     = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data    = await res.json();
+    const items   = data.hits || [];
+
+    newsCache[cacheKey] = { items, ts: now };
+    renderNews(items, isAsk);
+
+  } catch (err) {
+    addLine('  ERROR: No se pudo conectar con HackerNews.', 'tl-err');
+    addLine('  ' + esc(err.message), 'tl-dim');
+    addLine('  Comprueba tu conexión a internet e inténtalo de nuevo.', 'tl-dim');
+  }
+}
+
+function renderNews(items, isAsk) {
+  blank();
+  const label = isAsk
+    ? 'ASK HN — PREGUNTAS DE LA COMUNIDAD'
+    : 'TOP STORIES — HACKER NEWS';
+  addLine('  ' + label, 'tl-sec');
+  addLine('  ──────────────────────────────────────────────────────', 'tl-dim');
+  blank();
+
+  items.forEach((item, i) => {
+    if (!item || !item.title) return;
+    const num  = String(i + 1).padStart(2, ' ');
+    const pts  = item.points || 0;
+    const cmts = item.num_comments || 0;
+    const by   = item.author || '?';
+    const url  = item.url || `https://news.ycombinator.com/item?id=${item.objectID}`;
+    let host   = '';
+    try { host = ' (' + new URL(item.url).hostname.replace('www.','') + ')'; } catch(e) { host = ' (ask.hn)'; }
+
+    const el = document.createElement('div');
+    el.className = 'tl';
+    el.style.marginBottom = '5px';
+    el.innerHTML =
+      `  <span class="hn-num">${num}.</span> ` +
+      `<a class="hn-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a>` +
+      `<span class="hn-meta">${esc(host)}</span><br>` +
+      `      <span class="hn-meta">▲ ${pts} pts &nbsp;·&nbsp; ${cmts} comentarios &nbsp;·&nbsp; by ${esc(by)}</span>`;
+    out.appendChild(el);
+  });
+
+  blank();
+  addLine(`  <span style="color:#0d3020">${items.length} historias · Fuente: Algolia HN API (sin clave) · caché 5 min</span>`, 'tl');
+  addLine(`  <span style="color:#0d3020">Tip: 'news --top 20' para más · 'news --ask' para preguntas</span>`, 'tl');
+  scrollBottom();
+}
+
+/* ══════════════════════════
+   TECLADO
+══════════════════════════ */
+inp.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const v = inp.value;
+    inp.value = '';
+    runCmd(v);
+
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (histIdx < cmdHistory.length - 1) {
+      histIdx++;
+      inp.value = cmdHistory[histIdx];
+    }
+
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (histIdx > 0) {
+      histIdx--;
+      inp.value = cmdHistory[histIdx];
+    } else {
+      histIdx = -1;
+      inp.value = '';
+    }
+
+  } else if (e.key === 'Tab') {
+    e.preventDefault();
+    const v = inp.value.trim();
+    if (!v) return;
+    const parts = v.split(/\s+/);
+    const allCmds  = ['help','ls','cd','open','whoami','sysinfo','date','echo','news','skills','neofetch','ping','sudo','easter','clear','exit','logout'];
+    const allPages = Object.keys(PAGES);
+
+    if (parts.length === 1) {
+      const matches = [...allCmds, ...allPages].filter(c => c.startsWith(parts[0]));
+      if (matches.length === 1) {
+        inp.value = matches[0] + ' ';
+      } else if (matches.length > 1) {
+        printPrompt(v);
+        addLine('  ' + matches.join('  '), 'tl-dim');
+        blank();
+        scrollBottom();
+      }
+    } else if ((parts[0]==='cd'||parts[0]==='open') && parts.length===2) {
+      const matches = allPages.filter(p => p.startsWith(parts[1]));
+      if (matches.length === 1) inp.value = parts[0] + ' ' + matches[0];
+    }
+  }
+});
+
+/* Clic en la ventana → foco al input */
+document.getElementById('term-window').addEventListener('click', () => inp.focus());
+
+/* Arranque */
+printBanner();
+inp.focus();
+</script>
+
+</body>
+</html>

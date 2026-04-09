@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SQL — Guía de Bases de Datos | RETROTERM.AI</title>
+  <meta name="description" content="Guía práctica de SQL para ASIR: DDL, DML, DCL, SELECT, JOINs, GROUP BY, funciones y trucos de examen.">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "SQL — Guía de Bases de Datos para ASIR",
+    "description": "Guía práctica de SQL: DDL, DML, DCL, SELECT, JOINs, GROUP BY, funciones y trucos de examen.",
+    "author": { "@type": "Person", "name": "Iván Brihuega Crespo" },
+    "publisher": { "@type": "Organization", "name": "RETROTERM.AI", "url": "https://ivanchux.github.io/" },
+    "datePublished": "2026-01-24",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://ivanchux.github.io/articulo-sql.html" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://ivanchux.github.io/" },
+      { "@type": "ListItem", "position": 2, "name": "Artículos", "item": "https://ivanchux.github.io/articulos.html" },
+      { "@type": "ListItem", "position": 3, "name": "SQL — Guía de Bases de Datos", "item": "https://ivanchux.github.io/articulo-sql.html" }
+    ]
+  }
+  </script>
+
+  <style>
+    /* breadcrumbs */
+    .breadcrumbs {
+      font-size: 0.72rem;
+      color: #00ff6655;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+    }
+    .breadcrumbs a{ 
+      color: #00ff6688; 
+      text-decoration: none; 
+    }
+    
+    .breadcrumbs a:hover{ 
+      color: #00ff66; 
+    }
+    
+    .breadcrumbs span{ 
+      color: #00ff6633; 
+      margin: 0 6px; 
+    }
+
+    /* secciones del artículo */
+    .sql-seccion {
+      border: 1px solid #003300;
+      background: rgba(0,20,0,0.6);
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .sql-seccion-titulo {
+      padding: 8px 14px;
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      border-bottom: 1px solid #003300;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sql-seccion-titulo.ddl{ 
+      color: #ff6b6b; 
+      background: rgba(255,107,107,0.06); 
+    }
+    .sql-seccion-titulo.dml{ 
+      color: #00ff66; 
+      background: rgba(0,255,102,0.04); 
+    }
+    .sql-seccion-titulo.dcl{ 
+      color: #c77dff; 
+      background: rgba(199,125,255,0.06); 
+    }
+    .sql-seccion-titulo.sel{ 
+      color: #4fc3ff; 
+      background: rgba(79,195,255,0.06); 
+    }
+    .sql-seccion-titulo.join{ 
+      color: #4fc3ff; 
+      background: rgba(79,195,255,0.06); 
+    }
+    .sql-seccion-titulo.fn{ 
+      color: #ffd166; 
+      background: rgba(255,209,102,0.06); 
+    }
+    .sql-seccion-titulo.tip{ 
+      color: #c77dff; 
+      background: rgba(199,125,255,0.06); 
+    }
+    .sql-seccion-body{ 
+      padding: 14px; 
+    }
+
+    /* bloques de código */
+    .codigo-bloque {
+      background: #000;
+      border: 1px solid #003300;
+      border-left: 2px solid #00ff6655;
+      padding: 10px 14px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 10px 0;
+      color: #00ff66;
+    }
+
+    /* colores SQL */
+    .kw{ 
+      color: #ff79c6; 
+      font-weight: bold; 
+    }
+    .fn{ 
+      color: #00ff66; 
+    }
+    .str{ 
+      color: #f1fa8c; 
+    }
+    .num{ 
+      color: #bd93f9; 
+    }
+    .cmt{ 
+      color: #555; 
+      font-style: italic; 
+    }
+    .tbl{ 
+      color: #4fc3ff; 
+    }
+    .op{ 
+      color: #ffb86c; 
+    }
+
+    /* aviso y ok */
+    .aviso {
+      background: rgba(255,107,107,0.06);
+      border: 1px solid rgba(255,107,107,0.3);
+      color: #ff6b6b;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      margin: 8px 0;
+    }
+    .ok-msg {
+      background: rgba(0,255,102,0.04);
+      border: 1px solid rgba(0,255,102,0.2);
+      color: #66ffb3;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      margin: 8px 0;
+    }
+
+    /* etiqueta inline */
+    .etiqueta {
+      font-size: 0.70rem;
+      color: #ffffff77;
+      letter-spacing: 2px;
+      margin: 12px 0 4px;
+      display: block;
+    }
+
+    /* tabla */
+    .tabla-sql {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin: 10px 0;
+    }
+    .tabla-sql th {
+      background: rgba(0,255,102,0.06);
+      color: #00ff66;
+      padding: 6px 10px;
+      text-align: left;
+      border-bottom: 1px solid #003300;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+    }
+    .tabla-sql td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #001a00;
+      vertical-align: top;
+      color: #ccc;
+    }
+    .tabla-sql tr:last-child td{ 
+      border-bottom: none; 
+    }
+    .tabla-sql .k{ 
+      color: #00ff66; 
+      font-family: 'Courier New', monospace; 
+    }
+    .tabla-sql .tag-ddl{ 
+      color: #ff6b6b; 
+    }
+    .tabla-sql .tag-dml{ 
+      color: #00ff66; 
+    }
+    .tabla-sql .tag-dcl{ 
+      color: #c77dff; 
+    }
+    .tabla-sql .az { 
+      color: #4fc3ff; 
+      font-family: 'Courier New', monospace; 
+    }
+
+    /* grid dos columnas */
+    .col2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 10px 0;
+    }
+
+    @media (max-width: 480px) {
+      .col2{ 
+        grid-template-columns: 1fr; 
+      }
+      .codigo-bloque{ 
+        font-size: 0.72rem; 
+      }
+    }
+  
+  /* ── CANVAS FONDO ─── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  /* fondo transparente sobre canvas */
+  .pantalla, .pantalla-wide {
+    background: transparent !important;
+    border-color: #00ff6633 !important;
+    box-shadow: 0 0 15px #00ff6622 !important;
+  }
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+
+<section class="pantalla seccion activa pantalla-wide">
+
+  <!-- Breadcrumbs -->
+  <nav class="breadcrumbs" aria-label="Ruta de navegación">
+    <a href="index.html">INICIO</a><span>/</span>
+    <a href="articulos.html">ARTÍCULOS</a><span>/</span>
+    SQL
+  </nav>
+
+  <header class="cabecera">
+    <h1>🗄️ SQL — BASES DE DATOS</h1>
+    <p class="subtitulo">// DDL · DML · DCL · SELECT · JOINs · Funciones · Trucos de examen</p>
+  </header>
+
+  <p class="articulo-meta">
+    <span class="articulo-tag">BASES DE DATOS</span> // 2026-03-09 — Iván Brihuega
+  </p>
+
+  <p style="color:#ffffff; font-size:0.85rem; line-height:1.6; margin: 14px 0;">
+    Resumen de los comandos SQL más importantes para las prácticas y exámenes de ASIR.
+    Organizado por bloques: definición de estructuras (DDL), manipulación de datos (DML),
+    control de acceso (DCL), consultas SELECT, JOINs y funciones.
+  </p>
+
+  <!-- DDL -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo ddl">⬡ DDL — DATA DEFINITION LANGUAGE</div>
+    <div class="sql-seccion-body">
+      <p style="color:#ffffff;font-size:0.8rem;margin-bottom:10px;">Crear, modificar y eliminar estructuras de la base de datos.</p>
+      <span class="etiqueta">// Base de datos</span>
+      <div class="codigo-bloque"><span class="kw">DROP DATABASE IF EXISTS</span> <span class="tbl">mi_bd</span>;
+<span class="kw">CREATE DATABASE</span> <span class="tbl">mi_bd</span> <span class="kw">CHARACTER SET</span> utf8mb4;
+<span class="kw">USE</span> <span class="tbl">mi_bd</span>;</div>
+      <span class="etiqueta">// Crear tabla con clave foránea</span>
+      <div class="codigo-bloque"><span class="kw">CREATE TABLE</span> <span class="tbl">empleado</span> (
+  id       <span class="op">INT PRIMARY KEY AUTO_INCREMENT</span>,
+  nombre   <span class="op">VARCHAR</span>(<span class="num">50</span>) <span class="op">NOT NULL</span>,
+  salario  <span class="op">DECIMAL</span>(<span class="num">8</span>,<span class="num">2</span>),
+  id_dep   <span class="op">INT</span>,
+  <span class="kw">FOREIGN KEY</span> (id_dep) <span class="kw">REFERENCES</span> <span class="tbl">departamento</span>(id)
+);</div>
+      <span class="etiqueta">// Modificar tabla</span>
+      <div class="codigo-bloque"><span class="kw">ALTER TABLE</span> <span class="tbl">t</span> <span class="kw">ADD</span>         col <span class="op">TIPO</span>;
+<span class="kw">ALTER TABLE</span> <span class="tbl">t</span> <span class="kw">MODIFY</span>      col <span class="op">NUEVO_TIPO</span>;
+<span class="kw">ALTER TABLE</span> <span class="tbl">t</span> <span class="kw">DROP COLUMN</span> col;
+<span class="kw">DROP TABLE</span> <span class="tbl">t</span>;
+<span class="kw">TRUNCATE TABLE</span> <span class="tbl">t</span>; <span class="cmt">-- vacía sin borrar la estructura</span></div>
+    </div>
+  </div>
+
+  <!-- DML -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo dml">⬡ DML — DATA MANIPULATION LANGUAGE</div>
+    <div class="sql-seccion-body">
+      <p style="color:#ffffff;font-size:0.8rem;margin-bottom:10px;">Insertar, actualizar y eliminar datos.</p>
+      <span class="etiqueta">// INSERT</span>
+      <div class="codigo-bloque"><span class="kw">INSERT INTO</span> <span class="tbl">empleado</span> <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="str">'Ana'</span>, <span class="num">2800</span>, <span class="num">2</span>);
+<span class="cmt">-- Varios a la vez:</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">empleado</span> (nombre, salario) <span class="kw">VALUES</span>
+  (<span class="str">'Luis'</span>, <span class="num">3200</span>),
+  (<span class="str">'Marta'</span>, <span class="num">2900</span>);</div>
+      <span class="etiqueta">// UPDATE — siempre con WHERE</span>
+      <div class="codigo-bloque"><span class="kw">UPDATE</span> <span class="tbl">empleado</span>
+  <span class="kw">SET</span> salario = <span class="num">3000</span>
+  <span class="kw">WHERE</span> id = <span class="num">1</span>;</div>
+      <span class="etiqueta">// DELETE — siempre con WHERE</span>
+      <div class="codigo-bloque"><span class="kw">DELETE FROM</span> <span class="tbl">empleado</span>
+  <span class="kw">WHERE</span> id = <span class="num">1</span>;</div>
+      <div class="aviso">⚠ Sin WHERE en UPDATE o DELETE → afecta TODAS las filas</div>
+    </div>
+  </div>
+
+  <!-- DCL -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo dcl">⬡ DCL — DATA CONTROL LANGUAGE</div>
+    <div class="sql-seccion-body">
+      <p style="color:#ffffff;font-size:0.8rem;margin-bottom:10px;">Gestión de usuarios y permisos.</p>
+      <div class="col2">
+        <div>
+          <span class="etiqueta">// Usuarios</span>
+          <div class="codigo-bloque"><span class="kw">CREATE USER</span> <span class="str">'user'</span>@<span class="str">'localhost'</span>
+  <span class="kw">IDENTIFIED BY</span> <span class="str">'pass'</span>;
+<span class="kw">DROP USER</span> <span class="str">'user'</span>@<span class="str">'localhost'</span>;</div>
+        </div>
+        <div>
+          <span class="etiqueta">// Permisos</span>
+          <div class="codigo-bloque"><span class="kw">GRANT</span> <span class="op">SELECT, INSERT</span>
+  <span class="kw">ON</span> <span class="tbl">bd.*</span> <span class="kw">TO</span> <span class="str">'user'</span>@<span class="str">'localhost'</span>;
+<span class="kw">REVOKE</span> <span class="op">INSERT</span> <span class="kw">ON</span> <span class="tbl">bd.*</span>
+  <span class="kw">FROM</span> <span class="str">'user'</span>@<span class="str">'localhost'</span>;
+<span class="kw">FLUSH PRIVILEGES</span>;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELECT -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo sel">⬡ SELECT — CONSULTAS</div>
+    <div class="sql-seccion-body">
+      <p style="color:#ffffff;font-size:0.8rem;margin-bottom:6px;">Orden obligatorio de las cláusulas:</p>
+      <div class="ok-msg">SELECT → FROM → [JOIN] → [WHERE] → [GROUP BY] → [HAVING] → [ORDER BY] → [LIMIT]</div>
+      <div class="col2">
+        <div>
+          <span class="etiqueta">// Básico y ordenar</span>
+          <div class="codigo-bloque"><span class="kw">SELECT</span> nombre, salario
+<span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">ORDER BY</span> salario <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">5</span>;</div>
+        </div>
+        <div>
+          <span class="etiqueta">// WHERE — condiciones</span>
+          <div class="codigo-bloque"><span class="kw">WHERE</span> salario <span class="op">BETWEEN</span> <span class="num">1000</span> <span class="op">AND</span> <span class="num">3000</span>
+<span class="kw">WHERE</span> nombre <span class="op">IN</span> (<span class="str">'Ana'</span>,<span class="str">'Luis'</span>)
+<span class="kw">WHERE</span> nombre <span class="op">LIKE</span> <span class="str">'A%'</span>   <span class="cmt">↑ empieza por A</span>
+<span class="kw">WHERE</span> nombre <span class="op">LIKE</span> <span class="str">'%a'</span>   <span class="cmt">↑ termina en a</span>
+<span class="kw">WHERE</span> campo <span class="op">IS NULL</span></div>
+        </div>
+      </div>
+      <span class="etiqueta">// GROUP BY y HAVING</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> id_dep, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total, <span class="fn">AVG</span>(salario) <span class="kw">AS</span> media
+<span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">GROUP BY</span> id_dep
+<span class="kw">HAVING</span> <span class="fn">AVG</span>(salario) <span class="op">&gt;</span> <span class="num">3000</span>;</div>
+      <span class="etiqueta">// Subconsulta</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> nombre, salario
+<span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">WHERE</span> salario <span class="op">&gt;</span> (
+  <span class="kw">SELECT</span> <span class="fn">AVG</span>(salario) <span class="kw">FROM</span> <span class="tbl">empleado</span>
+);</div>
+    </div>
+  </div>
+
+  <!-- JOINs -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo join">⬡ JOINs — COMBINAR TABLAS</div>
+    <div class="sql-seccion-body">
+      <div class="col2">
+        <div>
+          <span class="etiqueta">// INNER JOIN — solo filas con pareja</span>
+          <div class="codigo-bloque"><span class="kw">SELECT</span> e.nombre, d.nombre <span class="kw">AS</span> depto
+<span class="kw">FROM</span> <span class="tbl">empleado</span> e
+<span class="kw">INNER JOIN</span> <span class="tbl">departamento</span> d
+  <span class="kw">ON</span> e.id_dep <span class="op">=</span> d.id;</div>
+        </div>
+        <div>
+          <span class="etiqueta">// LEFT JOIN — todos los de la izquierda</span>
+          <div class="codigo-bloque"><span class="kw">SELECT</span> d.nombre, <span class="fn">COUNT</span>(e.id) <span class="kw">AS</span> total
+<span class="kw">FROM</span> <span class="tbl">departamento</span> d
+<span class="kw">LEFT JOIN</span> <span class="tbl">empleado</span> e
+  <span class="kw">ON</span> d.id <span class="op">=</span> e.id_dep
+<span class="kw">GROUP BY</span> d.id;</div>
+        </div>
+      </div>
+      <div class="ok-msg">✓ LEFT JOIN para incluir departamentos que no tienen empleados</div>
+      <span class="etiqueta">// JOIN múltiple (3 tablas)</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> e.nombre, d.nombre, p.nombre
+<span class="kw">FROM</span> <span class="tbl">empleado</span> e
+<span class="kw">JOIN</span> <span class="tbl">departamento</span> d <span class="kw">ON</span> e.id_dep  <span class="op">=</span> d.id
+<span class="kw">JOIN</span> <span class="tbl">proyecto</span>     p <span class="kw">ON</span> e.id_proy <span class="op">=</span> p.id;</div>
+      <table class="tabla-sql" style="margin-top:12px;">
+        <tr><th>JOIN</th><th>Cuándo usarlo</th></tr>
+        <tr><td class="k">INNER JOIN</td><td>Solo filas con pareja en ambas tablas</td></tr>
+        <tr><td class="k">LEFT JOIN</td><td>Todos los de la tabla izquierda, aunque no tengan pareja</td></tr>
+        <tr><td class="k">RIGHT JOIN</td><td>Todos los de la tabla derecha, aunque no tengan pareja</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- WHERE vs HAVING -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo tip">⬡ WHERE vs HAVING</div>
+    <div class="sql-seccion-body">
+      <table class="tabla-sql">
+        <tr><th></th><th>WHERE</th><th>HAVING</th></tr>
+        <tr><td class="k">Cuándo</td><td>Antes de agrupar</td><td>Después de GROUP BY</td></tr>
+        <tr><td class="k">Filtra</td><td>Filas individuales</td><td>Grupos / agregados</td></tr>
+        <tr><td class="k">Funciones</td><td>No acepta COUNT, AVG…</td><td>Sí acepta COUNT, AVG…</td></tr>
+      </table>
+      <div class="ok-msg" style="margin-top:10px;">
+        ✓ COUNT(*) &gt; 1 → HAVING &nbsp;|&nbsp; ✓ salario &lt; 3000 → WHERE
+      </div>
+      <div class="aviso">
+        ✗ WHERE AVG(sal) &gt; 3000 → ERROR &nbsp;|&nbsp; ✓ HAVING AVG(sal) &gt; 3000 → OK
+      </div>
+    </div>
+  </div>
+
+  <!-- Funciones -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo fn">⬡ FUNCIONES</div>
+    <div class="sql-seccion-body">
+      <div class="col2">
+        <div>
+          <span class="etiqueta">// Funciones de grupo</span>
+          <table class="tabla-sql">
+            <tr><th>Función</th><th>Qué hace</th></tr>
+            <tr><td class="k">COUNT(*)</td><td>Cuenta filas</td></tr>
+            <tr><td class="k">SUM(col)</td><td>Suma</td></tr>
+            <tr><td class="k">AVG(col)</td><td>Media aritmética</td></tr>
+            <tr><td class="k">MAX(col)</td><td>Máximo</td></tr>
+            <tr><td class="k">MIN(col)</td><td>Mínimo</td></tr>
+            <tr><td class="k">ROUND(n,2)</td><td>Redondea 2 decimales</td></tr>
+          </table>
+        </div>
+        <div>
+          <span class="etiqueta">// Funciones de texto</span>
+          <table class="tabla-sql">
+            <tr><th>Función</th><th>Ejemplo</th></tr>
+            <tr><td class="k">UPPER(c)</td><td>'hola' → 'HOLA'</td></tr>
+            <tr><td class="k">LOWER(c)</td><td>'HOLA' → 'hola'</td></tr>
+            <tr><td class="k">LENGTH(c)</td><td>'Hola' → 4</td></tr>
+            <tr><td class="k">CONCAT(a,b)</td><td>'Ho'+'la' → 'Hola'</td></tr>
+            <tr><td class="k">TRIM(c)</td><td>' Hola ' → 'Hola'</td></tr>
+            <tr><td class="k">SUBSTR(c,2,3)</td><td>'Hola' → 'ola'</td></tr>
+          </table>
+        </div>
+      </div>
+      <span class="etiqueta">// Funciones de fecha</span>
+      <table class="tabla-sql">
+        <tr><th>Función</th><th>Resultado</th></tr>
+        <tr><td class="k">CURDATE()</td><td>Fecha de hoy</td></tr>
+        <tr><td class="k">NOW()</td><td>Fecha y hora actuales</td></tr>
+        <tr><td class="k">YEAR(fecha)</td><td>YEAR('2025-06-10') → 2025</td></tr>
+        <tr><td class="k">MONTH(fecha)</td><td>MONTH('2025-06-10') → 6</td></tr>
+        <tr><td class="k">DATEDIFF(f1,f2)</td><td>Días entre dos fechas</td></tr>
+      </table>
+      <span class="etiqueta">// Ejemplo con fechas</span>
+      <div class="codigo-bloque"><span class="kw">SELECT</span> nombre, <span class="fn">DATEDIFF</span>(<span class="fn">CURDATE</span>(), fecha_ingreso) <span class="kw">AS</span> dias
+<span class="kw">FROM</span> <span class="tbl">empleado</span>;
+<span class="cmt">-- Contratados en 2025:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">empleado</span>
+<span class="kw">WHERE</span> <span class="fn">YEAR</span>(fecha_ingreso) <span class="op">=</span> <span class="num">2025</span>;</div>
+    </div>
+  </div>
+
+  <!-- Trucos examen -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo tip">⬡ TRUCOS CLAVE DE EXAMEN</div>
+    <div class="sql-seccion-body">
+      <table class="tabla-sql">
+        <tr><th>Situación</th><th>Solución</th></tr>
+        <tr><td>Incluir filas sin pareja</td><td class="az">LEFT JOIN</td></tr>
+        <tr><td>Filtrar resultado agrupado</td><td class="az">HAVING</td></tr>
+        <tr><td>Comparar con NULL</td><td class="az">IS NULL</td></tr>
+        <tr><td>Sin duplicados</td><td class="az">SELECT DISTINCT</td></tr>
+        <tr><td>Primeros N resultados</td><td class="az">ORDER BY x DESC LIMIT N</td></tr>
+        <tr><td>Comparar con media</td><td class="az">WHERE x &gt; (SELECT AVG(x) FROM …)</td></tr>
+        <tr><td>Varios valores posibles</td><td class="az">IN ('A', 'B')</td></tr>
+        <tr><td>Rango de valores</td><td class="az">BETWEEN min AND max</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tabla resumen tipos -->
+  <div class="sql-seccion">
+    <div class="sql-seccion-titulo sel">⬡ RESUMEN: TIPOS DE SENTENCIAS</div>
+    <div class="sql-seccion-body">
+      <table class="tabla-sql">
+        <tr><th>Sentencias</th><th>Tipo</th></tr>
+        <tr><td class="k">CREATE / ALTER / DROP / TRUNCATE</td><td><span class="tag-ddl">DDL</span></td></tr>
+        <tr><td class="k">SELECT / INSERT / UPDATE / DELETE</td><td><span class="tag-dml">DML</span></td></tr>
+        <tr><td class="k">GRANT / REVOKE / CREATE USER</td><td><span class="tag-dcl">DCL</span></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <a href="articulos.html" class="volver">⬅ Volver a Artículos</a>
+
+  <nav class="nav-pie" aria-label="Navegación secundaria">
+    <a href="articulo-linux.html">🖥️ Linux</a>
+    <a href="articulo-seo.html">🔧 SEO</a>
+    <a href="index.html">🏠 HUB</a>
+  </nav>
+
+  <footer class="pie">
+    <p>RETROTERM.AI v0.2 © 2025 | Iván Brihuega Crespo</p>
+  </footer>
+
+</section>
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var STAR_COUNT=90, WAVE_COUNT=5, CONN_DIST=180, SPEED=0.18, WAVE_SPEED=0.0004;
+  var COLOR_NODE_A="rgba(0, 255, 102,", COLOR_NODE_B="rgba(255, 176, 0,";
+  var COLOR_LINE="rgba(0, 220, 90,", COLOR_WAVE="rgba(255, 176, 0,";
+  var stars=[], waves=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(var i=0;i<STAR_COUNT;i++){
+      var a=Math.random()>0.75;
+      stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?COLOR_NODE_B:COLOR_NODE_A,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});
+    }
+  }
+  function initWaves(){
+    waves=[];
+    for(var i=0;i<WAVE_COUNT;i++){
+      waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});
+    }
+  }
+  function drawWaves(){
+    for(var w=0;w<waves.length;w++){
+      var wv=waves[w]; wv.phase+=wv.speed*60;
+      ctx.beginPath(); ctx.moveTo(0,H*wv.yBase);
+      for(var x=0;x<=W;x+=4){ ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp); }
+      ctx.strokeStyle=COLOR_WAVE+wv.alpha+")"; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+  function drawConnections(){
+    for(var i=0;i<stars.length;i++){
+      for(var j=i+1;j<stars.length;j++){
+        var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<CONN_DIST){ ctx.beginPath(); ctx.moveTo(stars[i].x,stars[i].y); ctx.lineTo(stars[j].x,stars[j].y); ctx.strokeStyle=COLOR_LINE+(1-dist/CONN_DIST)*0.18+")"; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+  }
+  function drawStars(){
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.phase+=s.pspeed;
+      var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);
+      var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);
+      grad.addColorStop(0,s.col+(alpha*0.5)+")"); grad.addColorStop(1,s.col+"0)");
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius*4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius,0,Math.PI*2); ctx.fillStyle=s.col+alpha+")"; ctx.fill();
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<-20)s.x=W+20; if(s.x>W+20)s.x=-20;
+      if(s.y<-20)s.y=H+20; if(s.y>H+20)s.y=-20;
+    }
+  }
+  function draw(){ ctx.clearRect(0,0,W,H); drawWaves(); drawConnections(); drawStars(); requestAnimationFrame(draw); }
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize",function(){ resize(); initStars(); initWaves(); });
+})();
+</script>
+
+</body>
+</html>

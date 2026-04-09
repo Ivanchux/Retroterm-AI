@@ -1,5 +1,18 @@
 User-agent: *
 Allow: /
+Disallow: /perfil.html
+Disallow: /portal.html
+Disallow: /turco.html
+Disallow: /asistente.html
+Disallow: /404.html
+Disallow: /*pdf
 
 User-agent: Bingbot
-Disallow: /*.pdf
+Disallow: /perfil.html
+Disallow: /portal.html
+Disallow: /turco.html
+Disallow: /asistente.html
+Disallow: /404.html
+Disallow: /*pdf
+
+Sitemap: https://ivanchux.github.io/sitemap.xml

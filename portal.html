@@ -1,858 +1,550 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Portal interactivo RETROTERM.AI con articulos, minijuegos y contenido secreto.">
-  <meta name="robots" content="index,follow">
-  <title>RETROTERM.AI — Portal</title>
-  <link rel="stylesheet" href="estilos.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Portal interactivo RETROTERM.AI con articulos, minijuegos y contenido secreto.">
+<meta property="og:title" content="Portal — RETROTERM.AI">
+<meta property="og:description" content="Portal interactivo con contenido secreto, puzzles y módulos internos del sistema RETROTERM.AI.">
+<meta property="og:image" content="https://ivanchux.github.io/Imagenes/retroterm_ai.jpg">
+<meta property="og:url" content="https://ivanchux.github.io/portal.html">
+<meta name="robots" content="index,follow">
+<title>RETROTERM.AI — PORTAL</title>
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Inicio",     "item": "https://ivanchux.github.io/portal.html" },
-      { "@type": "ListItem", "position": 2, "name": "Logs",       "item": "https://ivanchux.github.io/portal.html#logs" },
-      { "@type": "ListItem", "position": 3, "name": "Core",       "item": "https://ivanchux.github.io/portal.html#core" },
-      { "@type": "ListItem", "position": 4, "name": "Restricted", "item": "https://ivanchux.github.io/portal.html#restricted" }
-    ]
+<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="accesibilidad.css">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<!-- Breadcrumbs JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "https://ivanchux.github.io/portal.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Logs",
+      "item": "https://ivanchux.github.io/portal.html#logs"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Core",
+      "item": "https://ivanchux.github.io/portal.html#core"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Restricted",
+      "item": "https://ivanchux.github.io/portal.html#restricted"
+    }
+  ]
+}
+</script>
+
+<!-- WebApplication JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Retroterm.ai – Portal Interactivo",
+  "url": "https://ivanchux.github.io/portal.html",
+  "description": "Sección interactiva tipo terminal retro con minijuegos, puzzles y contenido oculto dentro del ecosistema Retroterm.ai.",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web",
+  "author": {
+    "@type": "Person",
+    "name": "Iván Brihuega Crespo"
   }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Retroterm.ai — Portal Interactivo",
-    "url": "https://ivanchux.github.io/portal.html",
-    "description": "Portal secreto de RETROTERM.AI con puzzles, contenido oculto y efectos de terminal retro.",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web",
-    "author": { "@type": "Person", "name": "Iván Chux" }
+}
+</script>
+
+<style>
+/* GENERAL */
+body {
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  margin: 0; padding: 0;
+  scroll-behavior: smooth;
+}
+
+h1, h2{ 
+  text-shadow: 0 0 6px #00ff66; 
+}
+
+/* PANTALLAS */
+.pantalla {
+  display: none;
+  width: 90%;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  background: radial-gradient(circle at center, #001800 0%, #000 80%);
+}
+.pantalla.activa{ 
+  display: block; 
+}
+.seccion{ 
+  opacity: 0; 
+  animation: fadeIn 1s forwards; 
+}
+@keyframes fadeIn{ to { opacity: 1; } }
+
+/* BREADCRUMBS */
+.silo-breadcrumb{ 
+  margin-bottom: 15px; 
+  font-size: 0.9rem; 
+}
+.silo-breadcrumb a{ 
+  color: #00ff66; 
+  text-decoration: none; 
+}
+.silo-breadcrumb .sep{ 
+  margin: 0 5px; 
+}
+.silo-breadcrumb .actual{ 
+  color: #66ffb3; 
+}
+
+/* SILO MENU */
+.silo-menu {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.silo-menu a {
+  padding: 8px 18px;
+  border: 1px solid #00ff66;
+  border-radius: 5px;
+  background: rgba(0, 20, 0, 0.6);
+  color: #00ff66;
+  text-decoration: none;
+  transition: 0.3s;
+}
+.silo-menu a:hover{ 
+  background: #00ff66; 
+  color: #000; 
+  box-shadow: 0 0 10px #00ff66; 
+}
+
+/* MINI PUZZLE */
+#puzzle {
+  background: #001a00;
+  border: 2px solid #00ff66;
+  padding: 10px;
+  margin-top: 20px;
+  text-align: center;
+}
+#puzzle input {
+  background: #000;
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 5px 8px;
+  width: 60px;
+  font-family: 'Courier New', monospace;
+}
+#puzzle button {
+  padding: 5px 10px;
+  margin-left: 5px;
+  background: #00ff66;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+}
+#puzzle button:hover{ 
+  box-shadow: 0 0 6px #00ff66; 
+}
+#puzzle .msg{
+   margin-top: 10px; 
+   color: #66ffb3; 
   }
-  </script>
 
-  <style>
-    /* ══ BOOT SCREEN ══ */
-    #boot-screen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Courier New', monospace;
-      color: #00ff66;
-      padding: 30px;
-    }
-    #boot-screen.hidden {
-      animation: bootFade 0.6s ease-out forwards;
-      pointer-events: none;
-    }
-    @keyframes bootFade { to { opacity: 0; visibility: hidden; } }
-    .boot-logo {
-      font-size: clamp(1.2rem, 4vw, 2rem);
-      letter-spacing: 6px;
-      text-shadow: 0 0 20px #00ff66;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    .boot-log {
-      width: 100%;
-      max-width: 600px;
-      font-size: 0.78rem;
-      line-height: 2;
-      letter-spacing: 1px;
-    }
-    .boot-log .ok   { color: #00ff66; }
-    .boot-log .warn { color: #ffaa00; }
-    .boot-log .line { color: #1a5a2a; opacity: 0; }
-    .boot-log .line.show { animation: bootLine 0.1s forwards; }
-    @keyframes bootLine { to { opacity: 1; } }
-    .boot-bar-wrap {
-      width: 100%;
-      max-width: 600px;
-      margin-top: 20px;
-      border: 1px solid #00ff66;
-      height: 6px;
-      background: #000;
-    }
-    .boot-bar-fill {
-      height: 100%;
-      background: #00ff66;
-      box-shadow: 0 0 8px #00ff66;
-      width: 0%;
-      transition: width 0.15s linear;
-    }
-    .boot-bar-label {
-      font-size: 0.68rem;
-      color: #1a4a2a;
-      margin-top: 6px;
-      letter-spacing: 2px;
-    }
+/* ARTICULOS HORIZONTALES */
+.core-articles-horizontal{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.core-articles-horizontal .articulo{
+  width: 280px;
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #00ff66;
+  padding: 15px;
+  box-shadow: 0 0 10px #00ff66;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+.core-articles-horizontal .articulo table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.core-articles-horizontal .articulo table,
+.core-articles-horizontal .articulo th,
+.core-articles-horizontal .articulo td{
+  border: 1px solid #00ff66;
+}
+.core-articles-horizontal .articulo th,
+.core-articles-horizontal .articulo td {
+  padding: 5px;
+  text-align: center;
+  font-size: 0.85rem;
+}
 
-    /* ══ SECCIONES ══ */
-    .portal-section {
-      opacity: 0;
-      transition: opacity 0.35s ease;
-    }
-    .portal-section.activa { opacity: 1; }
+/* ARTICULO TURCO — ancho completo */
+.articulo-turco {
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #00ff66;
+  padding: 15px 20px;
+  box-shadow: 0 0 10px #00ff66;
+  border-radius: 8px;
+  margin-top: 20px;
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+.articulo-turco h3 {
+  color: #66ffb3;
+  margin-bottom: 10px;
+}
+.articulo-turco p{ 
+  color: #ccc; 
+  margin-bottom: 10px; 
+}
+.articulo-turco .fecha-clave {
+  color: #00ffff;
+  font-weight: bold;
+}
 
-    /* ══ BREADCRUMB ══ */
-    .silo-breadcrumb {
-      font-size: 0.78rem;
-      letter-spacing: 2px;
-      margin-bottom: 18px;
-      color: #1a4a2a;
-    }
-    .silo-breadcrumb a { color: #00ff66; text-decoration: none; transition: color 0.2s; }
-    .silo-breadcrumb a:hover { color: #66ffb3; }
-    .silo-breadcrumb .sep    { margin: 0 6px; color: #1a4a2a; }
-    .silo-breadcrumb .actual { color: #66ffb3; }
+/* LOG ENTRIES */
+.log-entry {
+  border-left: 2px solid #003300;
+  padding: 6px 12px;
+  margin: 8px 0;
+  font-size: 0.82rem;
+  color: #66ffb3;
+}
+.log-entry .log-time{ 
+  color: #1a5a2a; 
+  margin-right: 10px; 
+}
+.log-entry .log-warn{ 
+  color: #ffaa00; 
+}
+.log-entry .log-ok{ 
+  color: #00ff66; 
+}
+.log-entry .log-hint{ 
+  color: #00ffff; 
+}
 
-    /* ══ CURSOR TYPEWRITER ══ */
-    .tw-cursor {
-      display: inline-block;
-      width: 2px;
-      height: 1em;
-      background: #00ff66;
-      margin-left: 2px;
-      vertical-align: text-bottom;
-      animation: blink 0.8s infinite;
-    }
+/* RESPONSIVE */
+@media (max-width: 480px){
+  .core-articles-horizontal{ 
+    flex-direction: column; 
+    align-items: center; 
+  }
+  .core-articles-horizontal .articulo{ 
+    width: 100%; 
+  }
+}
 
-    /* ══ GLITCH ══ */
-    .glitch {
-      position: relative;
-      display: inline-block;
-    }
-    .glitch::before,
-    .glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      overflow: hidden;
-    }
-    .glitch::before {
-      color: #ff0040;
-      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-      transform: translateX(-2px);
-      animation: glitch1 3s infinite linear;
-    }
-    .glitch::after {
-      color: #00ffff;
-      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-      transform: translateX(2px);
-      animation: glitch2 3s infinite linear;
-    }
-    @keyframes glitch1 {
-      0%,90%  { transform: translateX(-2px); opacity: 1; }
-      91%     { transform: translateX(4px) skewX(2deg); opacity: 0.8; }
-      92%     { transform: translateX(-4px); opacity: 0.6; }
-      93%     { transform: translateX(2px); opacity: 1; }
-      94%,100%{ transform: translateX(-2px); opacity: 1; }
-    }
-    @keyframes glitch2 {
-      0%,90%  { transform: translateX(2px); opacity: 1; }
-      91%     { transform: translateX(-4px) skewX(-2deg); opacity: 0.8; }
-      92%     { transform: translateX(4px); opacity: 0.6; }
-      93%     { transform: translateX(-2px); opacity: 1; }
-      94%,100%{ transform: translateX(2px); opacity: 1; }
-    }
 
-    /* ══ PUZZLE ══ */
-    .puzzle-wrap {
-      border: 1px solid #00ff66;
-      background: rgba(0, 15, 0, 0.9);
-      padding: 20px 24px;
-      margin: 20px 0;
-      max-width: 440px;
-    }
-    .puzzle-wrap > p { color: #66ffb3; font-size: 0.85rem; margin-bottom: 14px; letter-spacing: 1px; }
-    .puzzle-input-row { display: flex; gap: 10px; align-items: center; }
-    .puzzle-input {
-      background: #000;
-      border: 1px solid #00ff66;
-      color: #00ff66;
-      font-family: 'Courier New', monospace;
-      font-size: 1.4rem;
-      letter-spacing: 8px;
-      padding: 8px 14px;
-      width: 120px;
-      text-align: center;
-      outline: none;
-      transition: box-shadow 0.2s;
-    }
-    .puzzle-input:focus { box-shadow: 0 0 10px #00ff66; }
-    .puzzle-input.error {
-      border-color: #ff5555;
-      animation: shake 0.4s ease;
-      box-shadow: 0 0 10px #ff5555;
-    }
-    .puzzle-input.success { border-color: #00ffff; box-shadow: 0 0 14px #00ffff; }
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%     { transform: translateX(-6px); }
-      40%     { transform: translateX(6px); }
-      60%     { transform: translateX(-4px); }
-      80%     { transform: translateX(4px); }
-    }
-    .puzzle-btn {
-      background: #001a00;
-      border: 1px solid #00ff66;
-      color: #00ff66;
-      font-family: 'Courier New', monospace;
-      font-size: 0.82rem;
-      padding: 8px 16px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.2s;
-      margin-top: 0;
-    }
-    .puzzle-btn:hover:not(:disabled) { background: #00ff66; color: #000; }
-    .puzzle-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .puzzle-msg { margin-top: 12px; font-size: 0.8rem; letter-spacing: 1px; min-height: 18px; }
-    .puzzle-intentos { font-size: 0.72rem; color: #1a4a2a; margin-top: 8px; letter-spacing: 1px; }
-    .puzzle-intentos.warn   { color: #ffaa00; }
-    .puzzle-intentos.danger { color: #ff5555; }
+  .activa{ 
+    display: block !important; 
+    opacity: 1 !important; }
 
-    /* ══ HACK OVERLAY ══ */
-    #hack-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 8888;
-      font-family: 'Courier New', monospace;
-      font-size: 0.78rem;
-      color: #00ff66;
-      padding: 30px;
-      overflow: hidden;
-    }
-    #hack-overlay.visible { display: block; }
-    #hack-text { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
-    .hack-final {
-      color: #00ffff;
-      font-size: 1.1rem;
-      letter-spacing: 3px;
-      text-shadow: 0 0 10px #00ffff;
-      margin-top: 20px;
-      display: block;
-    }
 
-    /* ══ MENÚ SILO ══ */
-    .silo-menu { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
-    .silo-menu a {
-      padding: 9px 20px;
-      border: 1px solid #00ff66;
-      border-radius: 4px;
-      background: rgba(0,20,0,0.7);
-      color: #00ff66;
-      text-decoration: none;
-      font-family: 'Courier New', monospace;
-      font-size: 0.82rem;
-      letter-spacing: 1px;
-      transition: all 0.25s;
-    }
-    .silo-menu a:hover { background: #00ff66; color: #000; box-shadow: 0 0 12px #00ff66; }
-    .silo-menu-cyan a { border-color: #00ffff; color: #00ffff; }
-    .silo-menu-cyan a:hover { background: #00ffff; color: #000; box-shadow: 0 0 12px #00ffff; }
 
-    /* ══ ARTÍCULOS HORIZONTALES ══ */
-    .core-articles-horizontal { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 16px; }
-    .core-articles-horizontal .articulo { width: 280px; box-sizing: border-box; border-radius: 6px; }
-    .core-articles-horizontal .articulo table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .core-articles-horizontal .articulo th,
-    .core-articles-horizontal .articulo td { border: 1px solid #00ff66; padding: 5px 8px; text-align: center; color: #e0e0e0; font-size: 0.82rem; }
-    .core-articles-horizontal .articulo th { color: #00ff66; background: rgba(0,255,102,0.07); }
+  /* ── CANVAS FONDO ─── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.45;
+  }
 
-    /* ══ VIDEO ══ */
-    .portal-video { width: 100%; border-radius: 6px; margin-top: 10px; border: 1px solid #00ff66; }
-
-    /* ══ RESTRICTED BANNER ══ */
-    .restricted-banner {
-      border: 1px solid #00ffff;
-      background: rgba(0,30,40,0.8);
-      padding: 16px 20px;
-      margin: 16px 0;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0,255,255,0.15);
-    }
-    .restricted-banner p { color: #66ffee; font-size: 0.85rem; letter-spacing: 1px; line-height: 1.8; }
-
-    /* ══ CORE — MONITOR GLOBAL ══ */
-    .core-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 14px;
-      margin: 14px 0;
-    }
-    .core-modulo { display: flex; flex-direction: column; gap: 4px; }
-    .core-modulo h3 {
-      font-size: 0.8rem;
-      letter-spacing: 2px;
-      color: #00ff66;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .core-live {
-      font-size: 0.58rem;
-      color: #ff5555;
-      letter-spacing: 1px;
-      animation: pulse-live 1.5s ease-in-out infinite;
-    }
-    @keyframes pulse-live {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.3; }
-    }
-    .core-fila {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 6px 0;
-      border-bottom: 1px solid #0a1a0a;
-      font-family: 'Courier New', monospace;
-    }
-    .core-fila:last-child { border-bottom: none; }
-    .btn-core {
-      margin-top: 10px;
-      width: 100%;
-      background: none;
-      border: 1px solid #003300;
-      color: #1a4a2a;
-      font-family: 'Courier New', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      padding: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-core:hover { border-color: #00ff66; color: #00ff66; }
-
-    /* ══ PÁRRAFOS OCULTOS HASTA ANIMAR ══ */
-    .p-hidden { opacity: 0; transition: opacity 0.5s; }
-    .p-hidden.show { opacity: 1; }
-
-    /* ══ SCANLINES OVERLAY ══ */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0,0,0,0.07) 3px);
-      pointer-events: none;
-      z-index: 10000;
-    }
-
-    @media (max-width: 600px) {
-      .core-grid { grid-template-columns: 1fr; }
-      .puzzle-wrap { max-width: 100%; }
-    }
+  /* fondo transparente sobre canvas */
+  .pantalla, .pantalla-wide {
+    background: transparent !important;
+    border-color: #00ff6633 !important;
+    box-shadow: 0 0 15px #00ff6622 !important;
+  }
   </style>
+
 </head>
 <body>
+<canvas id="bg-canvas"></canvas>
 
-  <!-- BOOT SCREEN -->
-  <div id="boot-screen">
-    <div class="boot-logo">RETROTERM.AI<span class="tw-cursor"></span></div>
-    <div class="boot-log" id="boot-log"></div>
-    <div class="boot-bar-wrap"><div class="boot-bar-fill" id="boot-bar"></div></div>
-    <div class="boot-bar-label" id="boot-label">INICIANDO...</div>
+
+<!-- INICIO -->
+<section id="inicio" class="pantalla seccion activa">
+  <nav class="silo-breadcrumb"><span class="actual">INICIO</span></nav>
+  <h1>INICIO</h1>
+  <p>Zona interna no documentada. Explora los módulos y descubre secretos.</p>
+
+  <div class="core-articles-horizontal">
+    <article class="articulo">
+      <h3>🖼 Bienvenido a Retroterm.ai</h3>
+      <p>Explora el universo retrofuturista inspirado en terminales clásicas y juegos tipo Fallout.</p>
+      <video preload="none"  src="Videos/video_inicio.mp4" autoplay muted loop playsinline style="width:100%; border-radius:8px;"></video>
+    </article>
+
+    <article class="articulo">
+      <h3>🎮 Minijuegos y Puzzles</h3>
+      <p>Encuentra minijuegos interactivos, códigos secretos y contenido oculto dentro del sistema.</p>
+      <video preload="none"  src="Videos/video_maquina.mp4" autoplay muted loop playsinline style="width:100%; border-radius:8px;"></video>
+    </article>
   </div>
 
-  <!-- HACK OVERLAY -->
-  <div id="hack-overlay"><div id="hack-text"></div></div>
+  <!-- Artículo Turco Mecánico con pista -->
+  <div class="articulo-turco">
+    <h3>♟ CURIOSIDAD — El Turco Mecánico</h3>
+    <p>En <span class="fecha-clave">1770</span>, el inventor húngaro Wolfgang von Kempelen presentó ante la corte de la emperatriz María Teresa de Austria una de las mayores ilusiones tecnológicas de la historia: el <strong>Turco Mecánico</strong>, un autómata aparentemente capaz de jugar al ajedrez y vencer a casi cualquier rival humano.</p>
+    <p>La máquina consistía en un maniquí vestido de turbante y ropajes otomanos, sentado frente a un tablero de ajedrez sobre un gran gabinete de madera. Von Kempelen abría los cajones del mecanismo para demostrar públicamente su complejidad interna — engranajes, palancas, cilindros — convenciendo al espectador de que todo era pura mecánica.</p>
+    <p>Durante más de 80 años el Turco viajó por Europa y América, derrotando a figuras como Napoleón Bonaparte o Benjamin Franklin. El secreto era más humano que mecánico: dentro del gabinete se ocultaba un maestro de ajedrez que controlaba los movimientos mediante un sistema de imanes e iluminación de velas.</p>
+    <p>El Turco fue destruido en un incendio en <span class="fecha-clave">1854</span>. Su legado inspiró directamente los primeros debates sobre inteligencia artificial y máquinas pensantes. Edgar Allan Poe escribió un ensayo intentando desentrañar su mecanismo. Charles Babbage lo estudió antes de diseñar su máquina analítica.</p>
 
-  <!-- ══ INICIO ══ -->
-  <section id="inicio" class="pantalla portal-section activa">
-    <nav class="silo-breadcrumb"><span class="actual">// INICIO</span></nav>
-    <h1><span id="tw-inicio"></span></h1>
-    <p class="p-hidden" id="p-inicio">Zona interna no documentada. Explora los módulos y descubre secretos.</p>
+    <div style="text-align:center; margin:15px 0;">
+  <img src="Imagenes/turco.png" alt="El Turco Mecánico de Kempelen" style="max-width:100%; border:1px solid #00ff66; box-shadow:0 0 10px #00ff66;">
+  <p style="font-size:0.75rem; color:#66ffb3; margin-top:6px;">Grabado original del Turco Mecánico, 1783.</p>
+</div>
 
-    <div class="core-articles-horizontal">
-      <article class="articulo">
-        <h3>🖼 Bienvenido a Retroterm.ai</h3>
-        <p>Explora el universo retrofuturista inspirado en terminales clásicas y juegos tipo Fallout.</p>
-        <video src="Videos/video_inicio.mp4" autoplay muted loop playsinline class="portal-video"></video>
-      </article>
-      <article class="articulo">
-        <h3>🎮 Minijuegos y Puzzles</h3>
-        <p>Encuentra minijuegos interactivos, códigos secretos y contenido oculto dentro del sistema.</p>
-        <video src="Videos/video_maquina.mp4" autoplay muted loop playsinline class="portal-video"></video>
-      </article>
-    </div>
+    <p style="color:#66ffb3; font-size:0.8rem; margin-top:12px;">> SISTEMA: archivo relacionado desbloqueado en LOGS. Introduce el año de su presentación.</p>
+  </div>
 
-    <div class="silo-menu">
-      <a href="#logs" onclick="irA('logs');return false;">▶ ACCEDER A LOGS</a>
-      <a href="index.html">⬅ VOLVER AL HUB</a>
-    </div>
-  </section>
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#logs">LOGS</a>
+  </div>
+</section>
 
-  <!-- ══ LOGS ══ -->
-  <section id="logs" class="pantalla portal-section">
-    <nav class="silo-breadcrumb">
-      <a href="#inicio" onclick="irA('inicio');return false;">INICIO</a>
-      <span class="sep">›</span>
-      <span class="actual">// LOGS</span>
-    </nav>
-    <h1><span id="tw-logs"></span></h1>
-    <p class="p-hidden" id="p-logs">Introduce el código de acceso para continuar al núcleo del sistema.</p>
+<!-- ===== LOGS ===== -->
+<section id="logs" class="pantalla seccion">
+  <nav class="silo-breadcrumb">
+    <a href="#inicio">INICIO</a> <span class="sep">></span>
+    <span class="actual">LOGS</span>
+  </nav>
+  <h1>SYSTEM LOGS</h1>
+  <p>Registros del sistema. Algunos archivos requieren autorización.</p>
 
-    <div class="puzzle-wrap">
-      <p>> AUTENTICACIÓN REQUERIDA — Introduce el código de 4 dígitos:</p>
-      <div class="puzzle-input-row">
-        <input type="text" id="codigo" class="puzzle-input" maxlength="4" placeholder="····" autocomplete="off">
-        <button class="puzzle-btn" id="puzzle-btn" onclick="verificarCodigo()">[ VERIFICAR ]</button>
+  <div class="log-entry"><span class="log-time">[2025-09-12 09:14]</span> <span class="log-ok">SISTEMA INICIADO</span> — retroterm.ai v0.1 cargado correctamente.</div>
+  <div class="log-entry"><span class="log-time">[2025-10-20 09:15]</span> <span class="log-ok">MÓDULO EDITOR</span> — CODE_CRT v0.3 operativo.</div>
+  <div class="log-entry"><span class="log-time">[2025-11-15 11:32]</span> <span class="log-ok">MÓDULO RED</span> — 5 nodos indexados correctamente.</div>
+  <div class="log-entry"><span class="log-time">[2025-12-03 18:07]</span> <span class="log-warn">ADVERTENCIA</span> — Acceso no autorizado detectado en sector /restricted.</div>
+  <div class="log-entry"><span class="log-time">[2026-01-15 22:41]</span> <span class="log-ok">ARCHIVO DESBLOQUEADO</span> — turco_v1.classified añadido al sistema.</div>
+  <div class="log-entry"><span class="log-time">[2026-03-01 10:00]</span> <span class="log-hint">PISTA</span> — El código de acceso es el año en que todo empezó. La respuesta está en INICIO.</div>
+  <div class="log-entry"><span class="log-time">[2026-04-04 10:01]</span> <span class="log-warn">ACCESO RESTRINGIDO</span> — Se requiere código de 4 dígitos para continuar.</div>
+
+  <div id="puzzle">
+    <p>Introduce el código secreto:</p>
+    <input type="text" id="codigo" maxlength="4" placeholder="____">
+    <button onclick="verificarCodigo()">✓</button>
+    <div class="msg" id="msgPuzzle"></div>
+  </div>
+
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#inicio">⬅ INICIO</a>
+    <a href="#core">IR A CORE</a>
+  </div>
+</section>
+
+<!-- ===== CORE ===== -->
+<section id="core" class="pantalla seccion">
+  <nav class="silo-breadcrumb">
+    <a href="#inicio">INICIO</a>
+    <span class="sep">></span>
+    <a href="#logs">LOGS</a>
+    <span class="sep">></span>
+    <span class="actual">CORE</span>
+  </nav>
+
+  <h1>CORE MODULE</h1>
+  <p>Bienvenido al núcleo del sistema RETROTERM.AI. Aquí se encuentran los datos y recursos principales.</p>
+
+  <div class="core-articles-horizontal">
+    <article class="articulo">
+      <h3>📝 Historia del Sistema</h3>
+      <p>Retroterm.ai nace como un entorno retrofuturista inspirado en terminales clásicas y sistemas tipo Fallout. Desarrollado por Iván Brihuega como proyecto ASIR 2025.</p>
+      <div class="imagen-articulo">
+        <img src="Imagenes/terminal.jpg" alt="Terminal estilo Fallout" loading="lazy">
       </div>
-      <div class="puzzle-msg" id="msgPuzzle"></div>
-      <div class="puzzle-intentos" id="intentos-label">Intentos restantes: 5</div>
-    </div>
+    </article>
 
-    <div class="silo-menu">
-      <a href="#inicio" onclick="irA('inicio');return false;">⬅ VOLVER</a>
-    </div>
-  </section>
+    <article class="articulo">
+      <h3>📊 Estadísticas del Proyecto</h3>
+      <p>Datos internos sobre la actividad del sistema.</p>
+      <table>
+        <thead>
+          <tr><th>Módulo</th><th>Usuarios</th><th>Proyectos</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Editor</td><td>120</td><td>45</td></tr>
+          <tr><td>IA</td><td>80</td><td>30</td></tr>
+          <tr><td>Gaming</td><td>65</td><td>20</td></tr>
+          <tr><td>Articulos</td><td>70</td><td>25</td></tr>
+          <tr><td>Turco Mecánico</td><td>Unknown</td><td>Unknown</td></tr>
+        </tbody>
+      </table>
+    </article>
 
-  <!-- ══ CORE ══ -->
-  <section id="core" class="pantalla portal-section">
-    <nav class="silo-breadcrumb">
-      <a href="#inicio" onclick="irA('inicio');return false;">INICIO</a>
-      <span class="sep">›</span>
-      <a href="#logs" onclick="irA('logs');return false;">LOGS</a>
-      <span class="sep">›</span>
-      <span class="actual">// CORE</span>
-    </nav>
-    <h1><span id="tw-core"></span></h1>
-    <p class="p-hidden" id="p-core">Módulo de inteligencia operacional. Datos en tiempo real del sistema global.</p>
+    <article class="articulo">
+      <h3>🗂 Estructura del Proyecto</h3>
+      <p>Archivos principales del sistema RETROTERM.AI.</p>
+      <table>
+        <thead>
+          <tr><th>Archivo</th><th>Función</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>index.html</td><td>HUB principal</td></tr>
+          <tr><td>portal.html</td><td>Portal secreto</td></tr>
+          <tr><td>editor.html</td><td>CODE_CRT v0.3</td></tr>
+          <tr><td>gaming.html</td><td>Selección de videojuegos</td></tr>
+          <tr><td>articulos.html</td><td>Articulos variados</td></tr>
+          <tr><td>asistente.html</td><td>Asistente IA "ARIA"</td></tr>
+          <tr><td>red.html</td><td>Red de nodos</td></tr>
+          <tr><td>turco.html</td><td>Clasificado</td></tr>
+        </tbody>
+      </table>
+    </article>
+  </div>
 
-    <div class="core-grid">
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#inicio">⬅ INICIO</a>
+    <a href="#restricted">ACCESO RESTRINGIDO</a>
+  </div>
+</section>
 
-      <div class="articulo core-modulo">
-        <h3>🔴 ACTIVIDAD SÍSMICA <span class="core-live">● LIVE</span></h3>
-        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Últimos terremotos M2.5+ — USGS</p>
-        <div id="core-sismos"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
-        <button class="btn-core" onclick="cargarSismos()">↺ ACTUALIZAR</button>
-      </div>
+<!-- ===== RESTRICTED ===== -->
+<section id="restricted" class="pantalla seccion">
+  <nav class="silo-breadcrumb">
+    <a href="#inicio">INICIO</a> <span class="sep">></span>
+    <a href="#logs">LOGS</a> <span class="sep">></span>
+    <a href="#core">CORE</a> <span class="sep">></span>
+    <span class="actual">RESTRICTED</span>
+  </nav>
+  <h1>ACCESS GRANTED</h1>
+  <p>Zona clasificada. Felicidades, has desbloqueado el contenido secreto.</p>
+  <p style="color:#66ffb3; font-size:0.85rem;">El Turco Mecánico lleva siglos esperando un rival digno. Ahora es tu turno.</p>
 
-      <div class="articulo core-modulo">
-        <h3>🌤 CLIMA <span class="core-live">● LIVE</span></h3>
-        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Condiciones actuales — Open-Meteo</p>
-        <div id="core-clima"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
-        <button class="btn-core" onclick="cargarClima()">↺ ACTUALIZAR</button>
-      </div>
+  <div style="text-align:center;">
+    <a href="turco.html" style="display:inline-block; margin-top:20px; padding:8px 18px; border:1px solid #00ffff; color:#00ffff; font-family:'Courier New',monospace; text-decoration:none; transition:0.3s;" onmouseover="this.style.background='#00ffff';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#00ffff'">♟ TURCO_v1 — ACCESO CONCEDIDO</a>
+  </div>
 
-      <div class="articulo core-modulo">
-        <h3>🛰 ISS POSICIÓN <span class="core-live">● LIVE</span></h3>
-        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Estación Espacial Internacional</p>
-        <div id="core-iss"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
-        <button class="btn-core" onclick="cargarISS()">↺ ACTUALIZAR</button>
-      </div>
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#inicio">⬅ INICIO</a>
+  </div>
+</section>
 
-      <div class="articulo core-modulo">
-        <h3>₿ MERCADOS CRYPTO <span class="core-live">● LIVE</span></h3>
-        <p style="font-size:0.75rem;color:#666;margin-bottom:10px;">Top 4 por capitalización — CoinGecko</p>
-        <div id="core-crypto"><p style="color:#333;font-size:0.8rem;">Cargando...</p></div>
-        <button class="btn-core" onclick="cargarCryptoCore()">↺ ACTUALIZAR</button>
-      </div>
+<script>
+//  NAVEGACIÓN HASH 
+function mostrarSeccion(id) {
+  document.querySelectorAll('.pantalla').forEach(s => s.classList.remove('activa'));
+  const seccion = document.getElementById(id);
+  if (seccion) seccion.classList.add('activa');
+}
 
-    </div>
+window.addEventListener('load', () => {
+  const hash = location.hash ? location.hash.substring(1) : 'inicio';
+  mostrarSeccion(hash);
+});
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.substring(1);
+  mostrarSeccion(hash);
+});
 
-    <div class="silo-menu">
-      <a href="#restricted" onclick="irA('restricted');return false;">🔒 ACCESO RESTRINGIDO</a>
-      <a href="#inicio" onclick="irA('inicio');return false;">⬅ VOLVER</a>
-    </div>
-  </section>
-
-  <!-- ══ RESTRICTED ══ -->
-  <section id="restricted" class="pantalla portal-section">
-    <nav class="silo-breadcrumb">
-      <a href="#inicio" onclick="irA('inicio');return false;">INICIO</a>
-      <span class="sep">›</span>
-      <a href="#logs" onclick="irA('logs');return false;">LOGS</a>
-      <span class="sep">›</span>
-      <a href="#core" onclick="irA('core');return false;">CORE</a>
-      <span class="sep">›</span>
-      <span class="actual">// RESTRICTED</span>
-    </nav>
-    <h1><span class="glitch" data-text="ACCESS GRANTED">ACCESS GRANTED</span></h1>
-
-    <div class="restricted-banner">
-      <p>⚠ ZONA CLASIFICADA — NIVEL 4 ⚠<br>
-      Acceso concedido. Has desbloqueado el contenido restringido de RETROTERM.AI.<br>
-      Procede con cautela.</p>
-    </div>
-
-    <div class="silo-menu silo-menu-cyan">
-      <a href="turco.html">♟ TURCO_v1 — ACCESO RESTRINGIDO</a>
-    </div>
-    <div class="silo-menu">
-      <a href="#inicio" onclick="irA('inicio');return false;">⬅ VOLVER AL INICIO</a>
-    </div>
-  </section>
-
-
-  <script>
-    // ══ AUDIO (Web Audio API) ══════════════════════════════════════
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function beep(freq = 440, dur = 0.08, vol = 0.05, type = 'square') {
-      try {
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.type = type; o.frequency.value = freq;
-        g.gain.setValueAtTime(vol, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-        o.start(); o.stop(audioCtx.currentTime + dur);
-      } catch(e) {}
+//  MINI PUZZLE 
+function verificarCodigo() {
+  const codigo = document.getElementById('codigo').value;
+  const msg = document.getElementById('msgPuzzle');
+  if (codigo === "1770") {
+    msg.textContent = "Código correcto. Acceso al CORE concedido.";
+    msg.style.color = "#00ffff";
+    setTimeout(() => { location.hash = 'core'; }, 1000);
+  } else {
+    msg.textContent = "Código incorrecto. La respuesta está más cerca de lo que crees.";
+    msg.style.color = "#ff5555";
+  }
+}
+</script>
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var STAR_COUNT=90, WAVE_COUNT=5, CONN_DIST=180, SPEED=0.18, WAVE_SPEED=0.0004;
+  var COLOR_NODE_A="rgba(0, 255, 102,", COLOR_NODE_B="rgba(255, 176, 0,";
+  var COLOR_LINE="rgba(0, 220, 90,", COLOR_WAVE="rgba(255, 176, 0,";
+  var stars=[], waves=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(var i=0;i<STAR_COUNT;i++){
+      var a=Math.random()>0.75;
+      stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?COLOR_NODE_B:COLOR_NODE_A,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});
     }
-    function beepNav()   { beep(300,0.05,0.04); setTimeout(()=>beep(600,0.07,0.04),60); }
-    function beepError() { beep(150,0.18,0.07,'sawtooth'); }
-    function beepOk()    { beep(400,0.06,0.05); setTimeout(()=>beep(600,0.06,0.05),80); setTimeout(()=>beep(900,0.1,0.05),160); }
-    function beepKey()   { beep(700+Math.random()*300, 0.03, 0.03); }
-
-    document.addEventListener('click', () => {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }, { once: true });
-
-    // ══ TYPEWRITER ═════════════════════════════════════════════════
-    function typewriter(elId, texto, vel = 55, cb) {
-      const el = document.getElementById(elId);
-      if (!el) { if(cb) cb(); return; }
-      el.textContent = '';
-      const cursor = document.createElement('span');
-      cursor.className = 'tw-cursor';
-      el.parentNode.appendChild(cursor);
-      let i = 0;
-      const iv = setInterval(() => {
-        el.textContent += texto[i];
-        beepKey();
-        i++;
-        if (i >= texto.length) {
-          clearInterval(iv);
-          cursor.remove();
-          if (cb) cb();
-        }
-      }, vel);
+  }
+  function initWaves(){
+    waves=[];
+    for(var i=0;i<WAVE_COUNT;i++){
+      waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});
     }
-
-    function mostrarParrafo(id, delay = 0) {
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('show');
-      }, delay);
+  }
+  function drawWaves(){
+    for(var w=0;w<waves.length;w++){
+      var wv=waves[w]; wv.phase+=wv.speed*60;
+      ctx.beginPath(); ctx.moveTo(0,H*wv.yBase);
+      for(var x=0;x<=W;x+=4){ ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp); }
+      ctx.strokeStyle=COLOR_WAVE+wv.alpha+")"; ctx.lineWidth=1; ctx.stroke();
     }
-
-    // ══ NAVEGACIÓN ══════════════════════════════════════════════════
-    function irA(id) {
-      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
-      const sec = document.getElementById(id);
-      if (!sec) return;
-      sec.classList.add('activa');
-      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      history.pushState(null, '', '#' + id);
-      iniciarSeccion(id);
-      beepNav();
-      if (id === 'logs') resetPuzzle();
-    }
-
-    function resetPuzzle() {
-      const inputEl = document.getElementById('codigo');
-      const btn     = document.getElementById('puzzle-btn');
-      const msg     = document.getElementById('msgPuzzle');
-      const label   = document.getElementById('intentos-label');
-
-      // Si está en cuenta atrás por fallos agotados, no interrumpir
-      if (bloqueado && intentos <= 0) return;
-
-      // En cualquier otro caso: limpiar estado visual y variables
-      bloqueado = false;
-      inputEl.value = '';
-      inputEl.disabled = false;
-      inputEl.classList.remove('success', 'error');
-      btn.disabled = false;
-      msg.textContent = '';
-      msg.style.color = '#66ffb3';
-      label.textContent = `Intentos restantes: ${intentos}`;
-      label.className = 'puzzle-intentos';
-    }
-
-    // Interceptar también navegación por hash nativa (botón atrás del navegador)
-    window.addEventListener('hashchange', () => {
-      const hash = location.hash ? location.hash.substring(1) : 'inicio';
-      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
-      const sec = document.getElementById(hash);
-      if (sec) {
-        sec.classList.add('activa');
-        iniciarSeccion(hash);
-        if (hash === 'logs') resetPuzzle();
-      }
-    });
-
-    function iniciarSeccion(id) {
-      if (id === 'inicio') {
-        typewriter('tw-inicio', 'PORTAL // INICIO', 60, () => mostrarParrafo('p-inicio', 150));
-      } else if (id === 'logs') {
-        typewriter('tw-logs', 'SYSTEM LOGS', 70, () => mostrarParrafo('p-logs', 150));
-      } else if (id === 'core') {
-        typewriter('tw-core', 'CORE MODULE', 70, () => mostrarParrafo('p-core', 150));
-        cargarCore();
+  }
+  function drawConnections(){
+    for(var i=0;i<stars.length;i++){
+      for(var j=i+1;j<stars.length;j++){
+        var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<CONN_DIST){ ctx.beginPath(); ctx.moveTo(stars[i].x,stars[i].y); ctx.lineTo(stars[j].x,stars[j].y); ctx.strokeStyle=COLOR_LINE+(1-dist/CONN_DIST)*0.18+")"; ctx.lineWidth=0.5; ctx.stroke(); }
       }
     }
-
-    // ══ PUZZLE ══════════════════════════════════════════════════════
-    const HASH_CORRECTO = "5335c1c78b99ea77b73cc03f735adc472835dc47c10e553d20f6e7ba338c0da3";
-    let intentos = 5;
-    let bloqueado = false;
-
-    async function hashear(txt) {
-      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt));
-      return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  function drawStars(){
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.phase+=s.pspeed;
+      var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);
+      var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);
+      grad.addColorStop(0,s.col+(alpha*0.5)+")"); grad.addColorStop(1,s.col+"0)");
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius*4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius,0,Math.PI*2); ctx.fillStyle=s.col+alpha+")"; ctx.fill();
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<-20)s.x=W+20; if(s.x>W+20)s.x=-20;
+      if(s.y<-20)s.y=H+20; if(s.y>H+20)s.y=-20;
     }
-
-    async function verificarCodigo() {
-      if (bloqueado) return;
-      const inputEl = document.getElementById('codigo');
-      const msg     = document.getElementById('msgPuzzle');
-      const label   = document.getElementById('intentos-label');
-      const btn     = document.getElementById('puzzle-btn');
-      const codigo  = inputEl.value.trim();
-      if (!codigo) return;
-
-      const hash = await hashear(codigo);
-
-      if (hash === HASH_CORRECTO) {
-        beepOk();
-        inputEl.classList.add('success');
-        msg.textContent = '> Código correcto. Acceso concedido. Iniciando protocolo...';
-        msg.style.color = '#00ffff';
-        bloqueado = true;
-        setTimeout(lanzarHackOverlay, 700);
-      } else {
-        beepError();
-        intentos--;
-        inputEl.classList.add('error');
-        setTimeout(() => inputEl.classList.remove('error'), 500);
-        inputEl.value = '';
-
-        if (intentos <= 0) {
-          bloqueado = true;
-          btn.disabled = true;
-          inputEl.disabled = true;
-          msg.textContent = '> ACCESO DENEGADO. Sistema bloqueado temporalmente.';
-          msg.style.color = '#ff5555';
-          label.textContent = 'BLOQUEADO — Espera 30 segundos';
-          label.className = 'puzzle-intentos danger';
-
-          let seg = 30;
-          const timer = setInterval(() => {
-            seg--;
-            label.textContent = `BLOQUEADO — ${seg}s restantes`;
-            if (seg <= 0) {
-              clearInterval(timer);
-              bloqueado = false; intentos = 5;
-              btn.disabled = false; inputEl.disabled = false;
-              msg.textContent = '> Sistema desbloqueado. Puedes intentarlo de nuevo.';
-              msg.style.color = '#66ffb3';
-              label.textContent = 'Intentos restantes: 5';
-              label.className = 'puzzle-intentos';
-            }
-          }, 1000);
-        } else {
-          msg.textContent = `> Código incorrecto. ${intentos} intento${intentos!==1?'s':''} restante${intentos!==1?'s':''}.`;
-          msg.style.color = '#ff5555';
-          label.textContent = `Intentos restantes: ${intentos}`;
-          label.className = 'puzzle-intentos' + (intentos<=2?' danger':intentos<=3?' warn':'');
-        }
-      }
-    }
-
-    document.getElementById('codigo').addEventListener('keydown', e => {
-      if (e.key === 'Enter') verificarCodigo();
-    });
-
-    // ══ HACK OVERLAY ════════════════════════════════════════════════
-    const HACK_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*[]{}|<>';
-
-    function lanzarHackOverlay() {
-      const overlay = document.getElementById('hack-overlay');
-      const textEl  = document.getElementById('hack-text');
-      overlay.classList.add('visible');
-
-      const FILAS = 20, COLS = 62;
-      let matriz = Array.from({length: FILAS}, () =>
-        Array.from({length: COLS}, () => HACK_CHARS[Math.floor(Math.random()*HACK_CHARS.length)])
-      );
-
-      let ciclo = 0;
-      const MAX = 28;
-
-      const iv = setInterval(() => {
-        // Mutar chars aleatoriamente
-        matriz = matriz.map(row =>
-          row.map(c => Math.random() < 0.12 ? HACK_CHARS[Math.floor(Math.random()*HACK_CHARS.length)] : c)
-        );
-        textEl.textContent = matriz.map(r => r.join('')).join('\n');
-        beep(80 + Math.random()*500, 0.03, 0.03, 'square');
-        ciclo++;
-
-        if (ciclo >= MAX) {
-          clearInterval(iv);
-          textEl.innerHTML = matriz.map(r=>r.join('')).join('\n') +
-            '\n\n<span class="hack-final">> ACCESO CONCEDIDO — CARGANDO CORE MODULE...</span>';
-          beepOk();
-          setTimeout(() => {
-            overlay.classList.remove('visible');
-            irA('core');
-          }, 1400);
-        }
-      }, 75);
-    }
-
-    // ══ BOOT SCREEN ═════════════════════════════════════════════════
-    const BOOT_LINES = [
-      { txt: 'RETROTERM.AI OS v0.2 — Iniciando kernel...',   cls: '' },
-      { txt: '[OK] Módulo de red cargado',                    cls: 'ok' },
-      { txt: '[OK] Interfaz de usuario inicializada',         cls: 'ok' },
-      { txt: '[OK] Base de datos conectada',                  cls: 'ok' },
-      { txt: '[WARN] Módulo IA operando en modo seguro',      cls: 'warn' },
-      { txt: '[OK] Sistema de autenticación SHA-256 activo',  cls: 'ok' },
-      { txt: '[OK] Portal de acceso restringido montado',     cls: 'ok' },
-      { txt: 'Cargando interfaz...',                          cls: '' },
-    ];
-
-    function runBoot() {
-      const logEl = document.getElementById('boot-log');
-      const bar   = document.getElementById('boot-bar');
-      const label = document.getElementById('boot-label');
-
-      logEl.innerHTML = BOOT_LINES.map(l =>
-        `<div class="line${l.cls ? ' ' + l.cls : ''}">&nbsp;</div>`
-      ).join('');
-      const divs = logEl.querySelectorAll('.line');
-      let i = 0;
-
-      const iv = setInterval(() => {
-        if (i < BOOT_LINES.length) {
-          divs[i].textContent = BOOT_LINES[i].txt;
-          divs[i].classList.add('show');
-          beep(280 + i*25, 0.04, 0.04);
-          bar.style.width = ((i+1) / BOOT_LINES.length * 100) + '%';
-          label.textContent = `CARGANDO... ${Math.round((i+1)/BOOT_LINES.length*100)}%`;
-          i++;
-        } else {
-          clearInterval(iv);
-          label.textContent = 'SISTEMA LISTO';
-          beepOk();
-          setTimeout(() => {
-            document.getElementById('boot-screen').classList.add('hidden');
-            const hash = location.hash ? location.hash.substring(1) : 'inicio';
-            iniciarSeccion(hash);
-          }, 200);
-        }
-      }, 80);
-    }
-
-    // ══ CORE — APIs en tiempo real ══════════════════════════════════
-    function cargarCore() {
-      cargarSismos(); cargarClima(); cargarISS(); cargarCryptoCore();
-    }
-
-    async function cargarSismos() {
-      const el = document.getElementById('core-sismos');
-      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Consultando USGS...</p>';
-      try {
-        const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
-        const data = await res.json();
-        el.innerHTML = data.features.slice(0,6).map(s => {
-          const mag = s.properties.mag.toFixed(1);
-          const lugar = s.properties.place;
-          const tiempo = new Date(s.properties.time).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-          const color = mag >= 5 ? '#ff5555' : mag >= 4 ? '#ffaa00' : '#00ff66';
-          return `<div class="core-fila">
-            <span style="color:${color};font-size:0.88rem;font-weight:bold;min-width:38px;">M${mag}</span>
-            <span style="color:#aaa;font-size:0.7rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${lugar}</span>
-            <span style="color:#333;font-size:0.65rem;flex-shrink:0;">${tiempo}</span>
-          </div>`;
-        }).join('');
-      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
-    }
-
-    async function cargarClima() {
-      const el = document.getElementById('core-clima');
-      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Obteniendo ubicación...</p>';
-      try {
-        let lat = 40.4168, lon = -3.7038, ciudad = 'Madrid, ES';
-        if (navigator.geolocation) {
-          await new Promise(r => navigator.geolocation.getCurrentPosition(
-            p => { lat=p.coords.latitude; lon=p.coords.longitude; ciudad='Tu ubicación'; r(); },
-            () => r(), { timeout: 3000 }
-          ));
-        }
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,weathercode&wind_speed_unit=kmh`);
-        const d = await res.json();
-        const c = d.current;
-        const icono = c.weathercode===0?'☀️':c.weathercode<=3?'⛅':c.weathercode<=67?'🌧️':c.weathercode<=77?'❄️':'⛈️';
-        el.innerHTML = `<div style="text-align:center;padding:8px 0;">
-          <div style="font-size:2.2rem;line-height:1;">${icono}</div>
-          <div style="font-size:1.5rem;color:#00ff66;margin:6px 0;text-shadow:0 0 8px #00ff66;">${c.temperature_2m}°C</div>
-          <div style="font-size:0.7rem;color:#666;letter-spacing:1px;">${ciudad}</div>
-          <div style="font-size:0.7rem;color:#444;margin-top:4px;">Viento: ${c.wind_speed_10m} km/h</div>
-        </div>`;
-      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
-    }
-
-    async function cargarISS() {
-      const el = document.getElementById('core-iss');
-      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Localizando ISS...</p>';
-      try {
-        const res = await fetch('https://api.wheretheiss.at/v1/satellites/25544');
-        const d = await res.json();
-        const lat = parseFloat(d.latitude).toFixed(2);
-        const lon = parseFloat(d.longitude).toFixed(2);
-        el.innerHTML = `<div style="font-size:0.76rem;line-height:2.2;color:#aaa;">
-          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">LAT</span>${Math.abs(lat)}° ${lat>=0?'N':'S'}</div>
-          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">LON</span>${Math.abs(lon)}° ${lon>=0?'E':'O'}</div>
-          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">ALTITUD</span>${parseFloat(d.altitude).toFixed(0)} km</div>
-          <div><span style="color:#00ff66;min-width:80px;display:inline-block;">VELOCIDAD</span>${parseInt(d.velocity).toLocaleString()} km/h</div>
-        </div>
-        <div style="font-size:0.6rem;color:#1a4a2a;margin-top:6px;letter-spacing:1px;">${new Date().toLocaleTimeString('es-ES')}</div>`;
-      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
-    }
-
-    async function cargarCryptoCore() {
-      const el = document.getElementById('core-crypto');
-      el.innerHTML = '<p style="color:#333;font-size:0.75rem;">Consultando mercados...</p>';
-      try {
-        const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,solana,dogecoin&order=market_cap_desc&sparkline=false');
-        const data = await res.json();
-        el.innerHTML = data.map(m => {
-          const cambio = m.price_change_percentage_24h;
-          const color = cambio >= 0 ? '#00ff66' : '#ff5555';
-          return `<div class="core-fila">
-            <span style="color:#66ffb3;font-size:0.76rem;min-width:40px;">${m.symbol.toUpperCase()}</span>
-            <span style="color:#e0e0e0;font-size:0.76rem;flex:1;">$${m.current_price.toLocaleString()}</span>
-            <span style="color:${color};font-size:0.7rem;">${cambio>=0?'▲':'▼'} ${Math.abs(cambio).toFixed(2)}%</span>
-          </div>`;
-        }).join('');
-      } catch(e) { el.innerHTML = '<p style="color:#ff5555;font-size:0.75rem;">Error al cargar.</p>'; }
-    }
-
-    // ══ INIT ════════════════════════════════════════════════════════
-    window.addEventListener('load', () => {
-      const hash = location.hash ? location.hash.substring(1) : 'inicio';
-      document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('activa'));
-      const sec = document.getElementById(hash) || document.getElementById('inicio');
-      sec.classList.add('activa');
-      runBoot();
-    });
-  </script>
+  }
+  function draw(){ ctx.clearRect(0,0,W,H); drawWaves(); drawConnections(); drawStars(); requestAnimationFrame(draw); }
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize",function(){ resize(); initStars(); initWaves(); });
+})();
+</script>
 
 </body>
 </html>

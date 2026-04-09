@@ -1,198 +1,83 @@
 # RETROTERM.AI
 
-> Entorno web retrofuturista de administración, desarrollo, gaming, inteligencia artificial y mercados financieros.
+Proyecto web desarrollado para la asignatura de Desarrollo Web en el ciclo ASIR (Administración de Sistemas Informáticos en Red) del CDM FP, curso 2025/26.
 
-![Estado](https://img.shields.io/badge/estado-activo-00ff88?style=flat-square)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-vanilla-F7DF1E?style=flat-square&logo=javascript)
-![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-deployed-00ff66?style=flat-square&logo=github)
-![Licencia](https://img.shields.io/badge/licencia-propietaria-ff3860?style=flat-square)
+La idea surgió de querer hacer algo diferente al típico portfolio. Me gustan las interfaces antiguas de terminal y quise combinar esa estética con lo que íbamos aprendiendo en clase.
 
 ---
 
-## ¿Qué es RETROTERM.AI?
+## ¿Qué es?
 
-RETROTERM.AI es un entorno web personal con estética de terminal retrofuturista inspirada en los sistemas de los años 80 y 90. Combina funcionalidad real con narrativa inmersiva — cada sección del sistema tiene identidad propia, desde un editor de código hasta un módulo de ajedrez con inteligencia artificial oculta tras una historia real.
+Una plataforma web con estética de terminal retro que funciona como HUB central con varias secciones:
 
-No es una web. Es un sistema.
-
----
-
-## Módulos
-
-### HUB Principal (`index.html`)
-- Panel de navegación central hacia todos los módulos
-- Minijuegos integrados: **SNAKE_CRT** y **TYPE_CRT** con controles táctiles
-- Sección GAMING con pestañas: Arcade y Guías
-- Enlace directo a DEFI_TERMINAL para mercados en tiempo real
-
-### DEFI_TERMINAL (`defi.html`)
-- **Ticker en tiempo real** con las 50 monedas desplazándose en la parte superior
-- **Precios vía Binance WebSocket** — stream continuo sin límite de peticiones, con flash visual en cada actualización
-- **Meta datos vía CoinGecko** — capitalización, suministro, dominancia y ranking (actualización cada 5 minutos)
-- Tabla de mercado con 50 monedas, buscador, filtros por categoría (L1/L2/DeFi/Meme/Stable) y ordenación por columnas
-- Modal por moneda con stats completas, descripción y noticias relacionadas filtradas
-- Pestaña **DOMINANCIA** — barras de dominancia de las 10 principales + Fear & Greed Index (alternative.me)
-- Pestaña **NOTICIAS** — feed en tiempo real de CoinDesk, CoinTelegraph y Decrypt vía RSS, con filtro por fuente
-- Pestaña **GLOSARIO** — 40 términos DeFi con buscador en tiempo real
-
-### Portal SILO (`portal.html`)
-- Acceso por boot screen animado con logs de sistema
-- Navegación inmersiva entre secciones con efectos typewriter
-- Puzzle de autenticación con hash SHA-256 y sistema de intentos con cuenta atrás
-- Hack overlay al acertar el código — transición al módulo CORE
-- **CORE MODULE** — datos globales en tiempo real desbloqueados tras autenticación:
-  - Actividad sísmica mundial (USGS, M2.5+)
-  - Clima actual con geolocalización automática (Open-Meteo)
-  - Posición en tiempo real de la ISS (wheretheiss.at)
-  - Mercados crypto con variación 24h (CoinGecko)
-- Zona RESTRICTED con acceso al Turco Mecánico
-
-### Asistente IA (`asistente.html`)
-- Interfaz de chat con **ARIA** — *"A girl has no name"*
-- Avatar pixel art de Arya Stark generado e integrado como identidad visual del sistema
-- **Historial persistente** en localStorage — hasta 15 conversaciones guardadas, 30 mensajes por conversación
-- Panel lateral con lista de conversaciones, título automático, eliminación individual y borrado total
-- Contexto enviado a la IA limitado a 20 mensajes para optimizar tokens
-- Conectado a modelo **LLaMA 3.1 8B Instant** vía Cloudflare Workers + Groq API (128k contexto, 500k tokens/día gratuitos)
-- Typing indicator, protección XSS, contador de uso de localStorage en KB
-- Responsive: sidebar colapsable en escritorio, overlay en móvil
-
-### Editor (`editor.html`)
-- Editor de código **CODE_CRT v0.3** — HTML, CSS y JavaScript en pestañas simultáneas
-- Menubar con 4 menús desplegables: FILE, EDIT, VIEW, RUN
-- Sidebar con iconos colapsable: explorador, búsqueda, snippets, tema, atajos, config
-- **Autocompletado** con posicionamiento real de caret — tags HTML, propiedades CSS, funciones JS
-- Auto-cierre de pares (`()`, `[]`, `{}`, `""`, `''`) y etiquetas HTML
-- Buscar y reemplazar (Ctrl+F), highlights, anterior/siguiente
-- Preview en tiempo real con botón de pantalla completa
-- Statusbar: línea/columna, modo INSERT/NORMAL, hora de autoguardado
-- Exportación de archivos, autoguardado en localStorage
-
-### El Turco Mecánico (`turco.html`)
-- Partida de ajedrez contra una IA con motor minimax (profundidad 3, alpha-beta pruning)
-- Narrativa progresiva que revela la historia real del Turco Mecánico (1770)
-- Cara ASCII animada que reacciona a los movimientos
-- Al terminar: galería histórica con modal de artículos sobre Von Kempelen, Napoleón y el legado en Amazon Mechanical Turk
-
-### Artículos (`articulos.html`)
-- Colección de artículos sobre tecnología, redes, SEO y sistemas
-- Filtrado por categorías con tablas de referencia OSI y SEO
-
-### Red de Proyectos (`red.html`)
-- Directorio de proyectos con tarjetas de preview
-- Estado online/offline por proyecto
+- **Modo Desarrollo** — editor de código integrado (HTML, CSS y JS con preview en tiempo real)
+- **Asistente IA** — chat con inteligencia artificial
+- **Gaming** — sección personal de videojuegos con fichas y trailers
+- **DeFi** — terminal de criptomonedas con datos en tiempo real desde CoinGecko
+- **Artículos** — publicaciones técnicas sobre Linux, SEO y el propio proyecto
+- **Red de Proyectos** — enlaces a los proyectos de compañeros de clase
 
 ---
 
-## Stack tecnológico
+## Tecnologías usadas
 
-| Capa | Tecnología |
-|---|---|
-| Frontend | HTML5, CSS3, JavaScript vanilla |
-| IA / Backend | Cloudflare Workers + Groq API (LLaMA 3.1) |
-| Precios crypto | Binance WebSocket API (tiempo real) |
-| Meta crypto | CoinGecko API |
-| Noticias | CoinDesk · CoinTelegraph · Decrypt (RSS vía rss2json) |
-| Datos globales | USGS · Open-Meteo · WhereTheISS · Alternative.me |
-| Tipografía | Courier New (monospace nativa) |
-| Hosting | GitHub Pages |
-| Control de versiones | Git + GitHub |
+- HTML5 semántico
+- CSS3 (Flexbox, animaciones, media queries)
+- JavaScript vanilla (sin frameworks)
+- API pública de CoinGecko
+- Cloudflare Workers (para el asistente IA)
+- GitHub Pages (hosting)
+- Google Search Console (indexación)
 
 ---
 
 ## Estructura de archivos
 
 ```
-retroterm-ai/
-├── index.html              # HUB principal — navegación y minijuegos
-├── defi.html               # DEFI_TERMINAL — mercados, noticias y glosario
-├── portal.html             # SILO — puzzle, CORE y zona RESTRICTED
-├── turco.html              # Ajedrez con IA y narrativa histórica
-├── asistente.html          # Chat con ARIA (IA)
-├── editor.html             # Editor de código CODE_CRT
-├── articulos.html          # Artículos con filtros por categoría
-├── red.html                # Red de proyectos
-├── estilos.css             # CSS global compartido con responsive
-├── worker_divine-river.js  # Cloudflare Worker para la IA
-├── favicon.ico
-└── Imagenes/
-    ├── turco_grabado.jpg
-    ├── turco_gabinete.jpg
-    ├── turco_napoleon.jpg
-    ├── turco_amazon.jpg
-    └── preview_*.jpg       # Capturas de webs para red.html
+/
+├── index.html              → HUB principal
+├── articulos.html          → Listado de artículos
+├── articulo-linux.html     → Artículo: comandos Linux
+├── articulo-retroterm.html → Artículo: sobre el proyecto
+├── articulo-seo.html       → Artículo: SEO técnico
+├── gaming.html             → Sección gaming
+├── defi.html               → Terminal DeFi
+├── red.html                → Red de proyectos
+├── editor.html             → Editor de código CODE_CRT
+├── asistente.html          → Asistente IA (ARIA)
+├── portal.html             → Portal interno
+├── estilos.css             → Hoja de estilos principal
+├── editor.css              → Estilos del editor
+├── sitemap.xml             → Mapa del sitio
+├── robots.txt              → Instrucciones para buscadores
+└── /Imagenes/              → Recursos visuales
 ```
 
 ---
 
-## Despliegue
+## Cosas que he aplicado del temario
 
-El proyecto corre directamente en **GitHub Pages** sin servidor ni build. Solo HTML, CSS y JS vanilla.
-
-```
-https://ivanchux.github.io/retroterm-ai
-```
-
-La IA (ARIA) requiere un **Cloudflare Worker** activo con una variable de entorno `GROQ_API_KEY` configurada. Sin él, el asistente no responde pero el resto del sistema funciona con normalidad.
-
----
-
-## Instalación local
-
-No requiere instalación. Clona el repositorio y abre `index.html` en el navegador:
-
-```bash
-git clone https://github.com/Ivanchux/retroterm-ai.git
-cd retroterm-ai
-# Abre index.html en tu navegador
-```
-
-Para desarrollo con live reload:
-```bash
-npx serve .
-```
+- Estructura de SILO en tres niveles para mejorar el SEO interno
+- Datos estructurados JSON-LD (Schema.org) con `@type: Article` y `@type: BreadcrumbList`
+- Media queries para pantallas menores de 480px
+- Metadatos Open Graph para redes sociales
+- `sitemap.xml` y `robots.txt` correctamente configurados
+- Lazy loading en imágenes
+- Navegación CSS pura con `:target` sin JavaScript
 
 ---
 
-## Capturas
+## Lo que me gustaría añadir en el futuro
 
-> Próximamente
-
----
-
-## Roadmap
-
-- [x] Historial persistente de conversaciones en ARIA
-- [x] Avatar pixel art de Arya Stark en ARIA
-- [x] Editor CODE_CRT v0.3 con autocompletado y sidebar
-- [x] Fix navegación HUB — eliminado flash negro al volver de módulos externos
-- [ ] Controles táctiles swipe para Snake en móvil
-- [ ] Gráficos de precio histórico en modal de moneda (DEFI_TERMINAL)
-- [ ] Modo estética ámbar — toggle verde / ámbar en todo el sistema
-- [ ] Más artículos y guías en la sección GAMING
-- [ ] Sistema de logros desbloqueables en el portal SILO
+- Backend real con base de datos para los artículos
+- Sistema de usuarios para la red de proyectos
+- Modo claro para accesibilidad
+- Más artículos técnicos
 
 ---
 
 ## Autor
 
-**Ivan Brihuega Crespo** — Proyecto personal desarrollado durante el Grado Superior de ASIR.
-
-- GitHub: [@Ivanchux](https://github.com/Ivanchux)
-- Web: [ivanchux.github.io/retroterm-ai](https://ivanchux.github.io/retroterm-ai)
-
----
-
-## Licencia
-
-© 2025–2026 Ivan Brihuega Crespo. Todos los derechos reservados.
-
-Este proyecto es de autoría propia e intelectual del autor. Queda expresamente prohibida su copia total o parcial, distribución, modificación o uso comercial sin autorización escrita del autor.
-
-El código fuente se comparte públicamente con fines de portfolio y demostración técnica únicamente.
-
----
-
-*RETROTERM.AI — La máquina siempre tuvo un humano dentro.*
+**Iván Brihuega Crespo**  
+1º ASIR — CDM FP 2025/26  
+[ivanchux.github.io](https://ivanchux.github.io)

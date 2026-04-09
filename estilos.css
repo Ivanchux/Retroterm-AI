@@ -6,10 +6,9 @@ body {
   font-family: 'Courier New', monospace;
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  height: 100vh;
   scroll-behavior: smooth;
 }
-
 
 .pantalla {
   width: 90%;
@@ -22,6 +21,10 @@ body {
   display: none; 
 }
 
+.pantalla-wide {
+  max-width: 1400px;
+  width: 95%;
+}
 
 .activa,
 :target {
@@ -40,7 +43,6 @@ h1 {
   color: #66ffb3;
   font-size: 0.9rem;
 }
-
 
 .menu {
   display: flex;
@@ -441,598 +443,414 @@ textarea#editor-crt:focus {
 
 
 
-/* =============== SECCIÓN GAMING =============== */
-.gaming-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 20px;
-  justify-content: center;
-}
-.gaming-grid .articulo {
-  flex: 1 1 300px;
-  max-width: 360px;
-}
 
-/* =============== ASISTENTE IA =============== */
-.ia-chat {
-  margin-top: 20px;
-  border: 1px solid #00ff66;
-  background: rgba(0,20,0,0.8);
-  padding: 15px;
-}
-.ia-output {
-  min-height: 120px;
-  max-height: 250px;
-  overflow-y: auto;
-  margin-bottom: 12px;
-  font-size: 0.9rem;
-}
-.ia-msg { margin: 4px 0; }
-.ia-msg.sistema { color: #66ffb3; }
-.ia-msg.usuario { color: #00ff66; }
-.ia-input-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.ia-prompt { color: #00ff66; font-size: 1.1rem; }
-.ia-input {
-  flex: 1;
-  background: #000;
-  color: #00ff66;
-  border: 1px solid #00ff66;
-  padding: 6px 10px;
+/* ============================================================
+   SILO — Estructura de navegación jerárquica
+   index.html → articulos.html → articulo-retroterm.html
+   ============================================================ */
+
+/* Migas de pan (breadcrumbs) visuales */
+.breadcrumbs {
   font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
-  outline: none;
-}
-.ia-input:focus { box-shadow: 0 0 6px #00ff66; }
-
-
-/* =============== ARTÍCULOS — ESTILOS EXTENDIDOS =============== */
-
-/* Filtros */
-.filtros {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 20px 0;
-  justify-content: center;
-}
-.filtro-btn {
-  padding: 6px 14px;
-  border: 1px solid #00ff66;
-  background: transparent;
-  color: #00ff66;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s;
-}
-.filtro-btn:hover,
-.filtro-btn.activo {
-  background: #00ff66;
-  color: #000;
-}
-
-/* Meta y tags */
-.articulo-meta {
   font-size: 0.75rem;
   color: #66ffb3;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
+  padding: 6px 10px;
+  border-left: 2px solid #00ff66;
+  background: rgba(0, 30, 0, 0.5);
   letter-spacing: 1px;
 }
-.articulo-tag {
-  display: inline-block;
-  border: 1px solid #00ff66;
+
+.breadcrumbs a {
   color: #00ff66;
-  font-size: 0.7rem;
-  padding: 2px 7px;
-  border-radius: 3px;
-  margin-right: 6px;
-}
-
-/* Mejoras sobre .articulo base */
-.articulo {
-  border-radius: 4px;
-  transition: box-shadow 0.3s;
-  padding: 20px;
-  gap: 24px;
-}
-.articulo:hover {
-  box-shadow: 0 0 20px #00ff66;
-}
-.articulo h4 {
-  color: #00ff66;
-  margin: 14px 0 8px;
-  font-size: 0.95rem;
-}
-.articulo ul,
-.articulo ol {
-  color: #e0e0e0;
-  font-size: 0.9rem;
-  padding-left: 20px;
-  line-height: 1.8;
-}
-.articulo h3 {
-  margin-bottom: 12px;
-  font-size: 1.1rem;
-}
-.articulo p {
-  line-height: 1.7;
-}
-
-/* Lista artículos con mayor gap */
-.lista-articulos {
-  gap: 24px;
-}
-
-/* Imagen artículo mejorada */
-.imagen-articulo img {
-  max-width: 300px;
-}
-
-/* Tabla retro */
-.tabla-retro {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-  font-size: 0.85rem;
-}
-.tabla-retro th,
-.tabla-retro td {
-  border: 1px solid #00ff66;
-  padding: 8px 12px;
-  text-align: left;
-}
-.tabla-retro th {
-  background: rgba(0,255,102,0.1);
-  color: #00ff66;
-}
-.tabla-retro td {
-  color: #e0e0e0;
-}
-.tabla-retro tr:hover td {
-  background: rgba(0,255,102,0.05);
-}
-
-/* Cita destacada */
-.cita {
-  border-left: 3px solid #00ff66;
-  padding: 10px 16px;
-  margin: 14px 0;
-  color: #66ffb3;
-  font-style: italic;
-  background: rgba(0,255,102,0.04);
-}
-
-/* Bloque de código */
-.code-block {
-  background: #000;
-  border: 1px solid #00ff66;
-  padding: 12px;
-  margin: 12px 0;
-  font-family: 'Courier New', monospace;
-  font-size: 0.85rem;
-  color: #00ff66;
-  overflow-x: auto;
-  border-radius: 4px;
-  white-space: pre;
-}
-
-/* Enlace de texto */
-.texto-link {
-  color: #00ff66;
-  text-decoration: underline;
-}
-.texto-link:hover {
-  color: #66ffb3;
-}
-
-/* Footer artículos */
-.footer-articulos {
-  margin-top: 30px;
-  padding-top: 16px;
-  border-top: 1px solid #00ff66;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #66ffb3;
-}
-
-
-/* =============== INDEX — BOTONES COMPARTIR =============== */
-.share-bar {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.share-btn {
-  border: 1px solid #00ff66;
-  color: #00ff66;
-  padding: 6px 14px;
   text-decoration: none;
-  font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  transition: all 0.3s;
-  background: transparent;
-}
-.share-btn:hover {
-  background: #00ff66;
-  color: #000;
+  transition: text-shadow 0.2s;
 }
 
-/* =============== INDEX — SILO TABLA ESTADO =============== */
-.silo-tabla {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-.silo-tabla th,
-.silo-tabla td {
-  border: 1px solid #00ff66;
-  padding: 8px;
-}
-.silo-tabla th {
-  background: rgba(0,255,102,0.1);
-  color: #00ff66;
-}
-.silo-tabla td {
-  color: #e0e0e0;
-}
-.estado-activo   { color: #00ff66; }
-.estado-dev      { color: #ffaa00; }
-
-/* =============== INDEX — CRYPTO =============== */
-.crypto-card {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 12px 20px;
-}
-.crypto-card img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid #00ff66;
-}
-.crypto-nombre { flex: 1; font-size: 1rem; }
-
-/* =============== PORTAL =============== */
-.portal-body {
-  background: #000;
-  color: #00ff66;
-  font-family: 'Courier New', monospace;
-  scroll-behavior: smooth;
-}
-.portal-body h1,
-.portal-body h2 {
+.breadcrumbs a:hover {
   text-shadow: 0 0 6px #00ff66;
 }
 
-/* Breadcrumb */
-.silo-breadcrumb { margin-bottom: 15px; font-size: 0.9rem; }
-.silo-breadcrumb a { color: #00ff66; text-decoration: none; }
-.silo-breadcrumb .sep { margin: 0 5px; }
-.silo-breadcrumb .actual { color: #66ffb3; }
-
-/* Menú silo */
-.silo-menu { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
-.silo-menu a { padding: 8px 18px; border: 1px solid #00ff66; border-radius: 5px; background: rgba(0,20,0,0.6); color: #00ff66; text-decoration: none; transition: 0.3s; }
-.silo-menu a:hover { background: #00ff66; color: #000; box-shadow: 0 0 10px #00ff66; }
-.silo-menu-cyan a { border-color: #00ffff; color: #00ffff; }
-.silo-menu-cyan a:hover { background: #00ffff; color: #000; box-shadow: 0 0 10px #00ffff; }
-
-/* Mini puzzle */
-#puzzle { background: #001a00; border: 2px solid #00ff66; padding: 10px; margin-top: 20px; text-align: center; }
-#puzzle input { background: #000; color: #00ff66; border: 1px solid #00ff66; padding: 5px 8px; width: 60px; font-family: 'Courier New', monospace; }
-#puzzle button { padding: 5px 10px; margin-left: 5px; background: #00ff66; border: none; color: #000; cursor: pointer; font-family: 'Courier New', monospace; }
-#puzzle button:hover { box-shadow: 0 0 6px #00ff66; }
-#puzzle .msg { margin-top: 10px; color: #66ffb3; }
-
-/* Artículos horizontales portal */
-.core-articles-horizontal { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-.core-articles-horizontal .articulo { width: 280px; box-sizing: border-box; border-radius: 8px; }
-.core-articles-horizontal .articulo table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-.core-articles-horizontal .articulo th,
-.core-articles-horizontal .articulo td { border: 1px solid #00ff66; padding: 5px; text-align: center; color: #e0e0e0; }
-.core-articles-horizontal .articulo th { color: #00ff66; background: rgba(0,255,102,0.1); }
-
-
-/* =============== GAMING — SNAKE & TYPING =============== */
-.snake-canvas {
-  border: 2px solid #00ff66;
-  display: block;
-  margin: 10px auto;
-  background: #000;
+.bread-sep {
+  margin: 0 8px;
+  color: #006633;
 }
-.snake-info {
-  text-align: center;
-  margin-top: 8px;
+
+.bread-current {
+  color: #ffffff;
 }
-.typing-wrap { margin-top: 15px; }
-.typing-frase {
-  color: #66ffb3;
+
+/* Enlace "Leer más" en tarjetas de artículo */
+.leer-mas {
+  display: inline-block;
+  margin-top: 15px;
   font-size: 0.85rem;
-  line-height: 1.8;
   letter-spacing: 1px;
-  border: 1px solid #003300;
-  padding: 10px;
-  min-height: 50px;
 }
-.typing-input { width: 100%; margin-top: 10px; }
-.typing-stats {
-  margin-top: 8px;
+
+/* Artículo completo (página individual del silo) */
+.articulo-completo {
+  margin-top: 20px;
+}
+
+.articulo-completo h4 {
+  color: #00ff66;
+  margin-top: 20px;
+  border-bottom: 1px solid #003300;
+  padding-bottom: 5px;
+}
+
+.articulo-completo ul,
+.articulo-completo ol {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  padding-left: 20px;
+}
+
+/* Botones de nav inferior en artículo individual */
+.nav-inferior {
+  margin-top: 25px;
   display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-/* =============== PORTAL — VIDEO =============== */
-.portal-video {
-  width: 100%;
-  border-radius: 8px;
-  margin-top: 10px;
+/* Enlace de texto inline */
+.texto-link {
+  color: #00ff66;
+  text-decoration: underline;
+  transition: text-shadow 0.2s;
+}
+.texto-link:hover {
+  text-shadow: 0 0 6px #00ff66;
 }
 
-/* =============== UTILIDADES =============== */
-.text-center { text-align: center; }
-.error-msg { color: #ff5555; }
 
 
-/* ═══════════════════════════════════════════════════════
-   RESPONSIVE GLOBAL — Mobile first
-   Breakpoints: 600px (móvil) · 768px (tablet)
-   Solo añade reglas, no sobreescribe nada crítico
-═══════════════════════════════════════════════════════ */
+/* ============================================================
+   MENÚ HAMBURGUESA — visible solo en móvil
+   Técnica: checkbox oculto + label visible + nav como overlay
+   ============================================================ */
 
-@media (max-width: 768px) {
+/* Ocultar el checkbox real */
+.menu-toggle-input {
+  display: none;
+}
 
-  /* ── Contenedor principal ── */
+/* Botón hamburguesa: solo visible en móvil (se activa en media query) */
+.hamburguesa {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #00ff66;
+  text-shadow: 0 0 6px #00ff66;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+
+
+/* ============================================================
+   RESPONSIVE — Optimización para pantallas < 480px
+   ============================================================ */
+
+@media (max-width: 480px) {
+
+  /* --- Layout general --- */
   .pantalla {
     width: 95%;
-    padding: 14px;
-    margin: 16px auto;
+    padding: 15px 12px;
+    margin: 15px auto;
+    box-sizing: border-box;
   }
 
-  /* ── Tipografía ── */
-  h1 { font-size: 1.5rem; }
-  h2 { font-size: 1.25rem; }
-  .subtitulo { font-size: 0.82rem; }
+  /* --- Tipografía y cabecera --- */
+  h1 {
+    font-size: 1.3rem;
+    word-break: break-word;
+  }
 
-  /* ── Menú HUB (index) ── */
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  .subtitulo {
+    font-size: 0.75rem;
+    padding: 0 5px;
+  }
+
+  /* --- Mostrar el botón hamburguesa --- */
+  .hamburguesa {
+    display: block;
+  }
+
+  /* --- Ocultar menú por defecto en móvil --- */
   .menu {
-    gap: 12px;
-    margin-top: 24px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
   }
+
+  /* --- Mostrar menú al activar el checkbox --- */
+  .menu-toggle-input:checked ~ .pantalla .menu,
+  .menu-toggle-input:checked ~ section .menu {
+    display: flex;
+  }
+
+  /* Solución alternativa: el label activa el checkbox y el menú
+     dentro de la misma sección */
+  .menu-toggle-input:checked + section .menu,
+  .menu-toggle-input:checked + .pantalla .menu {
+    display: flex;
+  }
+
+  /* --- Opciones de menú adaptadas --- */
   .opcion {
-    flex: 1 1 140px;
+    width: 100%;
     max-width: 100%;
-    padding: 14px 16px;
+    padding: 14px 10px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    text-align: center;
+    flex: none;
+  }
+
+  /* --- Imágenes de artículo: ocupan ancho completo en móvil --- */
+  .imagen-articulo img {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  /* --- Artículos: reducir padding --- */
+  .articulo {
+    padding: 12px 10px;
+  }
+
+  .articulo h3 {
+    font-size: 0.95rem;
+  }
+
+  .articulo p,
+  .articulo li {
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* --- Breadcrumbs en móvil: más compactos --- */
+  .breadcrumbs {
+    font-size: 0.68rem;
+    letter-spacing: 0;
+    word-break: break-word;
+  }
+
+  /* --- Botones "volver" y navegación inferior --- */
+  .volver {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    padding: 10px;
     font-size: 0.85rem;
   }
 
-  /* ── Artículos ── */
-  .lista-articulos { gap: 16px; }
-  .articulo { padding: 14px; }
-  .articulo h3 { font-size: 1rem; }
-  .articulo p  { font-size: 0.85rem; }
-
-  /* ── Tabla retro ── */
-  .tabla-retro { font-size: 0.78rem; }
-  .tabla-retro th,
-  .tabla-retro td { padding: 6px 8px; }
-
-  /* ── Filtros artículos ── */
-  .filtros { gap: 6px; }
-  .filtro-btn { font-size: 0.78rem; padding: 5px 10px; }
-
-  /* ── Gaming grid ── */
-  .gaming-grid { flex-direction: column; align-items: center; }
-  .gaming-grid .articulo { max-width: 100%; width: 100%; }
-
-  /* ── Snake canvas ── */
-  .snake-canvas { width: 260px !important; height: 260px !important; }
-
-  /* ── Typing stats ── */
-  .typing-stats { flex-direction: column; gap: 4px; font-size: 0.75rem; }
-
-  /* ── Crypto cards ── */
-  .crypto-card { padding: 10px 14px; gap: 10px; }
-  .crypto-nombre { font-size: 0.88rem; }
-
-  /* ── Share bar ── */
-  .share-bar { gap: 8px; }
-  .share-btn  { font-size: 0.75rem; padding: 5px 10px; }
-
-  /* ── Silo tabla ── */
-  .silo-tabla { font-size: 0.78rem; }
-  .silo-tabla th,
-  .silo-tabla td { padding: 6px; }
-
-  /* ── Footer artículos ── */
-  .footer-articulos { font-size: 0.78rem; }
-
-  /* ── Código ── */
-  .code-block { font-size: 0.78rem; }
-
-  /* ── Volver ── */
-  .volver { font-size: 0.82rem; margin-top: 14px; }
-}
-
-@media (max-width: 480px) {
-
-  /* ── Pantalla más ajustada ── */
-  .pantalla { width: 98%; padding: 10px; margin: 8px auto; }
-
-  /* ── Menú HUB en columna ── */
-  .opcion {
-    flex: 1 1 100%;
-    max-width: 100%;
-    padding: 12px;
-    font-size: 0.82rem;
-    text-align: center;
+  .nav-inferior {
+    flex-direction: column;
+    gap: 10px;
   }
 
-  /* ── H1 más pequeño ── */
-  h1 { font-size: 1.25rem; letter-spacing: 2px; }
+  /* --- Pie de página --- */
+  .pie {
+    font-size: 0.75rem;
+    margin-top: 20px;
+    padding-top: 8px;
+  }
 
-  /* ── Tabla retro scroll horizontal ── */
-  .tabla-retro-wrap { overflow-x: auto; }
-  .tabla-retro { min-width: 340px; }
+  /* --- Red de proyectos: lista vertical --- */
+  .lista-proyectos li {
+    margin: 10px 0;
+  }
 
-  /* ── Imagen artículo ── */
-  .imagen-articulo img { max-width: 200px; }
+  .red-page .proyecto {
+    display: block;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
 
-  /* ── Code block scroll ── */
-  .code-block { font-size: 0.72rem; }
+  /* --- Menú de artículo-completo también colapsable --- */
+  .menu-articulo {
+    display: none;
+  }
 
-  /* ── Gaming canvas pequeño ── */
-  .snake-canvas { width: 220px !important; height: 220px !important; }
-
-  /* ── Botón global ── */
-  button { padding: 8px 14px; font-size: 0.82rem; }
+  .menu-toggle-input:checked ~ .pantalla .menu-articulo {
+    display: flex;
+  }
 }
 
-/* ══════════════════════════════════════════════
-   GAMING — PESTAÑAS
-══════════════════════════════════════════════ */
-.gaming-tabs {
+/* ---- Clase añadida por JS al hacer click en hamburguesa ---- */
+@media (max-width: 480px) {
+  .menu.menu-visible {
+    display: flex !important;
+  }
+}
+
+/* ---- Nav pie: enlaces pequeños de navegación secundaria ---- */
+.nav-pie {
   display: flex;
-  gap: 8px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid #003300;
-  padding-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 25px;
+  padding-top: 12px;
+  border-top: 1px solid #003300;
 }
-.gaming-tab {
-  background: none;
+
+.nav-pie a {
+  color: #66ffb3;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  opacity: 0.7;
+  transition: opacity 0.2s, text-shadow 0.2s;
+}
+
+.nav-pie a:hover {
+  opacity: 1;
+  text-shadow: 0 0 6px #00ff66;
+}
+
+/* ---- Meta del artículo: tag + fecha ---- */
+.articulo-meta {
+  font-size: 0.75rem;
+  color: #66ffb3;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.articulo-tag {
+  border: 1px solid #00ff66;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  color: #00ff66;
+  margin-right: 6px;
+  letter-spacing: 2px;
+}
+
+/* ---- Bloque de código estilo terminal ---- */
+.codigo-bloque {
+  background: #000;
+  color: #00ff66;
   border: 1px solid #003300;
-  color: #1a4a2a;
+  padding: 12px 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  margin: 10px 0 18px 0;
+  white-space: pre;
+}
+
+@media (max-width: 480px) {
+  .codigo-bloque {
+    font-size: 0.75rem;
+    padding: 10px;
+  }
+}
+
+/* ---- Tabla SEO con divs ---- */
+.tabla-seo {
+  border: 1px solid #00ff66;
+  margin: 15px 0 20px 0;
+  font-size: 0.85rem;
+}
+
+.tabla-fila {
+  display: flex;
+  border-bottom: 1px solid #003300;
+}
+
+.tabla-fila:last-child {
+  border-bottom: none;
+}
+
+.tabla-fila div {
+  padding: 8px 12px;
+  flex: 1;
+  border-right: 1px solid #003300;
+  color: #e0e0e0;
+}
+
+.tabla-fila div:last-child {
+  border-right: none;
+}
+
+.tabla-cabecera div {
+  color: #00ff66;
+  background: rgba(0, 30, 0, 0.6);
+  font-weight: bold;
+}
+
+@media (max-width: 480px) {
+  .tabla-fila {
+    flex-direction: column;
+  }
+  .tabla-fila div {
+    border-right: none;
+    border-bottom: 1px solid #003300;
+    padding: 6px 10px;
+  }
+  .tabla-fila div:last-child {
+    border-bottom: none;
+  }
+  .tabla-cabecera {
+    display: none;
+  }
+}
+
+/* ===== BARRA COMPARTIR EN REDES ===== */
+.share-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #003300;
+  flex-wrap: wrap;
+}
+
+.share-label {
+  font-size: 0.7rem;
+  color: #00ff6655;
+  letter-spacing: 2px;
+}
+
+.share-btn {
+  display: inline-block;
+  padding: 5px 14px;
+  border: 1px solid #00ff6655;
+  color: #00ff66;
+  text-decoration: none;
   font-family: 'Courier New', monospace;
   font-size: 0.78rem;
-  letter-spacing: 2px;
-  padding: 7px 16px;
-  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
   transition: all 0.2s;
+  border-radius: 4px;
 }
-.gaming-tab:hover {
-  border-color: #00ff66;
-  color: #00ff66;
-}
-.gaming-tab.activa-tab {
-  border-color: #00ff66;
-  color: #00ff66;
-  background: rgba(0,255,102,0.06);
-  box-shadow: 0 0 8px rgba(0,255,102,0.1);
-}
-.gaming-panel { width: 100%; }
 
-/* ══ D-PAD TÁCTIL SNAKE ══ */
-.snake-dpad {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  margin-top: 12px;
-}
-.dpad-row {
-  display: flex;
-  gap: 4px;
-  justify-content: center;
-}
-.dpad-btn {
-  width: 44px;
-  height: 44px;
-  background: rgba(0,20,0,0.8);
-  border: 1px solid #003300;
-  color: #00ff66;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: all 0.15s;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-.dpad-btn:active {
+.share-btn:hover {
   background: #00ff66;
   color: #000;
-}
-.dpad-btn:disabled {
-  opacity: 0;
-  pointer-events: none;
-}
-/* Ocultar dpad en desktop */
-@media (hover: hover) and (pointer: fine) {
-  .snake-dpad { display: none; }
+  box-shadow: 0 0 10px #00ff66;
+  border-color: #00ff66;
 }
 
-/* ══════════════════════════════════════════════
-   CORE — MONITOR GLOBAL
-══════════════════════════════════════════════ */
-.core-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-  margin-top: 8px;
-}
-.core-modulo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.core-modulo h3 {
-  font-size: 0.82rem;
-  letter-spacing: 2px;
-  color: #00ff66;
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.core-live {
-  font-size: 0.6rem;
-  color: #ff5555;
-  letter-spacing: 1px;
-  animation: pulse-live 1.5s ease-in-out infinite;
-}
-@keyframes pulse-live {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
-}
-.core-fila {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  border-bottom: 1px solid #0a1a0a;
-  font-family: 'Courier New', monospace;
-}
-.core-fila:last-child { border-bottom: none; }
-.btn-core {
-  margin-top: 10px;
-  width: 100%;
-  background: none;
-  border: 1px solid #003300;
-  color: #1a4a2a;
-  font-family: 'Courier New', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  padding: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-core:hover {
-  border-color: #00ff66;
-  color: #00ff66;
-}
 @media (max-width: 480px) {
-  .core-grid { grid-template-columns: 1fr; }
-  .gaming-tabs { flex-wrap: wrap; }
-  .gaming-tab { flex: 1; text-align: center; font-size: 0.72rem; padding: 8px; }
+  .share-bar { gap: 8px; }
+  .share-btn { padding: 5px 10px; font-size: 0.72rem; }
 }
