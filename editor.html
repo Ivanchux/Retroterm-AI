@@ -27,45 +27,76 @@
   --font: 'Courier New', 'Lucida Console', monospace;
 }
 
+/* ═══════════════════════════════════
+   CANVAS FONDO ANIMADO
+═══════════════════════════════════ */
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
 body {
-  background: var(--bg);
+  background: #000;
   font-family: var(--font);
   color: var(--accent);
   height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+  z-index: 1;
 }
 
-/* ═══════════════════════════════════
-   TITLEBAR
-═══════════════════════════════════ */
-.titlebar {
-  background: #080808;
-  border-bottom: 1px solid var(--border2);
-  padding: 5px 12px;
+/* Espaciado superior para ver el fondo animado */
+.editor-top-gap {
+  height: 40px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  user-select: none;
+  justify-content: space-between;
+  padding: 0 14px;
+  background: transparent;
+  position: relative;
 }
-.wb { width: 11px; height: 11px; border-radius: 50%; cursor: pointer; transition: opacity 0.15s; }
-.wb:hover { opacity: 0.7; }
-.wr { background: #ff5f56; }
-.wy { background: #ffbd2e; }
-.wg { background: #27c93f; }
-.wtitle { font-size: 0.6rem; color: #2a2a2a; letter-spacing: 3px; margin: 0 auto; }
-.w-encoding { font-size: 0.58rem; color: #1a4a2a; letter-spacing: 1px; }
-.w-live { font-size: 0.58rem; color: var(--accent); letter-spacing: 1px; display: flex; align-items: center; gap: 4px; }
-.live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+.editor-top-gap .top-title {
+  font-size: 0.58rem;
+  color: #1a4a2a;
+  letter-spacing: 3px;
+  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.editor-top-gap .top-live {
+  font-size: 0.58rem;
+  color: var(--accent);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.editor-top-gap .top-home {
+  font-size: 0.58rem;
+  color: #1a4a2a;
+  letter-spacing: 2px;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.editor-top-gap .top-home:hover { color: var(--accent); }
+
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.live-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
 
 /* ═══════════════════════════════════
    MENUBAR
 ═══════════════════════════════════ */
 .menubar {
-  background: #050505;
+  background: rgba(5,5,5,0.88);
   border-bottom: 1px solid var(--border2);
   display: flex;
   align-items: center;
@@ -75,6 +106,7 @@ body {
   user-select: none;
   position: relative;
   z-index: 100;
+  backdrop-filter: blur(4px);
 }
 .menu-item {
   font-size: 0.63rem;
@@ -141,6 +173,8 @@ body {
   flex: 1;
   overflow: hidden;
   min-height: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* ═══════════════════════════════════
@@ -148,7 +182,7 @@ body {
 ═══════════════════════════════════ */
 .sidebar {
   width: 44px;
-  background: #040404;
+  background: rgba(4,4,4,0.85);
   border-right: 1px solid var(--border2);
   display: flex;
   flex-direction: column;
@@ -161,6 +195,7 @@ body {
   overflow: hidden;
   position: relative;
   z-index: 10;
+  backdrop-filter: blur(4px);
 }
 .sidebar.collapsed {
   width: 0;
@@ -238,11 +273,13 @@ body {
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
+  background: rgba(6,6,6,0.82);
+  backdrop-filter: blur(2px);
 }
 
 /* TABS - sistema multi-archivo */
 .tabsbar {
-  background: #070707;
+  background: rgba(7,7,7,0.9);
   border-bottom: 1px solid var(--border2);
   display: flex;
   align-items: flex-end;
@@ -382,8 +419,7 @@ body {
 }
 .ph-html { color: var(--col-html); background: rgba(255,140,66,0.04); border-bottom-color: rgba(255,140,66,0.12); }
 .ph-css  { color: var(--col-css);  background: rgba(78,205,196,0.04); border-bottom-color: rgba(78,205,196,0.12); }
-.ph-js   { color: var(--col-js);   background: rgba(255,230,109,0.04); border-bottom-color: rgba(255,230,109,0.12); }
-.line-count { font-size: 0.52rem; color: #1a3a1a; }
+.ph-js   { color: var(--col-js);   background: rgba(255,230,109,0.04); border-bottom-color: rgba(255,230,109,0.12); }.line-count { font-size: 0.52rem; color: #1a3a1a; }
 
 .panel-body {
   flex: 1;
@@ -393,7 +429,7 @@ body {
 }
 .line-nums {
   padding: 8px 6px 8px 4px;
-  background: #030303;
+  background: rgba(3,3,3,0.85);
   color: #1a3a1a;
   font-size: 0.62rem;
   line-height: 1.6;
@@ -406,7 +442,7 @@ body {
 }
 .code-editor {
   flex: 1;
-  background: transparent;
+  background: rgba(0,0,0,0.0);
   border: none;
   outline: none;
   color: var(--accent);
@@ -433,7 +469,7 @@ body {
    STATUS BAR
 ═══════════════════════════════════ */
 .statusbar {
-  background: #040404;
+  background: rgba(4,4,4,0.88);
   border-top: 1px solid var(--border2);
   display: flex;
   align-items: center;
@@ -457,7 +493,7 @@ body {
 ═══════════════════════════════════ */
 .preview-section {
   border-top: 1px solid #1a3a1a;
-  background: #030303;
+  background: rgba(3,3,3,0.88);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -819,15 +855,14 @@ body.amber .code-editor.js-editor   { color: #ffdd66; }
 </head>
 <body>
 
-<!-- TITLEBAR -->
-<div class="titlebar">
-  <div class="wb wr" title="Cerrar"></div>
-  <div class="wb wy" title="Minimizar"></div>
-  <div class="wb wg" title="Maximizar"></div>
-  <span class="wtitle">CODE_CRT v0.3 — RETROTERM.AI</span>
-  <span class="w-encoding">UTF-8</span>
-  <span style="margin-left:8px;"></span>
-  <span class="w-live"><span class="live-dot"></span>LIVE</span>
+<!-- CANVAS FONDO ANIMADO -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- TOP GAP — espacio con fondo visible -->
+<div class="editor-top-gap">
+  <a href="index.html" class="top-home">← HUB</a>
+  <span class="top-title">CODE_CRT v0.3 — RETROTERM.AI</span>
+  <span class="top-live"><span class="live-dot"></span>LIVE</span>
 </div>
 
 <!-- MENUBAR -->
@@ -848,8 +883,8 @@ body.amber .code-editor.js-editor   { color: #ffdd66; }
   <!-- EDIT -->
   <div class="menu-item" id="menu-edit" onclick="toggleMenu('edit')">EDIT
     <div class="dropdown">
-      <div class="dd-item" onclick="document.execCommand('undo')">Deshacer <span class="dd-shortcut">Ctrl+Z</span></div>
-      <div class="dd-item" onclick="document.execCommand('redo')">Rehacer <span class="dd-shortcut">Ctrl+Y</span></div>
+      <div class="dd-item" onclick="undoActive()">Deshacer <span class="dd-shortcut">Ctrl+Z</span></div>
+      <div class="dd-item" onclick="redoActive()">Rehacer <span class="dd-shortcut">Ctrl+Y</span></div>
       <div class="dd-sep"></div>
       <div class="dd-item" onclick="toggleSearch()">Buscar / Reemplazar <span class="dd-shortcut">Ctrl+F</span></div>
     </div>
@@ -1489,6 +1524,7 @@ function syncScroll(lang) {
 //  EDICION
 // ═══════════════════════════════════
 function onEdit(lang) {
+  pushUndo(lang);
   updateLineNums(lang);
   updateCharCount();
   markDirty();
@@ -1566,6 +1602,8 @@ function handleKey(e, lang) {
   }
   if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); runCode(); }
   if (e.ctrlKey && e.key === 's')     { e.preventDefault(); saveNow(); }
+  if (e.ctrlKey && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoLang(lang); }
+  if (e.ctrlKey && e.key === 'y')     { e.preventDefault(); redoLang(lang); }
   if (e.ctrlKey && e.key === 'n')     { e.preventDefault(); promptNewTab(); }
   if (e.ctrlKey && e.key === 'd')     { e.preventDefault(); downloadHTML(); }
   if (e.ctrlKey && e.key === 'f')     { e.preventDefault(); toggleSearch(); }
@@ -1840,6 +1878,42 @@ function setTheme(t) {
 }
 
 function toggleTheme() { setTheme(currentTheme === 'green' ? 'amber' : 'green'); }
+
+// ═══════════════════════════════════
+//  ALIAS Y COMPAT
+// ═══════════════════════════════════
+function newFile() { promptNewTab(); }
+
+// Undo/Redo por historial propio (execCommand está deprecado en textareas)
+const undoHistory = { html: [], css: [], js: [] };
+const redoHistory = { html: [], css: [], js: [] };
+
+function pushUndo(lang) {
+  const val = document.getElementById('editor-' + lang).value;
+  if (undoHistory[lang].length && undoHistory[lang][undoHistory[lang].length - 1] === val) return;
+  undoHistory[lang].push(val);
+  if (undoHistory[lang].length > 100) undoHistory[lang].shift();
+  redoHistory[lang] = [];
+}
+
+function undoLang(lang) {
+  const ed = document.getElementById('editor-' + lang);
+  if (!undoHistory[lang].length) return;
+  redoHistory[lang].push(ed.value);
+  ed.value = undoHistory[lang].pop();
+  onEdit(lang);
+}
+
+function redoLang(lang) {
+  const ed = document.getElementById('editor-' + lang);
+  if (!redoHistory[lang].length) return;
+  undoHistory[lang].push(ed.value);
+  ed.value = redoHistory[lang].pop();
+  onEdit(lang);
+}
+
+function undoActive() { undoLang(currentPanel); notify('Deshacer'); }
+function redoActive() { redoLang(currentPanel); notify('Rehacer'); }
 
 
 // ═══════════════════════════════════
@@ -2385,6 +2459,128 @@ function notify(msg) {
   clearTimeout(notifTimer);
   notifTimer = setTimeout(()=>n.classList.remove('show'), 2500);
 }
+// ═══════════════════════════════════
+//  CANVAS FONDO ANIMADO
+// ═══════════════════════════════════
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  var ctx = canvas.getContext("2d");
+  var W, H;
+
+  var STAR_COUNT   = 90;
+  var WAVE_COUNT   = 5;
+  var CONN_DIST    = 180;
+  var SPEED        = 0.18;
+  var WAVE_SPEED   = 0.0004;
+
+  var COLOR_NODE_A  = "rgba(0, 255, 102,";
+  var COLOR_NODE_B  = "rgba(255, 176, 0,";
+  var COLOR_LINE    = "rgba(0, 220, 90,";
+  var COLOR_WAVE    = "rgba(255, 176, 0,";
+
+  var stars = [], waves = [], tick = 0;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initStars() {
+    stars = [];
+    for (var i = 0; i < STAR_COUNT; i++) {
+      var isAmber = Math.random() > 0.75;
+      stars.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * SPEED, vy: (Math.random() - 0.5) * SPEED,
+        r: Math.random() * 1.4 + 0.4,
+        col: isAmber ? COLOR_NODE_B : COLOR_NODE_A,
+        phase: Math.random() * Math.PI * 2,
+        pspeed: 0.008 + Math.random() * 0.012
+      });
+    }
+  }
+
+  function initWaves() {
+    waves = [];
+    for (var i = 0; i < WAVE_COUNT; i++) {
+      waves.push({
+        amp: 30 + Math.random() * 60,
+        freq: 0.003 + Math.random() * 0.005,
+        phase: Math.random() * Math.PI * 2,
+        speed: (Math.random() > 0.5 ? 1 : -1) * (WAVE_SPEED + Math.random() * WAVE_SPEED),
+        yBase: (i + 1) * (1 / (WAVE_COUNT + 1)),
+        alpha: 0.018 + Math.random() * 0.022
+      });
+    }
+  }
+
+  function drawWaves() {
+    for (var w = 0; w < waves.length; w++) {
+      var wv = waves[w];
+      wv.phase += wv.speed * 60;
+      ctx.beginPath();
+      ctx.moveTo(0, H * wv.yBase);
+      for (var x = 0; x <= W; x += 4) {
+        var y = H * wv.yBase + Math.sin(x * wv.freq + wv.phase) * wv.amp;
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = COLOR_WAVE + wv.alpha + ")";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  function drawConnections() {
+    for (var i = 0; i < stars.length; i++) {
+      for (var j = i + 1; j < stars.length; j++) {
+        var dx = stars[i].x - stars[j].x, dy = stars[i].y - stars[j].y;
+        var dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < CONN_DIST) {
+          var alpha = (1 - dist / CONN_DIST) * 0.18;
+          ctx.beginPath();
+          ctx.moveTo(stars[i].x, stars[i].y);
+          ctx.lineTo(stars[j].x, stars[j].y);
+          ctx.strokeStyle = COLOR_LINE + alpha + ")";
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function drawStars() {
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      s.phase += s.pspeed;
+      var pulse = 0.5 + 0.5 * Math.sin(s.phase);
+      var alpha = 0.25 + pulse * 0.55;
+      var radius = s.r * (0.8 + pulse * 0.4);
+      var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, radius * 4);
+      grad.addColorStop(0, s.col + (alpha * 0.5) + ")");
+      grad.addColorStop(1, s.col + "0)");
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, radius * 4, 0, Math.PI * 2);
+      ctx.fillStyle = grad; ctx.fill();
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = s.col + alpha + ")"; ctx.fill();
+      s.x += s.vx; s.y += s.vy;
+      if (s.x < -20) s.x = W + 20;
+      if (s.x > W+20) s.x = -20;
+      if (s.y < -20) s.y = H + 20;
+      if (s.y > H+20) s.y = -20;
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    drawWaves(); drawConnections(); drawStars();
+    tick++;
+    requestAnimationFrame(draw);
+  }
+
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize", function() { resize(); initStars(); initWaves(); });
+})();
 </script>
-</body>
 </html>
