@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TOOLS — RETROTERM.AI</title>
-  <meta name="description" content="Herramientas de red y sistema: conversor IP, calculadora CIDR, tabla de puertos, generador de contraseñas y conversor de almacenamiento.">
+  <meta name="description" content="Herramientas de red y sistema: conversor IP, calculadora CIDR, tabla de puertos, generador de contraseñas, conversor de almacenamiento y herramientas de color y tamaños CSS.">
   <link rel="canonical" href="https://ivanchux.github.io/herramientas.html">
   <link rel="stylesheet" href="estilos.css">
   <link rel="stylesheet" href="accesibilidad.css">
@@ -78,7 +78,7 @@
   .tools-bento {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: 140px 140px 110px;
+    grid-template-rows: 140px 140px 140px;
     gap: 8px;
     margin: 0 0 2rem;
   }
@@ -88,7 +88,7 @@
   .t-puertos { grid-column: 9 / 13; grid-row: 1; }
   .t-pass    { grid-column: 1 / 7;  grid-row: 2; }
   .t-storage { grid-column: 7 / 13; grid-row: 2; }
-  .t-notes   { grid-column: 1 / 13; grid-row: 3; }
+  .t-color   { grid-column: 1 / 13; grid-row: 3; }
 
   /* ── CELDA BASE ─── */
   .tool-cell {
@@ -174,6 +174,16 @@
   .tc-storage:hover { border-color: #aaaaaa44; box-shadow: 0 0 20px rgba(170,170,170,0.12), inset 0 0 40px rgba(170,170,170,0.03); }
   .tc-storage .t-accent { color: #aaaaaa; }
   .tc-storage .t-dot    { background: #aaaaaa; box-shadow: 0 0 5px #aaaaaa; }
+
+  /* Color & Tamaños — rosa/magenta cálido */
+  .tc-color {
+    border-color: #220018;
+    background: radial-gradient(ellipse at 15% 50%, #120010 0%, #07000a 50%, #000510 100%);
+    border-radius: 8px 14px 6px 18px;
+  }
+  .tc-color:hover { border-color: #ff339966; box-shadow: 0 0 28px rgba(255,51,153,0.18), inset 0 0 60px rgba(255,51,153,0.04); }
+  .tc-color .t-accent { color: #ff3399; }
+  .tc-color .t-dot    { background: #ff3399; box-shadow: 0 0 6px #ff3399; }
 
   /* ── CONTENIDO CELDAS ─── */
   .t-dot {
@@ -522,238 +532,219 @@
 
   .tools-footer a:hover { color: var(--tools-accent); }
 
+  /* ── COLOR & TAMAÑOS ─── */
+  .color-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 700px) { .color-cols { grid-template-columns: 1fr; } }
+
+  .color-preview-wrap {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 0.8rem;
+  }
+
+  .color-swatch {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    border: 1px solid #1a1a2e;
+    flex-shrink: 0;
+    transition: background 0.1s;
+  }
+
+  .color-values {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.76rem;
+  }
+
+  .color-val-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .color-val-lbl {
+    color: #ff339966;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    min-width: 38px;
+  }
+
+  .color-val-txt {
+    color: #e0cce8;
+    cursor: pointer;
+    border-bottom: 1px dashed #ff339922;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .color-val-txt:hover { color: #ff3399; border-bottom-color: #ff3399; }
+
+  /* Paleta */
+  .paleta-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 0.8rem;
+  }
+
+  .paleta-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    border: 1px solid #1a1a1a;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s;
+  }
+
+  .paleta-chip:hover { transform: scale(1.15); z-index: 2; }
+
+  .paleta-chip::after {
+    content: attr(data-hex);
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5rem;
+    white-space: nowrap;
+    color: #778;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .paleta-chip:hover::after { opacity: 1; }
+
+  /* Contraste WCAG */
+  .wcag-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    margin-right: 6px;
+    margin-top: 6px;
+  }
+
+  .wcag-pass { background: #003300; color: #00ff66; border: 1px solid #00ff6644; }
+  .wcag-fail { background: #330000; color: #ff4444; border: 1px solid #ff444444; }
+  .wcag-preview {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 0.82rem;
+    margin-top: 6px;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Tamaños CSS */
+  .size-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 600px) { .size-cols { grid-template-columns: 1fr; } }
+
+  .size-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 6px;
+    margin-top: 0.8rem;
+  }
+
+  .size-item {
+    background: #07040f;
+    border: 1px solid #1a0820;
+    border-radius: 3px;
+    padding: 8px 10px;
+  }
+
+  .size-item-lbl {
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    color: #ff339944;
+    margin-bottom: 3px;
+  }
+
+  .size-item-val {
+    font-size: 0.88rem;
+    color: #e0cce8;
+    cursor: pointer;
+    word-break: break-all;
+  }
+
+  .size-item-val:hover { color: #ff3399; }
+
+  /* Gradiente */
+  .grad-preview {
+    height: 48px;
+    border-radius: 4px;
+    border: 1px solid #1a0820;
+    margin-top: 0.8rem;
+    transition: background 0.2s;
+  }
+
+  .grad-code {
+    font-size: 0.7rem;
+    color: #ff339988;
+    margin-top: 0.5rem;
+    word-break: break-all;
+    cursor: pointer;
+  }
+
+  .grad-code:hover { color: #ff3399; }
+
+  /* Modo claro — color tool */
+  [data-theme="light"] .tc-color {
+    background: rgba(255, 230, 242, 0.92) !important;
+    border-color: #cc2277 !important;
+  }
+  [data-theme="light"] .tc-color .t-accent { color: #cc2277 !important; }
+  [data-theme="light"] .color-val-lbl  { color: #cc227766; }
+  [data-theme="light"] .color-val-txt  { color: #330022; border-bottom-color: #cc227722; }
+  [data-theme="light"] .color-val-txt:hover { color: #cc2277; border-bottom-color: #cc2277; }
+  [data-theme="light"] .paleta-chip::after { color: #446; }
+  [data-theme="light"] .wcag-pass { background: #e8ffe8; color: #006600; border-color: #00cc0044; }
+  [data-theme="light"] .wcag-fail { background: #ffe8e8; color: #cc0000; border-color: #cc000044; }
+  [data-theme="light"] .size-item { background: #fdf0f8; border-color: #e8c0d8; }
+  [data-theme="light"] .size-item-lbl { color: #cc227744; }
+  [data-theme="light"] .size-item-val { color: #330022; }
+  [data-theme="light"] .size-item-val:hover { color: #cc2277; }
+  [data-theme="light"] .grad-code { color: #cc227788; }
+  [data-theme="light"] .grad-code:hover { color: #cc2277; }
+
   /* ── RESPONSIVE ─── */
   @media (max-width: 780px) {
     .tools-bento {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto;
     }
-    .t-ip, .t-cidr, .t-puertos, .t-pass, .t-storage {
+    .t-ip, .t-cidr, .t-puertos, .t-pass, .t-storage, .t-color {
       grid-column: span 1;
       grid-row: auto;
       min-height: 100px;
     }
-    .t-pass  { grid-column: span 2; }
-    .t-notes { grid-column: span 2; grid-row: auto; min-height: 80px; }
+    .t-pass, .t-color { grid-column: span 2; }
     .tool-cell { border-radius: 10px !important; }
-    .tc-notes { padding: 0 16px; }
-    .tc-notes .notes-preview { max-width: 200px; }
-    .tool-panel { padding: 1.6rem 1.6rem; }
-  }
-
-  @media (max-width: 600px) {
-    .tools-bento {
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
-    .t-ip, .t-cidr, .t-puertos {
-      grid-column: span 1;
-      min-height: 90px;
-    }
-    .t-pass  { grid-column: span 2; }
-    .t-storage { grid-column: span 2; }
-    .t-notes { grid-column: span 2; }
-    .tool-panel { padding: 1.4rem 1.2rem; }
-    .panel-title { font-size: 0.8rem; }
-    .t-row { gap: 8px; }
-    .t-row > * { min-width: 120px; }
   }
 
   @media (max-width: 480px) {
-    .tools-root { padding: 0.8rem 0 2rem; }
-    .tools-bento {
-      grid-template-columns: 1fr 1fr;
-      gap: 5px;
-    }
-    .t-ip, .t-cidr, .t-puertos {
-      grid-column: span 1;
-      min-height: 80px;
-    }
-    .t-pass  { grid-column: span 2; }
-    .t-storage { grid-column: span 2; }
-    .t-notes { grid-column: span 2; }
-    .tool-panel { padding: 1.2rem 1rem; }
+    .tools-bento { grid-template-columns: 1fr; }
+    .t-pass, .t-color { grid-column: span 1; }
+    .tool-panel { padding: 1.4rem 1.2rem; }
     .t-row { flex-direction: column; }
-    .t-row > * { min-width: unset; width: 100%; }
-    .puertos-filtro { flex-direction: column; }
-    .puertos-filtro .t-input { min-width: unset; width: 100%; }
-    .t-result { font-size: 0.78rem; word-break: break-all; }
-    .pass-chars { flex-wrap: wrap; gap: 5px; }
-    .tools-title { font-size: clamp(1.2rem, 6vw, 1.6rem); }
+    .t-row > * { min-width: unset; }
   }
-
-  @media (max-width: 360px) {
-    .tools-bento {
-      grid-template-columns: 1fr;
-    }
-    .t-ip, .t-cidr, .t-puertos,
-    .t-pass, .t-storage, .t-notes {
-      grid-column: span 1;
-    }
-  }
-
-  /* ── NOTAS — celda ámbar ─── */
-  .tc-notes {
-    border-color: #2a1e00;
-    background: radial-gradient(ellipse at 15% 50%, #120e00 0%, #080600 100%);
-    border-radius: 8px 14px 6px 18px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0;
-    padding: 0 24px;
-  }
-  .tc-notes:hover { border-color: #ffaa2255; box-shadow: 0 0 24px rgba(255,170,34,0.18), inset 0 0 40px rgba(255,170,34,0.04); }
-  .tc-notes .t-accent { color: #ffaa22; }
-  .tc-notes .t-dot    { background: #ffaa22; box-shadow: 0 0 6px #ffaa22; }
-
-  .tc-notes .notes-cell-left {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    z-index: 2;
-    flex: 1;
-  }
-  .tc-notes .notes-preview {
-    font-size: 0.65rem;
-    color: #ffaa2244;
-    margin-top: 6px;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 420px;
-    font-style: italic;
-  }
-  .tc-notes .notes-meta {
-    font-size: 0.52rem;
-    letter-spacing: 0.15em;
-    color: #ffaa2266;
-    margin-left: auto;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-  }
-  .tc-notes .notes-count-badge {
-    background: rgba(255,170,34,0.1);
-    border: 1px solid #ffaa2233;
-    padding: 2px 8px;
-    border-radius: 3px;
-    font-size: 0.55rem;
-    color: #ffaa2288;
-    letter-spacing: 0.12em;
-  }
-
-  /* ── PANEL NOTAS ─── */
-  .notes-cats {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-  .notes-cat-btn {
-    background: transparent;
-    border: 1px solid #2a1e00;
-    color: #ffaa2266;
-    font-family: 'Courier New', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.14em;
-    padding: 5px 14px;
-    cursor: pointer;
-    border-radius: 3px;
-    margin-top: 0;
-    transition: all 0.15s;
-  }
-  .notes-cat-btn:hover,
-  .notes-cat-btn.activo {
-    background: rgba(255,170,34,0.1);
-    border-color: #ffaa22;
-    color: #ffaa22;
-    box-shadow: none;
-  }
-
-  .notes-textarea {
-    width: 100%;
-    min-height: 220px;
-    background: #08060000;
-    border: 1px solid #2a1e00;
-    border-left: 3px solid #ffaa22;
-    color: #e8d8b0;
-    font-family: 'Courier New', monospace;
-    font-size: 0.83rem;
-    padding: 14px 16px;
-    resize: vertical;
-    outline: none;
-    box-sizing: border-box;
-    line-height: 1.7;
-    transition: border-color 0.15s;
-    border-radius: 0 3px 3px 0;
-    background: #08060099;
-  }
-  .notes-textarea:focus { border-color: #ffaa22; border-left-color: #ffaa22; }
-  .notes-textarea::placeholder { color: #ffaa2222; }
-
-  .notes-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 0.7rem;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .notes-saved {
-    font-size: 0.58rem;
-    letter-spacing: 0.14em;
-    color: #ffaa2244;
-    transition: color 0.3s;
-  }
-  .notes-saved.ok { color: #00ff66; }
-  .notes-chars {
-    font-size: 0.58rem;
-    letter-spacing: 0.1em;
-    color: #ffaa2244;
-  }
-  .notes-actions {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-  .notes-btn {
-    background: transparent;
-    border: 1px solid #2a1e00;
-    color: #ffaa2266;
-    font-family: 'Courier New', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    padding: 5px 12px;
-    cursor: pointer;
-    border-radius: 3px;
-    margin-top: 0;
-    transition: all 0.15s;
-  }
-  .notes-btn:hover { border-color: #ffaa22; color: #ffaa22; box-shadow: none; }
-  .notes-btn.danger:hover { border-color: #ff4444; color: #ff4444; }
-
-  /* light mode — notas */
-  [data-theme="light"] .tc-notes  { background: rgba(255, 245, 215, 0.92) !important; border-color: #cc7700 !important; }
-  [data-theme="light"] .tc-notes .t-accent { color: #aa6600 !important; }
-  [data-theme="light"] .tc-notes .notes-preview { color: #aa660055 !important; }
-  [data-theme="light"] .tc-notes .notes-meta,
-  [data-theme="light"] .tc-notes .notes-count-badge { color: #aa660077 !important; border-color: #aa660033 !important; }
-  [data-theme="light"] #panel-notes { background: rgba(255, 250, 235, 0.98); border-color: #cc9933; }
-  [data-theme="light"] .notes-cat-btn { border-color: #ddb833; color: #aa6600; }
-  [data-theme="light"] .notes-cat-btn.activo,
-  [data-theme="light"] .notes-cat-btn:hover { background: rgba(204,119,0,0.1); border-color: #cc7700; color: #cc7700; }
-  [data-theme="light"] .notes-textarea { background: #fffbee99; border-color: #ddb83355; border-left-color: #cc7700; color: #443300; }
-  [data-theme="light"] .notes-textarea:focus { border-color: #cc7700; }
-  [data-theme="light"] .notes-saved { color: #cc770055; }
-  [data-theme="light"] .notes-saved.ok { color: #006633; }
-  [data-theme="light"] .notes-chars { color: #cc770055; }
-  [data-theme="light"] .notes-btn { border-color: #ddb833; color: #aa6600; }
-  [data-theme="light"] .notes-btn:hover { border-color: #cc7700; color: #cc7700; }
-  [data-theme="light"] .notes-btn.danger:hover { border-color: #cc0000; color: #cc0000; }
 
   /* ── MODO CLARO ─── */
   [data-theme="light"] .tools-root { color: var(--text-body); }
@@ -812,23 +803,9 @@
   [data-theme="light"] .tools-footer { border-top-color: #8aaad0; color: #1a4d9944; }
   [data-theme="light"] .tools-footer a { color: #1a4d9966; }
   [data-theme="light"] .tools-footer a:hover { color: #1a4d99; }
-  /* ── CANVAS FONDO ─── */
-  #bg-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.55;
-  }
-  .tools-root {
-    position: relative;
-    z-index: 1;
-  }
   </style>
 </head>
 <body>
-<canvas id="bg-canvas"></canvas>
 
 <div class="tools-root">
 
@@ -878,17 +855,11 @@
       <span class="t-name t-accent">ALMACENAMIENTO</span>
     </button>
 
-    <button class="tool-cell tc-notes t-notes" onclick="abrirPanel('notes')" aria-label="Abrir bloc de notas">
-      <div class="t-dot" style="background:#ffaa22;box-shadow:0 0 6px #ffaa22;animation-delay:0.45s;top:50%;transform:translateY(-50%)"></div>
-      <div class="notes-cell-left">
-        <span class="t-tag t-accent" style="margin-bottom:4px">// utilidades</span>
-        <span class="t-name t-accent">NOTES</span>
-        <span class="notes-preview" id="notes-cell-preview">// bloc de notas persistente · autosave · exportar .txt</span>
-      </div>
-      <div class="notes-meta">
-        <span id="notes-cell-count" class="notes-count-badge">0 chars</span>
-        <span style="font-size:0.5rem;color:#ffaa2244;letter-spacing:0.12em">AUTOSAVE</span>
-      </div>
+    <button class="tool-cell tc-color t-color" onclick="abrirPanel('color')" aria-label="Abrir herramientas de color y tamaños">
+      <div class="t-dot" style="background:#ff3399;box-shadow:0 0 6px #ff3399;animation-delay:1.5s"></div>
+      <span class="t-glyph t-accent">◉</span>
+      <span class="t-tag t-accent">// diseño · dev</span>
+      <span class="t-name t-accent">COLOR &amp; TAMAÑOS CSS</span>
     </button>
 
   </nav>
@@ -1059,37 +1030,185 @@
     </div>
   </section>
 
-  <!-- ═══ PANEL: NOTAS ═══ -->
-  <section id="panel-notes" class="tool-panel" aria-label="Bloc de notas persistente">
+  <!-- ═══ PANEL: COLOR & TAMAÑOS ═══ -->
+  <section id="panel-color" class="tool-panel" aria-label="Herramientas de color y tamaños CSS">
     <div class="panel-header">
-      <span class="panel-title" style="color:#ffaa22">// NOTES</span>
-      <button class="panel-close" onclick="cerrarPanel('notes')" aria-label="Cerrar">[X] CERRAR</button>
+      <span class="panel-title" style="color:#ff3399">// COLOR &amp; TAMAÑOS CSS</span>
+      <button class="panel-close" onclick="cerrarPanel('color')" aria-label="Cerrar">[X] CERRAR</button>
     </div>
 
-    <div class="notes-cats" role="group" aria-label="Categorías de notas">
-      <button class="notes-cat-btn activo" id="cat-btn-general"  onclick="cambiarCat('GENERAL')"  aria-pressed="true">GENERAL</button>
-      <button class="notes-cat-btn"        id="cat-btn-comandos" onclick="cambiarCat('COMANDOS')" aria-pressed="false">COMANDOS</button>
-      <button class="notes-cat-btn"        id="cat-btn-ips"      onclick="cambiarCat('IPs')"      aria-pressed="false">IPs</button>
-    </div>
+    <div class="color-cols">
 
-    <textarea
-      class="notes-textarea"
-      id="notes-area"
-      placeholder="// escribe aquí · se guarda automáticamente"
-      oninput="notesInput()"
-      autocomplete="off"
-      spellcheck="false"
-      aria-label="Bloc de notas"
-    ></textarea>
+      <!-- COLUMNA IZQUIERDA: COLORES -->
+      <div>
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:0 0 0.8rem">// CONVERSOR DE COLOR</p>
 
-    <div class="notes-bar">
-      <span class="notes-saved" id="notes-saved">// sin cambios</span>
-      <span class="notes-chars" id="notes-chars">0 caracteres</span>
-      <div class="notes-actions">
-        <button class="notes-btn" onclick="exportarNota()">⬇ EXPORTAR .TXT</button>
-        <button class="notes-btn danger" onclick="limpiarNota()">✕ LIMPIAR</button>
+        <label class="t-label" for="color-picker">COLOR</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="color" id="color-picker" value="#ff3399"
+                 oninput="sincronizarColorDesdepicker(this.value)"
+                 style="width:48px;height:38px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          <input class="t-input" id="color-hex" type="text" placeholder="#ff3399" maxlength="9"
+                 oninput="sincronizarColorDesdeHex(this.value)"
+                 style="flex:1" autocomplete="off" spellcheck="false">
+        </div>
+
+        <div class="color-preview-wrap">
+          <div class="color-swatch" id="color-swatch"></div>
+          <div class="color-values" id="color-values">
+            <div class="color-val-row"><span class="color-val-lbl">HEX</span><span class="color-val-txt" id="cv-hex" onclick="copiarValorColor(this)" title="Copiar">#ff3399</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">RGB</span><span class="color-val-txt" id="cv-rgb" onclick="copiarValorColor(this)" title="Copiar">rgb(255, 51, 153)</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">HSL</span><span class="color-val-txt" id="cv-hsl" onclick="copiarValorColor(this)" title="Copiar">hsl(330, 100%, 60%)</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">HSV</span><span class="color-val-txt" id="cv-hsv" onclick="copiarValorColor(this)" title="Copiar">hsv(330°, 80%, 100%)</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">OKLCH</span><span class="color-val-txt" id="cv-oklch" onclick="copiarValorColor(this)" title="Copiar">oklch(60% 0.28 330)</span></div>
+          </div>
+        </div>
+
+        <!-- WCAG -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.2rem 0 0.5rem">// CONTRASTE WCAG</p>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:120px">
+            <label class="t-label" for="wcag-bg" style="margin-top:0">FONDO</label>
+            <input type="color" id="wcag-bg" value="#000000" oninput="calcularWCAG()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="flex:1;min-width:120px">
+            <label class="t-label" for="wcag-fg" style="margin-top:0">TEXTO</label>
+            <input type="color" id="wcag-fg" value="#ff3399" oninput="calcularWCAG()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+        </div>
+        <div id="wcag-result" style="margin-top:0.6rem"></div>
+
+        <!-- PALETA -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.2rem 0 0.3rem">// PALETA GENERADA</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.3rem">
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('complementario')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">COMPLEMENTARIO</button>
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('analogos')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">ANÁLOGOS</button>
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('triadico')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">TRIÁDICO</button>
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('tintes')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">TINTES/SOMBRAS</button>
+        </div>
+        <div class="paleta-grid" id="paleta-grid"></div>
+
+        <!-- GRADIENTE -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.2rem 0 0.5rem">// GRADIENTE CSS</p>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:100px">
+            <label class="t-label" style="margin-top:0">COLOR 1</label>
+            <input type="color" id="grad-c1" value="#ff3399" oninput="actualizarGradiente()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="flex:1;min-width:100px">
+            <label class="t-label" style="margin-top:0">COLOR 2</label>
+            <input type="color" id="grad-c2" value="#3399ff" oninput="actualizarGradiente()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="min-width:80px">
+            <label class="t-label" style="margin-top:0">ÁNGULO</label>
+            <input class="t-input" id="grad-angle" type="number" value="135" min="0" max="360"
+                   oninput="actualizarGradiente()" style="width:80px">
+          </div>
+        </div>
+        <div class="grad-preview" id="grad-preview"></div>
+        <div class="grad-code" id="grad-code" onclick="copiarTexto(this.textContent)" title="Copiar CSS"></div>
       </div>
-    </div>
+
+      <!-- COLUMNA DERECHA: TAMAÑOS CSS -->
+      <div>
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:0 0 0.8rem">// CONVERSOR DE UNIDADES CSS</p>
+
+        <div class="size-cols">
+          <div>
+            <label class="t-label" for="size-val" style="margin-top:0">VALOR</label>
+            <input class="t-input" id="size-val" type="number" placeholder="16" value="16"
+                   oninput="convertirSize()" min="0">
+          </div>
+          <div>
+            <label class="t-label" for="size-unit" style="margin-top:0">UNIDAD</label>
+            <select class="t-select" id="size-unit" onchange="convertirSize()">
+              <option value="px" selected>px</option>
+              <option value="rem">rem</option>
+              <option value="em">em</option>
+              <option value="pt">pt</option>
+              <option value="vw">vw</option>
+              <option value="vh">vh</option>
+              <option value="%">%</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="size-cols" style="margin-top:0.8rem">
+          <div>
+            <label class="t-label" style="margin-top:0">ROOT FONT-SIZE (px)</label>
+            <input class="t-input" id="size-root" type="number" value="16" min="1" oninput="convertirSize()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">VIEWPORT ANCHO (px)</label>
+            <input class="t-input" id="size-vw" type="number" value="1440" min="1" oninput="convertirSize()">
+          </div>
+        </div>
+
+        <div class="size-result-grid" id="size-result"></div>
+
+        <!-- TIEMPOS -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.4rem 0 0.5rem">// CONVERSOR DE TIEMPO (CSS)</p>
+        <div class="size-cols">
+          <div>
+            <label class="t-label" style="margin-top:0">VALOR</label>
+            <input class="t-input" id="time-val" type="number" placeholder="300" value="300"
+                   oninput="convertirTiempo()" min="0">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">UNIDAD</label>
+            <select class="t-select" id="time-unit" onchange="convertirTiempo()">
+              <option value="ms" selected>ms</option>
+              <option value="s">s</option>
+            </select>
+          </div>
+        </div>
+        <div class="size-result-grid" id="time-result" style="grid-template-columns:1fr 1fr"></div>
+
+        <!-- BOX SHADOW -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.4rem 0 0.5rem">// GENERADOR BOX-SHADOW</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
+          <div>
+            <label class="t-label" style="margin-top:0">X (px)</label>
+            <input class="t-input" id="bs-x" type="number" value="0" oninput="actualizarShadow()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">Y (px)</label>
+            <input class="t-input" id="bs-y" type="number" value="4" oninput="actualizarShadow()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">BLUR (px)</label>
+            <input class="t-input" id="bs-blur" type="number" value="12" min="0" oninput="actualizarShadow()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">SPREAD (px)</label>
+            <input class="t-input" id="bs-spread" type="number" value="0" oninput="actualizarShadow()">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:0.6rem;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:100px">
+            <label class="t-label" style="margin-top:0">COLOR</label>
+            <input type="color" id="bs-color" value="#000000" oninput="actualizarShadow()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="flex:1;min-width:80px">
+            <label class="t-label" style="margin-top:0">OPACIDAD</label>
+            <input class="t-input" id="bs-opacity" type="number" value="20" min="0" max="100" oninput="actualizarShadow()">
+          </div>
+          <label style="display:flex;align-items:center;gap:5px;font-size:0.7rem;color:#778899;margin-bottom:2px;cursor:pointer">
+            <input type="checkbox" id="bs-inset" onchange="actualizarShadow()" style="accent-color:#ff3399"> inset
+          </label>
+        </div>
+        <div id="bs-preview" style="margin-top:0.8rem;height:52px;background:#111;border-radius:4px;display:flex;align-items:center;justify-content:center">
+          <div id="bs-box" style="width:120px;height:32px;background:#222;border-radius:3px;transition:box-shadow 0.15s"></div>
+        </div>
+        <div class="grad-code" id="bs-code" onclick="copiarTexto(this.textContent)" title="Copiar CSS" style="margin-top:0.5rem"></div>
+      </div>
+
+    </div><!-- /color-cols -->
   </section>
 
   <footer class="tools-footer">
@@ -1103,147 +1222,6 @@
 </div><!-- /tools-root -->
 
 <script src="accesibilidad.js"></script>
-<script>
-(function() {
-  var canvas = document.getElementById("bg-canvas");
-  var ctx = canvas.getContext("2d");
-  var W, H;
-
-  var STAR_COUNT   = 90;
-  var WAVE_COUNT   = 5;
-  var CONN_DIST    = 180;
-  var SPEED        = 0.18;
-  var WAVE_SPEED   = 0.0004;
-
-  var COLOR_NODE_A  = "rgba(0, 255, 102,";
-  var COLOR_NODE_B  = "rgba(255, 176, 0,";
-  var COLOR_LINE    = "rgba(0, 220, 90,";
-  var COLOR_WAVE    = "rgba(255, 176, 0,";
-
-  var stars = [];
-  var waves = [];
-
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-
-  function initStars() {
-    stars = [];
-    for (var i = 0; i < STAR_COUNT; i++) {
-      var isAmber = Math.random() > 0.75;
-      stars.push({
-        x:   Math.random() * W,
-        y:   Math.random() * H,
-        vx:  (Math.random() - 0.5) * SPEED,
-        vy:  (Math.random() - 0.5) * SPEED,
-        r:   Math.random() * 1.4 + 0.4,
-        col: isAmber ? COLOR_NODE_B : COLOR_NODE_A,
-        phase: Math.random() * Math.PI * 2,
-        pspeed: 0.008 + Math.random() * 0.012
-      });
-    }
-  }
-
-  function initWaves() {
-    waves = [];
-    for (var i = 0; i < WAVE_COUNT; i++) {
-      waves.push({
-        amp:    30 + Math.random() * 60,
-        freq:   0.003 + Math.random() * 0.005,
-        phase:  Math.random() * Math.PI * 2,
-        speed:  (Math.random() > 0.5 ? 1 : -1) * (WAVE_SPEED + Math.random() * WAVE_SPEED),
-        yBase:  (i + 1) * (1 / (WAVE_COUNT + 1)),
-        alpha:  0.018 + Math.random() * 0.022
-      });
-    }
-  }
-
-  function drawWaves() {
-    for (var w = 0; w < waves.length; w++) {
-      var wv = waves[w];
-      wv.phase += wv.speed * 60;
-      ctx.beginPath();
-      ctx.moveTo(0, H * wv.yBase);
-      for (var x = 0; x <= W; x += 4) {
-        var y = H * wv.yBase + Math.sin(x * wv.freq + wv.phase) * wv.amp;
-        ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = COLOR_WAVE + wv.alpha + ")";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    }
-  }
-
-  function drawConnections() {
-    for (var i = 0; i < stars.length; i++) {
-      for (var j = i + 1; j < stars.length; j++) {
-        var dx = stars[i].x - stars[j].x;
-        var dy = stars[i].y - stars[j].y;
-        var dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < CONN_DIST) {
-          var alpha = (1 - dist / CONN_DIST) * 0.18;
-          ctx.beginPath();
-          ctx.moveTo(stars[i].x, stars[i].y);
-          ctx.lineTo(stars[j].x, stars[j].y);
-          ctx.strokeStyle = COLOR_LINE + alpha + ")";
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
-    }
-  }
-
-  function drawStars() {
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
-      s.phase += s.pspeed;
-      var pulse = 0.5 + 0.5 * Math.sin(s.phase);
-      var alpha = 0.25 + pulse * 0.55;
-      var radius = s.r * (0.8 + pulse * 0.4);
-
-      var grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, radius * 4);
-      grad.addColorStop(0,   s.col + (alpha * 0.5) + ")");
-      grad.addColorStop(1,   s.col + "0)");
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, radius * 4, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
-      ctx.fillStyle = s.col + alpha + ")";
-      ctx.fill();
-
-      s.x += s.vx;
-      s.y += s.vy;
-      if (s.x < -20) s.x = W + 20;
-      if (s.x > W+20) s.x = -20;
-      if (s.y < -20) s.y = H + 20;
-      if (s.y > H+20) s.y = -20;
-    }
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    drawWaves();
-    drawConnections();
-    drawStars();
-    requestAnimationFrame(draw);
-  }
-
-  resize();
-  initStars();
-  initWaves();
-  draw();
-
-  window.addEventListener("resize", function() {
-    resize();
-    initStars();
-    initWaves();
-  });
-})();
-</script>
 <script>
 (function() {
 'use strict';
@@ -1600,128 +1578,264 @@ function convertirStorage() {
 window.convertirStorage = convertirStorage;
 
 // ═══════════════════════════════════════════════════════════
-// 6. NOTAS RÁPIDAS
+// 6. COLOR & TAMAÑOS CSS
 // ═══════════════════════════════════════════════════════════
-var notesCat = 'GENERAL';
-var notesSaveTimer = null;
-var NOTES_PREFIX = 'retroterm_notes_';
 
-function notesKey(cat) { return NOTES_PREFIX + cat; }
-
-function cargarNota(cat) {
-  var area = document.getElementById('notes-area');
-  try {
-    area.value = localStorage.getItem(notesKey(cat)) || '';
-  } catch(e) { area.value = ''; }
-  actualizarNotasUI();
+// ── Helpers de color ──
+function hexToRgb(hex) {
+  hex = hex.replace(/^#/, '');
+  if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+  if (hex.length !== 6) return null;
+  var n = parseInt(hex, 16);
+  return { r: (n>>16)&255, g: (n>>8)&255, b: n&255 };
 }
 
-function notesInput() {
-  actualizarNotasUI();
-  var saved = document.getElementById('notes-saved');
-  saved.className = 'notes-saved';
-  saved.textContent = '// guardando...';
-  clearTimeout(notesSaveTimer);
-  notesSaveTimer = setTimeout(function() {
-    var val = document.getElementById('notes-area').value;
-    try { localStorage.setItem(notesKey(notesCat), val); } catch(e) {}
-    saved.className = 'notes-saved ok';
-    saved.textContent = '// guardado ✓';
-    actualizarCeldaPreview();
-    setTimeout(function() {
-      saved.className = 'notes-saved';
-      saved.textContent = '// sin cambios';
-    }, 2000);
-  }, 600);
-}
-
-function actualizarNotasUI() {
-  var val = document.getElementById('notes-area').value;
-  var chars = document.getElementById('notes-chars');
-  chars.textContent = val.length + ' carácter' + (val.length !== 1 ? 'es' : '');
-}
-
-function actualizarCeldaPreview() {
-  var val = document.getElementById('notes-area').value;
-  var preview = document.getElementById('notes-cell-preview');
-  var badge   = document.getElementById('notes-cell-count');
-  if (preview) {
-    var linea = val.split('\n').find(function(l) { return l.trim(); }) || '// bloc de notas persistente · autosave · exportar .txt';
-    preview.textContent = linea.length > 60 ? linea.slice(0,60) + '…' : linea;
+function rgbToHsl(r,g,b) {
+  r/=255; g/=255; b/=255;
+  var max=Math.max(r,g,b), min=Math.min(r,g,b), h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{
+    var d=max-min; s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}
+    h/=6;
   }
-  if (badge) {
-    // total chars across all categories
-    var total = 0;
-    ['GENERAL','COMANDOS','IPs'].forEach(function(c) {
-      try { total += (localStorage.getItem(notesKey(c)) || '').length; } catch(e) {}
-    });
-    badge.textContent = total > 0 ? total + ' chars' : '0 chars';
-  }
+  return {h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};
 }
 
-function cambiarCat(cat) {
-  // Guardar la categoría actual antes de cambiar
-  var area = document.getElementById('notes-area');
-  try { localStorage.setItem(notesKey(notesCat), area.value); } catch(e) {}
+function rgbToHsv(r,g,b) {
+  r/=255;g/=255;b/=255;
+  var max=Math.max(r,g,b),min=Math.min(r,g,b),h,s,v=max,d=max-min;
+  s=max===0?0:d/max;
+  if(max===min){h=0;}else{
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}
+    h/=6;
+  }
+  return {h:Math.round(h*360),s:Math.round(s*100),v:Math.round(v*100)};
+}
 
-  notesCat = cat;
-  ['GENERAL','COMANDOS','IPs'].forEach(function(c) {
-    var btn = document.getElementById('cat-btn-' + c.toLowerCase());
-    if (btn) {
-      btn.classList.toggle('activo', c === cat);
-      btn.setAttribute('aria-pressed', c === cat ? 'true' : 'false');
-    }
+function rgbToOklch(r,g,b) {
+  // sRGB → linear
+  function lin(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
+  var lr=lin(r),lg=lin(g),lb=lin(b);
+  // linear sRGB → OKLab (approximation)
+  var l=0.4122214708*lr+0.5363325363*lg+0.0514459929*lb;
+  var m=0.2119034982*lr+0.6806995451*lg+0.1073969566*lb;
+  var s=0.0883024619*lr+0.2817188376*lg+0.6299787005*lb;
+  var l_=Math.cbrt(l),m_=Math.cbrt(m),s_=Math.cbrt(s);
+  var L=0.2104542553*l_+0.7936177850*m_-0.0040720468*s_;
+  var a=1.9779984951*l_-2.4285922050*m_+0.4505937099*s_;
+  var bk=-0.0259040371*l_+0.7827717662*m_-0.7568667722*s_;
+  var C=Math.sqrt(a*a+bk*bk);
+  var H=Math.round(Math.atan2(bk,a)*180/Math.PI);
+  if(H<0)H+=360;
+  return {l:Math.round(L*100),c:parseFloat(C.toFixed(3)),h:H};
+}
+
+function hslToHex(h,s,l) {
+  s/=100;l/=100;
+  var a=s*Math.min(l,1-l);
+  var f=function(n){var k=(n+h/30)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
+  var toHex=function(x){return Math.round(x*255).toString(16).padStart(2,'0');};
+  return '#'+toHex(f(0))+toHex(f(8))+toHex(f(4));
+}
+
+function colorActual() {
+  return document.getElementById('color-hex').value.trim();
+}
+
+function actualizarPanelColor(hex) {
+  var rgb = hexToRgb(hex);
+  if (!rgb) return;
+  document.getElementById('color-swatch').style.background = hex;
+  document.getElementById('color-picker').value = hex;
+  document.getElementById('color-hex').value = hex;
+  var hsl = rgbToHsl(rgb.r,rgb.g,rgb.b);
+  var hsv = rgbToHsv(rgb.r,rgb.g,rgb.b);
+  var oklch = rgbToOklch(rgb.r,rgb.g,rgb.b);
+  document.getElementById('cv-hex').textContent = hex.toUpperCase();
+  document.getElementById('cv-rgb').textContent = 'rgb('+rgb.r+', '+rgb.g+', '+rgb.b+')';
+  document.getElementById('cv-hsl').textContent = 'hsl('+hsl.h+', '+hsl.s+'%, '+hsl.l+'%)';
+  document.getElementById('cv-hsv').textContent = 'hsv('+hsv.h+'°, '+hsv.s+'%, '+hsv.v+'%)';
+  document.getElementById('cv-oklch').textContent = 'oklch('+oklch.l+'% '+oklch.c+' '+oklch.h+')';
+  // sync wcag fg
+  document.getElementById('wcag-fg').value = hex;
+  calcularWCAG();
+  generarPaleta('tintes');
+}
+
+function sincronizarColorDesdepicker(hex) {
+  actualizarPanelColor(hex);
+}
+window.sincronizarColorDesdepicker = sincronizarColorDesdepicker;
+
+function sincronizarColorDesdeHex(val) {
+  val = val.trim();
+  if (/^#?([0-9a-fA-F]{3}){1,2}$/.test(val)) {
+    var hex = val.startsWith('#') ? val : '#'+val;
+    actualizarPanelColor(hex);
+  }
+}
+window.sincronizarColorDesdeHex = sincronizarColorDesdeHex;
+
+function copiarValorColor(el) {
+  navigator.clipboard.writeText(el.textContent).then(function() {
+    var orig = el.textContent;
+    el.textContent = '✓ copiado';
+    setTimeout(function(){ el.textContent = orig; }, 1200);
   });
-  cargarNota(cat);
 }
-window.cambiarCat = cambiarCat;
+window.copiarValorColor = copiarValorColor;
 
-function exportarNota() {
-  var val = document.getElementById('notes-area').value;
-  if (!val.trim()) return;
-  var fecha = new Date().toISOString().slice(0,10);
-  var nombre = 'retroterm_notas_' + notesCat.toLowerCase() + '_' + fecha + '.txt';
-  var blob = new Blob([val], { type: 'text/plain;charset=utf-8' });
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = nombre;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(a.href);
+function copiarTexto(txt) {
+  navigator.clipboard.writeText(txt);
 }
-window.exportarNota = exportarNota;
+window.copiarTexto = copiarTexto;
 
-function limpiarNota() {
-  var area = document.getElementById('notes-area');
-  if (!area.value.trim()) return;
-  if (!confirm('¿Limpiar las notas de ' + notesCat + '? Esta acción no se puede deshacer.')) return;
-  area.value = '';
-  try { localStorage.removeItem(notesKey(notesCat)); } catch(e) {}
-  actualizarNotasUI();
-  actualizarCeldaPreview();
-  var saved = document.getElementById('notes-saved');
-  saved.className = 'notes-saved ok';
-  saved.textContent = '// limpiado ✓';
-  setTimeout(function() {
-    saved.className = 'notes-saved';
-    saved.textContent = '// sin cambios';
-  }, 1500);
+// ── WCAG ──
+function luminancia(r,g,b) {
+  var f=function(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);};
+  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);
 }
-window.limpiarNota = limpiarNota;
 
-// Init NOTES on load
-(function initNotes() {
-  cargarNota('GENERAL');
-  actualizarCeldaPreview();
-})();
+function calcularWCAG() {
+  var bg = hexToRgb(document.getElementById('wcag-bg').value);
+  var fg = hexToRgb(document.getElementById('wcag-fg').value);
+  if (!bg||!fg) return;
+  var l1=luminancia(fg.r,fg.g,fg.b), l2=luminancia(bg.r,bg.g,bg.b);
+  var ratio = (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05);
+  var r = Math.round(ratio*100)/100;
+  var aa_n = r>=4.5, aa_l = r>=3, aaa_n = r>=7, aaa_l = r>=4.5;
+  var bgHex = document.getElementById('wcag-bg').value;
+  var fgHex = document.getElementById('wcag-fg').value;
+  document.getElementById('wcag-result').innerHTML =
+    '<div style="font-size:0.72rem;color:#778;margin-bottom:4px">Ratio: <strong style="color:#e0cce8">'+r+':1</strong></div>'+
+    '<span class="wcag-badge '+(aa_n?'wcag-pass':'wcag-fail')+'">AA Normal '+(aa_n?'✓':'✗')+'</span>'+
+    '<span class="wcag-badge '+(aa_l?'wcag-pass':'wcag-fail')+'">AA Large '+(aa_l?'✓':'✗')+'</span>'+
+    '<span class="wcag-badge '+(aaa_n?'wcag-pass':'wcag-fail')+'">AAA Normal '+(aaa_n?'✓':'✗')+'</span>'+
+    '<span class="wcag-badge '+(aaa_l?'wcag-pass':'wcag-fail')+'">AAA Large '+(aaa_l?'✓':'✗')+'</span>'+
+    '<div class="wcag-preview" style="background:'+bgHex+';color:'+fgHex+';margin-top:8px;border:1px solid #2a2a2a">'+
+    'Aa — Preview de texto</div>';
+}
+window.calcularWCAG = calcularWCAG;
 
-// Patch abrirPanel to init notes on first open
+// ── PALETA ──
+function generarPaleta(tipo) {
+  var hex = colorActual();
+  var rgb = hexToRgb(hex);
+  if (!rgb) return;
+  var hsl = rgbToHsl(rgb.r,rgb.g,rgb.b);
+  var colores = [];
+
+  if (tipo === 'complementario') {
+    colores = [hex, hslToHex((hsl.h+180)%360,hsl.s,hsl.l)];
+  } else if (tipo === 'analogos') {
+    colores = [hslToHex((hsl.h-30+360)%360,hsl.s,hsl.l), hex, hslToHex((hsl.h+30)%360,hsl.s,hsl.l)];
+  } else if (tipo === 'triadico') {
+    colores = [hex, hslToHex((hsl.h+120)%360,hsl.s,hsl.l), hslToHex((hsl.h+240)%360,hsl.s,hsl.l)];
+  } else if (tipo === 'tintes') {
+    for (var i=10;i<=90;i+=10) colores.push(hslToHex(hsl.h,hsl.s,i));
+  }
+
+  var grid = document.getElementById('paleta-grid');
+  grid.innerHTML = colores.map(function(c){
+    return '<div class="paleta-chip" style="background:'+c+'" data-hex="'+c.toUpperCase()+'" '+
+      'onclick="copiarTexto(\''+c+'\')" title="'+c.toUpperCase()+'"></div>';
+  }).join('');
+}
+window.generarPaleta = generarPaleta;
+
+// ── GRADIENTE ──
+function actualizarGradiente() {
+  var c1 = document.getElementById('grad-c1').value;
+  var c2 = document.getElementById('grad-c2').value;
+  var ang = document.getElementById('grad-angle').value || 135;
+  var css = 'linear-gradient('+ang+'deg, '+c1+', '+c2+')';
+  document.getElementById('grad-preview').style.background = css;
+  document.getElementById('grad-code').textContent = 'background: '+css+';';
+}
+window.actualizarGradiente = actualizarGradiente;
+
+// ── TAMAÑOS CSS ──
+function convertirSize() {
+  var val = parseFloat(document.getElementById('size-val').value);
+  var unit = document.getElementById('size-unit').value;
+  var root = parseFloat(document.getElementById('size-root').value) || 16;
+  var vwPx = parseFloat(document.getElementById('size-vw').value) || 1440;
+  if (isNaN(val)) { document.getElementById('size-result').innerHTML=''; return; }
+
+  // convertir todo a px primero
+  var px;
+  switch(unit) {
+    case 'px':  px = val; break;
+    case 'rem': px = val * root; break;
+    case 'em':  px = val * root; break;
+    case 'pt':  px = val * 1.3333; break;
+    case 'vw':  px = val * vwPx / 100; break;
+    case 'vh':  px = val * vwPx * 0.5625 / 100; break; // asume 16:9
+    case '%':   px = val * root / 100; break;
+    default:    px = val;
+  }
+
+  var fmt = function(n) { return parseFloat(n.toFixed(4)).toString(); };
+  var resultados = [
+    {u:'px',   v: fmt(px)},
+    {u:'rem',  v: fmt(px/root)},
+    {u:'em',   v: fmt(px/root)},
+    {u:'pt',   v: fmt(px/1.3333)},
+    {u:'vw',   v: fmt(px/vwPx*100)},
+    {u:'%',    v: fmt(px/root*100)},
+  ];
+
+  document.getElementById('size-result').innerHTML = resultados.map(function(r){
+    var activo = r.u===unit ? ' style="border-color:#ff339955"' : '';
+    return '<div class="size-item"'+activo+'><div class="size-item-lbl">'+r.u+'</div>'+
+      '<div class="size-item-val" onclick="copiarTexto(\''+r.v+r.u+'\')" title="Copiar">'+r.v+'</div></div>';
+  }).join('');
+}
+window.convertirSize = convertirSize;
+
+function convertirTiempo() {
+  var val = parseFloat(document.getElementById('time-val').value);
+  var unit = document.getElementById('time-unit').value;
+  if (isNaN(val)) { document.getElementById('time-result').innerHTML=''; return; }
+  var ms = unit==='ms' ? val : val*1000;
+  var s  = ms/1000;
+  document.getElementById('time-result').innerHTML =
+    '<div class="size-item"><div class="size-item-lbl">ms</div>'+
+    '<div class="size-item-val" onclick="copiarTexto(\''+ms+'ms\')" title="Copiar">'+ms+'</div></div>'+
+    '<div class="size-item"><div class="size-item-lbl">s</div>'+
+    '<div class="size-item-val" onclick="copiarTexto(\''+s+'s\')" title="Copiar">'+s+'</div></div>';
+}
+window.convertirTiempo = convertirTiempo;
+
+// ── BOX-SHADOW ──
+function actualizarShadow() {
+  var x      = document.getElementById('bs-x').value || 0;
+  var y      = document.getElementById('bs-y').value || 0;
+  var blur   = document.getElementById('bs-blur').value || 0;
+  var spread = document.getElementById('bs-spread').value || 0;
+  var color  = document.getElementById('bs-color').value;
+  var op     = Math.min(100,Math.max(0,parseInt(document.getElementById('bs-opacity').value)||20));
+  var inset  = document.getElementById('bs-inset').checked ? 'inset ' : '';
+  var rgb    = hexToRgb(color);
+  var rgba   = rgb ? 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+(op/100)+')' : color;
+  var shadow = inset+x+'px '+y+'px '+blur+'px '+spread+'px '+rgba;
+  document.getElementById('bs-box').style.boxShadow = shadow;
+  document.getElementById('bs-code').textContent = 'box-shadow: '+shadow+';';
+}
+window.actualizarShadow = actualizarShadow;
+
+// ── Init color panel ──
+var colorPanelIniciado = false;
 var _abrirPanelOrig = abrirPanel;
 abrirPanel = function(id) {
   _abrirPanelOrig(id);
-  if (id === 'notes') {
-    cargarNota(notesCat);
+  if (id === 'color' && !colorPanelIniciado) {
+    colorPanelIniciado = true;
+    actualizarPanelColor('#ff3399');
+    actualizarGradiente();
+    actualizarShadow();
+    convertirSize();
+    convertirTiempo();
   }
 };
 window.abrirPanel = abrirPanel;

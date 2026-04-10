@@ -16,6 +16,24 @@
      MURAL — estilos propios
      Acento: teal #00ffcc  (diferente al verde del HUB)
   ═══════════════════════════════════════════════ */
+  /* ── Reset de estilos.css ── */
+  body {
+    height: auto !important;
+    min-height: 100vh;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  .pantalla {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: none !important;
+    margin: 0 !important;
+  }
+
   * { box-sizing: border-box; }
 
   :root {
@@ -491,6 +509,8 @@ let miNick       = '';
 let ultimoId     = 0;
 let totalMsgs    = 0;
 let pollInterval = null;
+let ultimoEnvio  = 0;
+const COOLDOWN_MS = 3000;
 
 /* ── Utilidades ── */
 function esc(s) {
@@ -596,9 +616,17 @@ function iniciarPolling() {
 
 /* ── Enviar mensaje ── */
 async function enviar() {
+  const ahora = Date.now();
+  if (ahora - ultimoEnvio < COOLDOWN_MS) {
+    const restante = Math.ceil((COOLDOWN_MS - (ahora - ultimoEnvio)) / 1000);
+    mensajeSistema('espera ' + restante + 's antes de enviar otro mensaje');
+    scrollAbajo();
+    return;
+  }
   const texto = inputEl.value.trim();
   if (!texto || !miNick) return;
   if (texto.length > MAX_CHARS) return;
+  ultimoEnvio = Date.now();
 
   inputEl.value = '';
   sendBtn.disabled = true;
@@ -749,6 +777,5 @@ init();
 })();
 </script>
 
-<script src="accesibilidad.js"></script>
 </body>
 </html>
