@@ -86,11 +86,16 @@
     .toc a:hover { color: #66ffb3; }
 
     /* ── TABLAS ─── */
+    .t-tabla-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1rem 0;
+    }
     .t-tabla {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.78rem;
-      margin: 1rem 0;
+      margin: 0;
     }
     .t-tabla th {
       background: #001a00;
@@ -172,6 +177,22 @@
     .osi-proto { color: #446644; font-size: 0.68rem; margin-left: auto; font-style: italic; }
     .osi-layer.osi-highlight { background: rgba(0,40,0,0.5); border-color: #00ff6644; }
     .osi-layer.osi-highlight .osi-name { color: #66ffb3; }
+
+    /* ── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .osi-proto { display: none; }
+      .osi-name  { min-width: 90px; }
+      .ejemplo { padding: 12px 14px; }
+    }
+
+    @media (max-width: 480px) {
+      .osi-layer { flex-wrap: wrap; gap: 6px; padding: 8px 10px; }
+      .osi-desc { width: 100%; font-size: 0.68rem; }
+      .osi-name { min-width: unset; }
+      .callout { padding: 8px 12px; font-size: 0.76rem; }
+      .ejemplo { padding: 10px 10px; font-size: 0.76rem; }
+      .toc { padding: 10px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -214,7 +235,7 @@
     </div>
 
     <!-- ══ 1. MODELO OSI ══ -->
-    <h4 id="osi">1. Modelo OSI y TCP/IP</h4>
+    <h2 id="osi">1. Modelo OSI y TCP/IP</h2>
 
     <p>El modelo OSI es el marco de referencia estándar para entender cómo se comunican los dispositivos. Tiene 7 capas, cada una con una función específica. En la práctica se usa más TCP/IP (4 capas), pero OSI aparece en todos los exámenes.</p>
 
@@ -233,7 +254,7 @@
     </div>
 
     <!-- ══ 2. DIRECCIONAMIENTO IPv4 ══ -->
-    <h4 id="ip">2. Direccionamiento IPv4</h4>
+    <h2 id="ip">2. Direccionamiento IPv4</h2>
 
     <p>Una dirección IPv4 son 32 bits divididos en 4 octetos de 8 bits cada uno, escritos en decimal separados por puntos.</p>
 
@@ -251,7 +272,7 @@ Rango por octeto: 0 — 255</div>
     </div>
 
     <!-- ══ 3. CLASES ══ -->
-    <h4 id="clases">3. Clases de red y rangos privados</h4>
+    <h2 id="clases">3. Clases de red y rangos privados</h2>
 
     <table class="t-tabla" aria-label="Clases de red IPv4">
       <thead>
@@ -284,7 +305,7 @@ Rango por octeto: 0 — 255</div>
     </div>
 
     <!-- ══ 4. MÁSCARA ══ -->
-    <h4 id="mascara">4. Máscara de subred</h4>
+    <h2 id="mascara">4. Máscara de subred</h2>
 
     <p>La máscara de subred es otro número de 32 bits donde los 1s indican la parte de red y los 0s la parte de host. Siempre son 1s contiguos seguidos de 0s contiguos.</p>
 
@@ -308,7 +329,7 @@ AND 255.255.255.0  →  11111111.11111111.11111111.00000000
 =   192.168.1.0    →  11000000.10101000.00000001.00000000</div>
 
     <!-- ══ 5. CIDR ══ -->
-    <h4 id="cidr">5. Notación CIDR</h4>
+    <h2 id="cidr">5. Notación CIDR</h2>
 
     <p>CIDR (Classless Inter-Domain Routing) simplifica la máscara con un número que indica cuántos bits son de red. Es lo que ves detrás de la barra: <code>192.168.1.0/<strong style="color:#66ffb3">24</strong></code>.</p>
 
@@ -341,7 +362,7 @@ Ejemplo /26:
   salto entre redes = 256 - 192 = 64   (192 = último octeto de 255.255.255.192)</div>
 
     <!-- ══ 6. SUBNETTING ══ -->
-    <h4 id="subnetting">6. Cálculo de subredes paso a paso</h4>
+    <h2 id="subnetting">6. Cálculo de subredes paso a paso</h2>
 
     <p>El método más rápido en examen usa el <strong style="color:#66ffb3">bloque o salto</strong>: el valor del último octeto significativo de la máscara restado a 256.</p>
 
@@ -385,7 +406,7 @@ Hosts:             172.16.32.1 — 172.16.47.254  (4094 hosts)</div>
     </div>
 
     <!-- ══ 7. VLSM ══ -->
-    <h4 id="vlsm">7. VLSM — Subredes de tamaño variable</h4>
+    <h2 id="vlsm">7. VLSM — Subredes de tamaño variable</h2>
 
     <p>VLSM (Variable Length Subnet Masking) permite asignar a cada subred exactamente el tamaño que necesita, en lugar de dividir todo en bloques iguales. Es lo que se usa en entornos reales.</p>
 
@@ -419,11 +440,11 @@ Espacio restante sin usar: 10.0.0.116 — 10.0.0.255</div>
     </div>
 
     <!-- ══ 8. COMANDOS ══ -->
-    <h4 id="comandos">8. Comandos útiles de red</h4>
+    <h2 id="comandos">8. Comandos útiles de red</h2>
 
     <p>Los imprescindibles que aparecen en prácticas y exámenes de ASIR:</p>
 
-    <h4 style="font-size:0.85rem;color:#66ffb3">Linux / Unix</h4>
+    <h2 style="font-size:0.85rem;color:#66ffb3">Linux / Unix</h2>
     <div class="codigo-bloque">ip a                      # ver interfaces y direcciones IP
 ip r                      # tabla de enrutamiento
 ip route add X.X.X.X/Y   # añadir ruta estática
@@ -435,7 +456,7 @@ ss -tulnp                 # puertos abiertos con proceso
 arp -a                    # tabla ARP (IP ↔ MAC)
 nmcli con show            # conexiones NetworkManager</div>
 
-    <h4 style="font-size:0.85rem;color:#66ffb3">Windows (CMD / PowerShell)</h4>
+    <h2 style="font-size:0.85rem;color:#66ffb3">Windows (CMD / PowerShell)</h2>
     <div class="codigo-bloque">ipconfig /all             # ver config de red completa
 ipconfig /release         # liberar IP (DHCP)
 ipconfig /renew           # solicitar nueva IP (DHCP)
@@ -447,7 +468,7 @@ route print               # tabla de enrutamiento
 netstat -ano              # conexiones activas con PID
 arp -a                    # tabla ARP</div>
 
-    <h4 style="font-size:0.85rem;color:#66ffb3">Cisco IOS (routers/switches)</h4>
+    <h2 style="font-size:0.85rem;color:#66ffb3">Cisco IOS (routers/switches)</h2>
     <div class="codigo-bloque">show ip interface brief    # resumen de interfaces
 show ip route             # tabla de enrutamiento
 show running-config       # configuración activa
@@ -457,7 +478,7 @@ interface GigabitEthernet0/0
 ip route 0.0.0.0 0.0.0.0 192.168.1.254  # ruta por defecto</div>
 
     <!-- ══ 9. TRUCOS ══ -->
-    <h4 id="trucos">9. Trucos de examen</h4>
+    <h2 id="trucos">9. Trucos de examen</h2>
 
     <div class="callout">
       <strong>Calcular máscara desde prefijo en segundos:</strong> rellena los bits de izquierda a derecha. Si el prefijo es /20, los primeros 20 bits son 1 y el resto 0. Los primeros dos octetos completos son 255.255. Quedan 4 bits de 1 en el tercer octeto: 11110000 = 128+64+32+16 = 240. Resultado: 255.255.240.0

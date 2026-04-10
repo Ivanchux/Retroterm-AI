@@ -93,6 +93,23 @@
     .error-log .err { color: #ff5555; }
     .error-log .warn { color: #ffaa00; }
     .error-log .ok { color: #00ff66; }
+
+    @media (max-width: 600px) {
+      .error-code { font-size: 4.5rem; letter-spacing: 5px; }
+      .error-title { font-size: 1.1rem; letter-spacing: 2px; }
+      .error-msg { font-size: 0.82rem; }
+      .error-ascii { font-size: 0.5rem; }
+      .error-log { padding: 10px 14px; font-size: 0.68rem; }
+    }
+
+    @media (max-width: 400px) {
+      .error-code { font-size: 3.5rem; letter-spacing: 3px; }
+      .error-title { font-size: 0.95rem; }
+      .error-link { padding: 9px 14px; font-size: 0.74rem; }
+      .error-links { gap: 8px; }
+      .error-ascii { display: none; }
+      .error-container { padding: 24px 14px; }
+    }
   </style>
 </head>
 <body>

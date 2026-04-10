@@ -301,10 +301,34 @@
     .sn-footer a:hover { color: #00ff66; }
 
     /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sn-wrap { padding: 0 4px; }
+      .sn-input-area { gap: 10px; }
+      .sn-field { min-width: 150px; }
+    }
+
     @media (max-width: 600px) {
       .sn-grid { grid-template-columns: 1fr 1fr; }
       .sn-bin-etiqueta { width: 60px; }
       .sn-bin-valor { font-size: 0.62rem; letter-spacing: 1px; }
+      .sn-input-area { flex-direction: column; }
+      .sn-field { min-width: unset; width: 100%; }
+      .sn-btn, .sn-btn-sec { width: 100%; align-self: auto; }
+      .sn-tabs { flex-wrap: wrap; }
+      .sn-tab { font-size: 0.7rem; padding: 7px 12px; }
+    }
+
+    @media (max-width: 480px) {
+      .sn-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .sn-result-box { padding: 12px 10px; }
+      .sn-result-row { font-size: 0.78rem; flex-wrap: wrap; }
+      .sn-result-val { word-break: break-all; }
+      .sn-header h1 { font-size: 1.3rem; }
+      .sn-bin-row { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    }
+
+    @media (max-width: 360px) {
+      .sn-grid { grid-template-columns: 1fr; }
     }
   
   /* ── CANVAS FONDO ─── */

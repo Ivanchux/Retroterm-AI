@@ -587,6 +587,11 @@ body {
 /* ═══════════════════════════════════
    MOBILE VIEW
 ═══════════════════════════════════ */
+@media (max-width: 900px) {
+  .sidebar { width: 180px; }
+  .file-name { font-size: 0.58rem; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
 @media (max-width: 700px) {
   .sidebar { display: none; }
   .menubar { display: none; }
@@ -626,12 +631,23 @@ body {
     text-align: center;
     letter-spacing: 1px;
     transition: all 0.1s;
+    min-height: 36px;
+    touch-action: manipulation;
   }
   .mob-btn.primary { border-color: var(--accent-dim); color: var(--accent); }
   .mob-btn:active { background: var(--accent-glow); color: var(--accent); }
 
   .statusbar { font-size: 0.5rem; }
   .sb-ml { display: none; }
+}
+
+@media (max-width: 400px) {
+  .titlebar { padding: 0 6px; gap: 4px; }
+  .titlebar .wtitle { display: none; }
+  .tabsbar { height: 34px; }
+  .filetab { padding: 0 7px; font-size: 0.55rem; }
+  .mob-btn { font-size: 0.52rem; padding: 6px 2px; letter-spacing: 0; }
+  .statusbar { font-size: 0.45rem; }
 }
 .mob-actions { display: none; }
 
@@ -1198,6 +1214,7 @@ const defaultHTML = `<!DOCTYPE html>
     <p id="txt">Hola mundo</p>
     <button onclick="cambiar()">Cambiar texto</button>
   </div>
+<script src="accesibilidad.js"></script>
 </body>
 </html>`;
 

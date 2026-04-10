@@ -1,3 +1,9 @@
+/* =========== RESET GLOBAL ===================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /* =========== PANTALLA PRINCIPAL ===================== */
 
 body {
@@ -8,6 +14,7 @@ body {
   padding: 0;
   height: 100vh;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 .pantalla {
@@ -552,17 +559,130 @@ textarea#editor-crt:focus {
 
 
 /* ============================================================
-   RESPONSIVE — Optimización para pantallas < 480px
+   RESPONSIVE — Sistema de breakpoints completo
+   xs: < 480px (móvil pequeño)
+   sm: < 640px (móvil grande)
+   md: < 768px (tablet)
+   lg: < 1024px (tablet grande / portátil pequeño)
    ============================================================ */
 
+/* ── Base global segura ── */
+img, video, iframe, embed {
+  max-width: 100%;
+  height: auto;
+}
+
+textarea {
+  max-width: 100%;
+}
+
+/* ── Tablet grande (< 1024px) ── */
+@media (max-width: 1024px) {
+  .pantalla {
+    width: 95%;
+    padding: 20px 16px;
+  }
+
+  .pantalla-wide {
+    width: 98%;
+  }
+}
+
+/* ── Tablet (< 768px) ── */
+@media (max-width: 768px) {
+  .pantalla {
+    width: 96%;
+    padding: 16px 14px;
+    margin: 20px auto;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .menu {
+    gap: 16px;
+    margin-top: 25px;
+  }
+
+  .opcion {
+    flex: 1 1 160px;
+    max-width: 220px;
+    padding: 16px 18px;
+  }
+
+  /* Editor doble panel → apilado */
+  .editor-contenedor {
+    flex-direction: column;
+  }
+
+  .editor-crt {
+    width: 100%;
+    min-height: 250px;
+  }
+
+  #preview {
+    height: 280px;
+  }
+}
+
+/* ── Móvil grande (< 640px) ── */
+@media (max-width: 640px) {
+  .pantalla {
+    width: 97%;
+    padding: 14px 12px;
+    margin: 12px auto;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    word-break: break-word;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+  }
+
+  .menu {
+    gap: 12px;
+  }
+
+  .opcion {
+    flex: 1 1 140px;
+    max-width: none;
+    padding: 14px 12px;
+  }
+
+  .articulo-completo ul,
+  .articulo-completo ol {
+    padding-left: 14px;
+  }
+
+  .nav-pie {
+    gap: 8px;
+  }
+
+  .nav-pie a {
+    font-size: 0.7rem;
+  }
+}
+
+/* ── Móvil pequeño (< 480px) ── */
 @media (max-width: 480px) {
 
   /* --- Layout general --- */
   .pantalla {
-    width: 95%;
-    padding: 15px 12px;
-    margin: 15px auto;
-    box-sizing: border-box;
+    width: 100%;
+    padding: 14px 10px;
+    margin: 8px auto;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   /* --- Tipografía y cabecera --- */
@@ -572,7 +692,7 @@ textarea#editor-crt:focus {
   }
 
   h2 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
 
   .subtitulo {
@@ -600,8 +720,6 @@ textarea#editor-crt:focus {
     display: flex;
   }
 
-  /* Solución alternativa: el label activa el checkbox y el menú
-     dentro de la misma sección */
   .menu-toggle-input:checked + section .menu,
   .menu-toggle-input:checked + .pantalla .menu {
     display: flex;
@@ -613,7 +731,6 @@ textarea#editor-crt:focus {
     max-width: 100%;
     padding: 14px 10px;
     font-size: 0.9rem;
-    box-sizing: border-box;
     text-align: center;
     flex: none;
   }
@@ -628,6 +745,7 @@ textarea#editor-crt:focus {
   /* --- Artículos: reducir padding --- */
   .articulo {
     padding: 12px 10px;
+    overflow-x: hidden;
   }
 
   .articulo h3 {
@@ -645,6 +763,7 @@ textarea#editor-crt:focus {
     font-size: 0.68rem;
     letter-spacing: 0;
     word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   /* --- Botones "volver" y navegación inferior --- */
@@ -666,11 +785,16 @@ textarea#editor-crt:focus {
     font-size: 0.75rem;
     margin-top: 20px;
     padding-top: 8px;
+    word-break: break-word;
   }
 
   /* --- Red de proyectos: lista vertical --- */
   .lista-proyectos li {
     margin: 10px 0;
+  }
+
+  .red-page {
+    padding: 20px 10px;
   }
 
   .red-page .proyecto {
@@ -688,10 +812,45 @@ textarea#editor-crt:focus {
   .menu-toggle-input:checked ~ .pantalla .menu-articulo {
     display: flex;
   }
+
+  /* --- Editor: panel único en móvil --- */
+  .editor-contenedor {
+    flex-direction: column;
+  }
+
+  .editor-crt {
+    width: 100%;
+    min-height: 200px;
+  }
+
+  #preview {
+    height: 220px;
+  }
+
+  /* --- Textarea global: no desbordarse --- */
+  textarea {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 0.85rem;
+  }
+
+  /* --- Botones: tamaño táctil mínimo --- */
+  button {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    touch-action: manipulation;
+  }
+
+  /* --- Share bar compacta --- */
+  .share-bar {
+    gap: 6px;
+  }
 }
 
 /* ---- Clase añadida por JS al hacer click en hamburguesa ---- */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .menu.menu-visible {
     display: flex !important;
   }
@@ -754,10 +913,19 @@ textarea#editor-crt:focus {
   white-space: pre;
 }
 
+@media (max-width: 768px) {
+  .codigo-bloque {
+    font-size: 0.8rem;
+    padding: 10px 12px;
+  }
+}
+
 @media (max-width: 480px) {
   .codigo-bloque {
-    font-size: 0.75rem;
-    padding: 10px;
+    font-size: 0.72rem;
+    padding: 8px 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -792,6 +960,13 @@ textarea#editor-crt:focus {
   color: #00ff66;
   background: rgba(0, 30, 0, 0.6);
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .tabla-fila div {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -850,7 +1025,12 @@ textarea#editor-crt:focus {
   border-color: #00ff66;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .share-bar { gap: 8px; }
-  .share-btn { padding: 5px 10px; font-size: 0.72rem; }
+  .share-btn { padding: 6px 12px; font-size: 0.74rem; }
+}
+
+@media (max-width: 480px) {
+  .share-bar { gap: 6px; }
+  .share-btn { padding: 5px 9px; font-size: 0.72rem; }
 }

@@ -221,13 +221,21 @@
       margin: 10px 0;
     }
 
+    @media (max-width: 768px) {
+      .col2 { grid-template-columns: 1fr; }
+      .tabla-sql-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    }
+
     @media (max-width: 480px) {
-      .col2{ 
-        grid-template-columns: 1fr; 
+      .col2{
+        grid-template-columns: 1fr;
       }
-      .codigo-bloque{ 
-        font-size: 0.72rem; 
+      .codigo-bloque{
+        font-size: 0.72rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
+      .tabla-sql { min-width: 380px; }
     }
   
   /* ── CANVAS FONDO ─── */

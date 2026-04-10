@@ -84,7 +84,18 @@
     border-color: #00ff6633 !important;
     box-shadow: 0 0 15px #00ff6622 !important;
   }
-  </style>
+
+  /* ── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .codigo-bloque { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  }
+  @media (max-width: 480px) {
+    .articulo-completo p { font-size: 0.85rem; line-height: 1.7; }
+    .articulo-completo h2 { font-size: 0.9rem; }
+    .nav-inferior { flex-direction: column; gap: 8px; }
+    .breadcrumbs { font-size: 0.66rem; word-break: break-word; }
+  }
+    </style>
 
 </head>
 <body>
@@ -117,7 +128,7 @@
 
       <p>La idea surgió de una simple observación: las webs modernas son predecibles. Colores planos, diseños limpios, animaciones suaves... todo muy correcto, pero sin alma. Las interfaces de terminal de los años 80-90, con sus letras verdes brillando sobre fondo negro, transmiten algo que el diseño contemporáneo ha perdido: la sensación de que la máquina está viva.</p>
 
-      <h4>⚡ Características más notables</h4>
+      <h2>⚡ Características más notables</h2>
       <ul>
         <li>Interfaz minimalista, priorizando la productividad ante todo</li>
         <li>Agente de I.A. integrado, con funciones de autocompletado y explicaciones de código</li>
@@ -126,14 +137,14 @@
         <li>Estética coherente en todas las secciones: verde neón, tipografía monoespaciada, efectos de brillo</li>
       </ul>
 
-      <h4>🎯 Objetivos de RETROTERM.AI</h4>
+      <h2>🎯 Objetivos de RETROTERM.AI</h2>
       <ol>
         <li>Mejorar e innovar los métodos de concentración a través de un entorno visual sencillo y práctico</li>
         <li>Fusionar la NOSTALGIA con lo más avanzado en tecnología relacionada con la I.A.</li>
         <li>Facilitar una red en la que los usuarios compartan sus proyectos, inspirando a otros en el futuro</li>
       </ol>
 
-      <h4>🗺️ Fases de desarrollo planificadas</h4>
+      <h2>🗺️ Fases de desarrollo planificadas</h2>
       <p>El proyecto sigue un roadmap por fases: comenzando con HTML/CSS puro (v0.1), pasando por interactividad con JavaScript, después backend con base de datos, red de usuarios, optimización de accesibilidad, y finalmente integración con un modelo de lenguaje (IA) conectado a la API.</p>
 
     </article>

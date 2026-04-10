@@ -432,6 +432,11 @@
     }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 820px) {
+      .aria-sidebar { width: 200px; }
+      .sb-new-btn { font-size: 0.55rem; padding: 6px 8px; }
+    }
+
     @media (max-width: 640px) {
       .aria-sidebar {
         position: fixed;
@@ -445,6 +450,24 @@
       .mob-menu-btn { display: flex; align-items: center; }
       .sb-overlay.visible { display: block; }
       .msg-burbuja { max-width: 88%; font-size: 0.82rem; }
+    }
+
+    @media (max-width: 480px) {
+      .aria-topbar { padding: 6px 8px; gap: 6px; }
+      .aria-avatar { width: 32px !important; height: 42px !important; }
+      .aria-name { font-size: 0.68rem; }
+      .topbar-btn { font-size: 0.5rem; padding: 3px 5px; letter-spacing: 0; }
+      .chat-area { padding: 10px; gap: 8px; }
+      .msg-burbuja { max-width: 92%; font-size: 0.78rem; padding: 8px 10px; }
+      .input-area { padding: 8px; gap: 5px; }
+      #aria-input { font-size: 0.8rem; padding: 7px 9px; }
+      .send-btn { padding: 7px 12px; font-size: 0.7rem; }
+    }
+
+    @media (max-width: 360px) {
+      .aria-name { font-size: 0.6rem; }
+      .msg-burbuja { font-size: 0.72rem; }
+      .topbar-btn { display: none; }
     }
   
   /* ── CANVAS FONDO ─── */

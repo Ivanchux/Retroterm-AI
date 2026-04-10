@@ -61,7 +61,7 @@
   .bento {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: 200px 120px 85px;
+    grid-template-rows: 200px 120px 85px 85px;
     gap: 10px;
     margin: 1.8rem 0;
   }
@@ -76,6 +76,7 @@
   .b-subnet  { grid-column: 1 / 5;  grid-row: 3; }
   .b-roadmap { grid-column: 5 / 9;  grid-row: 3; }
   .b-term    { grid-column: 9 / 13; grid-row: 3; }
+  .b-wonder  { grid-column: 1 / 13; grid-row: 4; }
 
   /* ── CELDA BASE ─── */
   .bento-cell {
@@ -173,6 +174,13 @@
   }
   .bc-ice:hover { border-color: #3399ff55; box-shadow: 0 0 28px rgba(51,153,255,0.2), inset 0 0 40px rgba(51,153,255,0.04); }
 
+  .bc-amber {
+    border-color: #1e1000;
+    background: radial-gradient(ellipse at 50% 110%, #0e0800 0%, #050300 100%);
+    border-radius: 8px 20px 10px 16px;
+  }
+  .bc-amber:hover { border-color: #ffaa0066; box-shadow: 0 0 40px rgba(255,170,0,0.22), inset 0 0 60px rgba(255,170,0,0.05); }
+
   /* ── CONTENIDO ─── */
   .b-glyph {
     position: absolute;
@@ -202,6 +210,7 @@
   .dot-teal   { background:#00ffcc; box-shadow:0 0 7px #00ffcc; animation-delay:.3s; }
   .dot-dim    { background:#2a2a2a; animation-delay:2s; }
   .dot-ice    { background:#3399ff; box-shadow:0 0 7px #3399ff; animation-delay:0.8s; }
+  .dot-amber  { background:#ffaa00; box-shadow:0 0 7px #ffaa00; animation-delay:0.4s; }
   @keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.15} }
 
   .b-tag {
@@ -248,6 +257,7 @@
   .tc-teal   { color: #00ffcc; }
   .tc-dim    { color: #484848; }
   .tc-ice    { color: #3399ff; }
+  .tc-amber  { color: #ffaa00; }
 
   /* ── SHARE BAR ─── */
   .share-bar {
@@ -273,14 +283,57 @@
     }
     .b-editor, .b-aria,
     .b-gaming, .b-arts, .b-defi, .b-red,
-    .b-subnet, .b-roadmap, .b-term {
+    .b-subnet, .b-roadmap, .b-term, .b-wonder {
       grid-column: span 1;
       grid-row: auto;
       min-height: 110px;
     }
     .b-editor { grid-column: span 2; min-height: 130px; }
+    .b-wonder { grid-column: span 2; min-height: 90px; }
     .b-desc { display: none; }
     .bento-cell { border-radius: 12px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .bento {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+      gap: 7px;
+    }
+    .b-editor {
+      grid-column: span 2;
+      min-height: 100px;
+    }
+    .b-aria {
+      grid-column: span 2;
+      min-height: 90px;
+    }
+    .b-gaming, .b-arts, .b-defi, .b-red,
+    .b-subnet, .b-roadmap, .b-term {
+      grid-column: span 1;
+      min-height: 85px;
+    }
+    .b-wonder { grid-column: span 2; min-height: 80px; }
+    .b-tag { font-size: 0.48rem; }
+    .b-name { font-size: 0.75rem; }
+    .b-glyph { font-size: 1.8rem; }
+    .bento-cell { padding: 12px 12px; }
+    .hub-title { font-size: clamp(1.4rem, 6vw, 2rem); }
+    .hub-status { font-size: 0.6rem; letter-spacing: 0.1em; }
+    .hub-header { padding: 1.2rem 0 1rem; }
+  }
+
+  @media (max-width: 360px) {
+    .bento {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .b-editor, .b-aria,
+    .b-gaming, .b-arts, .b-defi, .b-red,
+    .b-subnet, .b-roadmap, .b-term, .b-wonder {
+      grid-column: span 1;
+      min-height: 75px;
+    }
   }
 
   /* ── CANVAS FONDO ─── */
@@ -383,6 +436,15 @@
         <span class="b-glyph tc-green">&gt;_</span>
         <span class="b-tag tc-green">// shell interactiva</span>
         <span class="b-name tc-green">TERMINAL</span>
+      </a>
+
+      <!-- WONDER IV — JUEGO -->
+      <a href="wonder.html" class="bento-cell b-wonder bc-amber">
+        <div class="b-dot dot-amber"></div>
+        <span class="b-glyph tc-amber">◈</span>
+        <span class="b-tag tc-amber">// juego · arqueología digital</span>
+        <span class="b-name tc-amber">WONDER IV — SIETE MARAVILLAS</span>
+        <span class="b-desc tc-amber">Puzzle de palabras · 7 maravillas del mundo digital · expedición interactiva</span>
       </a>
 
     </nav>

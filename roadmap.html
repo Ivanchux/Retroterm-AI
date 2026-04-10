@@ -273,10 +273,27 @@
     .rm-footer a:hover { color: #00ff66; }
 
     /* ── Responsive ───────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .rm-lista { gap: 12px; }
+      .rm-card { padding: 14px 16px; }
+    }
+
     @media (max-width: 600px) {
-      .rm-card-head { gap: 8px; }
+      .rm-card-head { gap: 8px; flex-wrap: wrap; }
       .rm-estado { margin-left: 0; }
       .rm-tag { font-size: 0.9rem; }
+      .rm-version { font-size: 0.75rem; letter-spacing: 2px; }
+      .rm-titulo { font-size: 0.9rem; }
+    }
+
+    @media (max-width: 480px) {
+      .rm-card { padding: 12px 12px; }
+      .rm-card-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .rm-estado { align-self: flex-start; }
+      .rm-subtareas { padding-left: 8px; }
+      .rm-subtarea { font-size: 0.74rem; }
+      .rm-header h1 { font-size: 1.3rem; }
+      .rm-header p { font-size: 0.68rem; }
     }
   
   /* ── CANVAS FONDO ─── */

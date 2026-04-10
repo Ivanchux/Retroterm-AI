@@ -366,9 +366,26 @@
   .mural-foot a:hover { color: var(--tc); }
 
   /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .mural-root { width: 98%; padding: 1rem 0 2rem; }
+    #mural-feed { height: 360px; }
+  }
+
   @media (max-width: 560px) {
-    #mural-feed { height: 320px; font-size: 0.74rem; }
-    .nick-modal { padding: 20px; }
+    .mural-root { width: 100%; }
+    #mural-feed { height: 300px; font-size: 0.74rem; }
+    .nick-modal { padding: 20px 14px; }
+    .mural-title { font-size: 1.2rem; }
+    .mural-inputbar { padding: 6px 8px; gap: 5px; }
+    .mural-nick { font-size: 0.7rem; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #mural-input { font-size: 0.8rem; }
+    #mural-send { padding: 0 12px; font-size: 0.72rem; }
+  }
+
+  @media (max-width: 400px) {
+    #mural-feed { height: 240px; font-size: 0.68rem; }
+    .mural-nick { max-width: 45px; }
+    .nick-modal { padding: 16px 10px; width: calc(100% - 16px); }
   }
   </style>
 </head>
@@ -732,5 +749,6 @@ init();
 })();
 </script>
 
+<script src="accesibilidad.js"></script>
 </body>
 </html>

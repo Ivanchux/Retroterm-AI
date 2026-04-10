@@ -237,7 +237,7 @@
       padding: 14px;
       box-shadow: 0 0 8px var(--verde-glow);
     }
-    .panel-box h3 {
+    .panel-box h2 {
       color: #66ffb3;
       font-size: 0.8rem;
       letter-spacing: 2px;
@@ -391,7 +391,7 @@
       border-top: 1px solid #003333;
       padding-top: 20px;
     }
-    .hist-galeria h3 {
+    .hist-galeria h2 {
       color: var(--cyan);
       font-size: 0.78rem;
       letter-spacing: 3px;
@@ -493,7 +493,7 @@
       border-bottom: 1px solid #003333;
       padding-bottom: 14px;
     }
-    .articulo-modal-top h3 {
+    .articulo-modal-top h2 {
       color: var(--cyan);
       font-size: 0.95rem;
       letter-spacing: 3px;
@@ -595,7 +595,7 @@
       #articulo-modal { padding: 10px; }
       .articulo-modal-box { padding: 16px; }
       .articulo-modal-top { flex-direction: column; gap: 10px; }
-      .articulo-modal-top h3 { font-size: 0.78rem; letter-spacing: 1px; }
+      .articulo-modal-top h2 { font-size: 0.78rem; letter-spacing: 1px; }
       .articulo-modal-cerrar { width: 100%; text-align: center; }
       .articulo-modal-body { font-size: 0.8rem; line-height: 1.8; }
       .articulo-modal-nav { flex-direction: column; gap: 8px; }
@@ -673,7 +673,7 @@
     <div class="panel-lateral">
 
       <div class="panel-box">
-        <h3>▸ ESTADO DEL SISTEMA</h3>
+        <h2>▸ ESTADO DEL SISTEMA</h2>
         <div id="status-text">> Inicializando TURCO_v1...</div>
         <div class="turno-row">
           <div class="turno-chip activo" id="chip-blancas">⬜ TÚ (BLANCAS)</div>
@@ -682,19 +682,19 @@
       </div>
 
       <div class="panel-box">
-        <h3>▸ LOG DEL SISTEMA</h3>
+        <h2>▸ LOG DEL SISTEMA</h2>
         <div id="turco-log">
           <p class="log-sistema">> TURCO_v1 online. Motor cargado.</p>
         </div>
       </div>
 
       <div class="panel-box">
-        <h3>▸ HISTORIAL DE MOVIMIENTOS</h3>
+        <h2>▸ HISTORIAL DE MOVIMIENTOS</h2>
         <div id="historial"></div>
       </div>
 
       <div class="panel-box">
-        <h3>▸ PIEZAS CAPTURADAS</h3>
+        <h2>▸ PIEZAS CAPTURADAS</h2>
         <p style="font-size:0.7rem;color:#333;margin-bottom:4px;">NEGRAS capturadas:</p>
         <div id="capturadas-blancas"></div>
         <p style="font-size:0.7rem;color:#333;margin:8px 0 4px;">BLANCAS capturadas:</p>
@@ -731,7 +731,7 @@
 
     <!-- GALERÍA HISTÓRICA -->
     <div class="hist-galeria" id="hist-galeria">
-      <h3>// ARCHIVO HISTÓRICO — TURCO MECÁNICO 1770–1854</h3>
+      <h2>// ARCHIVO HISTÓRICO — TURCO MECÁNICO 1770–1854</h2>
       <p style="font-size:0.68rem;color:#1a4a2a;text-align:center;margin-bottom:16px;letter-spacing:1px;">▸ Pincha cada tarjeta para leer el artículo</p>
       <div class="hist-fotos">
 
@@ -810,7 +810,7 @@
 <div id="articulo-modal">
   <div class="articulo-modal-box">
     <div class="articulo-modal-top">
-      <h3 id="modal-titulo"></h3>
+      <h2 id="modal-titulo"></h2>
       <button class="articulo-modal-cerrar" onclick="cerrarArticulo()">[ × CERRAR ]</button>
     </div>
     <img id="modal-img" class="articulo-modal-img" src="" alt=""

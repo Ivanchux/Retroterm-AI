@@ -217,9 +217,30 @@
   .term-foot a:hover { color: #00ff66; }
 
   /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .term-root { width: 98%; padding: 1rem 0 2rem; }
+    #term-output { height: 380px; }
+    .term-title { font-size: 1.4rem; }
+    .chips-row { gap: 5px; }
+    .chip { font-size: 0.55rem; padding: 4px 8px; }
+  }
+
   @media (max-width: 580px) {
-    #term-output { height: 340px; font-size: 0.74rem; }
-    .chip { font-size: 0.53rem; }
+    .term-root { width: 100%; padding: 0.8rem 0 1.5rem; }
+    #term-output { height: 320px; font-size: 0.74rem; }
+    .chip { font-size: 0.52rem; padding: 3px 7px; }
+    .term-title { font-size: 1.2rem; letter-spacing: 2px; }
+    .term-subtitle { font-size: 0.58rem; letter-spacing: 1px; }
+    .term-ps { font-size: 0.7rem; }
+    #term-input { font-size: 0.8rem; }
+  }
+
+  @media (max-width: 400px) {
+    #term-output { height: 260px; font-size: 0.68rem; }
+    .term-inputbar { padding: 6px 8px; gap: 4px; }
+    .term-ps { display: none; }
+    #term-input { font-size: 0.75rem; }
+    .chips-row { flex-wrap: wrap; gap: 4px; }
   }
   </style>
 </head>
@@ -814,5 +835,6 @@ printBanner();
 inp.focus();
 </script>
 
+<script src="accesibilidad.js"></script>
 </body>
 </html>

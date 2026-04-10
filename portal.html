@@ -253,14 +253,47 @@ h1, h2{
 }
 
 /* RESPONSIVE */
+@media (max-width: 768px) {
+  .pantalla {
+    width: 96%;
+    padding: 16px 14px;
+    margin: 20px auto;
+  }
+  .core-articles-horizontal { gap: 14px; }
+  .core-articles-horizontal .articulo { width: calc(50% - 7px); }
+  .silo-menu { gap: 10px; }
+}
+
+@media (max-width: 600px) {
+  .pantalla { width: 97%; padding: 14px 12px; margin: 12px auto; }
+  .core-articles-horizontal .articulo { width: 100%; max-width: 340px; }
+  .silo-menu a { padding: 7px 14px; font-size: 0.85rem; }
+  .silo-breadcrumb { font-size: 0.78rem; }
+  .articulo-turco { padding: 12px 14px; font-size: 0.85rem; }
+  .log-entry { font-size: 0.76rem; }
+}
+
 @media (max-width: 480px){
-  .core-articles-horizontal{ 
-    flex-direction: column; 
-    align-items: center; 
+  .pantalla { width: 100%; margin: 8px auto; border-left: none; border-right: none; }
+  .core-articles-horizontal{
+    flex-direction: column;
+    align-items: center;
   }
-  .core-articles-horizontal .articulo{ 
-    width: 100%; 
+  .core-articles-horizontal .articulo{
+    width: 100%;
+    max-width: none;
   }
+  .silo-menu {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .silo-menu a { text-align: center; }
+  #puzzle input { width: 52px; }
+  #puzzle button { padding: 5px 8px; font-size: 0.8rem; }
+  .articulo-turco { padding: 10px 10px; }
+  .log-entry { padding: 5px 8px; font-size: 0.72rem; }
+  .silo-breadcrumb { font-size: 0.7rem; word-break: break-word; }
 }
 
 
@@ -301,13 +334,13 @@ h1, h2{
 
   <div class="core-articles-horizontal">
     <article class="articulo">
-      <h3>🖼 Bienvenido a Retroterm.ai</h3>
+      <h2>🖼 Bienvenido a Retroterm.ai</h2>
       <p>Explora el universo retrofuturista inspirado en terminales clásicas y juegos tipo Fallout.</p>
       <video preload="none"  src="Videos/video_inicio.mp4" autoplay muted loop playsinline style="width:100%; border-radius:8px;"></video>
     </article>
 
     <article class="articulo">
-      <h3>🎮 Minijuegos y Puzzles</h3>
+      <h2>🎮 Minijuegos y Puzzles</h2>
       <p>Encuentra minijuegos interactivos, códigos secretos y contenido oculto dentro del sistema.</p>
       <video preload="none"  src="Videos/video_maquina.mp4" autoplay muted loop playsinline style="width:100%; border-radius:8px;"></video>
     </article>
@@ -315,7 +348,7 @@ h1, h2{
 
   <!-- Artículo Turco Mecánico con pista -->
   <div class="articulo-turco">
-    <h3>♟ CURIOSIDAD — El Turco Mecánico</h3>
+    <h2>♟ CURIOSIDAD — El Turco Mecánico</h2>
     <p>En <span class="fecha-clave">1770</span>, el inventor húngaro Wolfgang von Kempelen presentó ante la corte de la emperatriz María Teresa de Austria una de las mayores ilusiones tecnológicas de la historia: el <strong>Turco Mecánico</strong>, un autómata aparentemente capaz de jugar al ajedrez y vencer a casi cualquier rival humano.</p>
     <p>La máquina consistía en un maniquí vestido de turbante y ropajes otomanos, sentado frente a un tablero de ajedrez sobre un gran gabinete de madera. Von Kempelen abría los cajones del mecanismo para demostrar públicamente su complejidad interna — engranajes, palancas, cilindros — convenciendo al espectador de que todo era pura mecánica.</p>
     <p>Durante más de 80 años el Turco viajó por Europa y América, derrotando a figuras como Napoleón Bonaparte o Benjamin Franklin. El secreto era más humano que mecánico: dentro del gabinete se ocultaba un maestro de ajedrez que controlaba los movimientos mediante un sistema de imanes e iluminación de velas.</p>
@@ -381,7 +414,7 @@ h1, h2{
 
   <div class="core-articles-horizontal">
     <article class="articulo">
-      <h3>📝 Historia del Sistema</h3>
+      <h2>📝 Historia del Sistema</h2>
       <p>Retroterm.ai nace como un entorno retrofuturista inspirado en terminales clásicas y sistemas tipo Fallout. Desarrollado por Iván Brihuega como proyecto ASIR 2025.</p>
       <div class="imagen-articulo">
         <img src="Imagenes/terminal.jpg" alt="Terminal estilo Fallout" loading="lazy">
@@ -389,7 +422,7 @@ h1, h2{
     </article>
 
     <article class="articulo">
-      <h3>📊 Estadísticas del Proyecto</h3>
+      <h2>📊 Estadísticas del Proyecto</h2>
       <p>Datos internos sobre la actividad del sistema.</p>
       <table>
         <thead>
@@ -406,7 +439,7 @@ h1, h2{
     </article>
 
     <article class="articulo">
-      <h3>🗂 Estructura del Proyecto</h3>
+      <h2>🗂 Estructura del Proyecto</h2>
       <p>Archivos principales del sistema RETROTERM.AI.</p>
       <table>
         <thead>

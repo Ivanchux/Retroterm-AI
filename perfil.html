@@ -455,6 +455,7 @@
       .perfil-identidad {
         flex-direction: column;
         align-items: center;
+        gap: 16px;
       }
       .perfil-datos {
         width: 100%;
@@ -462,6 +463,25 @@
       .perfil-stats {
         grid-template-columns: repeat(2, 1fr);
       }
+      .perfil-campo { font-size: 0.8rem; }
+      .perfil-label { font-size: 0.6rem; }
+    }
+
+    @media (max-width: 480px) {
+      .perfil-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .perfil-stat-num { font-size: 1.3rem; }
+      .perfil-habilidades { flex-wrap: wrap; gap: 6px; }
+      .perfil-tag { font-size: 0.65rem; padding: 3px 8px; }
+      .perfil-backend-aviso { font-size: 0.72rem; padding: 10px 12px; }
+      .perfil-header h1 { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 360px) {
+      .perfil-stats { grid-template-columns: 1fr 1fr; gap: 6px; }
+      .perfil-avatar { width: 70px; height: 70px; font-size: 2rem; }
     }
   
   /* ── CANVAS FONDO ─── */

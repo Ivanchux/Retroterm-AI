@@ -231,13 +231,46 @@
     .footer a { color: var(--verde); text-decoration: none; }
     .footer a:hover { color: var(--verde-dim); }
 
+    @media (max-width: 820px) {
+      .wrap { padding: 16px 14px; }
+      .mtbl th:nth-child(6), .mtbl td:nth-child(6) { display: none; }
+    }
+
     @media (max-width: 600px) {
-      .dhead { flex-direction: column; }
+      .dhead { flex-direction: column; gap: 10px; }
       .mbox  { padding: 16px; }
       .mprecio { font-size: 1.5rem; }
       .ngrid, .ggrid { grid-template-columns: 1fr; }
       .mtbl th:nth-child(5), .mtbl td:nth-child(5),
       .mtbl th:nth-child(6), .mtbl td:nth-child(6) { display: none; }
+      .stats-row { gap: 10px; }
+      .schip { font-size: 0.65rem; padding: 5px 10px; }
+      .tabs { gap: 1px; }
+      .tab { font-size: 0.65rem; padding: 7px 10px; }
+      .twrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .mtbl { min-width: 480px; }
+    }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 10px 8px; }
+      .dhead h1 { font-size: 1.2rem; }
+      .stats-row { flex-wrap: wrap; gap: 6px; }
+      .schip { font-size: 0.6rem; flex: 1 1 40%; }
+      .tab { font-size: 0.6rem; padding: 6px 7px; }
+      .tb { flex-direction: column; gap: 6px; }
+      .tb input, .tb select { width: 100%; min-width: unset; }
+      .ngrid { grid-template-columns: 1fr; }
+      .ggrid { grid-template-columns: 1fr 1fr; }
+      .mtbl th:nth-child(4), .mtbl td:nth-child(4) { display: none; }
+      .mbox { padding: 12px 10px; }
+      .mprecio { font-size: 1.3rem; }
+      #cmodal > div { padding: 16px 12px; width: calc(100% - 20px); }
+      .mnomwrap img { width: 30px; height: 30px; }
+    }
+
+    @media (max-width: 360px) {
+      .ggrid { grid-template-columns: 1fr; }
+      .schip { flex: 1 1 100%; }
     }
   </style>
 </head>
@@ -315,7 +348,7 @@
   <!-- NOTICIAS -->
   <div id="p-noticias" class="panel">
     <div class="nhead">
-      <h3>📰 NOTICIAS CRYPTO <span class="live">● LIVE</span></h3>
+      <h2>📰 NOTICIAS CRYPTO <span class="live">● LIVE</span></h2>
       <button class="tbtn" onclick="cargarNoticias()">↺ ACTUALIZAR</button>
     </div>
     <div class="nfiltros" id="nfiltros">
@@ -952,5 +985,6 @@ const DESCS={
   window.addEventListener("resize", function() { resize(); initStars(); initWaves(); });
 })();
 </script>
+<script src="accesibilidad.js"></script>
 </body>
 </html>
