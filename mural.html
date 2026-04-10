@@ -689,6 +689,7 @@ function guardarNick() {
   nickDisplay.textContent = miNick;
   document.getElementById('nick-overlay').classList.remove('visible');
   inputEl.focus();
+  cargarHistorial();
 }
 
 document.getElementById('nick-input').addEventListener('keydown', e => {
@@ -706,11 +707,9 @@ function init() {
   } else {
     setStatus('offline', 'identifícate para entrar');
     nickDisplay.textContent = 'anónimo';
+    // Cargar historial en modo lectura mientras espera el nick
+    cargarHistorial();
     abrirNick();
-    // cuando cierre el modal sin nick, intentamos cargar igual en modo lectura
-    document.getElementById('nick-overlay').addEventListener('transitionend', () => {
-      if (!miNick) cargarHistorial();
-    }, { once: true });
   }
 }
 
