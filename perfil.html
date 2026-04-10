@@ -669,10 +669,9 @@
     <div class="perfil-seccion">
       <div class="perfil-seccion-titulo">ACCIONES</div>
       <div class="perfil-acciones">
-        <!-- Activar con backend real: -->
         <button class="btn-perfil primario" disabled title="Disponible cuando se conecte el backend">[ GUARDAR CAMBIOS ]</button>
         <button class="btn-perfil secundario" disabled title="Disponible cuando se conecte el backend">[ CAMBIAR CONTRASEÑA ]</button>
-        <button class="btn-perfil danger" disabled title="Disponible cuando se conecte el backend">[ CERRAR SESIÓN ]</button>
+        <button class="btn-perfil danger" id="btn-cerrar-sesion" disabled>[ CERRAR SESIÓN ]</button>
       </div>
     </div>
 
@@ -693,37 +692,90 @@
 </section>
 
 <script src="accesibilidad.js"></script>
-<script>
-  // Toggle de configuración local (persistido en localStorage)
-  // TODO backend: sincronizar preferencias con API /api/users/:id/config
-  function toggleConfig(el) {
-    var isOn = el.classList.toggle('on');
-    el.setAttribute('aria-checked', isOn.toString());
+
+<!-- ── FIREBASE: autenticación + datos de perfil ── -->
+<script type="module">
+  import { requireAuth }    from './middleware.js';
+  import { logoutUser }     from './auth.js';
+  import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  import { db }             from './firebase-config.js';
+
+  // ── 1. Proteger ruta — redirige a login.html si no hay sesión ──
+  let currentUser;
+  try {
+    currentUser = await requireAuth();
+  } catch (_) {
+    // requireAuth ya redirige; esta línea no se alcanza
+    throw _;
   }
 
-  // Soporte teclado para toggles
-  document.querySelectorAll('.config-toggle').forEach(function(t) {
-    t.addEventListener('keydown', function(e) {
+  // ── 2. Cargar documento del usuario en Firestore ──
+  const snap = await getDoc(doc(db, 'users', currentUser.uid));
+  const data = snap.exists() ? snap.data() : {};
+
+  // ── 3. Inyectar datos en el HTML ──
+  const set = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val !== undefined && val !== null) el.textContent = val;
+  };
+
+  set('campo-nombre',      data.username  || currentUser.email?.split('@')[0] || '—');
+  set('campo-nombre-real', data.fullname  || '—');
+  set('campo-email',       data.email     || currentUser.email || '—');
+  set('campo-bio',         data.bio       || '—');
+  set('stat-proyectos',    data.proyectos ?? 0);
+  set('stat-articulos',    data.articulos ?? 0);
+
+  // Sesiones: incrementar en cada carga
+  const sesiones = (data.sesiones ?? 0) + 1;
+  set('stat-sesiones', sesiones);
+  updateDoc(doc(db, 'users', currentUser.uid), { sesiones }).catch(() => {});
+
+  // Fecha de registro
+  if (data.createdAt?.toDate) {
+    const fecha = data.createdAt.toDate();
+    set('stat-registro', fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'short' }));
+  }
+
+  // Actualizar aviso de backend con saludo
+  const aviso = document.querySelector('.perfil-backend-aviso');
+  if (aviso) {
+    aviso.innerHTML = `<strong>// SESIÓN ACTIVA:</strong> Conectado como <code>${data.username || currentUser.email}</code> · UID: <code style="font-size:0.62rem">${currentUser.uid.slice(0,12)}…</code>`;
+  }
+
+  // Módulo auth → marcar como activo
+  document.querySelectorAll('.modulo-fila').forEach(fila => {
+    if (fila.textContent.includes('Autenticación')) {
+      const est = fila.querySelector('.modulo-estado');
+      if (est) { est.textContent = '● ACTIVO'; est.className = 'modulo-estado activo'; }
+    }
+  });
+
+  // Habilitar botones de acción
+  const btnCerrar = document.getElementById('btn-cerrar-sesion');
+  if (btnCerrar) {
+    btnCerrar.disabled = false;
+    btnCerrar.addEventListener('click', async () => {
+      btnCerrar.disabled = true;
+      await logoutUser();
+      window.location.replace('index.html');
+    });
+  }
+
+  // ── 4. Toggle de configuración local ──
+  window.toggleConfig = (el) => {
+    const isOn = el.classList.toggle('on');
+    el.setAttribute('aria-checked', isOn.toString());
+  };
+
+  document.querySelectorAll('.config-toggle').forEach(t => {
+    t.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        toggleConfig(t);
+        window.toggleConfig(t);
       }
     });
   });
-
-  // TODO backend: cargar datos reales del usuario autenticado
-  // fetch('/api/users/me', { headers: { Authorization: 'Bearer ' + token } })
-  //   .then(r => r.json())
-  //   .then(data => {
-  //     document.getElementById('campo-nombre').textContent = data.username;
-  //     document.getElementById('campo-nombre-real').textContent = data.fullname;
-  //     document.getElementById('campo-email').textContent = data.email;
-  //     document.getElementById('campo-bio').textContent = data.bio;
-  //     document.getElementById('stat-sesiones').textContent = data.stats.sessions;
-  //     document.getElementById('stat-proyectos').textContent = data.stats.projects;
-  //     document.getElementById('stat-articulos').textContent = data.stats.articles;
-  //     document.getElementById('stat-registro').textContent = data.createdAt;
-  //   });
 </script>
 <script>
 (function() {
