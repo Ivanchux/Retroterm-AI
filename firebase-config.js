@@ -3,12 +3,13 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID",
+  apiKey: "AIzaSyCh6lEcbt2tKqLTIddYW26Wc5hhU2IQiZ0",
+  authDomain: "retroterm-ai-f7a31.firebaseapp.com",
+  projectId: "retroterm-ai-f7a31",
+  storageBucket: "retroterm-ai-f7a31.firebasestorage.app",
+  messagingSenderId: "445990335441",
+  appId: "1:445990335441:web:91342f77a1cfe108e0e6f0",
+  measurementId: "G-WC9WDE9N8C"
 };
 
 const app = initializeApp(firebaseConfig);
