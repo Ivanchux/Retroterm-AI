@@ -10,7 +10,7 @@ export function requireAuth() {
         if (user) {
           resolve(user);
         } else {
-          window.location.href = "/login.html";
+          window.location.href = "/Retroterm-AI/login.html";
           reject(new Error("No authenticated user."));
         }
       },
