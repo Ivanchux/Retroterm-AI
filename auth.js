@@ -39,19 +39,25 @@ export async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
   const credential = await signInWithPopup(auth, provider);
   const user = credential.user;
+  console.log("Usuario Google:", user.uid, user.email);
 
-  // Si es la primera vez que entra con Google, crear su documento en Firestore
-  const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) {
-    await setDoc(doc(db, "users", user.uid), {
-      username: user.displayName || user.email.split("@")[0],
-      email:    user.email,
-      role:     "USER",
-      proyectos: 0,
-      sesiones:  0,
-      articulos: 0,
-      createdAt: serverTimestamp(),
-    });
+  try {
+    const snap = await getDoc(doc(db, "users", user.uid));
+    console.log("Documento existe:", snap.exists());
+    if (!snap.exists()) {
+      await setDoc(doc(db, "users", user.uid), {
+        username: user.displayName || user.email.split("@")[0],
+        email:    user.email,
+        role:     "USER",
+        proyectos: 0,
+        sesiones:  0,
+        articulos: 0,
+        createdAt: serverTimestamp(),
+      });
+      console.log("Documento creado ok");
+    }
+  } catch(e) {
+    console.error("Error Firestore:", e);
   }
 
   return user;
