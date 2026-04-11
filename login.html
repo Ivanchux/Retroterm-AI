@@ -102,11 +102,14 @@
   // Procesar resultado de redirect de Google
   handleGoogleRedirect().catch(console.error);
 
-  // Si ya hay sesion activa, ir al perfil
+  // Solo redirigir si ya habia sesion activa AL CARGAR la pagina
+  // No redirigir durante login/registro manual (handleSubmit ya lo hace)
+  let sesionPrevia = false;
   onAuthStateChanged(auth, (user) => {
-    if (user) {
+    if (user && sesionPrevia) {
       window.location.replace('/Retroterm-AI/perfil.html');
     }
+    sesionPrevia = true;
   });
 
   const log = (msg, cls = 'log-info') => {
@@ -146,6 +149,7 @@
         await loginUser(email, password);
         log('// OK Autenticacion exitosa. Accediendo...', 'log-ok');
       }
+      // Redirigir despues de que registerUser/loginUser terminen completamente
       setTimeout(() => window.location.replace('/Retroterm-AI/perfil.html'), 800);
     } catch (err) {
       btn.disabled = false;
@@ -159,8 +163,6 @@
     log('// Conectando con Google...', 'log-wait');
     try {
       await loginWithGoogle();
-      log('// OK Autenticacion con Google exitosa. Accediendo...', 'log-ok');
-      setTimeout(() => window.location.replace('/Retroterm-AI/perfil.html'), 800);
     } catch (err) {
       btn.disabled = false;
       if (err.code === 'auth/popup-closed-by-user') {
