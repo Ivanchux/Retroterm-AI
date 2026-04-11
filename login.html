@@ -97,7 +97,10 @@
 <script type="module">
   import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
   import { auth } from './firebase-config.js';
-  import { loginUser, registerUser, loginWithGoogle } from './auth.js';
+  import { loginUser, registerUser, loginWithGoogle, handleGoogleRedirect } from './auth.js';
+
+  // Procesar resultado de redirect de Google
+  handleGoogleRedirect().catch(console.error);
 
   // Si ya hay sesion activa, ir al perfil
   onAuthStateChanged(auth, (user) => {
