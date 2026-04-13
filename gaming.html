@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAMING — RETROTERM.AI</title>
+  <meta name="description" content="Selección de juegos recomendados por RETROTERM.AI: mundo abierto, acción, comedia y clásicos.">
+  <meta property="og:title" content="Gaming — RETROTERM.AI">
+  <meta property="og:description" content="Selección personal de videojuegos: mundo abierto, acción, comedia y clásicos.">
+  <meta property="og:image" content="https://ivanchux.github.io/Imagenes/retroterm_ai.jpg">
+  <meta property="og:url" content="https://ivanchux.github.io/gaming.html">
+  
+  <link rel="canonical" href="https://ivanchux.github.io/gaming.html">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <style>
+
+    /*  CABECERA  */
+    .gaming-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .gaming-header h1 {
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      text-shadow: 0 0 10px #00ff66;
+    }
+    .gaming-header p {
+      color: #66ffb3;
+      font-size: 0.78rem;
+      letter-spacing: 3px;
+      margin-top: 6px;
+    }
+
+    /* VISTA PRINCIPAL: ocultar detalles por defecto */
+    .juego-detalle {
+      display: none;
+    }
+    .juego-detalle:target {
+      display: block;
+    }
+    /* Cuando hay un detalle activo, oculta la vista principal */
+    .gaming-main {
+      display: block;
+    }
+    #cyberpunk:target ~ .gaming-main,
+    #rdr:target ~ .gaming-main,
+    #nms:target ~ .gaming-main,
+    #kcd2:target ~ .gaming-main,
+    #fable:target ~ .gaming-main,
+    #mafia:target ~ .gaming-main,
+    #ac:target ~ .gaming-main,
+    #dishonored:target ~ .gaming-main,
+    #southpark:target ~ .gaming-main,
+    #goat:target ~ .gaming-main,
+    #crazytaxi:target ~ .gaming-main,
+    #spore:target ~ .gaming-main,
+    #sims:target ~ .gaming-main {
+      display: none;
+    }
+
+    /* CATEGORÍA */
+    .gaming-categoria {
+      margin-bottom: 30px;
+    }
+    .gaming-categoria h2 {
+      font-size: 1rem;
+      letter-spacing: 3px;
+      color: #66ffb3;
+      border-bottom: 1px solid #003300;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    /* GRID DE CARDS */
+    .gaming-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* CARD */
+    .game-card {
+      width: 200px;
+      border: 1px solid #00ff66;
+      background: rgba(0, 15, 0, 0.85);
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      flex-direction: column;
+      text-decoration: none;
+      color: #00ff66;
+      transition: box-shadow 0.25s, border-color 0.25s, transform 0.25s;
+    }
+
+    .game-card::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0, 255, 102, 0.04) 50%,transparent 100%);
+      transition: top 0.5s ease;
+      pointer-events: none;
+}
+
+    .game-card:hover::after {
+      top: 150%;
+    }
+
+    .game-card:hover {
+      box-shadow: 0 0 14px rgba(0, 255, 102, 0.3);
+      border-color: #66ffb3;
+      transform: scale(1.02);
+    }
+    .game-card-img {
+      width: 100%;
+      height: 120px;
+      background: #000;
+      border-bottom: 1px solid #003300;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .game-card-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: brightness(0.85);
+    }
+    /* Placeholder visible cuando no hay imagen */
+    .game-card-img .ph {
+      font-size: 2.5rem;
+      opacity: 0.3;
+    }
+    .game-card-info {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .game-card-titulo {
+      font-size: 0.85rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .game-card-genero {
+      font-size: 0.68rem;
+      color: #66ffb3;
+      letter-spacing: 1px;
+    }
+    .game-card-desc {
+      font-size: 0.72rem;
+      color: #aaa;
+      line-height: 1.6;
+      margin-top: 4px;
+    }
+    .game-card-btn {
+      font-size: 0.65rem;
+      color: #00ff66;
+      letter-spacing: 1px;
+      margin-top: 8px;
+      border-top: 1px solid #003300;
+      padding-top: 6px;
+    }
+
+    /* VISTA DETALLADA */
+    .detalle-header {
+      margin-bottom: 20px;
+    }
+    .detalle-header h2 {
+      font-size: 1.4rem;
+      letter-spacing: 3px;
+      text-shadow: 0 0 8px #00ff66;
+    }
+    .detalle-genero {
+      font-size: 0.75rem;
+      color: #66ffb3;
+      letter-spacing: 2px;
+      margin-top: 4px;
+    }
+    .detalle-img {
+      width: 100%;
+      max-width: 500px;
+      height: 220px;
+      background: #000;
+      border: 1px solid #003300;
+      overflow: visible;
+      margin: 16px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .detalle-img img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: brightness(0.85);
+    }
+    .detalle-img .ph {
+      font-size: 4rem;
+      opacity: 0.2;
+    }
+    .detalle-body {
+      font-size: 0.88rem;
+      color: #ccc;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .detalle-body p{ 
+      margin-bottom: 10px; 
+    }
+    .detalle-body h4 {
+      color: #00ff66;
+      margin: 16px 0 6px 0;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      border-bottom: 1px solid #003300;
+      padding-bottom: 4px;
+    }
+    .detalle-datos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .dato {
+      border: 1px solid #003300;
+      padding: 5px 12px;
+      font-size: 0.72rem;
+      color: #66ffb3;
+      letter-spacing: 1px;
+    }
+    .dato span{ 
+      color: #aaa; 
+    }
+
+    .detalle-volver {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 7px 16px;
+      border: 1px solid #00ff66;
+      color: #00ff66;
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      transition: 0.2s;
+    }
+    .detalle-volver:hover {
+      background: #00ff66;
+      color: #000;
+    }
+
+    /* FOOTER */
+    .gaming-footer {
+      margin-top: 30px;
+      padding-top: 14px;
+      border-top: 1px solid #003300;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #1a4a2a;
+      line-height: 2;
+    }
+    .gaming-footer a{ 
+      color: #00ff66; 
+      text-decoration: none; 
+    }
+    .gaming-footer a:hover{ 
+      color: #66ffb3; 
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 820px) {
+      .game-card { width: calc(33.333% - 12px); }
+    }
+
+    @media (max-width: 600px) {
+      .gaming-grid { gap: 10px; }
+      .game-card { width: calc(50% - 5px); }
+      .gaming-header h1 { font-size: 1.4rem; }
+      .gaming-nav { gap: 6px; flex-wrap: wrap; }
+      .gaming-nav a { font-size: 0.7rem; padding: 5px 10px; }
+    }
+
+    @media (max-width: 480px) {
+      .gaming-grid {
+        justify-content: center;
+        gap: 8px;
+      }
+      .game-card {
+        width: calc(50% - 4px);
+        min-width: 140px;
+      }
+      .gaming-header h1 {
+        font-size: 1.3rem;
+      }
+      .gaming-categoria h2 { font-size: 0.85rem; }
+    }
+
+    @media (max-width: 360px) {
+      .game-card { width: 100%; max-width: 280px; }
+    }
+
+    .activa{
+      display: block !important; 
+      opacity: 1 !important;
+    }
+
+  
+  /* ── CANVAS FONDO ─── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  /* fondo transparente sobre canvas */
+  .pantalla, .pantalla-wide {
+    background: transparent !important;
+    border-color: #00ff6633 !important;
+    box-shadow: 0 0 15px #00ff6622 !important;
+  }
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+
+<!-------------------------- VISTAS DETALLADAS — se muestran con :target --------------------------->
+
+<!-- CYBERPUNK 2077 -->
+<section id="cyberpunk" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>CYBERPUNK 2077</h2>
+    <p class="detalle-genero">// RPG · Mundo Abierto · Acción</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/UWye-NVcuuU?autoplay=1&mute=1" title="Trailer Cyberpunk 2077" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>CD Projekt Red</span></div>
+    <div class="dato">Año <span>2020</span></div>
+    <div class="dato">Plataforma <span>PC / PS5 / Xbox</span></div>
+    <div class="dato">DLC <span>Phantom Liberty</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Night City, 2077. Una megalópolis controlada por megacorporaciones donde la vida humana vale lo que tu reputación en la calle. Encarnas a V, un mercenario que tras un golpe fallido acaba con el fantasma digital de una leyenda del rock grabado en su cabeza.</p>
+    <h3>POR QUÉ MERECE LA PENA</h3>
+    <p>El lanzamiento fue un desastre, sí. Pero tras años de parches y la expansión Phantom Liberty, Cyberpunk 2077 es uno de los mejores RPGs de mundo abierto que existen. La narrativa es brutal, Night City tiene una densidad de detalle que pocas ciudades virtuales han igualado y la banda sonora es de otro nivel.</p>
+    <h3>LO MEJOR</h3>
+    <p>La historia de Johnny Silverhand, la expansión Phantom Liberty y la cantidad de decisiones que realmente cambian el juego. Cada run es diferente según el origen que elijas al principio.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- RED DEAD REDEMPTION -->
+<section id="rdr" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>RED DEAD REDEMPTION 1 / 2</h2>
+    <p class="detalle-genero">// Acción · Aventura · Mundo Abierto · Western</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/df_z1u2pHYA?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Rockstar Games</span></div>
+    <div class="dato">RDR1 <span>2010</span></div>
+    <div class="dato">RDR2 <span>2018</span></div>
+    <div class="dato">Plataforma <span>PC / PS4 / Xbox</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Dos historias del salvaje oeste separadas por décadas pero conectadas por el mismo universo. RDR2 es la precuela: Arthur Morgan, forajido con más honor del que debería tener, intentando sobrevivir al fin de una era. RDR1 cierra la historia con John Marston y uno de los finales más recordados de los videojuegos.</p>
+    <h3>POR QUÉ MERECE LA PENA</h3>
+    <p>RDR2 es probablemente el juego con el mundo más vivo que existe. Los NPCs tienen rutinas reales, los animales se comportan de forma creíble y cada rincón del mapa tiene algo que descubrir. La historia de Arthur Morgan es de las mejores escritas en un videojuego.</p>
+    <h3>LO MEJOR</h3>
+    <p>El honor importa. Cada decisión afecta cómo te trata el mundo. Y el capítulo 6 de RDR2 es de las experiencias más emotivas que vas a tener delante de una pantalla.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- NO MAN'S SKY -->
+<section id="nms" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>NO MAN'S SKY</h2>
+    <p class="detalle-genero">// Exploración · Supervivencia · Sci-Fi</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/A6-9PMgqBbQ?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Hello Games</span></div>
+    <div class="dato">Año <span>2016</span></div>
+    <div class="dato">Plataforma <span>PC / PS4 / Xbox</span></div>
+    <div class="dato">Actualizaciones <span>+20 gratuitas</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Universo procedural con 18 trillones de planetas, cada uno único. Empiezas varado en un planeta aleatorio sin recursos y sin saber muy bien qué estás haciendo. La idea es explorar, sobrevivir, construir bases y eventualmente llegar al centro de la galaxia.</p>
+    <h3>LA HISTORIA DE SU REDENCIÓN</h3>
+    <p>El lanzamiento fue otro desastre histórico. Las promesas del fundador Sean Murray no se cumplieron ni de lejos y la comunidad lo destrozó. Pero Hello Games, sin decir nada a nadie, durante años fue sacando actualizaciones gratuitas masivas que convirtieron el juego en algo completamente diferente. Hoy es uno de los mejores ejemplos de cómo arreglar un lanzamiento fallido.</p>
+    <h3>LO MEJOR</h3>
+    <p>La libertad total. Puedes pasarte horas solo explorando planetas sin hacer nada concreto y es perfectamente válido. También tiene modo multijugador cooperativo y base building bastante completo.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- KINGDOM COME DELIVERANCE 2 -->
+<section id="kcd2" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>KINGDOM COME: DELIVERANCE 2</h2>
+    <p class="detalle-genero">// RPG · Mundo Abierto · Medieval Realista</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/8CuaPM70iu4?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Warhorse Studios</span></div>
+    <div class="dato">Año <span>2025</span></div>
+    <div class="dato">Plataforma <span>PC / PS5 / Xbox</span></div>
+    <div class="dato">Ambientación <span>Bohemia, siglo XV</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Continúa la historia de Henry de Skalitz, el herrero que en la primera entrega pasó de no saber leer ni pelear a convertirse en alguien capaz de cambiar el rumbo de una guerra. KCD2 amplía todo lo que hizo grande al primero con un mapa más grande, más opciones de diálogo y el mismo nivel de detalle histórico obsesivo.</p>
+    <h3>POR QUÉ ES DIFERENTE</h3>
+    <p>No hay elfos ni dragones. Es un RPG medieval realista en el que si te pillan robando te meten en la cárcel, si vas sucio la gente te trata peor y si no entrenas el combate pierdes los duelos. La progresión es lenta y exigente, pero cuando dominas el sistema es increíblemente satisfactorio.</p>
+    <h3>LO MEJOR</h3>
+    <p>El sistema de combate cuerpo a cuerpo, uno de los más realistas del género. Y la sensación de que cada decisión tiene consecuencias reales en el mundo.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- FABLE 2 -->
+<section id="fable" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>FABLE 2</h2>
+    <p class="detalle-genero">// RPG · Acción · Fantasía</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/PEQRwpMYPaw?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Lionhead Studios</span></div>
+    <div class="dato">Año <span>2008</span></div>
+    <div class="dato">Plataforma <span>Xbox 360</span></div>
+    <div class="dato">Próximo <span>Fable (2025)</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Albion, un mundo de fantasía con mucho humor británico y una libertad inusual para la época. Puedes ser el héroe más noble o el villano más temido, casarte, tener hijos, comprar propiedades y hacerte rico alquilándolas mientras te dedicas a salvar el mundo.</p>
+    <h3>POR QUÉ SIGUE SIENDO ESPECIAL</h3>
+    <p>Fable 2 tiene un encanto que pocos juegos han vuelto a conseguir. El tono, el humor, la música de Russell Shaw y esa sensación de que el mundo reacciona a todo lo que haces. Peter Molyneux prometió demasiado como siempre, pero lo que entregó fue genuinamente memorable.</p>
+    <h3>EL NUEVO FABLE</h3>
+    <p>Playground Games (los de Forza Horizon) están desarrollando un reboot de la saga para Xbox Series X y PC. Las primeras imágenes muestran un Albion de cuento de hadas con un tono que recuerda al espíritu del original. Sin fecha confirmada aún pero con muchas expectativas.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- MAFIA -->
+<section id="mafia" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>MAFIA 2 / 3 / THE OLD COUNTRY</h2>
+    <p class="detalle-genero">// Acción · Aventura · Crimen Organizado</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/wHoqwphzhzc?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Hangar 13 / 2K</span></div>
+    <div class="dato">Mafia 2 <span>2010</span></div>
+    <div class="dato">Mafia 3 <span>2016</span></div>
+    <div class="dato">The Old Country <span>2025</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>La saga Mafia es la versión cinematográfica del crimen organizado en los videojuegos. Mafia 2 sigue a Vito Scaletta en una ciudad ficticia de los años 40-50, con una narrativa tan bien construida que parece una película de Scorsese interactiva. Mafia 3 da un giro con Lincoln Clay en los 60, con un tono más crudo y político.</p>
+    <h3>MAFIA 2 — LA JOYA DE LA SAGA</h3>
+    <p>El mejor de los tres sin discusión. La historia de Vito y Joe, la ambientación de época, la música y una narrativa sin concesiones. Uno de los mejores juegos de su generación que no recibió el reconocimiento que merecía.</p>
+    <h3>THE OLD COUNTRY</h3>
+    <p>La entrega más reciente vuelve a los orígenes europeos de la mafia siciliana y nos pone en la piel de Enzo Favara. Nuevo protagonista, nueva época, mismo ADN narrativo de la saga. Todavía reciente pero con muy buenas críticas iniciales.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- ASSASSIN'S CREED -->
+<section id="ac" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>ASSASSIN'S CREED — SAGA EZIO</h2>
+    <p class="detalle-genero">// Acción · Sigilo · Histórico</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/b2Ay0plpImA?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">AC II <span>2009 — Florencia</span></div>
+    <div class="dato">Brotherhood <span>2010 — Roma</span></div>
+    <div class="dato">Revelations <span>2011 — Estambul</span></div>
+    <div class="dato">Desarrollador <span>Ubisoft</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Ezio Auditore da Firenze es el personaje más querido de toda la franquicia y probablemente uno de los protagonistas más completos de la historia del videojuego. Su arco narrativo atraviesa tres juegos y décadas de su vida, desde joven vengativo en el Renacimiento italiano hasta maestro asesino en Estambul.</p>
+    <h3>POR QUÉ LA SAGA EZIO ES ESPECIAL</h3>
+    <p>AC2 reinventó la franquicia con una ambientación en la Italia del Renacimiento impresionante. Brotherhood añadió Roma y el sistema de gestión de la hermandad. Revelations cerró la historia con Ezio y Altaïr de una forma que pocos esperaban. Los tres juntos forman una de las trilogías más sólidas del gaming.</p>
+    <h3>EL RESTO DE LA SAGA</h3>
+    <p>La franquicia ha tenido entregas muy dispares desde entonces. Black Flag sigue siendo un favorito por su ambientación pirata. Origins, Odyssey y Valhalla pivotaron hacia el RPG de mundo abierto con resultados mixtos. Shadows vuelve al Japón feudal con mecánicas más cercanas a los clásicos.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- DISHONORED -->
+<section id="dishonored" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>DISHONORED 1 / 2 + EL FORASTERO</h2>
+    <p class="detalle-genero">// Acción · Sigilo · Inmersive Sim</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/d4-Tr1wABOA?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Arkane Studios</span></div>
+    <div class="dato">Dishonored <span>2012</span></div>
+    <div class="dato">Dishonored 2 <span>2016</span></div>
+    <div class="dato">El Forastero <span>2017 — DLC</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Dunwall, una ciudad victoriana steampunk plagada de ratas y corrupción política. Encarnas a Corvo Attano, guardaespaldas real acusado del asesinato de la emperatriz, con poderes sobrenaturales otorgados por una entidad misteriosa llamada El Forastero.</p>
+    <h3>LA LIBERTAD DEL SIGILO</h3>
+    <p>Dishonored es uno de los mejores ejemplos de immersive sim: cada misión tiene múltiples soluciones. Puedes completar todo el juego sin matar a nadie, solo con sigilo y habilidad. O puedes desatar el caos absoluto con poderes como Blink o Devorar Tiempo. El juego no te juzga, pero el mundo cambia según tus decisiones.</p>
+    <h3>LA MUERTE DEL FORASTERO</h3>
+    <p>El DLC standalone protagonizado por Billie Lurk y Daud es posiblemente lo mejor que ha producido la saga. Una historia más íntima, más oscura y con un final que cierra el misterio del Forastero de una forma que nadie esperaba.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- SOUTH PARK -->
+<section id="southpark" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>SOUTH PARK: LA RETAGUARDIA EN PELIGRO</h2>
+    <p class="detalle-genero">// RPG · Comedia · Superhéroes</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/aI3bjL7LUyg?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Ubisoft San Francisco</span></div>
+    <div class="dato">Año <span>2017</span></div>
+    <div class="dato">Plataforma <span>PC / PS4 / Xbox</span></div>
+    <div class="dato">Predecesor <span>El Palo de la Verdad</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Secuela de El Palo de la Verdad. Esta vez los niños de South Park han cambiado los RPG de fantasía por los superhéroes. Eres el nuevo chico del barrio intentando unirte a la Agencia de Justicia de los Coon Friends y construir suficientes seguidores en redes sociales para financiar una película.</p>
+    <h3>POR QUÉ FUNCIONA</h3>
+    <p>Es exactamente lo que esperas de South Park: humor sin filtros, referencias constantes a la cultura pop y una sátira brutal de los clichés de superhéroes. Trey Parker y Matt Stone escribieron el guión completo, así que se siente como episodios jugables de la serie.</p>
+    <h3>LO MEJOR</h3>
+    <p>El sistema de combate por turnos con posicionamiento táctico es más profundo de lo que parece. Y los poderes de superhéroe de cada personaje están diseñados con un nivel de detalle absurdo que solo tiene sentido si has visto la serie.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- GOAT SIMULATOR -->
+<section id="goat" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>GOAT SIMULATOR</h2>
+    <p class="detalle-genero">// Simulación · Caos · Sin sentido</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/-t0VIf0GAl8?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Coffee Stain Studios</span></div>
+    <div class="dato">Año <span>2014</span></div>
+    <div class="dato">Plataforma <span>PC / Móvil / Consolas</span></div>
+    <div class="dato">Objetivo <span>Ninguno</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Eres una cabra. No hay objetivos, no hay historia, no hay ningún motivo concreto para hacer nada. Simplemente deambulas por un mapa destruyendo todo lo que encuentras, lanzándote contra personas, activando ragdolls imposibles y acumulando puntos de manera completamente arbitraria.</p>
+    <h3>LA ANALOGÍA ASIR</h3>
+    <p>Goat Simulator es básicamente el simulador oficial del alumno de ASIR en su primer año: sin un objetivo claro, destruyendo configuraciones que funcionaban perfectamente, colisionando con cosas que no debería tocar y generando el caos mientras el profesor intenta entender qué ha pasado. La diferencia es que la cabra no tiene que documentar nada después.</p>
+    <h3>POR QUÉ EXISTE</h3>
+    <p>Coffee Stain Studios lo empezó como un prototipo de prueba interno, lo subieron a internet como broma y la comunidad lo pidió como juego real. Lo lanzaron con todos los bugs intactos porque, según ellos, arreglarlos hubiera arruinado la experiencia. Tiene todo el sentido del mundo.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- CRAZY TAXI -->
+<section id="crazytaxi" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>CRAZY TAXI</h2>
+    <p class="detalle-genero">// Arcade · Conducción · Clásico</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/_dzL-0FwT7M?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Hitmaker / Sega</span></div>
+    <div class="dato">Año <span>1999 Arcade / 2000 Dreamcast</span></div>
+    <div class="dato">Plataforma <span>Arcade / Dreamcast / PC</span></div>
+    <div class="dato">Banda sonora <span>The Offspring / Bad Religion</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Llevas clientes de un punto a otro de la ciudad en el menor tiempo posible, ignorando absolutamente todas las normas de tráfico. Semáforos, aceras, otros coches, rampas accidentales — todo es válido si el cliente llega antes de que acabe el tiempo.</p>
+    <h3>UN CLÁSICO DE RECREATIVA</h3>
+    <p>Crazy Taxi nació en las recreativas y fue uno de los grandes éxitos de Dreamcast, la consola de Sega que llegó antes de tiempo y murió demasiado pronto. Su mecánica de puntuación arcade, su banda sonora punk rock y su ritmo frenético lo convirtieron en un referente que todavía hoy se cita cuando se habla de diseño de juegos accesibles y adictivos.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- SPORE -->
+<section id="spore" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>SPORE</h2>
+    <p class="detalle-genero">// Simulación · Estrategia · Evolución</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/zi2GvqboQfY?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Maxis / EA</span></div>
+    <div class="dato">Año <span>2008</span></div>
+    <div class="dato">Plataforma <span>PC / Mac</span></div>
+    <div class="dato">Fases <span>5 etapas evolutivas</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>Empiezas siendo un microorganismo en el fondo del océano y acabas siendo una civilización espacial conquistando galaxias. Cinco fases completamente diferentes: célula, criatura, tribu, civilización y espacio, cada una con su propio estilo de juego.</p>
+    <h3>LA PROMESA Y LA REALIDAD</h3>
+    <p>Will Wright, el creador de Los Sims, prometió una simulación evolutiva revolucionaria. Lo que entregaron fue algo más superficial de lo esperado en cada fase individual, pero el conjunto, la creatividad del editor de criaturas y la escala del juego lo convirtieron en una experiencia única que todavía no ha sido replicada.</p>
+    <h3>EL EDITOR DE CRIATURAS</h3>
+    <p>La herramienta más recordada del juego. Con unos pocos clics podías crear criaturas que iban desde lo adorable hasta lo perturbador, y el juego las animaba de forma procedural. Era tan popular que lanzaron el editor de forma gratuita antes del lanzamiento del juego.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+<!-- LOS SIMS -->
+<section id="sims" class="pantalla seccion juego-detalle">
+  <div class="detalle-header">
+    <a href="gaming.html" class="detalle-volver">⬅ Volver</a>
+    <h2>LOS SIMS</h2>
+    <p class="detalle-genero">// Simulación de Vida · Clásico</p>
+  </div>
+  <div class="detalle-img">
+    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/WjPPjU8OARg?autoplay=1&mute=1" title="Trailer" allowfullscreen style="border:none;"></iframe>
+  </div>
+  <div class="detalle-datos">
+    <div class="dato">Desarrollador <span>Maxis / EA</span></div>
+    <div class="dato">Sims 1 <span>2000</span></div>
+    <div class="dato">Sims 4 <span>2014 — F2P desde 2022</span></div>
+    <div class="dato">Sims 5 <span>En desarrollo</span></div>
+  </div>
+  <div class="detalle-body">
+    <p>La saga de simulación de vida más vendida de la historia. Creas personas, construyes sus casas, gestionas sus necesidades, sus relaciones y sus carreras. O las encierras en una piscina sin escalera. Las dos opciones son igual de válidas.</p>
+    <h3>POR QUÉ SIGUE SIENDO RELEVANTE</h3>
+    <p>Los Sims 4 lleva más de una década activo y se hizo gratuito en 2022. Tiene una comunidad de mods enorme que añade prácticamente cualquier cosa que puedas imaginar. La saga en conjunto ha vendido más de 200 millones de copias y definió el género de simulación de vida para toda una generación.</p>
+    <h3>EL FUTURO</h3>
+    <p>Project Rene, el nombre en clave de Los Sims 5, está en desarrollo. Se sabe poco pero EA ha confirmado que tendrá componentes multijugador opcionales y un editor más potente que el actual.</p>
+  </div>
+  <nav class="nav-pie">
+    <a href="gaming.html">🎮 Gaming</a>
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+  </nav>
+</section>
+
+
+<!------------------------- VISTA PRINCIPAL ------------------------->
+<section id="gaming" class="pantalla seccion activa gaming-main pantalla-wide">
+
+  <div class="gaming-header">
+    <h1>🎮 GAMING</h1>
+    <p>// SELECCIÓN PERSONAL — MUNDO ABIERTO · ACCIÓN · COMEDIA · CLÁSICOS</p>
+  </div>
+
+  <!-- CATEGORÍA 1 -->
+  <div class="gaming-categoria">
+    <h2>🌍 MUNDO ABIERTO / RPG</h2>
+    <div class="gaming-grid">
+
+      <a href="#cyberpunk" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/cyberpunk_2077.jpg" alt="Cyberpunk 2077">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">CYBERPUNK 2077</div>
+          <div class="game-card-genero">RPG · Mundo Abierto · Decisiones que Afectan</div>
+          <div class="game-card-desc">Night City, 2077. Megacorporaciones, implantes y una historia que no te suelta.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#rdr" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/red_dead_redemption.jpg" alt="Red Dead Redemption">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">RED DEAD REDEMPTION 1/2</div>
+          <div class="game-card-genero">Acción · Western · Inmersivo · Decisiones que Afectan</div>
+          <div class="game-card-desc">El salvaje oeste más vivo que existe en un videojuego. Arthur Morgan es historia.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#nms" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/no_mans_sky.jpg" alt="No Man's Sky">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">NO MAN'S SKY</div>
+          <div class="game-card-genero">Exploración · Sci-Fi</div>
+          <div class="game-card-desc">18 trillones de planetas y la historia de redención de un estudio que no se rindió.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#kcd2" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/kingdom_come_deliverance.jpg" alt="Kingdom Come Deliverance 2">
+         
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">KINGDOM COME: DELIVERANCE 2</div>
+          <div class="game-card-genero">RPG · Medieval Realista · Decisiones que Afectan</div>
+          <div class="game-card-desc">Sin magia, sin dragones. Solo Bohemia en el siglo XV y consecuencias reales.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#fable" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/fable.jpg" alt="Fable 2">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">FABLE 2</div>
+          <div class="game-card-genero">RPG · Fantasía</div>
+          <div class="game-card-desc">Albion y su humor británico. Y el reboot que viene por fin.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- CATEGORÍA 2 -->
+  <div class="gaming-categoria">
+    <h2>🗡️ ACCIÓN / AVENTURA</h2>
+    <div class="gaming-grid">
+
+      <a href="#mafia" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/mafia.jpg" alt="Mafia">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">MAFIA 2 / 3 / THE OLD COUNTRY</div>
+          <div class="game-card-genero">Acción · Crimen</div>
+          <div class="game-card-desc">La versión cinematográfica del crimen organizado. Mafia 2 es imprescindible.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#ac" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/assassins_creed.jpg" alt="Assassin's Creed"> 
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">ASSASSIN'S CREED — SAGA DE EZIO</div>
+          <div class="game-card-genero">Acción · Sigilo · Histórico</div>
+          <div class="game-card-desc">Ezio Auditore, el mejor protagonista de la franquicia. Tres juegos, un arco perfecto.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#dishonored" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/dishonored.jpg" alt="Dishonored"> 
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">DISHONORED 1/2 + EL FORASTERO</div>
+          <div class="game-card-genero">Sigilo · Inversivo · Decisiones que Afectan</div>
+          <div class="game-card-desc">Dunwall, poderes sobrenaturales y libertad total para decidir cómo resolver cada misión.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- CATEGORÍA 3 -->
+  <div class="gaming-categoria">
+    <h2>😂 COMEDIA / OTROS</h2>
+    <div class="gaming-grid">
+
+      <a href="#southpark" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/south_park.jpg" alt="South Park">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">SOUTH PARK: LA RETAGUARDIA EN PELIGRO</div>
+          <div class="game-card-genero">RPG · Comedia</div>
+          <div class="game-card-desc">Superhéroes, redes sociales y South Park sin filtros. Episodios jugables.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#goat" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/goat.jpg" alt="Goat Simulator">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">GOAT SIMULATOR</div>
+          <div class="game-card-genero">Simulación · Caos</div>
+          <div class="game-card-desc">Eres una cabra. No hay más explicación necesaria.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- CATEGORÍA 4 -->
+  <div class="gaming-categoria">
+    <h2>🕹️ CLÁSICOS</h2>
+    <div class="gaming-grid">
+
+      <a href="#crazytaxi" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/crazy_taxi.jpg" alt="Crazy Taxi">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">CRAZY TAXI</div>
+          <div class="game-card-genero">Arcade · Conducción</div>
+          <div class="game-card-desc">Sega, Dreamcast, The Offspring y ninguna norma de tráfico. Un clásico de recreativa.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#spore" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/spore.jpg" alt="Spore">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">SPORE</div>
+          <div class="game-card-genero">Simulación · Evolución</div>
+          <div class="game-card-desc">De microorganismo a civilización espacial. Y el editor de criaturas más adictivo que existe.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+      <a href="#sims" class="game-card">
+        <div class="game-card-img">
+          <img src="Imagenes/Gaming/sims.jpg" alt="Los Sims">
+        </div>
+        <div class="game-card-info">
+          <div class="game-card-titulo">LOS SIMS</div>
+          <div class="game-card-genero">Simulación de Vida</div>
+          <div class="game-card-desc">200 millones de copias vendidas y la piscina sin escalera más famosa de la historia.</div>
+          <div class="game-card-btn">▶ VER MÁS</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <div class="gaming-footer">
+    <a href="index.html">⬅ Volver al HUB</a><br><br>
+    <a href="wonder.html">◈ WONDER IV — Juego</a> · <a href="articulos.html">📚 Artículos</a> · <a href="red.html">🌐 Red</a> · <a href="editor.html">💻 Editor</a><br><br>
+    RETROTERM.AI v0.2 © 2025 | Gaming
+  </div>
+
+</section>
+
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var STAR_COUNT=90, WAVE_COUNT=5, CONN_DIST=180, SPEED=0.18, WAVE_SPEED=0.0004;
+  var COLOR_NODE_A="rgba(0, 255, 102,", COLOR_NODE_B="rgba(255, 176, 0,";
+  var COLOR_LINE="rgba(0, 220, 90,", COLOR_WAVE="rgba(255, 176, 0,";
+  var stars=[], waves=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(var i=0;i<STAR_COUNT;i++){
+      var a=Math.random()>0.75;
+      stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?COLOR_NODE_B:COLOR_NODE_A,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});
+    }
+  }
+  function initWaves(){
+    waves=[];
+    for(var i=0;i<WAVE_COUNT;i++){
+      waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});
+    }
+  }
+  function drawWaves(){
+    for(var w=0;w<waves.length;w++){
+      var wv=waves[w]; wv.phase+=wv.speed*60;
+      ctx.beginPath(); ctx.moveTo(0,H*wv.yBase);
+      for(var x=0;x<=W;x+=4){ ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp); }
+      ctx.strokeStyle=COLOR_WAVE+wv.alpha+")"; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+  function drawConnections(){
+    for(var i=0;i<stars.length;i++){
+      for(var j=i+1;j<stars.length;j++){
+        var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<CONN_DIST){ ctx.beginPath(); ctx.moveTo(stars[i].x,stars[i].y); ctx.lineTo(stars[j].x,stars[j].y); ctx.strokeStyle=COLOR_LINE+(1-dist/CONN_DIST)*0.18+")"; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+  }
+  function drawStars(){
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.phase+=s.pspeed;
+      var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);
+      var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);
+      grad.addColorStop(0,s.col+(alpha*0.5)+")"); grad.addColorStop(1,s.col+"0)");
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius*4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius,0,Math.PI*2); ctx.fillStyle=s.col+alpha+")"; ctx.fill();
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<-20)s.x=W+20; if(s.x>W+20)s.x=-20;
+      if(s.y<-20)s.y=H+20; if(s.y>H+20)s.y=-20;
+    }
+  }
+  function draw(){ ctx.clearRect(0,0,W,H); drawWaves(); drawConnections(); drawStars(); requestAnimationFrame(draw); }
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize",function(){ resize(); initStars(); initWaves(); });
+})();
+</script>
+
+</body>
+</html>

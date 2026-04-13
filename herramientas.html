@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOOLS — RETROTERM.AI</title>
+  <meta name="description" content="Herramientas de red y sistema: conversor IP, calculadora CIDR, tabla de puertos, generador de contraseñas, conversor de almacenamiento y herramientas de color y tamaños CSS.">
+  <link rel="canonical" href="https://ivanchux.github.io/herramientas.html">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta name="robots" content="index,follow">
+
+  <style>
+  /* ═══════════════════════════════════════════════════════════
+     TOOLS — Estilos propios
+     Paleta: azul eléctrico como acento principal
+     Personalidad: panel de diagnóstico / consola de sistema
+  ═══════════════════════════════════════════════════════════ */
+
+  :root {
+    --tools-accent:   #3399ff;
+    --tools-accent2:  #66bbff;
+    --tools-dim:      #1a3a5c;
+    --tools-bg-card:  rgba(5, 15, 28, 0.92);
+    --tools-border:   #0d2a4a;
+  }
+
+  /* ── PANTALLA TOOLS (fondo propio) ─── */
+  .tools-root {
+    max-width: 1100px;
+    width: 95%;
+    margin: 0 auto;
+    padding: 2rem 0 3rem;
+  }
+
+  /* ── HEADER ─── */
+  .tools-header {
+    text-align: center;
+    padding: 1.6rem 0 2rem;
+    position: relative;
+  }
+
+  .tools-breadcrumb {
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    color: #3399ff88;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.8rem;
+  }
+
+  .tools-breadcrumb a {
+    color: #3399ff88;
+    text-decoration: none;
+  }
+
+  .tools-breadcrumb a:hover {
+    color: var(--tools-accent);
+  }
+
+  .tools-title {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    color: var(--tools-accent);
+    letter-spacing: 0.18em;
+    margin: 0 0 0.4rem;
+    text-shadow: 0 0 20px rgba(51, 153, 255, 0.35);
+  }
+
+  .tools-subtitle {
+    font-family: 'Courier New', monospace;
+    font-size: 0.64rem;
+    color: #3399ff55;
+    letter-spacing: 0.22em;
+  }
+
+  /* ── BENTO DE HERRAMIENTAS ─── */
+  .tools-bento {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 140px 140px 140px;
+    gap: 8px;
+    margin: 0 0 2rem;
+  }
+
+  .t-ip      { grid-column: 1 / 5;  grid-row: 1; }
+  .t-cidr    { grid-column: 5 / 9;  grid-row: 1; }
+  .t-puertos { grid-column: 9 / 13; grid-row: 1; }
+  .t-pass    { grid-column: 1 / 7;  grid-row: 2; }
+  .t-storage { grid-column: 7 / 13; grid-row: 2; }
+  .t-color   { grid-column: 1 / 13; grid-row: 3; }
+
+  /* ── CELDA BASE ─── */
+  .tool-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px 18px;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--tools-border);
+    background: var(--tools-bg-card);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* líneas de escaneo */
+  .tool-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba(51,153,255,0.015) 3px, rgba(51,153,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .tool-cell:hover {
+    transform: translateY(-3px) scale(1.008);
+    z-index: 10;
+  }
+
+  /* ── COLORES POR HERRAMIENTA ─── */
+  /* IP Conversor — azul eléctrico */
+  .tc-ip {
+    border-color: #0d2440;
+    background: radial-gradient(ellipse at 20% 80%, #050f20 0%, #020810 100%);
+    border-radius: 14px 4px 18px 8px;
+  }
+  .tc-ip:hover { border-color: #3399ff66; box-shadow: 0 0 24px rgba(51,153,255,0.2), inset 0 0 40px rgba(51,153,255,0.04); }
+  .tc-ip .t-accent { color: #3399ff; }
+  .tc-ip .t-dot    { background: #3399ff; box-shadow: 0 0 6px #3399ff; }
+
+  /* CIDR — naranja apagado */
+  .tc-cidr {
+    border-color: #2a1400;
+    background: radial-gradient(ellipse at 80% 20%, #120900 0%, #070400 100%);
+    border-radius: 4px 18px 6px 16px;
+  }
+  .tc-cidr:hover { border-color: #ff660055; box-shadow: 0 0 24px rgba(255,102,0,0.18), inset 0 0 40px rgba(255,102,0,0.04); }
+  .tc-cidr .t-accent { color: #ff6600; }
+  .tc-cidr .t-dot    { background: #ff6600; box-shadow: 0 0 6px #ff6600; }
+
+  /* Puertos — rojo carmín */
+  .tc-puertos {
+    border-color: #220008;
+    background: radial-gradient(ellipse at 50% 90%, #0f0004 0%, #060002 100%);
+    border-radius: 18px 6px 14px 4px;
+  }
+  .tc-puertos:hover { border-color: #cc003355; box-shadow: 0 0 24px rgba(204,0,51,0.18), inset 0 0 40px rgba(204,0,51,0.04); }
+  .tc-puertos .t-accent { color: #cc0033; }
+  .tc-puertos .t-dot    { background: #cc0033; box-shadow: 0 0 6px #cc0033; }
+
+  /* Contraseñas — lila grisáceo */
+  .tc-pass {
+    border-color: #180020;
+    background: radial-gradient(ellipse at 30% 60%, #0c0014 0%, #060009 100%);
+    border-radius: 6px 20px 8px 22px;
+  }
+  .tc-pass:hover { border-color: #9966cc55; box-shadow: 0 0 24px rgba(153,102,204,0.18), inset 0 0 40px rgba(153,102,204,0.04); }
+  .tc-pass .t-accent { color: #9966cc; }
+  .tc-pass .t-dot    { background: #9966cc; box-shadow: 0 0 6px #9966cc; }
+
+  /* Almacenamiento — gris plateado */
+  .tc-storage {
+    border-color: #141414;
+    background: radial-gradient(ellipse at 70% 40%, #0d0d0d 0%, #070707 100%);
+    border-radius: 10px 6px 20px 14px;
+  }
+  .tc-storage:hover { border-color: #aaaaaa44; box-shadow: 0 0 20px rgba(170,170,170,0.12), inset 0 0 40px rgba(170,170,170,0.03); }
+  .tc-storage .t-accent { color: #aaaaaa; }
+  .tc-storage .t-dot    { background: #aaaaaa; box-shadow: 0 0 5px #aaaaaa; }
+
+  /* Color & Tamaños — rosa/magenta cálido */
+  .tc-color {
+    border-color: #220018;
+    background: radial-gradient(ellipse at 15% 50%, #120010 0%, #07000a 50%, #000510 100%);
+    border-radius: 8px 14px 6px 18px;
+  }
+  .tc-color:hover { border-color: #ff339966; box-shadow: 0 0 28px rgba(255,51,153,0.18), inset 0 0 60px rgba(255,51,153,0.04); }
+  .tc-color .t-accent { color: #ff3399; }
+  .tc-color .t-dot    { background: #ff3399; box-shadow: 0 0 6px #ff3399; }
+
+  /* ── CONTENIDO CELDAS ─── */
+  .t-dot {
+    position: absolute;
+    top: 12px; left: 14px;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    animation: tdot 2.8s ease-in-out infinite;
+    z-index: 2;
+  }
+  @keyframes tdot { 0%,100%{opacity:1} 50%{opacity:0.12} }
+
+  .t-glyph {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: clamp(1.6rem, 3vw, 2.8rem);
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.2s;
+    line-height: 1;
+  }
+  .tool-cell:hover .t-glyph { opacity: 0.2; }
+
+  .t-tag {
+    font-size: 0.52rem;
+    letter-spacing: 0.22em;
+    opacity: 0.4;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .t-name {
+    font-size: clamp(0.78rem, 1.3vw, 1rem);
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    position: relative;
+    z-index: 2;
+    line-height: 1.3;
+  }
+
+  /* ── ÁREA DE HERRAMIENTA ACTIVA ─── */
+  .tool-panel {
+    display: none;
+    background: rgba(5, 12, 22, 0.97);
+    border: 1px solid var(--tools-dim);
+    border-radius: 6px;
+    padding: 2rem 2.4rem;
+    margin-top: 0;
+    font-family: 'Courier New', monospace;
+    animation: fadePanel 0.18s ease;
+  }
+
+  .tool-panel.activo { display: block; }
+
+  @keyframes fadePanel {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.6rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #0d2a4a;
+  }
+
+  .panel-title {
+    font-size: 0.9rem;
+    letter-spacing: 0.14em;
+    font-weight: bold;
+  }
+
+  .panel-close {
+    margin-left: auto;
+    background: none;
+    border: 1px solid #0d2a4a;
+    color: #3399ff66;
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    border-radius: 3px;
+    transition: all 0.15s;
+  }
+
+  .panel-close:hover {
+    border-color: var(--tools-accent);
+    color: var(--tools-accent);
+  }
+
+  /* ── INPUTS / OUTPUTS COMUNES ─── */
+  .t-label {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    color: #3399ff66;
+    margin-bottom: 5px;
+    margin-top: 1rem;
+  }
+
+  .t-input {
+    width: 100%;
+    background: #020810;
+    border: 1px solid #0d2a4a;
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    border-radius: 3px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+  }
+
+  .t-input:focus { border-color: var(--tools-accent); }
+
+  .t-select {
+    width: 100%;
+    background: #020810;
+    border: 1px solid #0d2a4a;
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    padding: 7px 10px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .t-select:focus { border-color: var(--tools-accent); }
+
+  .t-btn {
+    background: transparent;
+    border: 1px solid var(--tools-accent);
+    color: var(--tools-accent);
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    padding: 7px 18px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-top: 1rem;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .t-btn:hover {
+    background: var(--tools-accent);
+    color: #000;
+  }
+
+  .t-btn-sm {
+    padding: 5px 12px;
+    font-size: 0.65rem;
+    margin-top: 0;
+  }
+
+  .t-output {
+    background: #010508;
+    border: 1px solid #0d2a4a;
+    border-left: 3px solid var(--tools-accent);
+    padding: 10px 14px;
+    margin-top: 1rem;
+    font-size: 0.82rem;
+    color: #ccddee;
+    border-radius: 0 3px 3px 0;
+    word-break: break-all;
+    min-height: 40px;
+  }
+
+  .t-output .t-ok  { color: #00ff66; }
+  .t-output .t-err { color: #ff4444; }
+  .t-output .t-key { color: var(--tools-accent2); }
+
+  .t-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .t-row > * { flex: 1; min-width: 140px; }
+
+  /* ── TABLA DE PUERTOS ─── */
+  .puertos-filtro {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .puertos-filtro .t-input { flex: 1; min-width: 160px; margin-top: 0; }
+
+  .puertos-tabla-wrap {
+    max-height: 340px;
+    overflow-y: auto;
+    border: 1px solid #0d2a4a;
+    border-radius: 3px;
+  }
+
+  .puertos-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+  }
+
+  .puertos-tabla th {
+    background: #050f1c;
+    color: #cc0033;
+    padding: 7px 12px;
+    text-align: left;
+    letter-spacing: 0.1em;
+    font-size: 0.62rem;
+    position: sticky;
+    top: 0;
+    border-bottom: 1px solid #0d2a4a;
+  }
+
+  .puertos-tabla td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #080808;
+    color: #c0c8d0;
+    vertical-align: top;
+  }
+
+  .puertos-tabla tr:hover td { background: #050f1c; }
+
+  .puerto-num { color: #cc0033; font-weight: bold; }
+  .puerto-proto { color: #aaaaaa; font-size: 0.68rem; }
+  .puerto-nombre { color: #e0e0e0; }
+  .puerto-desc { color: #778899; font-size: 0.7rem; }
+
+  /* ── GENERADOR CONTRASEÑAS ─── */
+  .pass-output {
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    word-break: break-all;
+    color: #9966cc;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
+
+  .pass-checks {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+  }
+
+  .pass-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: #778899;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .pass-check input[type="checkbox"] {
+    accent-color: #9966cc;
+    cursor: pointer;
+  }
+
+  .pass-strength {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.6rem;
+    align-items: center;
+  }
+
+  .pass-bar {
+    height: 4px;
+    flex: 1;
+    background: #0d0d0d;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+
+  .pass-bar.activo { background: #9966cc; }
+  .pass-bar.medio  { background: #ff6600; }
+  .pass-bar.fuerte { background: #00ff66; }
+
+  .pass-label-strength {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: #556;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  /* ── CONVERSOR ALMACENAMIENTO ─── */
+  .storage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 8px;
+    margin-top: 1rem;
+  }
+
+  .storage-item {
+    background: #010508;
+    border: 1px solid #141414;
+    border-radius: 3px;
+    padding: 10px 12px;
+  }
+
+  .storage-item-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    color: #556677;
+    margin-bottom: 4px;
+  }
+
+  .storage-item-val {
+    font-size: 0.9rem;
+    color: #aaaaaa;
+    word-break: break-all;
+  }
+
+  /* ── NAV PIE ─── */
+  .tools-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid #0d2a4a;
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    color: #3399ff44;
+    letter-spacing: 0.15em;
+  }
+
+  .tools-footer a {
+    color: #3399ff66;
+    text-decoration: none;
+    margin: 0 8px;
+  }
+
+  .tools-footer a:hover { color: var(--tools-accent); }
+
+  /* ── COLOR & TAMAÑOS ─── */
+  .color-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 700px) { .color-cols { grid-template-columns: 1fr; } }
+
+  .color-preview-wrap {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 0.8rem;
+  }
+
+  .color-swatch {
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+    border: 1px solid #1a1a2e;
+    flex-shrink: 0;
+    transition: background 0.1s;
+  }
+
+  .color-values {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.76rem;
+  }
+
+  .color-val-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .color-val-lbl {
+    color: #ff339966;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    min-width: 38px;
+  }
+
+  .color-val-txt {
+    color: #e0cce8;
+    cursor: pointer;
+    border-bottom: 1px dashed #ff339922;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .color-val-txt:hover { color: #ff3399; border-bottom-color: #ff3399; }
+
+  /* Paleta */
+  .paleta-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 0.8rem;
+  }
+
+  .paleta-chip {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    border: 1px solid #1a1a1a;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s;
+  }
+
+  .paleta-chip:hover { transform: scale(1.15); z-index: 2; }
+
+  .paleta-chip::after {
+    content: attr(data-hex);
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.5rem;
+    white-space: nowrap;
+    color: #778;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .paleta-chip:hover::after { opacity: 1; }
+
+  /* Contraste WCAG */
+  .wcag-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    margin-right: 6px;
+    margin-top: 6px;
+  }
+
+  .wcag-pass { background: #003300; color: #00ff66; border: 1px solid #00ff6644; }
+  .wcag-fail { background: #330000; color: #ff4444; border: 1px solid #ff444444; }
+  .wcag-preview {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 3px;
+    font-size: 0.82rem;
+    margin-top: 6px;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Tamaños CSS */
+  .size-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-top: 0.4rem;
+  }
+
+  @media (max-width: 600px) { .size-cols { grid-template-columns: 1fr; } }
+
+  .size-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 6px;
+    margin-top: 0.8rem;
+  }
+
+  .size-item {
+    background: #07040f;
+    border: 1px solid #1a0820;
+    border-radius: 3px;
+    padding: 8px 10px;
+  }
+
+  .size-item-lbl {
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    color: #ff339944;
+    margin-bottom: 3px;
+  }
+
+  .size-item-val {
+    font-size: 0.88rem;
+    color: #e0cce8;
+    cursor: pointer;
+    word-break: break-all;
+  }
+
+  .size-item-val:hover { color: #ff3399; }
+
+  /* Gradiente */
+  .grad-preview {
+    height: 48px;
+    border-radius: 4px;
+    border: 1px solid #1a0820;
+    margin-top: 0.8rem;
+    transition: background 0.2s;
+  }
+
+  .grad-code {
+    font-size: 0.7rem;
+    color: #ff339988;
+    margin-top: 0.5rem;
+    word-break: break-all;
+    cursor: pointer;
+  }
+
+  .grad-code:hover { color: #ff3399; }
+
+  /* Modo claro — color tool */
+  [data-theme="light"] .tc-color {
+    background: rgba(255, 230, 242, 0.92) !important;
+    border-color: #cc2277 !important;
+  }
+  [data-theme="light"] .tc-color .t-accent { color: #cc2277 !important; }
+  [data-theme="light"] .color-val-lbl  { color: #cc227766; }
+  [data-theme="light"] .color-val-txt  { color: #330022; border-bottom-color: #cc227722; }
+  [data-theme="light"] .color-val-txt:hover { color: #cc2277; border-bottom-color: #cc2277; }
+  [data-theme="light"] .paleta-chip::after { color: #446; }
+  [data-theme="light"] .wcag-pass { background: #e8ffe8; color: #006600; border-color: #00cc0044; }
+  [data-theme="light"] .wcag-fail { background: #ffe8e8; color: #cc0000; border-color: #cc000044; }
+  [data-theme="light"] .size-item { background: #fdf0f8; border-color: #e8c0d8; }
+  [data-theme="light"] .size-item-lbl { color: #cc227744; }
+  [data-theme="light"] .size-item-val { color: #330022; }
+  [data-theme="light"] .size-item-val:hover { color: #cc2277; }
+  [data-theme="light"] .grad-code { color: #cc227788; }
+  [data-theme="light"] .grad-code:hover { color: #cc2277; }
+
+  /* ── RESPONSIVE ─── */
+  @media (max-width: 780px) {
+    .tools-bento {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+    }
+    .t-ip, .t-cidr, .t-puertos, .t-pass, .t-storage, .t-color {
+      grid-column: span 1;
+      grid-row: auto;
+      min-height: 100px;
+    }
+    .t-pass, .t-color { grid-column: span 2; }
+    .tool-cell { border-radius: 10px !important; }
+  }
+
+  @media (max-width: 480px) {
+    .tools-bento { grid-template-columns: 1fr; }
+    .t-pass, .t-color { grid-column: span 1; }
+    .tool-panel { padding: 1.4rem 1.2rem; }
+    .t-row { flex-direction: column; }
+    .t-row > * { min-width: unset; }
+  }
+
+  /* ── MODO CLARO ─── */
+  [data-theme="light"] .tools-root { color: var(--text-body); }
+  [data-theme="light"] .tools-title { color: #1a4d99; text-shadow: none; }
+  [data-theme="light"] .tools-subtitle { color: #1a4d9955; }
+  [data-theme="light"] .tools-breadcrumb,
+  [data-theme="light"] .tools-breadcrumb a { color: #1a4d9966; }
+  [data-theme="light"] .tools-breadcrumb a:hover { color: #1a4d99; }
+
+  [data-theme="light"] .tool-cell {
+    background: rgba(220, 232, 248, 0.9) !important;
+    border-color: #8aaad0 !important;
+  }
+  [data-theme="light"] .tc-ip    { background: rgba(215, 230, 248, 0.92) !important; border-color: #2266bb !important; }
+  [data-theme="light"] .tc-cidr  { background: rgba(248, 232, 215, 0.92) !important; border-color: #a04400 !important; }
+  [data-theme="light"] .tc-puertos { background: rgba(248, 215, 220, 0.92) !important; border-color: #880022 !important; }
+  [data-theme="light"] .tc-pass  { background: rgba(238, 225, 248, 0.92) !important; border-color: #664499 !important; }
+  [data-theme="light"] .tc-storage { background: rgba(230, 230, 230, 0.92) !important; border-color: #777777 !important; }
+
+  [data-theme="light"] .tc-ip .t-accent    { color: #1a4d99 !important; }
+  [data-theme="light"] .tc-cidr .t-accent  { color: #a04400 !important; }
+  [data-theme="light"] .tc-puertos .t-accent { color: #880022 !important; }
+  [data-theme="light"] .tc-pass .t-accent  { color: #664499 !important; }
+  [data-theme="light"] .tc-storage .t-accent { color: #555555 !important; }
+
+  [data-theme="light"] .tool-panel {
+    background: rgba(240, 245, 252, 0.98);
+    border-color: #8aaad0;
+    color: var(--text-body);
+  }
+  [data-theme="light"] .panel-header { border-bottom-color: #8aaad0; }
+  [data-theme="light"] .panel-title  { color: #1a4d99; }
+  [data-theme="light"] .panel-close  { border-color: #8aaad0; color: #1a4d9966; }
+  [data-theme="light"] .panel-close:hover { border-color: #1a4d99; color: #1a4d99; }
+  [data-theme="light"] .t-label { color: #1a4d9966; }
+  [data-theme="light"] .t-input,
+  [data-theme="light"] .t-select { background: #f8fafc; border-color: #8aaad0; color: #1a1a1a; }
+  [data-theme="light"] .t-btn { border-color: #1a4d99; color: #1a4d99; }
+  [data-theme="light"] .t-btn:hover { background: #1a4d99; color: #fff; }
+  [data-theme="light"] .t-output { background: #eef4fc; border-color: #8aaad0; border-left-color: #1a4d99; color: #1a1a1a; }
+  [data-theme="light"] .t-output .t-ok  { color: #006633; }
+  [data-theme="light"] .t-output .t-err { color: #cc0000; }
+  [data-theme="light"] .t-output .t-key { color: #1a4d99; }
+  [data-theme="light"] .puertos-tabla-wrap { border-color: #8aaad0; }
+  [data-theme="light"] .puertos-tabla th  { background: #dce8f8; color: #880022; border-bottom-color: #8aaad0; }
+  [data-theme="light"] .puertos-tabla td  { border-bottom-color: #e0e8f4; color: #2a2a2a; }
+  [data-theme="light"] .puertos-tabla tr:hover td { background: #dce8f8; }
+  [data-theme="light"] .puerto-num { color: #880022; }
+  [data-theme="light"] .puerto-proto { color: #555; }
+  [data-theme="light"] .puerto-desc { color: #445566; }
+  [data-theme="light"] .pass-output { color: #664499; }
+  [data-theme="light"] .pass-check  { color: #334455; }
+  [data-theme="light"] .storage-item { background: #eef4fc; border-color: #c0d0e8; }
+  [data-theme="light"] .storage-item-label { color: #6688aa; }
+  [data-theme="light"] .storage-item-val { color: #334455; }
+  [data-theme="light"] .tools-footer { border-top-color: #8aaad0; color: #1a4d9944; }
+  [data-theme="light"] .tools-footer a { color: #1a4d9966; }
+  [data-theme="light"] .tools-footer a:hover { color: #1a4d99; }
+  </style>
+</head>
+<body>
+
+<div class="tools-root">
+
+  <header class="tools-header">
+    <p class="tools-breadcrumb">
+      <a href="index.html">RETROTERM.AI</a> / TOOLS
+    </p>
+    <h1 class="tools-title">[&nbsp;TOOLS&nbsp;]</h1>
+    <p class="tools-subtitle">// utilidades de red y sistema</p>
+  </header>
+
+  <!-- BENTO DE HERRAMIENTAS -->
+  <nav class="tools-bento" aria-label="Seleccionar herramienta">
+
+    <button class="tool-cell tc-ip t-ip" onclick="abrirPanel('ip')" aria-label="Abrir conversor IP">
+      <div class="t-dot" style="background:#3399ff;box-shadow:0 0 6px #3399ff;animation-delay:0s"></div>
+      <span class="t-glyph t-accent">⬡</span>
+      <span class="t-tag t-accent">// red</span>
+      <span class="t-name t-accent">IP ↔ BIN / HEX</span>
+    </button>
+
+    <button class="tool-cell tc-cidr t-cidr" onclick="abrirPanel('cidr')" aria-label="Abrir calculadora CIDR">
+      <div class="t-dot" style="background:#ff6600;box-shadow:0 0 6px #ff6600;animation-delay:0.6s"></div>
+      <span class="t-glyph t-accent">⊡</span>
+      <span class="t-tag t-accent">// red</span>
+      <span class="t-name t-accent">CIDR / WILDCARD</span>
+    </button>
+
+    <button class="tool-cell tc-puertos t-puertos" onclick="abrirPanel('puertos')" aria-label="Abrir tabla de puertos">
+      <div class="t-dot" style="background:#cc0033;box-shadow:0 0 6px #cc0033;animation-delay:1.2s"></div>
+      <span class="t-glyph t-accent">⚑</span>
+      <span class="t-tag t-accent">// sistema</span>
+      <span class="t-name t-accent">PUERTOS</span>
+    </button>
+
+    <button class="tool-cell tc-pass t-pass" onclick="abrirPanel('pass')" aria-label="Abrir generador de contraseñas">
+      <div class="t-dot" style="background:#9966cc;box-shadow:0 0 6px #9966cc;animation-delay:0.3s"></div>
+      <span class="t-glyph t-accent">⬡</span>
+      <span class="t-tag t-accent">// seguridad</span>
+      <span class="t-name t-accent">GENERADOR DE CONTRASEÑAS</span>
+    </button>
+
+    <button class="tool-cell tc-storage t-storage" onclick="abrirPanel('storage')" aria-label="Abrir conversor de almacenamiento">
+      <div class="t-dot" style="background:#aaaaaa;box-shadow:0 0 5px #aaaaaa;animation-delay:0.9s"></div>
+      <span class="t-glyph t-accent">▣</span>
+      <span class="t-tag t-accent">// sistema</span>
+      <span class="t-name t-accent">ALMACENAMIENTO</span>
+    </button>
+
+    <button class="tool-cell tc-color t-color" onclick="abrirPanel('color')" aria-label="Abrir herramientas de color y tamaños">
+      <div class="t-dot" style="background:#ff3399;box-shadow:0 0 6px #ff3399;animation-delay:1.5s"></div>
+      <span class="t-glyph t-accent">◉</span>
+      <span class="t-tag t-accent">// diseño · dev</span>
+      <span class="t-name t-accent">COLOR &amp; TAMAÑOS CSS</span>
+    </button>
+
+  </nav>
+
+  <!-- ═══ PANEL: IP CONVERSOR ═══ -->
+  <section id="panel-ip" class="tool-panel" aria-label="Conversor IP">
+    <div class="panel-header">
+      <span class="panel-title t-accent" style="color:#3399ff">// IP ↔ BIN / HEX</span>
+      <button class="panel-close" onclick="cerrarPanel('ip')" aria-label="Cerrar">[X] CERRAR</button>
+    </div>
+
+    <label class="t-label" for="ip-input">DIRECCIÓN IPv4</label>
+    <input class="t-input" id="ip-input" type="text" placeholder="ej. 192.168.1.1" maxlength="18"
+           oninput="convertirIP()" autocomplete="off" spellcheck="false">
+
+    <div class="t-output" id="ip-output">
+      <span style="color:#3399ff33">// introduce una IP para convertir</span>
+    </div>
+
+    <div class="t-row" style="margin-top:1rem">
+      <div>
+        <label class="t-label" for="ip-bin-input">BINARIO → IP</label>
+        <input class="t-input" id="ip-bin-input" type="text"
+               placeholder="ej. 11000000.10101000.00000001.00000001"
+               oninput="binToIP()" autocomplete="off" spellcheck="false">
+        <div class="t-output" id="ip-bin-output" style="margin-top:0.5rem;min-height:32px">
+          <span style="color:#3399ff33">// resultado</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PANEL: CIDR ═══ -->
+  <section id="panel-cidr" class="tool-panel" aria-label="Calculadora CIDR y Wildcard">
+    <div class="panel-header">
+      <span class="panel-title" style="color:#ff6600">// CIDR / WILDCARD</span>
+      <button class="panel-close" onclick="cerrarPanel('cidr')" aria-label="Cerrar">[X] CERRAR</button>
+    </div>
+
+    <div class="t-row">
+      <div>
+        <label class="t-label" for="cidr-ip">RED (CIDR)</label>
+        <input class="t-input" id="cidr-ip" type="text" placeholder="ej. 192.168.1.0/24"
+               oninput="calcularCIDR()" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div class="t-output" id="cidr-output" style="margin-top:1rem">
+      <span style="color:#ff660033">// introduce una red en notación CIDR</span>
+    </div>
+  </section>
+
+  <!-- ═══ PANEL: PUERTOS ═══ -->
+  <section id="panel-puertos" class="tool-panel" aria-label="Tabla de puertos conocidos">
+    <div class="panel-header">
+      <span class="panel-title" style="color:#cc0033">// PUERTOS CONOCIDOS</span>
+      <button class="panel-close" onclick="cerrarPanel('puertos')" aria-label="Cerrar">[X] CERRAR</button>
+    </div>
+
+    <div class="puertos-filtro">
+      <input class="t-input" id="puertos-filtro" type="text"
+             placeholder="Filtrar por puerto, nombre o protocolo..."
+             oninput="filtrarPuertos()" autocomplete="off" spellcheck="false">
+      <select class="t-select" id="puertos-proto" onchange="filtrarPuertos()" style="max-width:120px;margin-top:0">
+        <option value="">TCP + UDP</option>
+        <option value="TCP">TCP</option>
+        <option value="UDP">UDP</option>
+        <option value="TCP/UDP">TCP/UDP</option>
+      </select>
+    </div>
+
+    <div class="puertos-tabla-wrap">
+      <table class="puertos-tabla" id="puertos-tabla" aria-label="Tabla de puertos conocidos">
+        <thead>
+          <tr>
+            <th>PUERTO</th>
+            <th>PROTO</th>
+            <th>SERVICIO</th>
+            <th>DESCRIPCIÓN</th>
+          </tr>
+        </thead>
+        <tbody id="puertos-body"></tbody>
+      </table>
+    </div>
+    <p style="font-size:0.6rem;color:#334;margin-top:0.6rem;letter-spacing:0.1em" id="puertos-count"></p>
+  </section>
+
+  <!-- ═══ PANEL: CONTRASEÑAS ═══ -->
+  <section id="panel-pass" class="tool-panel" aria-label="Generador de contraseñas">
+    <div class="panel-header">
+      <span class="panel-title" style="color:#9966cc">// GENERADOR DE CONTRASEÑAS</span>
+      <button class="panel-close" onclick="cerrarPanel('pass')" aria-label="Cerrar">[X] CERRAR</button>
+    </div>
+
+    <label class="t-label" for="pass-len">LONGITUD: <span id="pass-len-val">20</span> caracteres</label>
+    <input type="range" id="pass-len" min="8" max="64" value="20"
+           oninput="document.getElementById('pass-len-val').textContent=this.value;generarPass()"
+           style="width:100%;accent-color:#9966cc;margin-bottom:0.4rem">
+
+    <div class="pass-checks">
+      <label class="pass-check">
+        <input type="checkbox" id="pass-may" checked onchange="generarPass()"> Mayúsculas (A–Z)
+      </label>
+      <label class="pass-check">
+        <input type="checkbox" id="pass-min" checked onchange="generarPass()"> Minúsculas (a–z)
+      </label>
+      <label class="pass-check">
+        <input type="checkbox" id="pass-num" checked onchange="generarPass()"> Números (0–9)
+      </label>
+      <label class="pass-check">
+        <input type="checkbox" id="pass-sym" checked onchange="generarPass()"> Símbolos (!@#...)
+      </label>
+    </div>
+
+    <div class="t-output" style="margin-top:1rem">
+      <div class="pass-output" id="pass-output">// genera una contraseña</div>
+    </div>
+
+    <div class="pass-strength" id="pass-strength" style="margin-top:0.6rem">
+      <div class="pass-bar" id="pb1"></div>
+      <div class="pass-bar" id="pb2"></div>
+      <div class="pass-bar" id="pb3"></div>
+      <div class="pass-bar" id="pb4"></div>
+      <span class="pass-label-strength" id="pass-strength-label">—</span>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem">
+      <button class="t-btn" onclick="generarPass()">⟳ GENERAR</button>
+      <button class="t-btn t-btn-sm" onclick="copiarPass()" style="margin-top:1rem">⎘ COPIAR</button>
+    </div>
+  </section>
+
+  <!-- ═══ PANEL: ALMACENAMIENTO ═══ -->
+  <section id="panel-storage" class="tool-panel" aria-label="Conversor de almacenamiento">
+    <div class="panel-header">
+      <span class="panel-title" style="color:#aaaaaa">// CONVERSOR DE ALMACENAMIENTO</span>
+      <button class="panel-close" onclick="cerrarPanel('storage')" aria-label="Cerrar">[X] CERRAR</button>
+    </div>
+
+    <div class="t-row">
+      <div>
+        <label class="t-label" for="storage-val">VALOR</label>
+        <input class="t-input" id="storage-val" type="number" placeholder="ej. 1024"
+               min="0" oninput="convertirStorage()" autocomplete="off">
+      </div>
+      <div>
+        <label class="t-label" for="storage-unit">UNIDAD</label>
+        <select class="t-select" id="storage-unit" onchange="convertirStorage()">
+          <option value="b">Bits (b)</option>
+          <option value="B">Bytes (B)</option>
+          <option value="KB" selected>Kilobytes (KB)</option>
+          <option value="MB">Megabytes (MB)</option>
+          <option value="GB">Gigabytes (GB)</option>
+          <option value="TB">Terabytes (TB)</option>
+          <option value="PB">Petabytes (PB)</option>
+          <option value="KiB">Kibibytes (KiB)</option>
+          <option value="MiB">Mebibytes (MiB)</option>
+          <option value="GiB">Gibibytes (GiB)</option>
+          <option value="TiB">Tebibytes (TiB)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="storage-grid" id="storage-output">
+      <div style="color:#334;font-size:0.72rem;letter-spacing:0.1em;margin-top:0.5rem">
+        // introduce un valor para convertir
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PANEL: COLOR & TAMAÑOS ═══ -->
+  <section id="panel-color" class="tool-panel" aria-label="Herramientas de color y tamaños CSS">
+    <div class="panel-header">
+      <span class="panel-title" style="color:#ff3399">// COLOR &amp; TAMAÑOS CSS</span>
+      <button class="panel-close" onclick="cerrarPanel('color')" aria-label="Cerrar">[X] CERRAR</button>
+    </div>
+
+    <div class="color-cols">
+
+      <!-- COLUMNA IZQUIERDA: COLORES -->
+      <div>
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:0 0 0.8rem">// CONVERSOR DE COLOR</p>
+
+        <label class="t-label" for="color-picker">COLOR</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="color" id="color-picker" value="#ff3399"
+                 oninput="sincronizarColorDesdepicker(this.value)"
+                 style="width:48px;height:38px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          <input class="t-input" id="color-hex" type="text" placeholder="#ff3399" maxlength="9"
+                 oninput="sincronizarColorDesdeHex(this.value)"
+                 style="flex:1" autocomplete="off" spellcheck="false">
+        </div>
+
+        <div class="color-preview-wrap">
+          <div class="color-swatch" id="color-swatch"></div>
+          <div class="color-values" id="color-values">
+            <div class="color-val-row"><span class="color-val-lbl">HEX</span><span class="color-val-txt" id="cv-hex" onclick="copiarValorColor(this)" title="Copiar">#ff3399</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">RGB</span><span class="color-val-txt" id="cv-rgb" onclick="copiarValorColor(this)" title="Copiar">rgb(255, 51, 153)</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">HSL</span><span class="color-val-txt" id="cv-hsl" onclick="copiarValorColor(this)" title="Copiar">hsl(330, 100%, 60%)</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">HSV</span><span class="color-val-txt" id="cv-hsv" onclick="copiarValorColor(this)" title="Copiar">hsv(330°, 80%, 100%)</span></div>
+            <div class="color-val-row"><span class="color-val-lbl">OKLCH</span><span class="color-val-txt" id="cv-oklch" onclick="copiarValorColor(this)" title="Copiar">oklch(60% 0.28 330)</span></div>
+          </div>
+        </div>
+
+        <!-- WCAG -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.2rem 0 0.5rem">// CONTRASTE WCAG</p>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:120px">
+            <label class="t-label" for="wcag-bg" style="margin-top:0">FONDO</label>
+            <input type="color" id="wcag-bg" value="#000000" oninput="calcularWCAG()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="flex:1;min-width:120px">
+            <label class="t-label" for="wcag-fg" style="margin-top:0">TEXTO</label>
+            <input type="color" id="wcag-fg" value="#ff3399" oninput="calcularWCAG()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+        </div>
+        <div id="wcag-result" style="margin-top:0.6rem"></div>
+
+        <!-- PALETA -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.2rem 0 0.3rem">// PALETA GENERADA</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0.3rem">
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('complementario')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">COMPLEMENTARIO</button>
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('analogos')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">ANÁLOGOS</button>
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('triadico')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">TRIÁDICO</button>
+          <button class="t-btn t-btn-sm" onclick="generarPaleta('tintes')" style="border-color:#ff339966;color:#ff3399;margin-top:0.4rem">TINTES/SOMBRAS</button>
+        </div>
+        <div class="paleta-grid" id="paleta-grid"></div>
+
+        <!-- GRADIENTE -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.2rem 0 0.5rem">// GRADIENTE CSS</p>
+        <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:100px">
+            <label class="t-label" style="margin-top:0">COLOR 1</label>
+            <input type="color" id="grad-c1" value="#ff3399" oninput="actualizarGradiente()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="flex:1;min-width:100px">
+            <label class="t-label" style="margin-top:0">COLOR 2</label>
+            <input type="color" id="grad-c2" value="#3399ff" oninput="actualizarGradiente()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="min-width:80px">
+            <label class="t-label" style="margin-top:0">ÁNGULO</label>
+            <input class="t-input" id="grad-angle" type="number" value="135" min="0" max="360"
+                   oninput="actualizarGradiente()" style="width:80px">
+          </div>
+        </div>
+        <div class="grad-preview" id="grad-preview"></div>
+        <div class="grad-code" id="grad-code" onclick="copiarTexto(this.textContent)" title="Copiar CSS"></div>
+      </div>
+
+      <!-- COLUMNA DERECHA: TAMAÑOS CSS -->
+      <div>
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:0 0 0.8rem">// CONVERSOR DE UNIDADES CSS</p>
+
+        <div class="size-cols">
+          <div>
+            <label class="t-label" for="size-val" style="margin-top:0">VALOR</label>
+            <input class="t-input" id="size-val" type="number" placeholder="16" value="16"
+                   oninput="convertirSize()" min="0">
+          </div>
+          <div>
+            <label class="t-label" for="size-unit" style="margin-top:0">UNIDAD</label>
+            <select class="t-select" id="size-unit" onchange="convertirSize()">
+              <option value="px" selected>px</option>
+              <option value="rem">rem</option>
+              <option value="em">em</option>
+              <option value="pt">pt</option>
+              <option value="vw">vw</option>
+              <option value="vh">vh</option>
+              <option value="%">%</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="size-cols" style="margin-top:0.8rem">
+          <div>
+            <label class="t-label" style="margin-top:0">ROOT FONT-SIZE (px)</label>
+            <input class="t-input" id="size-root" type="number" value="16" min="1" oninput="convertirSize()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">VIEWPORT ANCHO (px)</label>
+            <input class="t-input" id="size-vw" type="number" value="1440" min="1" oninput="convertirSize()">
+          </div>
+        </div>
+
+        <div class="size-result-grid" id="size-result"></div>
+
+        <!-- TIEMPOS -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.4rem 0 0.5rem">// CONVERSOR DE TIEMPO (CSS)</p>
+        <div class="size-cols">
+          <div>
+            <label class="t-label" style="margin-top:0">VALOR</label>
+            <input class="t-input" id="time-val" type="number" placeholder="300" value="300"
+                   oninput="convertirTiempo()" min="0">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">UNIDAD</label>
+            <select class="t-select" id="time-unit" onchange="convertirTiempo()">
+              <option value="ms" selected>ms</option>
+              <option value="s">s</option>
+            </select>
+          </div>
+        </div>
+        <div class="size-result-grid" id="time-result" style="grid-template-columns:1fr 1fr"></div>
+
+        <!-- BOX SHADOW -->
+        <p style="font-size:0.6rem;letter-spacing:0.18em;color:#ff339955;margin:1.4rem 0 0.5rem">// GENERADOR BOX-SHADOW</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
+          <div>
+            <label class="t-label" style="margin-top:0">X (px)</label>
+            <input class="t-input" id="bs-x" type="number" value="0" oninput="actualizarShadow()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">Y (px)</label>
+            <input class="t-input" id="bs-y" type="number" value="4" oninput="actualizarShadow()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">BLUR (px)</label>
+            <input class="t-input" id="bs-blur" type="number" value="12" min="0" oninput="actualizarShadow()">
+          </div>
+          <div>
+            <label class="t-label" style="margin-top:0">SPREAD (px)</label>
+            <input class="t-input" id="bs-spread" type="number" value="0" oninput="actualizarShadow()">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:0.6rem;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:100px">
+            <label class="t-label" style="margin-top:0">COLOR</label>
+            <input type="color" id="bs-color" value="#000000" oninput="actualizarShadow()"
+                   style="width:100%;height:34px;border:1px solid #1a0820;background:none;cursor:pointer;border-radius:3px;padding:2px">
+          </div>
+          <div style="flex:1;min-width:80px">
+            <label class="t-label" style="margin-top:0">OPACIDAD</label>
+            <input class="t-input" id="bs-opacity" type="number" value="20" min="0" max="100" oninput="actualizarShadow()">
+          </div>
+          <label style="display:flex;align-items:center;gap:5px;font-size:0.7rem;color:#778899;margin-bottom:2px;cursor:pointer">
+            <input type="checkbox" id="bs-inset" onchange="actualizarShadow()" style="accent-color:#ff3399"> inset
+          </label>
+        </div>
+        <div id="bs-preview" style="margin-top:0.8rem;height:52px;background:#111;border-radius:4px;display:flex;align-items:center;justify-content:center">
+          <div id="bs-box" style="width:120px;height:32px;background:#222;border-radius:3px;transition:box-shadow 0.15s"></div>
+        </div>
+        <div class="grad-code" id="bs-code" onclick="copiarTexto(this.textContent)" title="Copiar CSS" style="margin-top:0.5rem"></div>
+      </div>
+
+    </div><!-- /color-cols -->
+  </section>
+
+  <footer class="tools-footer">
+    <a href="index.html">← HUB</a>
+    <span>·</span>
+    <a href="subnet.html">SUBNET CALC</a>
+    <span>·</span>
+    <a href="articulos.html">ARTÍCULOS</a>
+  </footer>
+
+</div><!-- /tools-root -->
+
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+'use strict';
+
+// ═══════════════════════════════════════════════════════════
+// PANEL NAVIGATION
+// ═══════════════════════════════════════════════════════════
+var panelActual = null;
+
+function abrirPanel(id) {
+  if (panelActual) {
+    var prev = document.getElementById('panel-' + panelActual);
+    if (prev) prev.classList.remove('activo');
+  }
+  var panel = document.getElementById('panel-' + id);
+  if (!panel) return;
+  panel.classList.add('activo');
+  panelActual = id;
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // init on first open
+  if (id === 'puertos' && !puertosCargados) renderPuertos();
+  if (id === 'pass') generarPass();
+}
+window.abrirPanel = abrirPanel;
+
+function cerrarPanel(id) {
+  var panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.remove('activo');
+  panelActual = null;
+}
+window.cerrarPanel = cerrarPanel;
+
+// ═══════════════════════════════════════════════════════════
+// 1. IP ↔ BIN / HEX
+// ═══════════════════════════════════════════════════════════
+function ipValida(ip) {
+  var partes = ip.trim().split('.');
+  if (partes.length !== 4) return false;
+  return partes.every(function(p) {
+    var n = parseInt(p, 10);
+    return !isNaN(n) && n >= 0 && n <= 255 && String(n) === p;
+  });
+}
+
+function convertirIP() {
+  var val = document.getElementById('ip-input').value.trim();
+  var out = document.getElementById('ip-output');
+  if (!val) { out.innerHTML = '<span style="color:#3399ff33">// introduce una IP para convertir</span>'; return; }
+  if (!ipValida(val)) { out.innerHTML = '<span class="t-err">// IP inválida</span>'; return; }
+
+  var partes = val.split('.').map(Number);
+  var binario = partes.map(function(n) { return n.toString(2).padStart(8, '0'); }).join('.');
+  var hex = partes.map(function(n) { return n.toString(16).toUpperCase().padStart(2, '0'); }).join(':');
+  var decimal = partes.reduce(function(acc, n, i) { return acc + n * Math.pow(256, 3 - i); }, 0);
+  var claseIP = partes[0] < 128 ? 'A' : partes[0] < 192 ? 'B' : partes[0] < 224 ? 'C' : partes[0] < 240 ? 'D (multicast)' : 'E (reservada)';
+
+  out.innerHTML =
+    '<span class="t-key">BIN</span>  ' + binario + '<br>' +
+    '<span class="t-key">HEX</span>  ' + hex + '<br>' +
+    '<span class="t-key">DEC</span>  ' + decimal.toLocaleString() + '<br>' +
+    '<span class="t-key">CLASE</span> ' + claseIP;
+}
+window.convertirIP = convertirIP;
+
+function binToIP() {
+  var val = document.getElementById('ip-bin-input').value.trim().replace(/\s/g, '');
+  var out = document.getElementById('ip-bin-output');
+  if (!val) { out.innerHTML = '<span style="color:#3399ff33">// resultado</span>'; return; }
+
+  // Acepta con o sin puntos
+  var limpio = val.replace(/\./g, '');
+  if (!/^[01]{32}$/.test(limpio)) {
+    out.innerHTML = '<span class="t-err">// introduce 32 bits (con o sin puntos)</span>';
+    return;
+  }
+  var partes = [0,8,16,24].map(function(i) { return parseInt(limpio.slice(i, i+8), 2); });
+  out.innerHTML = '<span class="t-ok">' + partes.join('.') + '</span>';
+}
+window.binToIP = binToIP;
+
+// ═══════════════════════════════════════════════════════════
+// 2. CIDR / WILDCARD
+// ═══════════════════════════════════════════════════════════
+function calcularCIDR() {
+  var val = document.getElementById('cidr-ip').value.trim();
+  var out = document.getElementById('cidr-output');
+  if (!val) { out.innerHTML = '<span style="color:#ff660033">// introduce una red en notación CIDR</span>'; return; }
+
+  var partes = val.split('/');
+  if (partes.length !== 2) { out.innerHTML = '<span class="t-err">// formato: IP/prefijo (ej. 192.168.1.0/24)</span>'; return; }
+
+  var ip = partes[0].trim();
+  var prefijo = parseInt(partes[1], 10);
+
+  if (!ipValida(ip) || isNaN(prefijo) || prefijo < 0 || prefijo > 32) {
+    out.innerHTML = '<span class="t-err">// datos inválidos</span>';
+    return;
+  }
+
+  var mascara = prefijo === 0 ? 0 : (~0 << (32 - prefijo)) >>> 0;
+  var wildcard = (~mascara) >>> 0;
+  var ipNum = ip.split('.').reduce(function(acc, n, i) { return acc + parseInt(n) * Math.pow(256, 3-i); }, 0) >>> 0;
+  var red   = (ipNum & mascara) >>> 0;
+  var broad = (red | wildcard) >>> 0;
+  var primeraHost = prefijo <= 30 ? red + 1 : red;
+  var ultimaHost  = prefijo <= 30 ? broad - 1 : broad;
+  var numHosts    = prefijo <= 30 ? Math.pow(2, 32 - prefijo) - 2 : prefijo === 31 ? 2 : 1;
+
+  function toIP(n) {
+    return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.');
+  }
+  function toMask(n) {
+    return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.');
+  }
+
+  out.innerHTML =
+    '<span class="t-key">RED</span>         ' + toIP(red) + '/' + prefijo + '<br>' +
+    '<span class="t-key">MÁSCARA</span>     ' + toMask(mascara) + '<br>' +
+    '<span class="t-key">WILDCARD</span>    ' + toMask(wildcard) + '<br>' +
+    '<span class="t-key">BROADCAST</span>   ' + toIP(broad) + '<br>' +
+    '<span class="t-key">PRIMER HOST</span> ' + toIP(primeraHost) + '<br>' +
+    '<span class="t-key">ÚLTIMO HOST</span> ' + toIP(ultimaHost) + '<br>' +
+    '<span class="t-key">Nº HOSTS</span>    <span class="t-ok">' + numHosts.toLocaleString() + '</span>';
+}
+window.calcularCIDR = calcularCIDR;
+
+// ═══════════════════════════════════════════════════════════
+// 3. TABLA DE PUERTOS
+// ═══════════════════════════════════════════════════════════
+var PUERTOS = [
+  [20,'TCP','FTP-DATA','Transferencia de datos FTP'],
+  [21,'TCP','FTP','Control de sesión FTP'],
+  [22,'TCP','SSH','Secure Shell - acceso remoto cifrado'],
+  [23,'TCP','TELNET','Telnet - acceso remoto sin cifrar'],
+  [25,'TCP','SMTP','Envío de correo electrónico'],
+  [53,'TCP/UDP','DNS','Domain Name System - resolución de nombres'],
+  [67,'UDP','DHCP-S','Servidor DHCP - asignación de IPs'],
+  [68,'UDP','DHCP-C','Cliente DHCP'],
+  [69,'UDP','TFTP','Trivial FTP - sin autenticación'],
+  [80,'TCP','HTTP','Tráfico web sin cifrar'],
+  [110,'TCP','POP3','Recepción de correo (descarga)'],
+  [119,'TCP','NNTP','Network News Transfer Protocol'],
+  [123,'UDP','NTP','Sincronización de tiempo de red'],
+  [135,'TCP','MSRPC','Microsoft RPC'],
+  [137,'UDP','NETBIOS-NS','NetBIOS Name Service'],
+  [138,'UDP','NETBIOS-DGM','NetBIOS Datagram'],
+  [139,'TCP','NETBIOS-SSN','NetBIOS Session - compartición de archivos'],
+  [143,'TCP','IMAP','Acceso a correo en servidor'],
+  [161,'UDP','SNMP','Gestión de dispositivos de red'],
+  [162,'UDP','SNMPTRAP','Notificaciones SNMP'],
+  [179,'TCP','BGP','Border Gateway Protocol - enrutamiento'],
+  [194,'TCP','IRC','Internet Relay Chat'],
+  [389,'TCP/UDP','LDAP','Directorio activo / autenticación'],
+  [443,'TCP','HTTPS','Tráfico web cifrado (TLS/SSL)'],
+  [445,'TCP','SMB','Compartición de archivos Windows (CIFS)'],
+  [465,'TCP','SMTPS','SMTP sobre TLS'],
+  [500,'UDP','IKE','Internet Key Exchange - VPN IPsec'],
+  [514,'UDP','SYSLOG','Registro de eventos de red'],
+  [515,'TCP','LPD','Impresión en red'],
+  [587,'TCP','SMTP-TLS','Envío de correo con STARTTLS'],
+  [631,'TCP','IPP','Protocolo de impresión por internet'],
+  [636,'TCP','LDAPS','LDAP sobre TLS'],
+  [993,'TCP','IMAPS','IMAP sobre TLS'],
+  [995,'TCP','POP3S','POP3 sobre TLS'],
+  [1080,'TCP','SOCKS','Proxy SOCKS'],
+  [1194,'UDP','OpenVPN','VPN OpenVPN'],
+  [1433,'TCP','MSSQL','Microsoft SQL Server'],
+  [1434,'UDP','MSSQL-M','Microsoft SQL Server Monitor'],
+  [1521,'TCP','Oracle','Oracle Database'],
+  [1723,'TCP','PPTP','VPN PPTP'],
+  [1812,'UDP','RADIUS','Autenticación RADIUS'],
+  [1813,'UDP','RADIUS-A','Accounting RADIUS'],
+  [2049,'TCP/UDP','NFS','Network File System'],
+  [2082,'TCP','cPanel','Panel de hosting cPanel (HTTP)'],
+  [2083,'TCP','cPanel-S','Panel de hosting cPanel (HTTPS)'],
+  [2181,'TCP','ZooKeeper','Apache ZooKeeper'],
+  [3306,'TCP','MySQL','Base de datos MySQL / MariaDB'],
+  [3389,'TCP','RDP','Remote Desktop Protocol - Windows'],
+  [4444,'TCP','Metasploit','Puerto por defecto de Metasploit'],
+  [5000,'TCP','Flask','Servidor Flask por defecto'],
+  [5432,'TCP','PostgreSQL','Base de datos PostgreSQL'],
+  [5900,'TCP','VNC','Virtual Network Computing - escritorio remoto'],
+  [6379,'TCP','Redis','Base de datos Redis'],
+  [6881,'TCP/UDP','BitTorrent','BitTorrent (rango 6881-6889)'],
+  [8080,'TCP','HTTP-Alt','HTTP alternativo / proxies / Tomcat'],
+  [8443,'TCP','HTTPS-Alt','HTTPS alternativo'],
+  [8888,'TCP','Jupyter','Jupyter Notebook por defecto'],
+  [9200,'TCP','Elasticsearch','API REST Elasticsearch'],
+  [9300,'TCP','Elasticsearch-C','Cluster Elasticsearch'],
+  [27017,'TCP','MongoDB','Base de datos MongoDB'],
+  [51820,'UDP','WireGuard','VPN WireGuard'],
+];
+
+var puertosCargados = false;
+
+function renderPuertos() {
+  var tbody = document.getElementById('puertos-body');
+  var rows = '';
+  PUERTOS.forEach(function(p) {
+    rows += '<tr>' +
+      '<td class="puerto-num">' + p[0] + '</td>' +
+      '<td class="puerto-proto">' + p[1] + '</td>' +
+      '<td class="puerto-nombre">' + p[2] + '</td>' +
+      '<td class="puerto-desc">' + p[3] + '</td>' +
+      '</tr>';
+  });
+  tbody.innerHTML = rows;
+  puertosCargados = true;
+  actualizarCount(PUERTOS.length);
+}
+
+function filtrarPuertos() {
+  var q = document.getElementById('puertos-filtro').value.toLowerCase();
+  var proto = document.getElementById('puertos-proto').value;
+  var tbody = document.getElementById('puertos-body');
+  var visibles = 0;
+  var rows = '';
+
+  PUERTOS.forEach(function(p) {
+    var coincide =
+      (String(p[0]).includes(q) || p[2].toLowerCase().includes(q) || p[3].toLowerCase().includes(q)) &&
+      (!proto || p[1] === proto);
+    if (coincide) {
+      visibles++;
+      rows += '<tr>' +
+        '<td class="puerto-num">' + p[0] + '</td>' +
+        '<td class="puerto-proto">' + p[1] + '</td>' +
+        '<td class="puerto-nombre">' + p[2] + '</td>' +
+        '<td class="puerto-desc">' + p[3] + '</td>' +
+        '</tr>';
+    }
+  });
+  tbody.innerHTML = rows;
+  actualizarCount(visibles);
+}
+window.filtrarPuertos = filtrarPuertos;
+
+function actualizarCount(n) {
+  document.getElementById('puertos-count').textContent = '// ' + n + ' puerto(s) mostrado(s)';
+}
+
+// ═══════════════════════════════════════════════════════════
+// 4. GENERADOR DE CONTRASEÑAS
+// ═══════════════════════════════════════════════════════════
+function generarPass() {
+  var len  = parseInt(document.getElementById('pass-len').value);
+  var may  = document.getElementById('pass-may').checked;
+  var min  = document.getElementById('pass-min').checked;
+  var num  = document.getElementById('pass-num').checked;
+  var sym  = document.getElementById('pass-sym').checked;
+
+  var chars = '';
+  if (may) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if (min) chars += 'abcdefghijklmnopqrstuvwxyz';
+  if (num) chars += '0123456789';
+  if (sym) chars += '!@#$%^&*()-_=+[]{}|;:,.<>?';
+
+  if (!chars) {
+    document.getElementById('pass-output').textContent = '// activa al menos un tipo de carácter';
+    return;
+  }
+
+  var arr = new Uint32Array(len);
+  window.crypto.getRandomValues(arr);
+  var pass = Array.from(arr).map(function(n) { return chars[n % chars.length]; }).join('');
+  document.getElementById('pass-output').textContent = pass;
+  evaluarFortaleza(pass, may, min, num, sym);
+}
+window.generarPass = generarPass;
+
+function evaluarFortaleza(pass, may, min, num, sym) {
+  var score = 0;
+  if (pass.length >= 12) score++;
+  if (pass.length >= 20) score++;
+  var tipos = [may, min, num, sym].filter(Boolean).length;
+  if (tipos >= 3) score++;
+  if (tipos === 4) score++;
+
+  var bars = ['pb1','pb2','pb3','pb4'];
+  var clases = ['activo','activo','medio','fuerte'];
+  var labels = ['MUY DÉBIL','DÉBIL','MEDIA','FUERTE'];
+
+  bars.forEach(function(id, i) {
+    var el = document.getElementById(id);
+    el.className = 'pass-bar';
+    if (i < score) el.classList.add(score <= 1 ? 'activo' : score === 2 ? 'medio' : 'fuerte');
+  });
+
+  document.getElementById('pass-strength-label').textContent = labels[Math.max(0, score - 1)] || '—';
+}
+
+function copiarPass() {
+  var txt = document.getElementById('pass-output').textContent;
+  if (!txt || txt.startsWith('//')) return;
+  navigator.clipboard.writeText(txt).then(function() {
+    var btn = document.querySelector('[onclick="copiarPass()"]');
+    var orig = btn.textContent;
+    btn.textContent = '✓ COPIADO';
+    setTimeout(function() { btn.textContent = orig; }, 1500);
+  });
+}
+window.copiarPass = copiarPass;
+
+// ═══════════════════════════════════════════════════════════
+// 5. CONVERSOR DE ALMACENAMIENTO
+// ═══════════════════════════════════════════════════════════
+var UNIDADES_SI = {
+  'b':  1/8,
+  'B':  1,
+  'KB': 1e3,
+  'MB': 1e6,
+  'GB': 1e9,
+  'TB': 1e12,
+  'PB': 1e15,
+};
+var UNIDADES_IEC = {
+  'KiB': 1024,
+  'MiB': 1024*1024,
+  'GiB': 1024*1024*1024,
+  'TiB': 1024*1024*1024*1024,
+};
+var TODAS = Object.assign({}, UNIDADES_SI, UNIDADES_IEC);
+
+function convertirStorage() {
+  var val  = parseFloat(document.getElementById('storage-val').value);
+  var unit = document.getElementById('storage-unit').value;
+  var out  = document.getElementById('storage-output');
+
+  if (isNaN(val) || val < 0) {
+    out.innerHTML = '<div style="color:#334;font-size:0.72rem;letter-spacing:0.1em;margin-top:0.5rem">// introduce un valor para convertir</div>';
+    return;
+  }
+
+  var bytes = val * TODAS[unit];
+  var html = '';
+  var orden = ['b','B','KB','MB','GB','TB','PB','KiB','MiB','GiB','TiB'];
+
+  orden.forEach(function(u) {
+    var resultado = bytes / TODAS[u];
+    var display;
+    if (resultado >= 1e15) display = resultado.toExponential(3);
+    else if (resultado < 0.0001 && resultado > 0) display = resultado.toExponential(3);
+    else display = resultado.toPrecision(6).replace(/\.?0+$/, '');
+
+    var activo = u === unit ? ' style="border-color:#3399ff55"' : '';
+    html += '<div class="storage-item"' + activo + '>' +
+      '<div class="storage-item-label">' + u + '</div>' +
+      '<div class="storage-item-val">' + display + '</div>' +
+      '</div>';
+  });
+
+  out.innerHTML = html;
+}
+window.convertirStorage = convertirStorage;
+
+// ═══════════════════════════════════════════════════════════
+// 6. COLOR & TAMAÑOS CSS
+// ═══════════════════════════════════════════════════════════
+
+// ── Helpers de color ──
+function hexToRgb(hex) {
+  hex = hex.replace(/^#/, '');
+  if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+  if (hex.length !== 6) return null;
+  var n = parseInt(hex, 16);
+  return { r: (n>>16)&255, g: (n>>8)&255, b: n&255 };
+}
+
+function rgbToHsl(r,g,b) {
+  r/=255; g/=255; b/=255;
+  var max=Math.max(r,g,b), min=Math.min(r,g,b), h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}else{
+    var d=max-min; s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}
+    h/=6;
+  }
+  return {h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};
+}
+
+function rgbToHsv(r,g,b) {
+  r/=255;g/=255;b/=255;
+  var max=Math.max(r,g,b),min=Math.min(r,g,b),h,s,v=max,d=max-min;
+  s=max===0?0:d/max;
+  if(max===min){h=0;}else{
+    switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break;}
+    h/=6;
+  }
+  return {h:Math.round(h*360),s:Math.round(s*100),v:Math.round(v*100)};
+}
+
+function rgbToOklch(r,g,b) {
+  // sRGB → linear
+  function lin(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
+  var lr=lin(r),lg=lin(g),lb=lin(b);
+  // linear sRGB → OKLab (approximation)
+  var l=0.4122214708*lr+0.5363325363*lg+0.0514459929*lb;
+  var m=0.2119034982*lr+0.6806995451*lg+0.1073969566*lb;
+  var s=0.0883024619*lr+0.2817188376*lg+0.6299787005*lb;
+  var l_=Math.cbrt(l),m_=Math.cbrt(m),s_=Math.cbrt(s);
+  var L=0.2104542553*l_+0.7936177850*m_-0.0040720468*s_;
+  var a=1.9779984951*l_-2.4285922050*m_+0.4505937099*s_;
+  var bk=-0.0259040371*l_+0.7827717662*m_-0.7568667722*s_;
+  var C=Math.sqrt(a*a+bk*bk);
+  var H=Math.round(Math.atan2(bk,a)*180/Math.PI);
+  if(H<0)H+=360;
+  return {l:Math.round(L*100),c:parseFloat(C.toFixed(3)),h:H};
+}
+
+function hslToHex(h,s,l) {
+  s/=100;l/=100;
+  var a=s*Math.min(l,1-l);
+  var f=function(n){var k=(n+h/30)%12;return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
+  var toHex=function(x){return Math.round(x*255).toString(16).padStart(2,'0');};
+  return '#'+toHex(f(0))+toHex(f(8))+toHex(f(4));
+}
+
+function colorActual() {
+  return document.getElementById('color-hex').value.trim();
+}
+
+function actualizarPanelColor(hex) {
+  var rgb = hexToRgb(hex);
+  if (!rgb) return;
+  document.getElementById('color-swatch').style.background = hex;
+  document.getElementById('color-picker').value = hex;
+  document.getElementById('color-hex').value = hex;
+  var hsl = rgbToHsl(rgb.r,rgb.g,rgb.b);
+  var hsv = rgbToHsv(rgb.r,rgb.g,rgb.b);
+  var oklch = rgbToOklch(rgb.r,rgb.g,rgb.b);
+  document.getElementById('cv-hex').textContent = hex.toUpperCase();
+  document.getElementById('cv-rgb').textContent = 'rgb('+rgb.r+', '+rgb.g+', '+rgb.b+')';
+  document.getElementById('cv-hsl').textContent = 'hsl('+hsl.h+', '+hsl.s+'%, '+hsl.l+'%)';
+  document.getElementById('cv-hsv').textContent = 'hsv('+hsv.h+'°, '+hsv.s+'%, '+hsv.v+'%)';
+  document.getElementById('cv-oklch').textContent = 'oklch('+oklch.l+'% '+oklch.c+' '+oklch.h+')';
+  // sync wcag fg
+  document.getElementById('wcag-fg').value = hex;
+  calcularWCAG();
+  generarPaleta('tintes');
+}
+
+function sincronizarColorDesdepicker(hex) {
+  actualizarPanelColor(hex);
+}
+window.sincronizarColorDesdepicker = sincronizarColorDesdepicker;
+
+function sincronizarColorDesdeHex(val) {
+  val = val.trim();
+  if (/^#?([0-9a-fA-F]{3}){1,2}$/.test(val)) {
+    var hex = val.startsWith('#') ? val : '#'+val;
+    actualizarPanelColor(hex);
+  }
+}
+window.sincronizarColorDesdeHex = sincronizarColorDesdeHex;
+
+function copiarValorColor(el) {
+  navigator.clipboard.writeText(el.textContent).then(function() {
+    var orig = el.textContent;
+    el.textContent = '✓ copiado';
+    setTimeout(function(){ el.textContent = orig; }, 1200);
+  });
+}
+window.copiarValorColor = copiarValorColor;
+
+function copiarTexto(txt) {
+  navigator.clipboard.writeText(txt);
+}
+window.copiarTexto = copiarTexto;
+
+// ── WCAG ──
+function luminancia(r,g,b) {
+  var f=function(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);};
+  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);
+}
+
+function calcularWCAG() {
+  var bg = hexToRgb(document.getElementById('wcag-bg').value);
+  var fg = hexToRgb(document.getElementById('wcag-fg').value);
+  if (!bg||!fg) return;
+  var l1=luminancia(fg.r,fg.g,fg.b), l2=luminancia(bg.r,bg.g,bg.b);
+  var ratio = (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05);
+  var r = Math.round(ratio*100)/100;
+  var aa_n = r>=4.5, aa_l = r>=3, aaa_n = r>=7, aaa_l = r>=4.5;
+  var bgHex = document.getElementById('wcag-bg').value;
+  var fgHex = document.getElementById('wcag-fg').value;
+  document.getElementById('wcag-result').innerHTML =
+    '<div style="font-size:0.72rem;color:#778;margin-bottom:4px">Ratio: <strong style="color:#e0cce8">'+r+':1</strong></div>'+
+    '<span class="wcag-badge '+(aa_n?'wcag-pass':'wcag-fail')+'">AA Normal '+(aa_n?'✓':'✗')+'</span>'+
+    '<span class="wcag-badge '+(aa_l?'wcag-pass':'wcag-fail')+'">AA Large '+(aa_l?'✓':'✗')+'</span>'+
+    '<span class="wcag-badge '+(aaa_n?'wcag-pass':'wcag-fail')+'">AAA Normal '+(aaa_n?'✓':'✗')+'</span>'+
+    '<span class="wcag-badge '+(aaa_l?'wcag-pass':'wcag-fail')+'">AAA Large '+(aaa_l?'✓':'✗')+'</span>'+
+    '<div class="wcag-preview" style="background:'+bgHex+';color:'+fgHex+';margin-top:8px;border:1px solid #2a2a2a">'+
+    'Aa — Preview de texto</div>';
+}
+window.calcularWCAG = calcularWCAG;
+
+// ── PALETA ──
+function generarPaleta(tipo) {
+  var hex = colorActual();
+  var rgb = hexToRgb(hex);
+  if (!rgb) return;
+  var hsl = rgbToHsl(rgb.r,rgb.g,rgb.b);
+  var colores = [];
+
+  if (tipo === 'complementario') {
+    colores = [hex, hslToHex((hsl.h+180)%360,hsl.s,hsl.l)];
+  } else if (tipo === 'analogos') {
+    colores = [hslToHex((hsl.h-30+360)%360,hsl.s,hsl.l), hex, hslToHex((hsl.h+30)%360,hsl.s,hsl.l)];
+  } else if (tipo === 'triadico') {
+    colores = [hex, hslToHex((hsl.h+120)%360,hsl.s,hsl.l), hslToHex((hsl.h+240)%360,hsl.s,hsl.l)];
+  } else if (tipo === 'tintes') {
+    for (var i=10;i<=90;i+=10) colores.push(hslToHex(hsl.h,hsl.s,i));
+  }
+
+  var grid = document.getElementById('paleta-grid');
+  grid.innerHTML = colores.map(function(c){
+    return '<div class="paleta-chip" style="background:'+c+'" data-hex="'+c.toUpperCase()+'" '+
+      'onclick="copiarTexto(\''+c+'\')" title="'+c.toUpperCase()+'"></div>';
+  }).join('');
+}
+window.generarPaleta = generarPaleta;
+
+// ── GRADIENTE ──
+function actualizarGradiente() {
+  var c1 = document.getElementById('grad-c1').value;
+  var c2 = document.getElementById('grad-c2').value;
+  var ang = document.getElementById('grad-angle').value || 135;
+  var css = 'linear-gradient('+ang+'deg, '+c1+', '+c2+')';
+  document.getElementById('grad-preview').style.background = css;
+  document.getElementById('grad-code').textContent = 'background: '+css+';';
+}
+window.actualizarGradiente = actualizarGradiente;
+
+// ── TAMAÑOS CSS ──
+function convertirSize() {
+  var val = parseFloat(document.getElementById('size-val').value);
+  var unit = document.getElementById('size-unit').value;
+  var root = parseFloat(document.getElementById('size-root').value) || 16;
+  var vwPx = parseFloat(document.getElementById('size-vw').value) || 1440;
+  if (isNaN(val)) { document.getElementById('size-result').innerHTML=''; return; }
+
+  // convertir todo a px primero
+  var px;
+  switch(unit) {
+    case 'px':  px = val; break;
+    case 'rem': px = val * root; break;
+    case 'em':  px = val * root; break;
+    case 'pt':  px = val * 1.3333; break;
+    case 'vw':  px = val * vwPx / 100; break;
+    case 'vh':  px = val * vwPx * 0.5625 / 100; break; // asume 16:9
+    case '%':   px = val * root / 100; break;
+    default:    px = val;
+  }
+
+  var fmt = function(n) { return parseFloat(n.toFixed(4)).toString(); };
+  var resultados = [
+    {u:'px',   v: fmt(px)},
+    {u:'rem',  v: fmt(px/root)},
+    {u:'em',   v: fmt(px/root)},
+    {u:'pt',   v: fmt(px/1.3333)},
+    {u:'vw',   v: fmt(px/vwPx*100)},
+    {u:'%',    v: fmt(px/root*100)},
+  ];
+
+  document.getElementById('size-result').innerHTML = resultados.map(function(r){
+    var activo = r.u===unit ? ' style="border-color:#ff339955"' : '';
+    return '<div class="size-item"'+activo+'><div class="size-item-lbl">'+r.u+'</div>'+
+      '<div class="size-item-val" onclick="copiarTexto(\''+r.v+r.u+'\')" title="Copiar">'+r.v+'</div></div>';
+  }).join('');
+}
+window.convertirSize = convertirSize;
+
+function convertirTiempo() {
+  var val = parseFloat(document.getElementById('time-val').value);
+  var unit = document.getElementById('time-unit').value;
+  if (isNaN(val)) { document.getElementById('time-result').innerHTML=''; return; }
+  var ms = unit==='ms' ? val : val*1000;
+  var s  = ms/1000;
+  document.getElementById('time-result').innerHTML =
+    '<div class="size-item"><div class="size-item-lbl">ms</div>'+
+    '<div class="size-item-val" onclick="copiarTexto(\''+ms+'ms\')" title="Copiar">'+ms+'</div></div>'+
+    '<div class="size-item"><div class="size-item-lbl">s</div>'+
+    '<div class="size-item-val" onclick="copiarTexto(\''+s+'s\')" title="Copiar">'+s+'</div></div>';
+}
+window.convertirTiempo = convertirTiempo;
+
+// ── BOX-SHADOW ──
+function actualizarShadow() {
+  var x      = document.getElementById('bs-x').value || 0;
+  var y      = document.getElementById('bs-y').value || 0;
+  var blur   = document.getElementById('bs-blur').value || 0;
+  var spread = document.getElementById('bs-spread').value || 0;
+  var color  = document.getElementById('bs-color').value;
+  var op     = Math.min(100,Math.max(0,parseInt(document.getElementById('bs-opacity').value)||20));
+  var inset  = document.getElementById('bs-inset').checked ? 'inset ' : '';
+  var rgb    = hexToRgb(color);
+  var rgba   = rgb ? 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+(op/100)+')' : color;
+  var shadow = inset+x+'px '+y+'px '+blur+'px '+spread+'px '+rgba;
+  document.getElementById('bs-box').style.boxShadow = shadow;
+  document.getElementById('bs-code').textContent = 'box-shadow: '+shadow+';';
+}
+window.actualizarShadow = actualizarShadow;
+
+// ── Init color panel ──
+var colorPanelIniciado = false;
+var _abrirPanelOrig = abrirPanel;
+abrirPanel = function(id) {
+  _abrirPanelOrig(id);
+  if (id === 'color' && !colorPanelIniciado) {
+    colorPanelIniciado = true;
+    actualizarPanelColor('#ff3399');
+    actualizarGradiente();
+    actualizarShadow();
+    convertirSize();
+    convertirTiempo();
+  }
+};
+window.abrirPanel = abrirPanel;
+
+})();
+</script>
+
+</body>
+</html>

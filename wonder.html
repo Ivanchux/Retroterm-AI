@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WONDER IV — Juego | RETROTERM.AI</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Cinzel:wght@400;700;900&display=swap');
+
+:root {
+  --bg:       #05080a;
+  --c-amber:  #ffaa00;
+  --c-gold:   #ffd060;
+  --c-cyan:   #00e5ff;
+  --c-green:  #39ff14;
+  --c-purple: #cc44ff;
+  --c-red:    #ff4444;
+  --c-blue:   #4488ff;
+  --c-pink:   #ff88aa;
+  --c-white:  #e8dfc8;
+  --c-stone:  #8a7a60;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-vt:   'VT323', monospace;
+  --font-cin:  'Cinzel', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--c-white);
+  font-family: var(--font-mono);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* ── CANVAS DE FONDO ── */
+#particle-canvas {
+  position: fixed; inset: 0; z-index: 0;
+  opacity: 0.5; pointer-events: none;
+}
+
+/* ── OVERLAY CRT ── */
+.crt-overlay {
+  position: fixed; inset: 0; z-index: 900; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+  animation: flicker 12s infinite;
+}
+@keyframes flicker {
+  0%,89%,91%,93%,100% { opacity:1; }
+  90% { opacity:0.95; } 92% { opacity:0.98; }
+}
+
+/* ── VIGNETTE ── */
+.vignette {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.75) 100%);
+}
+
+/* ══════════════════════════════════════
+   PANTALLAS
+══════════════════════════════════════ */
+.screen { display: none; position: relative; z-index: 2; min-height: 100vh; width: 100%; }
+.screen.active { display: flex; }
+
+/* ══════════════════════════════════════
+   LEVEL SELECT
+══════════════════════════════════════ */
+#screen-select {
+  flex-direction: column; align-items: center;
+  padding: 24px 14px 48px; gap: 18px;
+}
+
+.sel-header {
+  text-align: center; width: 100%; max-width: 920px;
+  border: 1px solid #5a4010;
+  box-shadow: 0 0 40px #ffaa0022, inset 0 0 60px #ffaa0005;
+  padding: 20px 32px;
+  background: linear-gradient(180deg, #0a0800 0%, #05080a 100%);
+  position: relative; overflow: hidden;
+}
+.sel-header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% -20%, #ffaa0015 0%, transparent 65%);
+}
+.sel-header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, #ffaa0044, transparent);
+}
+.sel-eyebrow {
+  font-family: var(--font-cin); font-size: 10px; letter-spacing: 6px;
+  color: #aa7010; margin-bottom: 8px; position: relative; z-index: 1;
+}
+.sel-title {
+  font-family: var(--font-cin); font-size: clamp(38px, 8vw, 72px);
+  letter-spacing: 10px; color: var(--c-gold);
+  text-shadow: 0 0 20px #ffaa00, 0 0 60px #ffaa0044, 0 2px 0 #8a5000;
+  line-height: 1; position: relative; z-index: 1;
+}
+.sel-sub {
+  font-size: 9px; letter-spacing: 3px; color: #7a5a20; margin-top: 8px;
+  position: relative; z-index: 1;
+}
+
+/* Ornamento del título */
+.sel-ornament {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; margin: 6px 0;
+}
+.sel-ornament-line {
+  height: 1px; flex: 1;
+  background: linear-gradient(90deg, transparent, #ffaa0033, #ffaa0066, #ffaa0033, transparent);
+}
+.sel-ornament-diamond {
+  color: var(--c-amber); font-size: 10px;
+  text-shadow: 0 0 8px var(--c-amber);
+}
+
+/* GRID DE MARAVILLAS */
+.sel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px; width: 100%; max-width: 920px;
+}
+
+.wonder-card {
+  border: 1px solid #2a1e08;
+  background: linear-gradient(160deg, #070a04 0%, #050803 60%, #080a07 100%);
+  padding: 16px 18px; cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  position: relative; overflow: hidden;
+}
+.wonder-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, #ffaa0010 0%, transparent 70%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.wonder-card::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, #ffaa0033, transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.wonder-card:hover { border-color: #6a4a10; box-shadow: 0 0 24px #ffaa0020, inset 0 0 30px #ffaa0008; transform: translateY(-2px); }
+.wonder-card:hover::before, .wonder-card:hover::after { opacity: 1; }
+.wonder-card:hover .wc-title { text-shadow: 0 0 16px #ffaa0099; color: var(--c-gold); }
+.wonder-card:active { transform: scale(0.98) translateY(0); }
+
+/* Locked card */
+.wonder-card.locked {
+  opacity: 0.4; cursor: not-allowed; pointer-events: none;
+}
+.wonder-card.locked::after { display: none; }
+
+.wc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; }
+.wc-num { font-size: 8px; letter-spacing: 3px; color: #3a2a0a; }
+.wc-stars { display: flex; gap: 2px; }
+.wc-star { font-size: 10px; color: #2a2010; }
+.wc-star.earned { color: var(--c-gold); text-shadow: 0 0 6px #ffaa0088; }
+
+.wc-title {
+  font-family: var(--font-cin); font-size: 20px; letter-spacing: 2px;
+  color: var(--c-amber); line-height: 1.1; margin-bottom: 3px;
+  transition: all 0.2s;
+}
+.wc-desc { font-size: 8px; letter-spacing: 1px; color: #6a5020; margin-bottom: 10px; }
+
+.wc-ascii {
+  font-family: var(--font-mono);
+  font-size: clamp(4.5px, 0.85vw, 7px);
+  line-height: 1.12; letter-spacing: 1px;
+  color: #3a2a08; white-space: pre; margin-bottom: 10px;
+  transition: color 0.25s;
+}
+.wonder-card:hover .wc-ascii { color: #6a4a14; }
+
+.wc-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+.wc-tag { font-size: 7px; letter-spacing: 2px; padding: 2px 7px; border: 1px solid #1a1208; color: #3a2808; }
+.wc-tag.diff-easy   { border-color: #1a3210; color: var(--c-green); }
+.wc-tag.diff-medium { border-color: #3a2c00; color: var(--c-amber); }
+.wc-tag.diff-hard   { border-color: #3a1800; color: #ff8844; }
+.wc-tag.diff-expert { border-color: #3a0808; color: var(--c-red); }
+.wc-tag.tag-locked  { color: #3a3020; }
+
+.sel-footer { font-size: 8px; letter-spacing: 2px; color: #2a1e08; width: 100%; max-width: 920px; text-align: center; }
+
+/* ══════════════════════════════════════
+   PANTALLA DE JUEGO
+══════════════════════════════════════ */
+#screen-game {
+  flex-direction: column; align-items: center;
+  padding: 10px 10px 24px; gap: 8px;
+}
+
+.game-layout {
+  width: 100%; max-width: 1100px;
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+}
+@media (min-width: 760px) {
+  .game-layout { flex-direction: row; align-items: flex-start; gap: 16px; }
+  .game-left   { flex: 0 0 380px; }
+  .game-right  { flex: 1; min-width: 0; display: flex; flex-direction: column; align-self: stretch; }
+}
+.game-left, .game-right { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+
+/* HEADER */
+.header {
+  width: 100%; max-width: 1100px;
+  border: 1px solid #3a2808;
+  box-shadow: 0 0 16px #ffaa0018, inset 0 0 40px #ffaa0005;
+  padding: 10px 18px;
+  background: linear-gradient(180deg, #080600 0%, #05080a 100%);
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  position: relative; overflow: hidden;
+}
+.header::after {
+  content: ''; position: absolute; bottom: 0; left: 5%; right: 5%; height: 1px;
+  background: linear-gradient(90deg, transparent, #ffaa0033, transparent);
+}
+.header-eyebrow { font-family: var(--font-cin); font-size: 8px; letter-spacing: 4px; color: #5a3808; margin-bottom: 2px; }
+.header-title {
+  font-family: var(--font-cin); font-size: 28px; letter-spacing: 6px;
+  color: var(--c-gold); text-shadow: 0 0 12px #ffaa0066, 0 1px 0 #6a3800; line-height: 1;
+}
+.header-sub { font-size: 8px; letter-spacing: 2px; color: #4a3010; }
+.header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.badge-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.badge { font-size: 8px; letter-spacing: 2px; padding: 2px 9px; border: 1px solid currentColor; }
+.badge-on  { color: var(--c-green); box-shadow: 0 0 6px #39ff1433; }
+.badge-lvl { color: var(--c-gold);  box-shadow: 0 0 6px #ffaa0033; }
+.btn-back {
+  font-family: var(--font-mono); font-size: 8px; letter-spacing: 2px;
+  padding: 3px 10px; background: transparent;
+  border: 1px solid #2a1e08; color: #4a3010; cursor: pointer; transition: all 0.14s;
+}
+.btn-back:hover { border-color: #6a4010; color: var(--c-amber); box-shadow: 0 0 6px #ffaa0022; }
+
+/* STATS */
+.stats-row { width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.stat-box {
+  border: 1px solid #1a1408; background: linear-gradient(160deg, #07060a 0%, #060a06 100%);
+  padding: 8px 5px; text-align: center; transition: border-color 0.3s, box-shadow 0.3s;
+  position: relative; overflow: hidden;
+}
+.stat-box::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, #ffaa0022, transparent);
+}
+.stat-lbl { font-size: 7px; letter-spacing: 2px; color: #4a3a1a; margin-bottom: 3px; font-family: var(--font-cin); }
+.stat-val { font-family: var(--font-cin); font-size: 28px; line-height: 1; }
+.sv-score  { color: var(--c-gold);   text-shadow: 0 0 8px #ffd06066; }
+.sv-moves  { color: var(--c-green);  text-shadow: 0 0 8px #39ff1455; }
+.sv-combo  { color: var(--c-purple); text-shadow: 0 0 8px #cc44ff55; }
+.stat-val.bump { animation: stat-bump 0.28s ease-out; }
+@keyframes stat-bump { 0%{transform:scale(1)} 45%{transform:scale(1.28)} 100%{transform:scale(1)} }
+.sv-moves.low { color: var(--c-red); text-shadow: 0 0 8px #ff444466; animation: moves-warn 0.55s infinite alternate; }
+@keyframes moves-warn { from{opacity:1} to{opacity:0.45} }
+.stat-box.warn-box { border-color: #3a0e0e; box-shadow: 0 0 10px #ff444410; }
+
+/* ── OBJETIVOS (nuevo) ── */
+.objectives-panel {
+  width: 100%; border: 1px solid #1e1a08;
+  background: linear-gradient(160deg, #060900 0%, #08060a 100%);
+  padding: 8px 12px;
+}
+.obj-title {
+  font-family: var(--font-cin); font-size: 8px; letter-spacing: 3px;
+  color: #5a4010; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.obj-title::before { content: '◆'; color: var(--c-amber); font-size: 7px; }
+.obj-list { display: flex; flex-wrap: wrap; gap: 5px; }
+.obj-item {
+  display: flex; align-items: center; gap: 5px;
+  border: 1px solid #1a1408; padding: 4px 8px;
+  font-size: 8px; letter-spacing: 1px; transition: all 0.3s;
+  background: #060904;
+}
+.obj-item.done { border-color: #1a3010; background: #07100a; }
+.obj-item.done .obj-val { color: var(--c-green); text-decoration: line-through; opacity: 0.5; }
+.obj-glyph { font-size: 13px; }
+.obj-val { font-family: var(--font-cin); color: #8a7040; }
+.obj-needed { font-size: 7px; color: #4a3a1a; }
+
+/* BOARD — estilo flotante sin cuadrícula */
+.board-wrap {
+  width: 100%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0,20,10,0.55) 0%, rgba(0,0,0,0) 80%);
+  padding: 6px; position: relative; touch-action: none;
+  border: none;
+}
+.board-wrap::before { display: none; }
+#board {
+  position: relative; width: 100%; aspect-ratio: 1;
+  user-select: none; z-index: 1;
+}
+
+/* ── CELL: sin fondo, sin borde — solo la gema flota ── */
+.cell {
+  position: absolute;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  user-select: none; -webkit-user-select: none;
+  will-change: transform, left, top; box-sizing: border-box;
+  border-radius: 50%;
+  padding: 0;
+  transition: filter 0.1s;
+}
+.cell:active { filter: brightness(1.4) saturate(1.3); }
+
+/* SVG dentro de la celda */
+.cell svg {
+  width: 88%; height: 88%;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.7));
+  transition: filter 0.15s, transform 0.15s;
+  display: block;
+}
+.cell:hover svg {
+  transform: scale(1.1);
+}
+
+/* Colores de tile (para score popups y herencia) */
+.t0 { --tc: var(--c-red);    }
+.t1 { --tc: var(--c-amber);  }
+.t2 { --tc: var(--c-cyan);   }
+.t3 { --tc: var(--c-purple); }
+.t4 { --tc: var(--c-green);  }
+.t5 { --tc: #aaff00; }
+.t6 { --tc: #ff6600; }
+
+/* SELECTED: anillo de luz sin fondo */
+.cell.selected { z-index: 10; animation: sel-pulse 0.7s ease-in-out infinite alternate; }
+.cell.selected svg { transform: scale(1.12); }
+.cell.selected.t0 svg { filter: drop-shadow(0 0 8px #ff4444) drop-shadow(0 0 16px #ff4444aa); }
+.cell.selected.t1 svg { filter: drop-shadow(0 0 8px #ffaa00) drop-shadow(0 0 16px #ffaa00aa); }
+.cell.selected.t2 svg { filter: drop-shadow(0 0 8px #00e5ff) drop-shadow(0 0 16px #00e5ffaa); }
+.cell.selected.t3 svg { filter: drop-shadow(0 0 8px #cc44ff) drop-shadow(0 0 16px #cc44ffaa); }
+.cell.selected.t4 svg { filter: drop-shadow(0 0 8px #39ff14) drop-shadow(0 0 16px #39ff14aa); }
+.cell.selected.t5 svg { filter: drop-shadow(0 0 8px #aaff00) drop-shadow(0 0 16px #aaff00aa); }
+.cell.selected.t6 svg { filter: drop-shadow(0 0 8px #ff6600) drop-shadow(0 0 16px #ff6600aa); }
+@keyframes sel-pulse { from{opacity:1} to{opacity:0.8} }
+
+/* HINT */
+.cell.hint-cell svg { animation: hint-blink 0.65s infinite alternate; }
+@keyframes hint-blink {
+  from { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+  to   { filter: drop-shadow(0 0 10px #ffaa00) drop-shadow(0 0 20px #ffaa0066); }
+}
+
+/* RUNE */
+.cell.rune svg { animation: rune-glow 1.6s infinite alternate; }
+@keyframes rune-glow {
+  from { filter: drop-shadow(0 0 4px #cc44ff44); }
+  to   { filter: drop-shadow(0 0 12px #cc44ff) drop-shadow(0 0 24px #cc44ff66); }
+}
+
+/* GEM-LINE */
+.cell.gem-line { z-index: 5; }
+.cell.gem-line svg { animation: gem-line-glow 1.4s infinite alternate; }
+@keyframes gem-line-glow {
+  from { filter: drop-shadow(0 0 6px #00e5ff) drop-shadow(0 0 2px #fff); }
+  to   { filter: drop-shadow(0 0 16px #00e5ff) drop-shadow(0 0 32px #00e5ff88) drop-shadow(0 0 4px #fff); }
+}
+
+/* GEM-AREA */
+.cell.gem-area { z-index: 5; }
+.cell.gem-area svg { animation: gem-area-glow 1.2s infinite alternate; }
+@keyframes gem-area-glow {
+  from { filter: drop-shadow(0 0 6px #ffaa00) drop-shadow(0 0 2px #fff); }
+  to   { filter: drop-shadow(0 0 20px #ffd060) drop-shadow(0 0 40px #ffaa0088) drop-shadow(0 0 5px #fff); }
+}
+
+.gem-burst {
+  position:absolute; pointer-events:none; z-index:50; border-radius:50%;
+  animation:gem-burst-anim 0.4s ease-out forwards;
+}
+@keyframes gem-burst-anim {
+  0%   { opacity:1; transform:scale(0.5); filter:brightness(4) blur(0px); }
+  50%  { opacity:0.8; transform:scale(1.3); filter:brightness(2) blur(1px); }
+  100% { opacity:0; transform:scale(2); filter:brightness(1) blur(3px); }
+}
+@keyframes pop {
+  0%   { transform:scale(1.15); opacity:1; filter:brightness(3) saturate(2); }
+  40%  { transform:scale(1.7);  opacity:0.6; filter:brightness(4) saturate(3); }
+  100% { transform:scale(0);    opacity:0; }
+}
+.cell.swap-anim { animation:swap-bounce 0.14s ease-in-out; }
+@keyframes swap-bounce { 0%{transform:scale(1)} 50%{transform:scale(0.88)} 100%{transform:scale(1)} }
+.cell.shake { animation:shake 0.36s ease-out; }
+@keyframes shake { 0%{transform:translateX(0)} 18%{transform:translateX(-6px)} 36%{transform:translateX(5px)} 54%{transform:translateX(-3px)} 72%{transform:translateX(2px)} 100%{transform:translateX(0)} }
+.cell.popping { animation: pop 0.32s ease-out forwards; pointer-events: none; }
+
+.swipe-ghost {
+  position:absolute; pointer-events:none; border-radius:50%;
+  background:rgba(255,200,50,0.12); transform:translate(-50%,-50%);
+  width:52px; height:52px; display:none; z-index:20;
+  animation:ghost-fade 0.45s forwards;
+}
+@keyframes ghost-fade { from{opacity:1;transform:translate(-50%,-50%) scale(1)} to{opacity:0;transform:translate(-50%,-50%) scale(2.2)} }
+
+/* ── POWER-UPS (NUEVO) ── */
+.powerups-panel {
+  width: 100%; border: 1px solid #1a1208;
+  background: linear-gradient(160deg, #080600 0%, #060908 100%);
+  padding: 8px 12px;
+}
+.pu-title {
+  font-family: var(--font-cin); font-size: 8px; letter-spacing: 3px;
+  color: #5a4010; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.pu-title::before { content: '⚡'; font-size: 8px; }
+.pu-list { display: flex; gap: 6px; }
+.pu-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border: 1px solid #2a1e08; background: #070500; padding: 6px 4px;
+  cursor: pointer; transition: all 0.15s; position: relative; overflow: hidden;
+}
+.pu-btn:hover:not(.pu-disabled) { border-color: #6a4010; box-shadow: 0 0 12px #ffaa0020; transform: translateY(-1px); }
+.pu-btn:active:not(.pu-disabled) { transform: scale(0.96); }
+.pu-btn.pu-active { border-color: var(--c-gold); box-shadow: 0 0 16px #ffaa0040; animation: pu-pulse 0.8s infinite alternate; }
+@keyframes pu-pulse { from{box-shadow:0 0 8px #ffaa0040} to{box-shadow:0 0 24px #ffaa0080} }
+.pu-btn.pu-disabled { opacity: 0.3; cursor: not-allowed; }
+.pu-icon { font-size: 20px; }
+.pu-name { font-size: 6px; letter-spacing: 2px; color: #6a5020; font-family: var(--font-cin); }
+.pu-count {
+  font-family: var(--font-cin); font-size: 11px; color: var(--c-gold);
+  position: absolute; top: 3px; right: 5px;
+  text-shadow: 0 0 6px #ffaa0066;
+}
+.pu-btn.pu-disabled .pu-count { color: #3a2a10; }
+
+/* LOG */
+.log-panel {
+  width: 100%; border: 1px solid #1a1408; background: #04060a;
+  padding: 8px 12px; min-height: 72px; max-height: 90px; overflow: hidden;
+}
+.log-section-title {
+  font-family: var(--font-cin); font-size: 8px; letter-spacing: 3px;
+  color: #5a4010; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.log-section-title::before { content: '◆'; font-size: 7px; }
+#log { display: flex; flex-direction: column; gap: 2px; }
+.log-line { font-size: 10px; letter-spacing: 1px; animation: log-in 0.22s ease-out; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log-line::before { content: '» '; color: #2a2010; }
+@keyframes log-in { from{opacity:0;transform:translateX(-5px)} to{opacity:1;transform:translateX(0)} }
+.lc-ok   { color: var(--c-green); }
+.lc-info { color: var(--c-cyan); }
+.lc-warn { color: var(--c-amber); }
+.lc-rune { color: var(--c-purple); }
+.lc-err  { color: var(--c-red); }
+.lc-dim  { color: #2e2a1a; }
+.lc-gold { color: var(--c-gold); }
+
+/* CONTROLS */
+.controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.btn {
+  font-family: var(--font-cin); font-size: 9px; letter-spacing: 2px;
+  padding: 10px 8px; background: transparent; border: 1px solid currentColor;
+  cursor: pointer; transition: all 0.14s;
+}
+.btn:active { opacity:0.7; transform:scale(0.97); }
+.btn-rst  { color: var(--c-red); }
+.btn-rst:hover  { box-shadow: 0 0 10px #ff444433; }
+.btn-hint { color: var(--c-cyan); }
+.btn-hint:hover { box-shadow: 0 0 10px #00e5ff33; }
+
+/* PANEL DERECHO — WONDER */
+.wonder-scene {
+  width: 100%; border: 1px solid #1e1a08;
+  background: linear-gradient(180deg, #080600 0%, #050804 100%);
+  padding: 14px 18px; position: relative; overflow: hidden;
+  flex: 1; display: flex; flex-direction: column; min-height: 200px;
+}
+.scene-bg-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0.15; pointer-events: none;
+}
+.wonder-label {
+  font-family: var(--font-cin); font-size: 8px; letter-spacing: 4px;
+  color: #5a4010; margin-bottom: 5px;
+  display: flex; align-items: center; gap: 6px; position: relative; z-index: 2;
+}
+.wonder-label::before { content: '◆'; font-size: 7px; color: var(--c-amber); }
+.wonder-name {
+  font-family: var(--font-cin); font-size: 26px; letter-spacing: 3px;
+  color: var(--c-gold); text-shadow: 0 0 10px #ffaa0055, 0 1px 0 #6a3800;
+  margin-bottom: 2px; position: relative; z-index: 2;
+}
+.wonder-desc { font-size: 8px; letter-spacing: 1px; color: #6a5020; margin-bottom: 12px; position: relative; z-index: 2; }
+
+.ascii-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 2; overflow: hidden; min-height: 80px;
+}
+#ascii-art {
+  font-family: var(--font-mono);
+  font-size: clamp(7px, 2.2vw, 13px);
+  line-height: 1.18; color: var(--c-amber);
+  text-shadow: 0 0 5px #ffaa0077; white-space: pre;
+  letter-spacing: 2px; text-align: left;
+}
+@media (min-width: 760px) { #ascii-art { font-size: clamp(11px, 1.55vw, 19px); letter-spacing: clamp(2px, 0.4vw, 5px); line-height: 1.22; } }
+@media (min-width: 1000px) { #ascii-art { font-size: clamp(14px, 1.7vw, 23px); letter-spacing: clamp(3px, 0.5vw, 6px); } }
+#ascii-art.pulse { animation: ascii-pulse 0.55s ease-out; }
+@keyframes ascii-pulse {
+  0%   { text-shadow: 0 0 5px #ffaa0077; }
+  40%  { text-shadow: 0 0 28px var(--c-gold), 0 0 56px #ffaa0088; }
+  100% { text-shadow: 0 0 5px #ffaa0077; }
+}
+
+/* BARRA DE PROGRESO */
+.prog-wrap { margin-top: 8px; position: relative; z-index: 2; }
+.prog-era-label {
+  font-family: var(--font-cin); font-size: 7px; letter-spacing: 3px;
+  color: #5a4010; margin-bottom: 5px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.prog-track { display: flex; gap: 3px; margin-bottom: 4px; }
+.prog-seg {
+  flex: 1; height: 5px; background: #0e0c06; border: 1px solid #1a1408;
+  transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+.prog-seg.lit { background: var(--c-gold); box-shadow: 0 0 6px var(--c-amber); border-color: var(--c-gold); }
+.prog-seg.lit-new { animation: seg-pop 0.65s ease-out; }
+@keyframes seg-pop {
+  0%   { box-shadow: 0 0 6px var(--c-amber); }
+  40%  { box-shadow: 0 0 22px var(--c-gold), 0 0 40px #ffaa0066; }
+  100% { box-shadow: 0 0 6px var(--c-amber); }
+}
+.prog-text { font-size: 8px; letter-spacing: 2px; color: #5a4010; }
+
+/* ── PANEL DE TIEMPO (nuevo) ── */
+.time-panel {
+  width: 100%; border: 1px solid #1a1208;
+  background: #06070a;
+  padding: 6px 12px; display: flex; align-items: center; gap: 10px;
+}
+.time-label { font-family: var(--font-cin); font-size: 7px; letter-spacing: 3px; color: #3a2808; white-space: nowrap; }
+.time-bar-wrap { flex: 1; height: 4px; background: #0e0c06; border: 1px solid #1a1408; position: relative; overflow: hidden; }
+.time-bar-fill {
+  height: 100%; background: var(--c-green);
+  transition: width 1s linear, background 0.5s;
+  box-shadow: 0 0 6px currentColor;
+}
+.time-bar-fill.warn { background: var(--c-red); }
+.time-val { font-family: var(--font-cin); font-size: 14px; color: var(--c-green); white-space: nowrap; min-width: 28px; text-align: right; }
+.time-val.warn { color: var(--c-red); animation: moves-warn 0.4s infinite alternate; }
+
+/* ── SCORE POPUP (nuevo) ── */
+.score-popup {
+  position: absolute; pointer-events: none; z-index: 60;
+  font-family: var(--font-cin); font-weight: 700;
+  animation: score-rise 0.9s ease-out forwards;
+  white-space: nowrap;
+}
+@keyframes score-rise {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  60%  { opacity: 1; transform: translateY(-40px) scale(1.15); }
+  100% { opacity: 0; transform: translateY(-70px) scale(0.9); }
+}
+
+/* OVERLAY */
+#overlay {
+  display: none; position: fixed; inset: 0; z-index: 800;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; text-align: center; padding: 24px;
+  background: radial-gradient(ellipse at 50% 40%, rgba(20,12,0,0.97) 0%, rgba(0,0,0,0.98) 100%);
+}
+#overlay.show { display: flex; animation: ov-fade 0.45s ease-out forwards; }
+@keyframes ov-fade { from{opacity:0} to{opacity:1} }
+.ov-inner {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  animation: ov-rise 0.55s cubic-bezier(0.22,1,0.36,1) both; animation-delay: 0.1s;
+  border: 1px solid #3a2808; padding: 32px 40px;
+  background: linear-gradient(180deg, #0a0800 0%, #050803 100%);
+  box-shadow: 0 0 60px #ffaa0015, inset 0 0 80px #ffaa0005;
+  position: relative;
+}
+.ov-inner::before {
+  content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+  background: linear-gradient(90deg, transparent, #ffaa0055, transparent);
+}
+@keyframes ov-rise { from{transform:translateY(28px);opacity:0} to{transform:translateY(0);opacity:1} }
+.ov-title {
+  font-family: var(--font-cin); font-size: clamp(38px, 8vw, 60px); letter-spacing: 6px;
+  color: var(--c-gold); text-shadow: 0 0 20px #ffaa00, 0 0 50px #ffaa0044, 0 2px 0 #6a3800;
+}
+.ov-sub { font-family: var(--font-cin); font-size: 10px; letter-spacing: 4px; color: #7a5a20; }
+
+.ov-stars { display: flex; gap: 8px; justify-content: center; margin: 4px 0; }
+.ov-star { font-size: 28px; color: #2a2010; transition: all 0.4s; }
+.ov-star.lit { color: var(--c-gold); text-shadow: 0 0 12px #ffaa00, 0 0 24px #ffaa0066; animation: star-pop 0.5s ease-out; }
+@keyframes star-pop { 0%{transform:scale(0.5);opacity:0} 70%{transform:scale(1.3)} 100%{transform:scale(1);opacity:1} }
+
+.ov-score {
+  font-family: var(--font-cin); font-size: 36px; color: var(--c-gold);
+  text-shadow: 0 0 12px var(--c-amber); letter-spacing: 4px;
+}
+.ov-ascii {
+  font-family: var(--font-mono); font-size: clamp(8px, 1.4vw, 11px);
+  line-height: 1.15; color: var(--c-amber); text-shadow: 0 0 10px #ffaa00aa;
+  white-space: pre; letter-spacing: 2px; opacity: 0.85;
+}
+.ov-btns { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+
+/* ── CARD DE ERA — toast flotante ── */
+#era-card {
+  display: none; position: fixed;
+  bottom: 24px; right: 20px;
+  z-index: 700; pointer-events: none;
+}
+#era-card.show {
+  display: block; pointer-events: auto;
+  animation: era-slide-in 0.45s cubic-bezier(0.22,1,0.36,1) both;
+}
+#era-card.dismiss {
+  animation: era-slide-out 0.3s ease-in forwards;
+}
+@keyframes era-slide-in {
+  from { opacity:0; transform: translateX(120%) scale(0.9); }
+  to   { opacity:1; transform: translateX(0) scale(1); }
+}
+@keyframes era-slide-out {
+  from { opacity:1; transform: translateX(0) scale(1); }
+  to   { opacity:0; transform: translateX(120%) scale(0.9); }
+}
+.era-inner {
+  border: 1px solid #5a3808;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #0e0900 0%, #050803 100%);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.85), 0 0 24px #ffaa0030, inset 0 0 30px #ffaa0008;
+  width: 230px; position: relative; overflow: hidden;
+  cursor: pointer;
+}
+.era-inner::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, #ffaa00, #ffd060, #ffaa00, transparent);
+}
+.era-inner::after {
+  content: ''; position: absolute; bottom: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, #ffaa00, #ffd060);
+  animation: era-timer 4s linear forwards;
+}
+@keyframes era-timer { from { width:100%; } to { width:0%; } }
+.era-eyebrow {
+  font-family: var(--font-cin); font-size: 7px; letter-spacing: 4px;
+  color: #6a4010; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 5px;
+}
+.era-eyebrow::before { content:'◆'; color: var(--c-amber); font-size: 6px; }
+.era-title {
+  font-family: var(--font-cin); font-size: 18px; color: var(--c-gold);
+  text-shadow: 0 0 14px #ffaa0066; letter-spacing: 2px; margin-bottom: 5px; line-height: 1.1;
+}
+.era-desc {
+  font-size: 8px; letter-spacing: 1px; color: #7a6030; margin-bottom: 10px; line-height: 1.5;
+}
+.era-bonus {
+  border: 1px solid #2a1e08; padding: 6px 10px;
+  background: #070508; display: flex; align-items: center; gap: 8px;
+}
+.era-bonus-title { font-family: var(--font-cin); font-size: 7px; letter-spacing: 2px; color: #4a3010; }
+.era-bonus-val { font-family: var(--font-cin); font-size: 13px; color: var(--c-amber); text-shadow: 0 0 8px #ffaa0055; }
+.btn-era-cont { display: none; }
+/* ── RETROTERM NAV ── */
+.rt-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  background: rgba(5, 8, 10, 0.88);
+  border-bottom: 1px solid #2a1e08;
+  backdrop-filter: blur(6px);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+}
+.rt-nav a {
+  color: #6a4010;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.rt-nav a:hover { color: #ffaa00; }
+.rt-nav .rt-sep { color: #2a1e08; margin: 0 4px; }
+.rt-nav .rt-cur { color: #ffaa0088; }
+
+/* compensar barra fija en pantallas del juego */
+.screen { padding-top: 36px; }
+@media (max-width: 480px) {
+  .rt-nav { font-size: 0.52rem; padding: 6px 10px; }
+  .screen { padding-top: 32px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+<div class="crt-overlay"></div>
+<div class="vignette"></div>
+
+<!-- ── RETROTERM BREADCRUMB ── -->
+<nav class="rt-nav" aria-label="Navegación">
+  <a href="index.html">RETROTERM.AI</a>
+  <span class="rt-sep">/</span>
+  <a href="gaming.html">GAMING</a>
+  <span class="rt-sep">/</span>
+  <span class="rt-cur">WONDER IV</span>
+</nav>
+
+<!-- ══ LEVEL SELECT ══ -->
+<div id="screen-select" class="screen active">
+  <div class="sel-header">
+    <div class="sel-eyebrow">◆ SIETE MARAVILLAS DEL MUNDO DIGITAL ◆</div>
+    <div class="sel-ornament">
+      <div class="sel-ornament-line"></div>
+      <span class="sel-ornament-diamond">◈</span>
+      <div class="sel-ornament-line"></div>
+    </div>
+    <div class="sel-title">WONDER IV</div>
+    <div class="sel-ornament">
+      <div class="sel-ornament-line"></div>
+      <span class="sel-ornament-diamond">◈</span>
+      <div class="sel-ornament-line"></div>
+    </div>
+    <div class="sel-sub">ARQUEOLOGÍA DIGITAL — ELIGE TU MARAVILLA</div>
+  </div>
+  <div class="sel-grid" id="sel-grid"></div>
+  <div class="sel-footer">◆ SELECCIONA UNA MARAVILLA PARA INICIAR LA EXPEDICIÓN ◆</div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.15em;color:#2a1e08;margin-top:10px;padding-bottom:20px;">
+    <a href="index.html" style="color:#4a3010;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#ffaa00'" onmouseout="this.style.color='#4a3010'">⬅ RETROTERM.AI HUB</a>
+    &nbsp;·&nbsp;
+    <a href="gaming.html" style="color:#4a3010;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#ffaa00'" onmouseout="this.style.color='#4a3010'">GAMING</a>
+  </div>
+</div>
+
+<!-- ══ GAME ══ -->
+<div id="screen-game" class="screen">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-eyebrow">◆ EXPEDICIÓN ACTIVA</div>
+      <div class="header-title">WONDER IV</div>
+      <div class="header-sub">ARQUEOLOGÍA DIGITAL — SERIE ALFA</div>
+    </div>
+    <div class="header-right">
+      <div class="badge-row">
+        <span class="badge badge-on">● ACTIVO</span>
+        <span class="badge badge-lvl" id="badge-lvl">LVL 01</span>
+      </div>
+      <button class="btn-back" onclick="goToSelect()">← MENÚ</button>
+    </div>
+  </div>
+
+  <div class="game-layout">
+    <div class="game-left">
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-lbl">PUNTOS</div>
+          <div class="stat-val sv-score" id="score">0</div>
+        </div>
+        <div class="stat-box" id="stat-moves-box">
+          <div class="stat-lbl">MOVS</div>
+          <div class="stat-val sv-moves" id="moves">40</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">COMBO</div>
+          <div class="stat-val sv-combo" id="combo">×1</div>
+        </div>
+      </div>
+
+      <!-- OBJETIVOS -->
+      <div class="objectives-panel">
+        <div class="obj-title">OBJETIVOS DE ERA</div>
+        <div class="obj-list" id="obj-list"></div>
+      </div>
+
+      <!-- TABLERO -->
+      <div class="board-wrap" id="board-wrap">
+        <div id="board"></div>
+        <div class="swipe-ghost" id="swipe-ghost"></div>
+      </div>
+
+      <!-- POWER-UPS -->
+      <div class="powerups-panel">
+        <div class="pu-title">PODERES ESPECIALES</div>
+        <div class="pu-list">
+          <div class="pu-btn" id="pu-bomb" onclick="activatePowerup('bomb')">
+            <span class="pu-count" id="pu-bomb-count">2</span>
+            <span class="pu-icon">💥</span>
+            <span class="pu-name">BOMBA</span>
+          </div>
+          <div class="pu-btn" id="pu-ray" onclick="activatePowerup('ray')">
+            <span class="pu-count" id="pu-ray-count">2</span>
+            <span class="pu-icon">⚡</span>
+            <span class="pu-name">RAYO</span>
+          </div>
+          <div class="pu-btn" id="pu-shuffle" onclick="activatePowerup('shuffle')">
+            <span class="pu-count" id="pu-shuffle-count">1</span>
+            <span class="pu-icon">🔀</span>
+            <span class="pu-name">REVOLVER</span>
+          </div>
+          <div class="pu-btn" id="pu-color" onclick="activatePowerup('color')">
+            <span class="pu-count" id="pu-color-count">1</span>
+            <span class="pu-icon">✨</span>
+            <span class="pu-name">AURORA</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="log-panel">
+        <div class="log-section-title">REGISTRO DE EXCAVACIÓN</div>
+        <div id="log"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-rst"  onclick="restartLevel()">⟳ REINICIAR</button>
+        <button class="btn btn-hint" onclick="doHint()">◈ SUGERIR</button>
+      </div>
+    </div>
+
+    <div class="game-right">
+      <div class="wonder-scene">
+        <canvas class="scene-bg-canvas" id="scene-canvas"></canvas>
+        <div class="wonder-label">OBJETIVO ACTIVO</div>
+        <div class="wonder-name" id="wonder-name">—</div>
+        <div class="wonder-desc" id="wonder-desc">—</div>
+        <div class="ascii-wrap">
+          <div id="ascii-art"></div>
+        </div>
+        <div class="prog-wrap">
+          <div class="prog-era-label">
+            <span id="era-label-text">ERA I</span>
+            <span id="prog-text">0 / 0</span>
+          </div>
+          <div class="prog-track" id="prog-track"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CARD DE ERA — toast -->
+<div id="era-card" onclick="dismissEraCard()">
+  <div class="era-inner">
+    <div class="era-eyebrow">NUEVA ÉPOCA DESBLOQUEADA</div>
+    <div class="era-title" id="era-title">ERA II</div>
+    <div class="era-desc" id="era-desc">Los cimientos se asientan.</div>
+    <div class="era-bonus">
+      <div class="era-bonus-title">BONUS</div>
+      <div class="era-bonus-val" id="era-bonus-val">×2 PTS</div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY FINAL -->
+<div id="overlay">
+  <div class="ov-inner">
+    <div class="ov-title" id="ov-title">COMPLETO</div>
+    <div class="ov-sub" id="ov-sub">MARAVILLA RECONSTRUIDA</div>
+    <div class="ov-stars" id="ov-stars">
+      <span class="ov-star" id="ov-s1">★</span>
+      <span class="ov-star" id="ov-s2">★</span>
+      <span class="ov-star" id="ov-s3">★</span>
+    </div>
+    <div class="ov-ascii" id="ov-ascii"></div>
+    <div class="ov-score" id="ov-score"></div>
+    <div class="ov-btns">
+      <button class="btn btn-hint" id="btn-next" onclick="nextLevel()">▶ SIGUIENTE</button>
+      <button class="btn btn-rst"                onclick="restartLevel()">⟳ REINICIAR</button>
+      <button class="btn btn-back" style="color:#4a3010;border-color:#2a1e08" onclick="goToSelect()">← MENÚ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════
+const TILES      = [{glyph:'⌬'},{glyph:'⟁'},{glyph:'◎'},{glyph:'⬡'},{glyph:'⌖'},{glyph:'⟐'},{glyph:'◈'}];
+const TILE_NAMES = ['DELTA','LAMBDA','ORBIT','HEX','TARGET','NODE','CORE'];
+const TILE_COLORS= ['#ff4444','#ffaa00','#00e5ff','#cc44ff','#39ff14','#aaff00','#ff6600'];
+const RUNES      = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ'.split('');
+
+// ── SVG GEMS ──────────────────────────────
+// Cada función devuelve el innerHTML SVG para la gema (sin <svg> externo)
+function gemSVG(t){
+  const svgs=[
+    // T0 DELTA — Rojo: triángulo facetado
+    `<svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs>
+      <linearGradient id="g0a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff8888"/><stop offset="40%" stop-color="#ff4444"/><stop offset="100%" stop-color="#880000"/></linearGradient>
+      <linearGradient id="g0b" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffaaaa" stop-opacity="0.6"/><stop offset="100%" stop-color="#ff4444" stop-opacity="0"/></linearGradient>
+    </defs>
+    <polygon points="21,4 38,36 4,36" fill="url(#g0a)" stroke="#ff2222" stroke-width="0.8"/>
+    <polygon points="21,4 12,36 4,36" fill="#aa1111" opacity="0.5"/>
+    <polygon points="21,4 30,20 38,36 21,36" fill="#ff7777" opacity="0.25"/>
+    <polygon points="21,6 28,18 21,14" fill="url(#g0b)" opacity="0.9"/>
+    <line x1="21" y1="4" x2="21" y2="36" stroke="#ff6666" stroke-width="0.5" opacity="0.4"/>
+    <line x1="5" y1="36" x2="37" y2="36" stroke="#ff8888" stroke-width="1" opacity="0.5"/></svg>`,
+    // T1 LAMBDA — Amber: rombo/diamante
+    `<svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs>
+      <linearGradient id="g1a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd060"/><stop offset="45%" stop-color="#ffaa00"/><stop offset="100%" stop-color="#885500"/></linearGradient>
+      <linearGradient id="g1b" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffe88a" stop-opacity="0.7"/><stop offset="100%" stop-color="#ffaa00" stop-opacity="0"/></linearGradient>
+    </defs>
+    <polygon points="21,3 38,21 21,39 4,21" fill="url(#g1a)" stroke="#cc8800" stroke-width="0.8"/>
+    <polygon points="21,3 4,21 21,21" fill="#663300" opacity="0.35"/>
+    <polygon points="21,3 38,21 21,21" fill="#ffd060" opacity="0.2"/>
+    <polygon points="21,5 30,17 21,14" fill="url(#g1b)" opacity="0.85"/>
+    <line x1="21" y1="3" x2="21" y2="39" stroke="#ffcc44" stroke-width="0.5" opacity="0.35"/>
+    <line x1="4" y1="21" x2="38" y2="21" stroke="#ffcc44" stroke-width="0.5" opacity="0.35"/></svg>`,
+    // T2 ORBIT — Cyan: círculo con anillos
+    `<svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs>
+      <radialGradient id="g2a" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#aaffff"/><stop offset="45%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#005566"/></radialGradient>
+      <linearGradient id="g2b" x1="30%" y1="0%" x2="70%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/></linearGradient>
+    </defs>
+    <circle cx="21" cy="21" r="16" fill="url(#g2a)" stroke="#00bbcc" stroke-width="0.8"/>
+    <ellipse cx="21" cy="21" rx="19" ry="8" fill="none" stroke="#00e5ff" stroke-width="0.8" opacity="0.5" transform="rotate(-25,21,21)"/>
+    <ellipse cx="16" cy="14" rx="5" ry="3" fill="url(#g2b)" opacity="0.7"/>
+    <circle cx="21" cy="21" r="3" fill="#aaffff" opacity="0.6"/></svg>`,
+    // T3 HEX — Purple: hexágono
+    `<svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs>
+      <linearGradient id="g3a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ee88ff"/><stop offset="45%" stop-color="#cc44ff"/><stop offset="100%" stop-color="#551188"/></linearGradient>
+      <linearGradient id="g3b" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffccff" stop-opacity="0.6"/><stop offset="100%" stop-color="#cc44ff" stop-opacity="0"/></linearGradient>
+    </defs>
+    <polygon points="21,4 36,12.5 36,29.5 21,38 6,29.5 6,12.5" fill="url(#g3a)" stroke="#9922cc" stroke-width="0.8"/>
+    <polygon points="6,12.5 21,4 21,21" fill="#ee88ff" opacity="0.18"/>
+    <polygon points="36,12.5 21,4 21,21" fill="#220055" opacity="0.3"/>
+    <polygon points="6,29.5 21,38 21,21" fill="#220055" opacity="0.35"/>
+    <polygon points="10,13 21,5 21,18 14,17" fill="url(#g3b)" opacity="0.8"/>
+    <line x1="21" y1="4" x2="21" y2="38" stroke="#dd88ff" stroke-width="0.5" opacity="0.3"/></svg>`,
+    // T4 TARGET — Green: estrella de 4 puntas
+    `<svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs>
+      <radialGradient id="g4a" cx="45%" cy="35%" r="65%"><stop offset="0%" stop-color="#aaffaa"/><stop offset="40%" stop-color="#39ff14"/><stop offset="100%" stop-color="#116600"/></radialGradient>
+      <linearGradient id="g4b" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ccffcc" stop-opacity="0.65"/><stop offset="100%" stop-color="#39ff14" stop-opacity="0"/></linearGradient>
+    </defs>
+    <path d="M21,3 L24,18 L39,21 L24,24 L21,39 L18,24 L3,21 L18,18 Z" fill="url(#g4a)" stroke="#22cc00" stroke-width="0.8"/>
+    <path d="M21,4 L23,16 L21,14 L19,16 Z" fill="url(#g4b)" opacity="0.85"/>
+    <path d="M3,21 L16,19 L14,21 L16,23 Z" fill="url(#g4b)" opacity="0.45"/>
+    <circle cx="21" cy="21" r="4" fill="#99ff66" opacity="0.55"/></svg>`,
+    // T5 NODE — Lima: octágono
+    `<svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs>
+      <linearGradient id="g5a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ddff88"/><stop offset="45%" stop-color="#aaff00"/><stop offset="100%" stop-color="#336600"/></linearGradient>
+      <linearGradient id="g5b" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#eeffbb" stop-opacity="0.65"/><stop offset="100%" stop-color="#aaff00" stop-opacity="0"/></linearGradient>
+    </defs>
+    <polygon points="14,4 28,4 38,14 38,28 28,38 14,38 4,28 4,14" fill="url(#g5a)" stroke="#77cc00" stroke-width="0.8"/>
+    <polygon points="14,4 28,4 21,21" fill="#ccff88" opacity="0.18"/>
+    <polygon points="4,14 4,28 21,21" fill="#224400" opacity="0.3"/>
+    <polygon points="28,38 14,38 21,21" fill="#224400" opacity="0.35"/>
+    <polygon points="14,5 27,5 21,16 16,15" fill="url(#g5b)" opacity="0.8"/>
+    <line x1="21" y1="4" x2="21" y2="38" stroke="#bbff44" stroke-width="0.5" opacity="0.25"/>
+    <line x1="4" y1="21" x2="38" y2="21" stroke="#bbff44" stroke-width="0.5" opacity="0.25"/></svg>`,
+    // T6 CORE — Naranja: cristal irregular
+    `<svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg"><defs>
+      <linearGradient id="g6a" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffcc88"/><stop offset="40%" stop-color="#ff6600"/><stop offset="100%" stop-color="#882200"/></linearGradient>
+      <linearGradient id="g6b" x1="0%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#ffddaa" stop-opacity="0.7"/><stop offset="100%" stop-color="#ff6600" stop-opacity="0"/></linearGradient>
+    </defs>
+    <polygon points="21,3 34,10 38,24 28,38 14,38 4,24 8,10" fill="url(#g6a)" stroke="#cc4400" stroke-width="0.8"/>
+    <polygon points="21,3 8,10 14,21" fill="#ffddaa" opacity="0.2"/>
+    <polygon points="21,3 34,10 28,21" fill="#441100" opacity="0.3"/>
+    <polygon points="14,38 4,24 14,21" fill="#441100" opacity="0.35"/>
+    <polygon points="28,38 38,24 28,21" fill="#ffcc88" opacity="0.12"/>
+    <polyline points="21,3 21,21 14,38" fill="none" stroke="#ff8833" stroke-width="0.5" opacity="0.4"/>
+    <polygon points="13,10 21,4 21,15 16,14" fill="url(#g6b)" opacity="0.9"/></svg>`,
+  ];
+  return svgs[t] || svgs[0];
+}
+
+function gemLineSVG(){
+  return `<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><defs>
+    <radialGradient id="gl1" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffffff"/><stop offset="30%" stop-color="#aaffff"/><stop offset="70%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#003344"/></radialGradient>
+    <radialGradient id="gl2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <circle cx="26" cy="26" r="22" fill="url(#gl1)" stroke="#00ddee" stroke-width="1.2"/>
+  <circle cx="26" cy="26" r="14" fill="none" stroke="#aaffff" stroke-width="0.8" opacity="0.5"/>
+  <line x1="4" y1="26" x2="48" y2="26" stroke="#ffffff" stroke-width="1.5" opacity="0.35"/>
+  <line x1="26" y1="4" x2="26" y2="48" stroke="#ffffff" stroke-width="1.5" opacity="0.35"/>
+  <circle cx="26" cy="26" r="7" fill="url(#gl2)"/>
+  <circle cx="26" cy="26" r="3" fill="#ffffff" opacity="0.85"/>
+  <line x1="26" y1="4" x2="26" y2="10" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="26" y1="42" x2="26" y2="48" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="4" y1="26" x2="10" y2="26" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <line x1="42" y1="26" x2="48" y2="26" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.8"/></svg>`;
+}
+
+function gemAreaSVG(){
+  return `<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><defs>
+    <radialGradient id="ga1" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffffff"/><stop offset="20%" stop-color="#fff0aa"/><stop offset="60%" stop-color="#ffaa00"/><stop offset="100%" stop-color="#553300"/></radialGradient>
+    <radialGradient id="ga2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/><stop offset="100%" stop-color="#ffaa00" stop-opacity="0"/></radialGradient>
+  </defs>
+  <polygon points="26,4 29.5,17 38,9.5 30.5,19.5 44,22 30.5,25.5 38,35.5 28.5,28.5 26,42 23.5,28.5 14,35.5 21.5,25.5 8,22 21.5,19.5 14,9.5 22.5,17" fill="url(#ga1)" stroke="#cc8800" stroke-width="0.8"/>
+  <circle cx="26" cy="26" r="10" fill="none" stroke="#ffe088" stroke-width="0.8" opacity="0.6"/>
+  <circle cx="26" cy="26" r="6" fill="url(#ga2)"/>
+  <circle cx="26" cy="26" r="2.5" fill="#ffffff" opacity="0.9"/>
+  <line x1="26" y1="4" x2="26" y2="9" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <line x1="26" y1="43" x2="26" y2="48" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <line x1="4" y1="26" x2="9" y2="26" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <line x1="43" y1="26" x2="48" y2="26" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/></svg>`;
+}
+
+// 3 Eras por nivel, objetivos de ficha por era
+const WONDERS = [
+  {
+    name:'LA PIRÁMIDE', desc:'Primer algoritmo registrado — 2560 a.C.',
+    year:'2560 A.C.', diff:'easy', stages:9, movs:48,
+    eras:[
+      { name:'ERA I — FUNDAMENTOS',  bonus:'×1.5 puntos', scoreBonus:1.5, desc:'Las primeras piedras son puestas. El saber abre camino.', objType:1, objCount:18 },
+      { name:'ERA II — ELEVACIÓN',   bonus:'×2 puntos',   scoreBonus:2,   desc:'La estructura emerge. Cada pieza es crucial.', objType:4, objCount:22 },
+      { name:'ERA III — CORONACIÓN', bonus:'×3 puntos',   scoreBonus:3,   desc:'La cima se alcanza. La maravilla se completa.', objType:2, objCount:28 },
+    ],
+    ascii:[
+      '            /\\            ',
+      '           /··\\           ',
+      '          /·  ·\\          ',
+      '         / ·  · \\         ',
+      '        /··    ··\\        ',
+      '       / ········ \\       ',
+      '      /············\\      ',
+      '     /______________\\     ',
+      '    /________________\\    ',
+    ]
+  },
+  {
+    name:'EL FARO', desc:'Primer compilador funcional — 1952 d.C.',
+    year:'1952 D.C.', diff:'easy', stages:9, movs:44,
+    eras:[
+      { name:'ERA I — BASE',         bonus:'×1.5 puntos', scoreBonus:1.5, desc:'El cimiento del faro se asienta sobre roca viva.', objType:0, objCount:18 },
+      { name:'ERA II — TORRE',       bonus:'×2 puntos',   scoreBonus:2,   desc:'La torre se eleva hacia el horizonte.', objType:3, objCount:22 },
+      { name:'ERA III — LUZ',        bonus:'×3 puntos',   scoreBonus:3,   desc:'La luz guía a los navegantes a través de la oscuridad.', objType:5, objCount:26 },
+    ],
+    ascii:[
+      '          *·*·*           ',
+      '          |·|·|           ',
+      '         [=====]          ',
+      '          | · |           ',
+      '         /|   |\\          ',
+      '        / | · | \\         ',
+      '       /  |   |  \\        ',
+      '      /   | · |   \\       ',
+      '     [_____________]      ',
+    ]
+  },
+  {
+    name:'LOS JARDINES', desc:'Primer sistema operativo — 1969 d.C.',
+    year:'1969 D.C.', diff:'medium', stages:12, movs:42,
+    eras:[
+      { name:'ERA I — TIERRA',       bonus:'×1.5 puntos', scoreBonus:1.5, desc:'La tierra fértil acoge las primeras semillas del saber.', objType:4, objCount:20 },
+      { name:'ERA II — TERRAZA',     bonus:'×2 puntos',   scoreBonus:2,   desc:'Las terrazas ascienden, verdes y exuberantes.', objType:1, objCount:24 },
+      { name:'ERA III — EDÉN',       bonus:'×3 puntos',   scoreBonus:3,   desc:'El jardín colgante desafía las leyes de la naturaleza.', objType:6, objCount:30 },
+    ],
+    ascii:[
+      '  ~*~ ~*~ ~*~ ~*~ ~*~    ',
+      '  |\\|  |\\|  |\\|  |\\|  |  ',
+      '  | ·  | ·  | ·  | ·  |  ',
+      '  |    |    |    |    |  ',
+      ' _|____|____|____|____|_ ',
+      '|   ___________________  |',
+      '|  |  ·  ·  ·  ·  ·   | |',
+      '|__|___________________|_|',
+      '|________________________|',
+      '   |___________________|  ',
+      '       |___________|      ',
+      '           |___|          ',
+    ]
+  },
+  {
+    name:'EL COLOSO', desc:'Primer kernel de red — 1983 d.C.',
+    year:'1983 D.C.', diff:'medium', stages:12, movs:40,
+    eras:[
+      { name:'ERA I — PEDESTAL',     bonus:'×1.5 puntos', scoreBonus:1.5, desc:'El pedestal aguarda al gigante que habrá de alzarse.', objType:2, objCount:20 },
+      { name:'ERA II — CUERPO',      bonus:'×2.5 puntos', scoreBonus:2.5, desc:'El cuerpo de bronce toma forma, imponente y eterno.', objType:0, objCount:26 },
+      { name:'ERA III — COLOSO',     bonus:'×3 puntos',   scoreBonus:3,   desc:'El gigante se yergue sobre el puerto, inmortal.', objType:5, objCount:32 },
+    ],
+    ascii:[
+      '         ·O·              ',
+      '        /|·|\\             ',
+      '       / | · \\            ',
+      '      /  |   |\\           ',
+      '     /   | · | \\          ',
+      '    /    |   |  \\         ',
+      '   /_____|·__|___\\        ',
+      '  /···············\\       ',
+      ' /·················\\      ',
+      '|_____________________|   ',
+      '|_|_________________|_|   ',
+      '  |_________________|     ',
+    ]
+  },
+  {
+    name:'EL TEMPLO', desc:'Primer motor de búsqueda — 1990 d.C.',
+    year:'1990 D.C.', diff:'hard', stages:12, movs:38,
+    eras:[
+      { name:'ERA I — COLUMNAS',     bonus:'×2 puntos',   scoreBonus:2,   desc:'Las columnas jónicas surgen del mármol puro.', objType:1, objCount:22 },
+      { name:'ERA II — FRONTÓN',     bonus:'×2.5 puntos', scoreBonus:2.5, desc:'El frontón esculpido narra la historia de los dioses.', objType:3, objCount:28 },
+      { name:'ERA III — SANTUARIO',  bonus:'×3.5 puntos', scoreBonus:3.5, desc:'El santuario interior guarda los secretos divinos.', objType:6, objCount:36 },
+    ],
+    ascii:[
+      '  /\\  /\\  /\\  /\\  /\\      ',
+      ' /  \\/  \\/  \\/  \\/  \\     ',
+      '|  ||  ||  ||  ||  ||    ',
+      '| ·|| ·|| ·|| ·|| ·||    ',
+      '|  ||  ||  ||  ||  ||    ',
+      '|__|__|__|__|__|__|__|    ',
+      '|                    |   ',
+      '|  ·   ·   ·   ·  ·  |   ',
+      '|____________________|   ',
+      '  |________________|     ',
+      '   |______________|      ',
+      '    |____________|       ',
+    ]
+  },
+  {
+    name:'LA ESTATUA', desc:'Primer protocolo P2P — 2001 d.C.',
+    year:'2001 D.C.', diff:'hard', stages:14, movs:36,
+    eras:[
+      { name:'ERA I — ARMAZÓN',      bonus:'×2 puntos',   scoreBonus:2,   desc:'El armazón interno define la pose de la eternidad.', objType:5, objCount:24 },
+      { name:'ERA II — FORMA',       bonus:'×2.5 puntos', scoreBonus:2.5, desc:'El mármol revela la figura que siempre estuvo dentro.', objType:2, objCount:30 },
+      { name:'ERA III — GLORIA',     bonus:'×4 puntos',   scoreBonus:4,   desc:'La obra maestra desafía el paso del tiempo.', objType:4, objCount:38 },
+    ],
+    ascii:[
+      '        ·(O)·             ',
+      '       /·|||·\\            ',
+      '      / ·|||· \\           ',
+      '        ·|||·             ',
+      '       / |·| \\            ',
+      '      /  | |  \\           ',
+      '     /   | |   \\          ',
+      '    /____|_|____\\         ',
+      '   /____________\\         ',
+      '  |______________|        ',
+      ' /________________\\       ',
+      '|__________________|      ',
+      ' |________________|       ',
+      '  |______________|        ',
+    ]
+  },
+  {
+    name:'LA TUMBA', desc:'Primera red neuronal masiva — 2012 d.C.',
+    year:'2012 D.C.', diff:'expert', stages:15, movs:32,
+    eras:[
+      { name:'ERA I — CÁMARA',       bonus:'×2.5 puntos', scoreBonus:2.5, desc:'La cámara sellada guarda secretos milenarios.', objType:3, objCount:26 },
+      { name:'ERA II — LABERINTO',   bonus:'×3 puntos',   scoreBonus:3,   desc:'El laberinto de pasillos confunde a los profanos.', objType:0, objCount:32 },
+      { name:'ERA III — ETERNIDAD',  bonus:'×4 puntos',   scoreBonus:4,   desc:'La eternidad se graba en la piedra para siempre.', objType:6, objCount:40 },
+    ],
+    ascii:[
+      ' ________________________ ',
+      '|  ____________________  |',
+      '| |  ________________  | |',
+      '| | |  ____________  | | |',
+      '| | | |  ________  | | | |',
+      '| | | | |  ____  | | | | |',
+      '| | | | | |    | | | | | |',
+      '| | | | | | ·· | | | | | |',
+      '| | | | |______| | | | | |',
+      '| | | |__________| | | | |',
+      '| | |______________| | | |',
+      '| |__________________| | |',
+      '|________________________|',
+      ' |_____________________|  ',
+      '   |_________________|    ',
+    ]
+  },
+  {
+    name:'EL ORÁCULO', desc:'Singularidad computacional — 2045 d.C.',
+    year:'2045 D.C.', diff:'expert', stages:15, movs:28,
+    eras:[
+      { name:'ERA I — DESPERTAR',    bonus:'×3 puntos',   scoreBonus:3,   desc:'La chispa inicial enciende la llama de la conciencia.', objType:2, objCount:28 },
+      { name:'ERA II — ASCENSIÓN',   bonus:'×3.5 puntos', scoreBonus:3.5, desc:'La mente trasciende los límites de lo humano.', objType:5, objCount:36 },
+      { name:'ERA III — SINGULARIDAD',bonus:'×5 puntos',  scoreBonus:5,   desc:'El Oráculo ve todo. El Oráculo lo sabe todo.', objType:1, objCount:44 },
+    ],
+    ascii:[
+      '      ·*·*·*·*·*·         ',
+      '     /·····[·]···\\        ',
+      '    / ·[·······]· \\       ',
+      '   / ·[·[·····]·]· \\      ',
+      '  / ·[·[·[···]·]·]· \\     ',
+      ' / ·[·[·[·[·]·]·]·]· \\    ',
+      '/·[·[·[·[·[·]·]·]·]·]·\\   ',
+      '|·[·[·[·[·[·]·]·]·]·]·|   ',
+      '|·[·[·[·[·[·]·]·]·]·]·|   ',
+      '\\·[·[·[·[·[·]·]·]·]·]/    ',
+      ' \\·[·[·[·[·]·]·]·]/       ',
+      '  \\·[·[·[·]·]·]/          ',
+      '   \\·[·[·]·]/             ',
+      '    \\·[·]/                ',
+      '     \\·/                  ',
+    ]
+  },
+];
+
+// ════════════════════════════════════════
+//  BEST SCORES (localStorage)
+// ════════════════════════════════════════
+function getBestScore(idx) {
+  try { return parseInt(localStorage.getItem('wonder_best_' + idx) || '0'); } catch(e){ return 0; }
+}
+function setBestScore(idx, s) {
+  try { localStorage.setItem('wonder_best_' + idx, s); } catch(e){}
+}
+function getBestStars(idx) {
+  try { return parseInt(localStorage.getItem('wonder_stars_' + idx) || '0'); } catch(e){ return 0; }
+}
+function setBestStars(idx, s) {
+  try { localStorage.setItem('wonder_stars_' + idx, s); } catch(e){}
+}
+
+// ════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════
+const COLS=7, ROWS=7;
+let board=[], selected=null;
+let score=0, moves=0, combo=1;
+let wonderProg=0, level=0;
+let busy=false, hintPair=[];
+let asciiLines=[], asciiRevealed=0;
+let prevProgSegs=0;
+let inputBound=false;
+
+// Eras
+let currentEra=0;
+let eraThresholds=[]; // [t1, t2] etapas en que cambia era
+let objCollected=0; // fichas del tipo objetivo recogidas esta era
+let scoreBonus=1;
+
+// Power-ups
+const PU_DEFAULTS = { bomb:2, ray:2, shuffle:1, color:1 };
+let puCounts = {...PU_DEFAULTS};
+let activePu = null; // null | 'bomb' | 'ray' | 'color'
+
+// ════════════════════════════════════════
+//  SCREENS
+// ════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goToSelect() {
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('era-card').classList.remove('show');
+  showScreen('screen-select');
+}
+
+// ════════════════════════════════════════
+//  SELECT SCREEN
+// ════════════════════════════════════════
+function buildSelectScreen() {
+  const grid = document.getElementById('sel-grid');
+  grid.innerHTML = '';
+  WONDERS.forEach((w, i) => {
+    const best   = getBestScore(i);
+    const stars  = getBestStars(i);
+    const locked = i > 0 && getBestStars(i-1) === 0;
+    const card   = document.createElement('div');
+    card.className = 'wonder-card' + (locked ? ' locked' : '');
+
+    const starHtml = [0,1,2].map(s => `<span class="wc-star${s < stars ? ' earned' : ''}">★</span>`).join('');
+
+    card.innerHTML =
+      `<div class="wc-top">` +
+        `<div class="wc-num">MARAVILLA ${String(i+1).padStart(2,'0')}</div>` +
+        `<div class="wc-stars">${starHtml}</div>` +
+      `</div>` +
+      `<div class="wc-title">${w.name}</div>` +
+      `<div class="wc-desc">${w.desc}</div>` +
+      `<div class="wc-ascii">${w.ascii.join('\n')}</div>` +
+      `<div class="wc-meta">` +
+        `<span class="wc-tag diff-${w.diff}">${diffLabel(w.diff)}</span>` +
+        `<span class="wc-tag">${w.stages} ETAPAS</span>` +
+        `<span class="wc-tag">${w.movs} MOVS</span>` +
+        `<span class="wc-tag">${w.year}</span>` +
+        (best > 0 ? `<span class="wc-tag" style="color:#ffaa0077">MEJOR: ${best}</span>` : '') +
+        (locked   ? `<span class="wc-tag tag-locked">🔒 BLOQUEADO</span>` : '') +
+      `</div>`;
+    if (!locked) card.addEventListener('click', () => startLevel(i));
+    grid.appendChild(card);
+  });
+}
+function diffLabel(d) {
+  return {easy:'FÁCIL',medium:'MEDIO',hard:'DIFÍCIL',expert:'EXPERTO'}[d]||d.toUpperCase();
+}
+
+// ════════════════════════════════════════
+//  PARTICLES
+// ════════════════════════════════════════
+const pc   = document.getElementById('particle-canvas');
+const pctx = pc.getContext('2d');
+let pnodes=[], pPulses=[];
+function resizeParticles(){ pc.width=window.innerWidth; pc.height=window.innerHeight; }
+function initParticles(){
+  resizeParticles(); pnodes=[];
+  const count=Math.floor((pc.width*pc.height)/13000);
+  for(let i=0;i<count;i++) pnodes.push({
+    x:Math.random()*pc.width, y:Math.random()*pc.height,
+    vx:(Math.random()-0.5)*0.15, vy:(Math.random()-0.5)*0.15,
+    r:Math.random()*1.6+0.3, bright:Math.random(), col:Math.floor(Math.random()*3)
+  });
+}
+function tickParticles(){
+  pctx.clearRect(0,0,pc.width,pc.height);
+  const W=pc.width, H=pc.height, LINK=80;
+  const cols=['rgba(255,170,0,','rgba(255,200,80,','rgba(200,130,0,'];
+  pnodes.forEach(n=>{
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<0)n.x=W; if(n.x>W)n.x=0; if(n.y<0)n.y=H; if(n.y>H)n.y=0;
+    n.bright=0.3+0.25*Math.sin(Date.now()*0.0008+n.x*0.01);
+    pctx.beginPath(); pctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    pctx.fillStyle=cols[n.col]+n.bright*0.65+')'; pctx.fill();
+  });
+  for(let i=0;i<pnodes.length;i++){
+    for(let j=i+1;j<pnodes.length;j++){
+      const dx=pnodes[i].x-pnodes[j].x, dy=pnodes[i].y-pnodes[j].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<LINK){
+        const a=(1-d/LINK)*0.18;
+        pctx.beginPath(); pctx.moveTo(pnodes[i].x,pnodes[i].y); pctx.lineTo(pnodes[j].x,pnodes[j].y);
+        pctx.strokeStyle=`rgba(255,170,0,${a})`; pctx.lineWidth=0.4; pctx.stroke();
+      }
+    }
+  }
+  pPulses=pPulses.filter(p=>p.life>0);
+  pPulses.forEach(p=>{
+    pctx.beginPath(); pctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pctx.strokeStyle=`rgba(${p.cr},${p.cg},${p.cb},${p.life*0.55})`; pctx.lineWidth=1; pctx.stroke();
+    p.r+=3; p.life-=0.04;
+  });
+  requestAnimationFrame(tickParticles);
+}
+function spawnPulse(x,y,cr=0,cg=229,cb=255){
+  const r=document.getElementById('board-wrap').getBoundingClientRect();
+  pPulses.push({x:r.left+x, y:r.top+y, r:4, life:1, cr,cg,cb});
+}
+
+// ════════════════════════════════════════
+//  SCENE CANVAS (fondo del panel maravilla)
+// ════════════════════════════════════════
+const sc=document.getElementById('scene-canvas');
+const sctx=sc.getContext('2d');
+function drawSceneBg(){
+  sc.width=sc.offsetWidth||300; sc.height=sc.offsetHeight||200;
+  sctx.clearRect(0,0,sc.width,sc.height);
+  // Grid base
+  sctx.strokeStyle='rgba(255,170,0,0.04)'; sctx.lineWidth=0.5;
+  const step=16;
+  for(let x=0;x<sc.width;x+=step){ sctx.beginPath();sctx.moveTo(x,0);sctx.lineTo(x,sc.height);sctx.stroke(); }
+  for(let y=0;y<sc.height;y+=step){ sctx.beginPath();sctx.moveTo(0,y);sctx.lineTo(sc.width,y);sctx.stroke(); }
+  // Radial glow
+  const grd=sctx.createRadialGradient(sc.width/2,sc.height/2,0,sc.width/2,sc.height/2,sc.width*0.7);
+  grd.addColorStop(0,'rgba(255,170,0,0.06)');
+  grd.addColorStop(1,'rgba(0,0,0,0)');
+  sctx.fillStyle=grd; sctx.fillRect(0,0,sc.width,sc.height);
+}
+
+// ════════════════════════════════════════
+//  ASCII
+// ════════════════════════════════════════
+function initAscii(){ asciiLines=WONDERS[level].ascii.slice(); asciiRevealed=0; renderAscii(); }
+function revealAsciiLine(){
+  if(asciiRevealed<asciiLines.length) asciiRevealed++;
+  renderAscii();
+  const el=document.getElementById('ascii-art');
+  el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse');
+}
+function renderAscii(){
+  const el=document.getElementById('ascii-art');
+  const revealed=asciiLines.slice(0,asciiRevealed);
+  const hidden=asciiLines.length-asciiRevealed;
+  const dim=Array(hidden).fill('· · · · · · · · · · · · ·');
+  el.textContent=[...revealed,...dim].join('\n');
+}
+
+// ════════════════════════════════════════
+//  TILE TYPES
+// ════════════════════════════════════════
+function mkTile(){ return {t:Math.floor(Math.random()*TILES.length), kind:'normal'}; }
+function isGem(tile){ return tile?.kind==='gem-line'||tile?.kind==='gem-area'; }
+
+// ════════════════════════════════════════
+//  START LEVEL
+// ════════════════════════════════════════
+function startLevel(idx){
+  level=idx; score=0; moves=WONDERS[level].movs;
+  combo=1; wonderProg=0; prevProgSegs=0;
+  selected=null; busy=false; hintPair=[];
+  activePu=null;
+  puCounts={...PU_DEFAULTS};
+
+  // Eras init
+  currentEra=0;
+  const w=WONDERS[level];
+  eraThresholds=[Math.floor(w.stages/3), Math.floor(w.stages*2/3)];
+  objCollected=0;
+  scoreBonus=w.eras[0].scoreBonus;
+
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('era-card').classList.remove('show');
+  showScreen('screen-game');
+  inputBound=false;
+  buildBoard();
+  requestAnimationFrame(()=>{ drawSceneBg(); relayoutBoard(); });
+  initAscii(); updateUI(); updateWonder(); updatePowerups(); updateObjectives();
+  log('Expedición iniciada.','dim');
+  log(`Objetivo: ${w.name}`, 'info');
+  log(`${w.eras[0].name} — activa`, 'gold');
+}
+
+function restartLevel(){ startLevel(level); }
+function nextLevel(){ if(level+1<WONDERS.length) startLevel(level+1); else goToSelect(); }
+
+// ════════════════════════════════════════
+//  ERA SYSTEM
+// ════════════════════════════════════════
+function checkEraAdvance(){
+  const w=WONDERS[level];
+  const newEra = wonderProg >= eraThresholds[1] ? 2 : wonderProg >= eraThresholds[0] ? 1 : 0;
+  if(newEra > currentEra){
+    currentEra=newEra;
+    objCollected=0;
+    scoreBonus=w.eras[currentEra].scoreBonus;
+    showEraCard(currentEra);
+  }
+}
+
+let _eraDismissTimer=null;
+function showEraCard(eraIdx){
+  const w=WONDERS[level];
+  const era=w.eras[eraIdx];
+  document.getElementById('era-title').textContent=era.name;
+  document.getElementById('era-desc').textContent=era.desc;
+  document.getElementById('era-bonus-val').textContent=era.bonus;
+  // No bloquea el juego — toast pasivo
+  const card=document.getElementById('era-card');
+  card.classList.remove('dismiss');
+  card.classList.add('show');
+  if(_eraDismissTimer) clearTimeout(_eraDismissTimer);
+  _eraDismissTimer=setTimeout(()=>dismissEraCard(), 4200);
+}
+
+function dismissEraCard(){
+  if(_eraDismissTimer){ clearTimeout(_eraDismissTimer); _eraDismissTimer=null; }
+  const card=document.getElementById('era-card');
+  card.classList.add('dismiss');
+  setTimeout(()=>{ card.classList.remove('show','dismiss'); },320);
+  updateObjectives();
+  log(`${WONDERS[level].eras[currentEra].name} — activa`,'gold');
+}
+
+// ════════════════════════════════════════
+//  POWER-UPS
+// ════════════════════════════════════════
+function activatePowerup(type){
+  if(busy) return;
+  if(puCounts[type]<=0) return;
+  if(type==='shuffle'){
+    useShuffle(); return;
+  }
+  // Toggle
+  if(activePu===type){ activePu=null; updatePowerups(); return; }
+  activePu=type;
+  updatePowerups();
+  log(`Poder activado: ${type.toUpperCase()}. Selecciona una ficha.`, 'warn');
+}
+
+function useShuffle(){
+  if(puCounts.shuffle<=0||busy) return;
+  busy=true;
+  puCounts.shuffle--;
+  const all=[];
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) all.push(board[r][c]);
+  for(let i=all.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [all[i],all[j]]=[all[j],all[i]]; }
+  let k=0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){ board[r][c]=all[k++]; syncCell(r,c); }
+  updatePowerups();
+  log('⟳ Tablero revuelto.','warn');
+  busy=false;
+}
+
+async function applyPowerupAt(r, c){
+  if(!activePu||busy) return;
+  const type=activePu; activePu=null;
+  if(puCounts[type]<=0){ updatePowerups(); return; }
+  puCounts[type]--;
+  updatePowerups();
+  busy=true;
+
+  if(type==='bomb'){
+    // 3×3 area bomb
+    const cells=[];
+    for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+      const nr=r+dr, nc=c+dc;
+      if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS) cells.push({r:nr,c:nc});
+    }
+    spawnGemBurst(cells,'#ffaa0044');
+    log(`💥 BOMBA — ${cells.length} fichas destruidas.`,'warn');
+    await wait(300);
+    const pts=cells.length*80;
+    score+=pts;
+    cells.forEach(({r,c})=>{ board[r][c]=null; cellDom[r][c]?.remove(); cellDom[r][c]=null; });
+    spawnScorePopup(r,c,pts,'#ffaa00');
+    bumpStat('score'); updateUI();
+    await wait(100);
+    dropTiles(); fillBoard(); renderBoard();
+    await wait(200);
+    const m2=findMatches();
+    if(m2.length){ await processMatches(m2); } else { busy=false; }
+
+  } else if(type==='ray'){
+    // Destroy entire row
+    const cells=[];
+    for(let cc=0;cc<COLS;cc++) cells.push({r,c:cc});
+    spawnGemBurst(cells,'#00e5ff44');
+    log(`⚡ RAYO — fila ${r+1} destruida.`,'info');
+    await wait(300);
+    const pts2=cells.length*80;
+    score+=pts2;
+    cells.forEach(({r,c})=>{ board[r][c]=null; cellDom[r][c]?.remove(); cellDom[r][c]=null; });
+    spawnScorePopup(r,Math.floor(COLS/2),pts2,'#00e5ff');
+    bumpStat('score'); updateUI();
+    await wait(100);
+    dropTiles(); fillBoard(); renderBoard();
+    await wait(200);
+    const m3=findMatches();
+    if(m3.length){ await processMatches(m3); } else { busy=false; }
+
+  } else if(type==='color'){
+    // Destroy all tiles of the tapped color
+    const ttype=board[r][c]?.t;
+    if(ttype==null){ busy=false; return; }
+    const cells2=[];
+    for(let rr=0;rr<ROWS;rr++) for(let cc=0;cc<COLS;cc++){
+      if(board[rr][cc]?.t===ttype) cells2.push({r:rr,c:cc});
+    }
+    spawnGemBurst(cells2, TILE_COLORS[ttype]+'44');
+    log(`✨ AURORA — ${cells2.length}× ${TILE_NAMES[ttype]} eliminados.`,'rune');
+    await wait(300);
+    const pts3=cells2.length*100;
+    score+=pts3;
+    cells2.forEach(({r,c})=>{ board[r][c]=null; cellDom[r][c]?.remove(); cellDom[r][c]=null; });
+    spawnScorePopup(r,c,pts3,TILE_COLORS[ttype]);
+    bumpStat('score'); updateUI();
+    await wait(100);
+    dropTiles(); fillBoard(); renderBoard();
+    await wait(200);
+    const m4=findMatches();
+    if(m4.length){ await processMatches(m4); } else { busy=false; }
+  }
+}
+
+function updatePowerups(){
+  ['bomb','ray','shuffle','color'].forEach(t=>{
+    const btn=document.getElementById('pu-'+t);
+    const cnt=document.getElementById('pu-'+t+'-count');
+    if(!btn||!cnt) return;
+    cnt.textContent=puCounts[t];
+    btn.classList.toggle('pu-active', activePu===t);
+    btn.classList.toggle('pu-disabled', puCounts[t]<=0 && t!=='shuffle');
+  });
+}
+
+function updateObjectives(){
+  const w=WONDERS[level];
+  const era=w.eras[currentEra];
+  const list=document.getElementById('obj-list');
+  if(!list) return;
+  list.innerHTML='';
+
+  // Main objective: collect N tiles of type
+  const needed=era.objCount;
+  const done=objCollected>=needed;
+  const item=document.createElement('div');
+  item.className='obj-item'+(done?' done':'');
+  item.innerHTML=
+    `<span class="obj-glyph" style="color:${TILE_COLORS[era.objType]};display:inline-flex;align-items:center;width:20px;height:20px;">${gemSVG(era.objType)}</span>`+
+    `<span class="obj-val">${TILE_NAMES[era.objType]}</span>`+
+    `<span class="obj-needed">${Math.min(objCollected,needed)} / ${needed}</span>`;
+  list.appendChild(item);
+
+  // Bonus objective: current era multiplier
+  const bonusItem=document.createElement('div');
+  bonusItem.className='obj-item';
+  bonusItem.innerHTML=
+    `<span class="obj-glyph">⚡</span>`+
+    `<span class="obj-val">${era.bonus}</span>`+
+    `<span class="obj-needed">ACTIVO</span>`;
+  list.appendChild(bonusItem);
+}
+
+// ════════════════════════════════════════
+//  SCORE POPUP
+// ════════════════════════════════════════
+function spawnScorePopup(r, c, pts, color){
+  const boardEl=document.getElementById('board');
+  const m=boardMetrics();
+  const div=document.createElement('div');
+  div.className='score-popup';
+  div.textContent='+'+pts;
+  div.style.cssText=`left:${m.left(c)}px;top:${m.top(r)-10}px;font-size:${pts>500?'16px':'12px'};color:${color};text-shadow:0 0 8px ${color};`;
+  boardEl.appendChild(div);
+  setTimeout(()=>div.remove(), 950);
+}
+
+// ════════════════════════════════════════
+//  BOARD
+// ════════════════════════════════════════
+let cellDom=[];
+let _metrics=null;
+
+function boardMetrics(){
+  if(_metrics) return _metrics;
+  const el=document.getElementById('board');
+  const W=el.offsetWidth;
+  const GAP=Math.max(2,Math.round(W*0.006));
+  const SIZE=(W-GAP*(COLS-1))/COLS;
+  _metrics={size:SIZE, gap:GAP, left:c=>c*(SIZE+GAP), top:r=>r*(SIZE+GAP)};
+  return _metrics;
+}
+function invalidateMetrics(){ _metrics=null; }
+
+function applyPos(el,r,c,animated,duration=160){
+  const m=boardMetrics();
+  el.style.width=m.size+'px'; el.style.height=m.size+'px';
+  el.style.transition=animated?`left ${duration}ms cubic-bezier(0.22,1,0.36,1), top ${duration}ms cubic-bezier(0.22,1,0.36,1)`:'none';
+  el.style.left=m.left(c)+'px'; el.style.top=m.top(r)+'px';
+}
+
+function tileClass(tile){
+  let cls=`cell t${tile.t}`;
+  if(tile.kind==='gem-line') cls+=' gem-line';
+  else if(tile.kind==='gem-area') cls+=' gem-area';
+  else if(tile.kind==='rune') cls+=' rune';
+  return cls;
+}
+function tileHTML(tile){
+  if(tile.kind==='gem-line') return gemLineSVG();
+  if(tile.kind==='gem-area') return gemAreaSVG();
+  if(tile.kind==='rune'){
+    // Rune: overlay the rune char on the base gem
+    return gemSVG(tile.t) + `<span style="position:absolute;font-size:clamp(8px,2vw,13px);color:#cc44ff;text-shadow:0 0 8px #cc44ff;pointer-events:none;">${tile.rune}</span>`;
+  }
+  return gemSVG(tile.t);
+}
+
+function makeCellEl(r,c){
+  const tile=board[r][c];
+  const div=document.createElement('div');
+  div.className=tileClass(tile); div.dataset.r=r; div.dataset.c=c;
+  div.innerHTML=tileHTML(tile);
+  applyPos(div,r,c,false);
+  return div;
+}
+
+function renderBoard(){
+  const el=document.getElementById('board');
+  el.innerHTML=''; cellDom=[]; invalidateMetrics();
+  const frag=document.createDocumentFragment();
+  for(let r=0;r<ROWS;r++){
+    cellDom[r]=[];
+    for(let c=0;c<COLS;c++){
+      const div=makeCellEl(r,c);
+      frag.appendChild(div); cellDom[r][c]=div;
+    }
+  }
+  el.appendChild(frag);
+  bindInputHandlers();
+}
+
+function syncCell(r,c){
+  const tile=board[r][c], div=cellDom[r][c];
+  if(!div||!tile) return;
+  div.className=tileClass(tile); div.dataset.r=r; div.dataset.c=c;
+  div.innerHTML=tileHTML(tile);
+}
+function getCell(r,c){ return cellDom[r]?.[c]??null; }
+function relayoutBoard(){
+  invalidateMetrics();
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(cellDom[r]?.[c]) applyPos(cellDom[r][c],r,c,false);
+}
+
+function buildBoard(){
+  board=[];
+  for(let r=0;r<ROWS;r++){ board[r]=[]; for(let c=0;c<COLS;c++) board[r][c]=mkTile(); }
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) while(hasMatchAt(r,c)) board[r][c]=mkTile();
+  renderBoard();
+}
+
+// ════════════════════════════════════════
+//  INPUT
+// ════════════════════════════════════════
+let touchStart=null;
+function bindInputHandlers(){
+  if(inputBound) return;
+  inputBound=true;
+  const boardEl=document.getElementById('board');
+
+  boardEl.addEventListener('pointerdown', e=>{
+    if(busy||moves<=0) return;
+    const cell=e.target.closest('.cell');
+    if(!cell) return;
+    e.preventDefault();
+    touchStart={r:+cell.dataset.r, c:+cell.dataset.c, x:e.clientX, y:e.clientY};
+  },{passive:false});
+
+  boardEl.addEventListener('pointerup', e=>{
+    if(!touchStart) return;
+    const dx=e.clientX-touchStart.x, dy=e.clientY-touchStart.y;
+    if(Math.sqrt(dx*dx+dy*dy)<10){
+      // Powerup tap?
+      if(activePu){ applyPowerupAt(touchStart.r, touchStart.c); }
+      else { handleTap(touchStart.r, touchStart.c); }
+    } else {
+      clearSel();
+      const {r,c}=touchStart;
+      let tr=r, tc=c;
+      if(Math.abs(dx)>Math.abs(dy)) tc=dx>0?c+1:c-1;
+      else tr=dy>0?r+1:r-1;
+      if(tr>=0&&tr<ROWS&&tc>=0&&tc<COLS) doSwap(r,c,tr,tc);
+    }
+    touchStart=null;
+  },{passive:true});
+
+  boardEl.addEventListener('pointerleave',()=>{touchStart=null;},{passive:true});
+}
+
+function handleTap(r,c){
+  clearHints();
+  if(selected===null){ selected={r,c}; getCell(r,c)?.classList.add('selected'); return; }
+  if(selected.r===r&&selected.c===c){ clearSel(); return; }
+  const dr=Math.abs(selected.r-r), dc=Math.abs(selected.c-c);
+  const pr=selected.r, pc2=selected.c;
+  clearSel();
+  if((dr===1&&dc===0)||(dr===0&&dc===1)) doSwap(pr,pc2,r,c);
+  else { selected={r,c}; getCell(r,c)?.classList.add('selected'); }
+}
+function clearSel(){ if(selected){ getCell(selected.r,selected.c)?.classList.remove('selected'); selected=null; } }
+
+// ════════════════════════════════════════
+//  SWAP
+// ════════════════════════════════════════
+async function doSwap(r1,c1,r2,c2){
+  busy=true;
+  const el1=getCell(r1,c1), el2=getCell(r2,c2);
+  const SWAP_MS=140;
+  if(el1) applyPos(el1,r2,c2,true,SWAP_MS);
+  if(el2) applyPos(el2,r1,c1,true,SWAP_MS);
+  await wait(SWAP_MS+20);
+  swap(r1,c1,r2,c2);
+  const tmp=cellDom[r1][c1]; cellDom[r1][c1]=cellDom[r2][c2]; cellDom[r2][c2]=tmp;
+  syncCell(r1,c1); syncCell(r2,c2);
+
+  const tA=board[r1][c1], tB=board[r2][c2];
+  const aIsGem=isGem(tA), bIsGem=isGem(tB);
+
+  if(aIsGem||bIsGem){
+    moves--; combo=1;
+    await activateGemSwap(r1,c1,r2,c2,tA,tB);
+    return;
+  }
+
+  const matches=findMatches();
+  if(!matches.length){
+    if(el1) applyPos(el1,r1,c1,true,SWAP_MS);
+    if(el2) applyPos(el2,r2,c2,true,SWAP_MS);
+    await wait(SWAP_MS+20);
+    swap(r1,c1,r2,c2);
+    const tmp2=cellDom[r1][c1]; cellDom[r1][c1]=cellDom[r2][c2]; cellDom[r2][c2]=tmp2;
+    syncCell(r1,c1); syncCell(r2,c2);
+    log('Sin combinacion.','err'); busy=false; return;
+  }
+  moves--; combo=1;
+  const mid=getCell(r1,c1);
+  if(mid){
+    const br=mid.getBoundingClientRect(), bw=document.getElementById('board-wrap').getBoundingClientRect();
+    spawnPulse(br.left-bw.left+br.width/2, br.top-bw.top+br.height/2);
+  }
+  await processMatches(matches);
+}
+
+async function activateGemSwap(r1,c1,r2,c2,tA,tB){
+  const aIsGem=isGem(tA), bIsGem=isGem(tB);
+  const toDestroy=new Set();
+
+  if(aIsGem&&bIsGem){
+    if(tA.kind==='gem-area'&&tB.kind==='gem-area'){
+      for(let dr=-2;dr<=2;dr++) for(let dc=-2;dc<=2;dc++){
+        const nr=r1+dr,nc=c1+dc;
+        if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS) toDestroy.add(nr*COLS+nc);
+      }
+      log('DOBLE AREA explosion 5x5!','rune');
+    } else if(tA.kind==='gem-line'&&tB.kind==='gem-line'){
+      for(let c=0;c<COLS;c++) toDestroy.add(r1*COLS+c);
+      for(let r=0;r<ROWS;r++) toDestroy.add(r*COLS+c1);
+      for(let c=0;c<COLS;c++) toDestroy.add(r2*COLS+c);
+      for(let r=0;r<ROWS;r++) toDestroy.add(r*COLS+c2);
+      log('DOBLE LINEA filas y columnas!','rune');
+    } else {
+      const gr=tA.kind==='gem-line'?r1:r2, gc=tA.kind==='gem-line'?c1:c2;
+      for(let c=0;c<COLS;c++) toDestroy.add(gr*COLS+c);
+      for(let r=0;r<ROWS;r++) toDestroy.add(r*COLS+gc);
+      for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+        const nr=gr+dr,nc=gc+dc;
+        if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS) toDestroy.add(nr*COLS+nc);
+      }
+      log('LINEA + AREA combo devastador!','rune');
+    }
+  } else {
+    const gr=aIsGem?r1:r2, gc=aIsGem?c1:c2;
+    const gem=aIsGem?tA:tB;
+    if(gem.kind==='gem-line'){
+      for(let c=0;c<COLS;c++) toDestroy.add(gr*COLS+c);
+      for(let r=0;r<ROWS;r++) toDestroy.add(r*COLS+gc);
+      log('LINEA fila y columna barridas!','info');
+    } else if(gem.kind==='gem-area'){
+      for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+        const nr=gr+dr,nc=gc+dc;
+        if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS) toDestroy.add(nr*COLS+nc);
+      }
+      log('AREA explosion 3x3!','warn');
+    }
+  }
+
+  const cells=[...toDestroy].map(k=>({r:Math.floor(k/COLS),c:k%COLS}));
+  const color=(tA?.kind==='gem-area'||tB?.kind==='gem-area')?'#ffaa0066':'#00e5ff55';
+  spawnGemBurst(cells,color);
+  cells.forEach(({r,c})=>getCell(r,c)?.classList.add('popping'));
+  await wait(340);
+
+  const pts=Math.round(cells.length*120*combo*scoreBonus);
+  score+=pts; bumpStat('score');
+  spawnScorePopup(r1,c1,pts,'#ffd060');
+  updateUI();
+
+  cells.forEach(({r,c})=>{ cellDom[r][c]?.remove(); cellDom[r][c]=null; board[r][c]=null; });
+  dropTiles(); fillBoard(); renderBoard();
+  await wait(260);
+  combo++; updateUI(); updateWonder(); checkEraAdvance();
+  const chain=findMatches();
+  if(chain.length){ await wait(80); await processMatches(chain); }
+  else {
+    combo=1; updateUI();
+    if(wonderProg>=WONDERS[level].stages){ await wait(400); showWin(); return; }
+    if(moves<=0){ await wait(400); showLose(); return; }
+    if(!hasMoves()){ log('Sin movimientos. Revolviendo.','warn'); shuffleBoard(); }
+    busy=false;
+  }
+}
+
+// ════════════════════════════════════════
+//  MATCH DETECTION
+// ════════════════════════════════════════
+function findMatches(){
+  const hits=new Set();
+  for(let r=0;r<ROWS;r++){
+    let c=0;
+    while(c<COLS){
+      const tile=board[r][c];
+      if(!tile||isGem(tile)){c++;continue;}
+      const t=tile.t;
+      let end=c+1;
+      while(end<COLS&&board[r][end]?.t===t&&!isGem(board[r][end])) end++;
+      if(end-c>=3) for(let i=c;i<end;i++) hits.add(r*COLS+i);
+      c=end;
+    }
+  }
+  for(let c=0;c<COLS;c++){
+    let r=0;
+    while(r<ROWS){
+      const tile=board[r][c];
+      if(!tile||isGem(tile)){r++;continue;}
+      const t=tile.t;
+      let end=r+1;
+      while(end<ROWS&&board[end][c]?.t===t&&!isGem(board[end][c])) end++;
+      if(end-r>=3) for(let i=r;i<end;i++) hits.add(i*COLS+c);
+      r=end;
+    }
+  }
+  return [...hits].map(k=>({r:Math.floor(k/COLS),c:k%COLS}));
+}
+
+// ════════════════════════════════════════
+//  GEM HELPERS
+// ════════════════════════════════════════
+function gemBlast(gr,gc){
+  const kind=board[gr]?.[gc]?.kind;
+  const keys=new Set();
+  if(kind==='gem-line'){ for(let c=0;c<COLS;c++) keys.add(gr*COLS+c); for(let r=0;r<ROWS;r++) keys.add(r*COLS+gc); }
+  else if(kind==='gem-area'){ for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){ const nr=gr+dr,nc=gc+dc; if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS) keys.add(nr*COLS+nc); } }
+  return keys;
+}
+function spawnGemBurst(cells,color){
+  const boardEl=document.getElementById('board'); const m=boardMetrics();
+  cells.forEach(({r,c})=>{
+    const div=document.createElement('div'); div.className='gem-burst';
+    div.style.cssText=`width:${m.size}px;height:${m.size}px;left:${m.left(c)}px;top:${m.top(r)}px;background:${color};`;
+    boardEl.appendChild(div); setTimeout(()=>div.remove(),420);
+  });
+}
+
+// ════════════════════════════════════════
+//  PROCESS MATCHES + GRAVITY
+// ════════════════════════════════════════
+async function processMatches(matches){
+  const sz=matches.length;
+  const toRemove=new Set(matches.map(({r,c})=>r*COLS+c));
+  const gemCells=matches.filter(({r,c})=>isGem(board[r]?.[c]));
+  gemCells.forEach(({r,c})=>{ gemBlast(r,c).forEach(k=>toRemove.add(k)); });
+  const removeList=[...toRemove].map(k=>({r:Math.floor(k/COLS),c:k%COLS}));
+
+  const freq={};
+  matches.forEach(({r,c})=>{ const t=board[r][c]?.t??0; freq[t]=(freq[t]||0)+1; });
+  const ttype=+Object.keys(freq).reduce((a,b)=>freq[a]>freq[b]?a:b);
+  const tname=TILE_NAMES[ttype]||'TILE';
+
+  let gemCreated=null;
+  if(sz>=5&&gemCells.length===0){
+    const pivot=matches[Math.floor(matches.length/2)];
+    gemCreated={r:pivot.r,c:pivot.c,kind:'gem-area',t:ttype};
+    toRemove.delete(pivot.r*COLS+pivot.c);
+  } else if(sz===4&&gemCells.length===0){
+    const pivot=matches[Math.floor(matches.length/2)];
+    const allSameRow=matches.every(m=>m.r===matches[0].r);
+    gemCreated={r:pivot.r,c:pivot.c,kind:'gem-line',t:ttype,axis:allSameRow?'col':'row'};
+    toRemove.delete(pivot.r*COLS+pivot.c);
+  }
+
+  const finalRemove=[...toRemove].map(k=>({r:Math.floor(k/COLS),c:k%COLS}));
+  finalRemove.forEach(({r,c})=>getCell(r,c)?.classList.add('popping'));
+  if(gemCreated){
+    const piv=getCell(gemCreated.r,gemCreated.c);
+    if(piv){ piv.style.filter='brightness(3)'; setTimeout(()=>{piv.style.filter='';},350); }
+  }
+  if(gemCells.length>0){
+    gemCells.forEach(({r,c})=>{
+      const kind=board[r][c]?.kind;
+      const color=kind==='gem-area'?'#ffaa0055':'#00e5ff44';
+      const blastCells=[...gemBlast(r,c)].map(k=>({r:Math.floor(k/COLS),c:k%COLS}));
+      spawnGemBurst(blastCells,color);
+    });
+  }
+  await wait(340);
+
+  // ── SCORE con bonus de era ──
+  const basePts=finalRemove.length*100*combo;
+  const pts=Math.round(basePts*scoreBonus);
+  score+=pts;
+  bumpStat('score');
+
+  // ── Objetivos: contar fichas del tipo requerido ──
+  const era=WONDERS[level].eras[currentEra];
+  const matchedObj=finalRemove.filter(({r,c})=>board[r][c]?.t===era.objType).length;
+  if(matchedObj>0){
+    objCollected+=matchedObj;
+    updateObjectives();
+  }
+
+  // ── Score popup ──
+  const pivR=matches[0]?.r??0, pivC=matches[0]?.c??0;
+  spawnScorePopup(pivR, pivC, pts, TILE_COLORS[ttype]);
+
+  // ── Log ──
+  const bonusTxt=scoreBonus>1?` (×${scoreBonus})`:'';
+  if(gemCells.length>0){
+    const gemType=gemCells[0]&&board[gemCells[0].r]?.[gemCells[0].c]?.kind;
+    log(`⚡ ${gemType==='gem-area'?'ÁREA':'LÍNEA'} — ${finalRemove.length}× +${pts}${bonusTxt}`,'rune');
+  } else if(gemCreated){
+    const label=gemCreated.kind==='gem-area'?'✦ GEMA ÁREA':'◉ GEMA LÍNEA';
+    log(`${label} — ${tname} +${pts}${bonusTxt}`,'warn');
+  } else if(sz>=6){
+    log(`✦ COMBO MASIVO — ${sz}× ${tname} +${pts}${bonusTxt}`,'rune');
+  } else {
+    log(`${tname} ×${sz} — +${pts}${bonusTxt}`,'ok');
+  }
+
+  // ── Wonder progress ──
+  const gained=Math.max(1,Math.floor(finalRemove.length/3));
+  const maxStages=WONDERS[level].stages;
+  prevProgSegs=wonderProg;
+  wonderProg=Math.min(maxStages, wonderProg+gained);
+  const linesPerStage=WONDERS[level].ascii.length/maxStages;
+  const targetLines=Math.ceil(wonderProg*linesPerStage);
+  while(asciiRevealed<targetLines&&asciiRevealed<WONDERS[level].ascii.length) revealAsciiLine();
+
+  // ── Place new gem — after DOM removal so it gets a fresh element ──
+  if(gemCreated){
+    board[gemCreated.r][gemCreated.c]={t:gemCreated.t,kind:gemCreated.kind};
+  }
+
+  const removingSet=toRemove;
+  const fallDist=Array.from({length:ROWS},()=>new Array(COLS).fill(0));
+  for(let c=0;c<COLS;c++){
+    let empties=0;
+    for(let r=ROWS-1;r>=0;r--){
+      if(removingSet.has(r*COLS+c)) empties++;
+      else fallDist[r][c]=empties;
+    }
+  }
+
+  finalRemove.forEach(({r,c})=>{ cellDom[r][c]?.remove(); cellDom[r][c]=null; board[r][c]=null; });
+
+  // Restore gem board entry (finalRemove may have nulled it if timing was off)
+  if(gemCreated){
+    board[gemCreated.r][gemCreated.c]={t:gemCreated.t,kind:gemCreated.kind};
+    // Build a fresh DOM element for the gem
+    const m2=boardMetrics();
+    const tile=board[gemCreated.r][gemCreated.c];
+    const gemDiv=document.createElement('div');
+    gemDiv.className=tileClass(tile);
+    gemDiv.dataset.r=gemCreated.r; gemDiv.dataset.c=gemCreated.c;
+    gemDiv.innerHTML=tileHTML(tile);
+    gemDiv.style.cssText=`width:${m2.size}px;height:${m2.size}px;left:${m2.left(gemCreated.c)}px;top:${m2.top(gemCreated.r)}px;transition:none`;
+    gemDiv.style.filter='brightness(3) saturate(2)';
+    setTimeout(()=>{ gemDiv.style.filter=''; gemDiv.style.transition='filter 0.4s'; }, 60);
+    setTimeout(()=>{ gemDiv.style.transition=''; }, 500);
+    document.getElementById('board').appendChild(gemDiv);
+    cellDom[gemCreated.r][gemCreated.c]=gemDiv;
+  }
+
+  const m=boardMetrics();
+  const DROP_MS=200;
+  const boardEl=document.getElementById('board');
+  const newDom=Array.from({length:ROWS},()=>new Array(COLS).fill(null));
+
+  for(let c=0;c<COLS;c++){
+    for(let r=0;r<ROWS;r++){
+      if(removingSet.has(r*COLS+c)) continue;
+      const el=cellDom[r][c];
+      const destR=r+fallDist[r][c];
+      if(!el) continue;
+      newDom[destR][c]=el; el.dataset.r=destR;
+      if(fallDist[r][c]>0){
+        const delay=c*8;
+        el.style.transition=`top ${DROP_MS}ms cubic-bezier(0.4,0,0.2,1) ${delay}ms`;
+        el.style.top=m.top(destR)+'px';
+        setTimeout(()=>{el.style.transition='';},DROP_MS+delay+30);
+      }
+    }
+  }
+
+  dropTiles(); fillBoard();
+
+  for(let c=0;c<COLS;c++){
+    let spawnSlot=0;
+    for(let r=0;r<ROWS;r++){
+      if(newDom[r][c]!==null) continue;
+      // Skip if this is the freshly placed gem cell
+      if(gemCreated&&gemCreated.r===r&&gemCreated.c===c){ newDom[r][c]=cellDom[r][c]; continue; }
+      const tile=board[r][c];
+      if(!tile) continue;
+      const div=document.createElement('div');
+      div.className=tileClass(tile); div.dataset.r=r; div.dataset.c=c;
+      div.innerHTML=tileHTML(tile);
+      div.style.cssText=`width:${m.size}px;height:${m.size}px;left:${m.left(c)}px;top:${m.top(-(spawnSlot+1))}px;transition:none`;
+      boardEl.appendChild(div); void div.offsetWidth;
+      const delay=c*8+spawnSlot*12;
+      div.style.transition=`top ${DROP_MS}ms cubic-bezier(0.4,0,0.2,1) ${delay}ms`;
+      div.style.top=m.top(r)+'px';
+      setTimeout(()=>{div.style.transition='';},DROP_MS+delay+30);
+      newDom[r][c]=div; spawnSlot++;
+    }
+  }
+  cellDom=newDom;
+
+  await wait(DROP_MS+60);
+  combo++; updateUI(); updateWonder();
+  checkEraAdvance();
+
+  const chain=findMatches();
+  if(chain.length){ await wait(80); await processMatches(chain); }
+  else {
+    combo=1; updateUI();
+    if(wonderProg>=maxStages){ await wait(400); showWin(); return; }
+    if(moves<=0){ await wait(400); showLose(); return; }
+    if(!hasMoves()){ log('Sin movimientos. Revolviendo.','warn'); shuffleBoard(); }
+    busy=false;
+  }
+}
+
+// ════════════════════════════════════════
+//  BOARD HELPERS
+// ════════════════════════════════════════
+function dropTiles(){
+  for(let c=0;c<COLS;c++){
+    let empty=ROWS-1;
+    for(let r=ROWS-1;r>=0;r--){ if(board[r][c]){board[empty][c]=board[r][c]; if(empty!==r)board[r][c]=null; empty--;} }
+    for(let r=empty;r>=0;r--) board[r][c]=null;
+  }
+}
+function fillBoard(){
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(!board[r][c]) board[r][c]=mkTile();
+}
+function hasMatchAt(r,c){
+  const tile=board[r][c];
+  if(!tile||tile.t===undefined||tile.t===null) return false;
+  if(isGem(tile)) return false;
+  const t=tile.t;
+  if(c>=2&&board[r][c-1]?.t===t&&!isGem(board[r][c-1])&&board[r][c-2]?.t===t&&!isGem(board[r][c-2])) return true;
+  if(r>=2&&board[r-1]?.[c]?.t===t&&!isGem(board[r-1]?.[c])&&board[r-2]?.[c]?.t===t&&!isGem(board[r-2]?.[c])) return true;
+  return false;
+}
+function hasMoves(){
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    if(c<COLS-1){swap(r,c,r,c+1); if(findMatches().length){swap(r,c,r,c+1);return true;} swap(r,c,r,c+1);}
+    if(r<ROWS-1){swap(r,c,r+1,c); if(findMatches().length){swap(r,c,r+1,c);return true;} swap(r,c,r+1,c);}
+  }
+  return false;
+}
+function swap(r1,c1,r2,c2){ const t=board[r1][c1]; board[r1][c1]=board[r2][c2]; board[r2][c2]=t; }
+
+function shuffleBoard(){
+  const all=[]; for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) all.push(board[r][c]);
+  for(let i=all.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [all[i],all[j]]=[all[j],all[i]]; }
+  let k=0; for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){ board[r][c]=all[k++]; syncCell(r,c); }
+}
+
+// ════════════════════════════════════════
+//  HINT
+// ════════════════════════════════════════
+function doHint(){
+  if(busy) return;
+  clearHints();
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    if(c<COLS-1){swap(r,c,r,c+1);if(findMatches().length){swap(r,c,r,c+1);hintPair=[`${r},${c}`,`${r},${c+1}`];applyHints();log('Movimiento sugerido.','info');return;}swap(r,c,r,c+1);}
+    if(r<ROWS-1){swap(r,c,r+1,c);if(findMatches().length){swap(r,c,r+1,c);hintPair=[`${r},${c}`,`${r+1},${c}`];applyHints();log('Movimiento sugerido.','info');return;}swap(r,c,r+1,c);}
+  }
+  log('No hay movimientos válidos.','err');
+}
+function applyHints(){ hintPair.forEach(k=>{const[r,c]=k.split(',');getCell(+r,+c)?.classList.add('hint-cell');}); }
+function clearHints(){ hintPair.forEach(k=>{const[r,c]=k.split(',');getCell(+r,+c)?.classList.remove('hint-cell');}); hintPair=[]; }
+
+// ════════════════════════════════════════
+//  UI
+// ════════════════════════════════════════
+function bumpStat(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+  setTimeout(()=>el.classList.remove('bump'),320);
+}
+function updateUI(){
+  document.getElementById('score').textContent=score;
+  const movEl=document.getElementById('moves');
+  const movBox=document.getElementById('stat-moves-box');
+  const mv=Math.max(0,moves);
+  movEl.textContent=mv;
+  if(mv<=5&&mv>0){ movEl.classList.add('low'); movBox.classList.add('warn-box'); }
+  else { movEl.classList.remove('low'); movBox.classList.remove('warn-box'); }
+  document.getElementById('combo').textContent=`×${combo}`;
+  document.getElementById('badge-lvl').textContent=`LVL ${String(level+1).padStart(2,'0')}`;
+  if(combo>1) bumpStat('combo');
+}
+function updateWonder(){
+  const w=WONDERS[level];
+  document.getElementById('wonder-name').textContent=w.name;
+  document.getElementById('wonder-desc').textContent=w.desc;
+  const eraName=w.eras[currentEra]?.name||`ERA ${currentEra+1}`;
+  document.getElementById('era-label-text').textContent=eraName;
+  document.getElementById('prog-text').textContent=`${wonderProg} / ${w.stages}`;
+  const track=document.getElementById('prog-track');
+  track.innerHTML='';
+  for(let i=0;i<w.stages;i++){
+    const s=document.createElement('div');
+    const isLit=i<wonderProg, isNew=i>=prevProgSegs&&i<wonderProg;
+    // Color segment by era
+    const eraColor= i<eraThresholds[0] ? '#ffaa00' : i<eraThresholds[1] ? '#cc44ff' : '#00e5ff';
+    s.className='prog-seg'+(isLit?' lit':'')+(isNew?' lit-new':'');
+    if(isLit) s.style.background=eraColor, s.style.boxShadow=`0 0 6px ${eraColor}`, s.style.borderColor=eraColor;
+    track.appendChild(s);
+  }
+}
+
+// ════════════════════════════════════════
+//  OVERLAYS
+// ════════════════════════════════════════
+function calcStars(){
+  const w=WONDERS[level];
+  const maxMovs=w.movs;
+  const movsLeft=Math.max(0,moves);
+  if(wonderProg>=w.stages){
+    if(movsLeft>=Math.floor(maxMovs*0.4)) return 3;
+    if(movsLeft>=Math.floor(maxMovs*0.15)) return 2;
+    return 1;
+  }
+  return 0;
+}
+
+async function showWin(){
+  const w=WONDERS[level];
+  const stars=calcStars();
+  const best=getBestScore(level);
+  if(score>best) setBestScore(level, score);
+  const prevStars=getBestStars(level);
+  if(stars>prevStars) setBestStars(level, stars);
+
+  document.getElementById('ov-title').textContent='COMPLETO';
+  document.getElementById('ov-sub').textContent=`${w.name} — RECONSTRUIDA`;
+  document.getElementById('ov-ascii').textContent=w.ascii.join('\n');
+  document.getElementById('ov-score').textContent=`${score} PTS`;
+  document.getElementById('btn-next').style.display=(level+1<WONDERS.length)?'':'none';
+
+  // Reset stars
+  ['ov-s1','ov-s2','ov-s3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.add('show');
+
+  // Animate stars with delay
+  await wait(600);
+  for(let i=0;i<stars;i++){
+    await wait(320);
+    document.getElementById(['ov-s1','ov-s2','ov-s3'][i]).classList.add('lit');
+  }
+  buildSelectScreen(); // refresh best scores
+}
+
+function showLose(){
+  document.getElementById('ov-title').textContent='EXPEDICIÓN FALLIDA';
+  document.getElementById('ov-sub').textContent='MOVIMIENTOS AGOTADOS — REINICIO REQUERIDO';
+  document.getElementById('ov-ascii').textContent='';
+  document.getElementById('ov-score').textContent=`${score} PTS`;
+  document.getElementById('btn-next').style.display='none';
+  ['ov-s1','ov-s2','ov-s3'].forEach(id=>document.getElementById(id).classList.remove('lit'));
+  document.getElementById('overlay').classList.add('show');
+}
+
+// ════════════════════════════════════════
+//  LOG
+// ════════════════════════════════════════
+function log(msg,cls='dim'){
+  const el=document.getElementById('log');
+  const line=document.createElement('div');
+  line.className=`log-line lc-${cls}`; line.textContent=msg;
+  el.appendChild(line);
+  while(el.children.length>4) el.removeChild(el.firstChild);
+}
+
+function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// ════════════════════════════════════════
+//  BOOT
+// ════════════════════════════════════════
+window.addEventListener('resize',()=>{ resizeParticles(); drawSceneBg(); invalidateMetrics(); relayoutBoard(); });
+initParticles();
+tickParticles();
+buildSelectScreen();
+</script>
+<script src="accesibilidad.js"></script>
+</body>
+</html>

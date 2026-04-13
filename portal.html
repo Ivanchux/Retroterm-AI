@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Portal interactivo RETROTERM.AI con articulos, minijuegos y contenido secreto.">
+<meta property="og:title" content="Portal — RETROTERM.AI">
+<meta property="og:description" content="Portal interactivo con contenido secreto, puzzles y módulos internos del sistema RETROTERM.AI.">
+<meta property="og:image" content="https://ivanchux.github.io/Imagenes/retroterm_ai.jpg">
+<meta property="og:url" content="https://ivanchux.github.io/portal.html">
+<meta name="robots" content="index,follow">
+<title>RETROTERM.AI — PORTAL</title>
+
+<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="accesibilidad.css">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<!-- Breadcrumbs JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Inicio",
+      "item": "https://ivanchux.github.io/portal.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Logs",
+      "item": "https://ivanchux.github.io/portal.html#logs"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Core",
+      "item": "https://ivanchux.github.io/portal.html#core"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Restricted",
+      "item": "https://ivanchux.github.io/portal.html#restricted"
+    }
+  ]
+}
+</script>
+
+<!-- WebApplication JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Retroterm.ai – Portal Interactivo",
+  "url": "https://ivanchux.github.io/portal.html",
+  "description": "Sección interactiva tipo terminal retro con minijuegos, puzzles y contenido oculto dentro del ecosistema Retroterm.ai.",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web",
+  "author": {
+    "@type": "Person",
+    "name": "Iván Brihuega Crespo"
+  }
+}
+</script>
+
+<style>
+/* GENERAL */
+body {
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  margin: 0; padding: 0;
+  scroll-behavior: smooth;
+}
+
+h1, h2{ 
+  text-shadow: 0 0 6px #00ff66; 
+}
+
+/* PANTALLAS */
+.pantalla {
+  display: none;
+  width: 90%;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  background: radial-gradient(circle at center, #001800 0%, #000 80%);
+}
+.pantalla.activa{ 
+  display: block; 
+}
+.seccion{ 
+  opacity: 0; 
+  animation: fadeIn 1s forwards; 
+}
+@keyframes fadeIn{ to { opacity: 1; } }
+
+/* BREADCRUMBS */
+.silo-breadcrumb{ 
+  margin-bottom: 15px; 
+  font-size: 0.9rem; 
+}
+.silo-breadcrumb a{ 
+  color: #00ff66; 
+  text-decoration: none; 
+}
+.silo-breadcrumb .sep{ 
+  margin: 0 5px; 
+}
+.silo-breadcrumb .actual{ 
+  color: #66ffb3; 
+}
+
+/* SILO MENU */
+.silo-menu {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.silo-menu a {
+  padding: 8px 18px;
+  border: 1px solid #00ff66;
+  border-radius: 5px;
+  background: rgba(0, 20, 0, 0.6);
+  color: #00ff66;
+  text-decoration: none;
+  transition: 0.3s;
+}
+.silo-menu a:hover{ 
+  background: #00ff66; 
+  color: #000; 
+  box-shadow: 0 0 10px #00ff66; 
+}
+
+/* MINI PUZZLE */
+#puzzle {
+  background: #001a00;
+  border: 2px solid #00ff66;
+  padding: 10px;
+  margin-top: 20px;
+  text-align: center;
+}
+#puzzle input {
+  background: #000;
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 5px 8px;
+  width: 60px;
+  font-family: 'Courier New', monospace;
+}
+#puzzle button {
+  padding: 5px 10px;
+  margin-left: 5px;
+  background: #00ff66;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+}
+#puzzle button:hover{ 
+  box-shadow: 0 0 6px #00ff66; 
+}
+#puzzle .msg{
+   margin-top: 10px; 
+   color: #66ffb3; 
+  }
+
+/* ARTICULOS HORIZONTALES */
+.core-articles-horizontal{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.core-articles-horizontal .articulo{
+  width: 280px;
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #00ff66;
+  padding: 15px;
+  box-shadow: 0 0 10px #00ff66;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+.core-articles-horizontal .articulo table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.core-articles-horizontal .articulo table,
+.core-articles-horizontal .articulo th,
+.core-articles-horizontal .articulo td{
+  border: 1px solid #00ff66;
+}
+.core-articles-horizontal .articulo th,
+.core-articles-horizontal .articulo td {
+  padding: 5px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+/* ARTICULO TURCO — ancho completo */
+.articulo-turco {
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #00ff66;
+  padding: 15px 20px;
+  box-shadow: 0 0 10px #00ff66;
+  border-radius: 8px;
+  margin-top: 20px;
+  line-height: 1.8;
+  font-size: 0.9rem;
+}
+.articulo-turco h3 {
+  color: #66ffb3;
+  margin-bottom: 10px;
+}
+.articulo-turco p{ 
+  color: #ccc; 
+  margin-bottom: 10px; 
+}
+.articulo-turco .fecha-clave {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+/* LOG ENTRIES */
+.log-entry {
+  border-left: 2px solid #003300;
+  padding: 6px 12px;
+  margin: 8px 0;
+  font-size: 0.82rem;
+  color: #66ffb3;
+}
+.log-entry .log-time{ 
+  color: #1a5a2a; 
+  margin-right: 10px; 
+}
+.log-entry .log-warn{ 
+  color: #ffaa00; 
+}
+.log-entry .log-ok{ 
+  color: #00ff66; 
+}
+.log-entry .log-hint{ 
+  color: #00ffff; 
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .pantalla {
+    width: 96%;
+    padding: 16px 14px;
+    margin: 20px auto;
+  }
+  .core-articles-horizontal { gap: 14px; }
+  .core-articles-horizontal .articulo { width: calc(50% - 7px); }
+  .silo-menu { gap: 10px; }
+}
+
+@media (max-width: 600px) {
+  .pantalla { width: 97%; padding: 14px 12px; margin: 12px auto; }
+  .core-articles-horizontal .articulo { width: 100%; max-width: 340px; }
+  .silo-menu a { padding: 7px 14px; font-size: 0.85rem; }
+  .silo-breadcrumb { font-size: 0.78rem; }
+  .articulo-turco { padding: 12px 14px; font-size: 0.85rem; }
+  .log-entry { font-size: 0.76rem; }
+}
+
+@media (max-width: 480px){
+  .pantalla { width: 100%; margin: 8px auto; border-left: none; border-right: none; }
+  .core-articles-horizontal{
+    flex-direction: column;
+    align-items: center;
+  }
+  .core-articles-horizontal .articulo{
+    width: 100%;
+    max-width: none;
+  }
+  .silo-menu {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .silo-menu a { text-align: center; }
+  #puzzle input { width: 52px; }
+  #puzzle button { padding: 5px 8px; font-size: 0.8rem; }
+  .articulo-turco { padding: 10px 10px; }
+  .log-entry { padding: 5px 8px; font-size: 0.72rem; }
+  .silo-breadcrumb { font-size: 0.7rem; word-break: break-word; }
+}
+
+
+  .activa{ 
+    display: block !important; 
+    opacity: 1 !important; }
+
+
+
+  /* ── CANVAS FONDO ─── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  /* fondo transparente sobre canvas */
+  .pantalla, .pantalla-wide {
+    background: transparent !important;
+    border-color: #00ff6633 !important;
+    box-shadow: 0 0 15px #00ff6622 !important;
+  }
+  </style>
+
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+
+<!-- INICIO -->
+<section id="inicio" class="pantalla seccion activa">
+  <nav class="silo-breadcrumb"><span class="actual">INICIO</span></nav>
+  <h1>INICIO</h1>
+  <p>Zona interna no documentada. Explora los módulos y descubre secretos.</p>
+
+  <div class="core-articles-horizontal">
+    <article class="articulo">
+      <h2>🖼 Bienvenido a Retroterm.ai</h2>
+      <p>Explora el universo retrofuturista inspirado en terminales clásicas y juegos tipo Fallout.</p>
+      <video preload="none"  src="Videos/video_inicio.mp4" autoplay muted loop playsinline style="width:100%; border-radius:8px;"></video>
+    </article>
+
+    <article class="articulo">
+      <h2>🎮 Minijuegos y Puzzles</h2>
+      <p>Encuentra minijuegos interactivos, códigos secretos y contenido oculto dentro del sistema.</p>
+      <video preload="none"  src="Videos/video_maquina.mp4" autoplay muted loop playsinline style="width:100%; border-radius:8px;"></video>
+    </article>
+  </div>
+
+  <!-- Artículo Turco Mecánico con pista -->
+  <div class="articulo-turco">
+    <h2>♟ CURIOSIDAD — El Turco Mecánico</h2>
+    <p>En <span class="fecha-clave">1770</span>, el inventor húngaro Wolfgang von Kempelen presentó ante la corte de la emperatriz María Teresa de Austria una de las mayores ilusiones tecnológicas de la historia: el <strong>Turco Mecánico</strong>, un autómata aparentemente capaz de jugar al ajedrez y vencer a casi cualquier rival humano.</p>
+    <p>La máquina consistía en un maniquí vestido de turbante y ropajes otomanos, sentado frente a un tablero de ajedrez sobre un gran gabinete de madera. Von Kempelen abría los cajones del mecanismo para demostrar públicamente su complejidad interna — engranajes, palancas, cilindros — convenciendo al espectador de que todo era pura mecánica.</p>
+    <p>Durante más de 80 años el Turco viajó por Europa y América, derrotando a figuras como Napoleón Bonaparte o Benjamin Franklin. El secreto era más humano que mecánico: dentro del gabinete se ocultaba un maestro de ajedrez que controlaba los movimientos mediante un sistema de imanes e iluminación de velas.</p>
+    <p>El Turco fue destruido en un incendio en <span class="fecha-clave">1854</span>. Su legado inspiró directamente los primeros debates sobre inteligencia artificial y máquinas pensantes. Edgar Allan Poe escribió un ensayo intentando desentrañar su mecanismo. Charles Babbage lo estudió antes de diseñar su máquina analítica.</p>
+
+    <div style="text-align:center; margin:15px 0;">
+  <img src="Imagenes/turco.png" alt="El Turco Mecánico de Kempelen" style="max-width:100%; border:1px solid #00ff66; box-shadow:0 0 10px #00ff66;">
+  <p style="font-size:0.75rem; color:#66ffb3; margin-top:6px;">Grabado original del Turco Mecánico, 1783.</p>
+</div>
+
+    <p style="color:#66ffb3; font-size:0.8rem; margin-top:12px;">> SISTEMA: archivo relacionado desbloqueado en LOGS. Introduce el año de su presentación.</p>
+  </div>
+
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#logs">LOGS</a>
+  </div>
+</section>
+
+<!-- ===== LOGS ===== -->
+<section id="logs" class="pantalla seccion">
+  <nav class="silo-breadcrumb">
+    <a href="#inicio">INICIO</a> <span class="sep">></span>
+    <span class="actual">LOGS</span>
+  </nav>
+  <h1>SYSTEM LOGS</h1>
+  <p>Registros del sistema. Algunos archivos requieren autorización.</p>
+
+  <div class="log-entry"><span class="log-time">[2025-09-12 09:14]</span> <span class="log-ok">SISTEMA INICIADO</span> — retroterm.ai v0.1 cargado correctamente.</div>
+  <div class="log-entry"><span class="log-time">[2025-10-20 09:15]</span> <span class="log-ok">MÓDULO EDITOR</span> — CODE_CRT v0.3 operativo.</div>
+  <div class="log-entry"><span class="log-time">[2025-11-15 11:32]</span> <span class="log-ok">MÓDULO RED</span> — 5 nodos indexados correctamente.</div>
+  <div class="log-entry"><span class="log-time">[2025-12-03 18:07]</span> <span class="log-warn">ADVERTENCIA</span> — Acceso no autorizado detectado en sector /restricted.</div>
+  <div class="log-entry"><span class="log-time">[2026-01-15 22:41]</span> <span class="log-ok">ARCHIVO DESBLOQUEADO</span> — turco_v1.classified añadido al sistema.</div>
+  <div class="log-entry"><span class="log-time">[2026-03-01 10:00]</span> <span class="log-hint">PISTA</span> — El código de acceso es el año en que todo empezó. La respuesta está en INICIO.</div>
+  <div class="log-entry"><span class="log-time">[2026-04-04 10:01]</span> <span class="log-warn">ACCESO RESTRINGIDO</span> — Se requiere código de 4 dígitos para continuar.</div>
+
+  <div id="puzzle">
+    <p>Introduce el código secreto:</p>
+    <input type="text" id="codigo" maxlength="4" placeholder="____">
+    <button onclick="verificarCodigo()">✓</button>
+    <div class="msg" id="msgPuzzle"></div>
+  </div>
+
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#inicio">⬅ INICIO</a>
+    <a href="#core">IR A CORE</a>
+  </div>
+</section>
+
+<!-- ===== CORE ===== -->
+<section id="core" class="pantalla seccion">
+  <nav class="silo-breadcrumb">
+    <a href="#inicio">INICIO</a>
+    <span class="sep">></span>
+    <a href="#logs">LOGS</a>
+    <span class="sep">></span>
+    <span class="actual">CORE</span>
+  </nav>
+
+  <h1>CORE MODULE</h1>
+  <p>Bienvenido al núcleo del sistema RETROTERM.AI. Aquí se encuentran los datos y recursos principales.</p>
+
+  <div class="core-articles-horizontal">
+    <article class="articulo">
+      <h2>📝 Historia del Sistema</h2>
+      <p>Retroterm.ai nace como un entorno retrofuturista inspirado en terminales clásicas y sistemas tipo Fallout. Desarrollado por Iván Brihuega como proyecto ASIR 2025.</p>
+      <div class="imagen-articulo">
+        <img src="Imagenes/terminal.jpg" alt="Terminal estilo Fallout" loading="lazy">
+      </div>
+    </article>
+
+    <article class="articulo">
+      <h2>📊 Estadísticas del Proyecto</h2>
+      <p>Datos internos sobre la actividad del sistema.</p>
+      <table>
+        <thead>
+          <tr><th>Módulo</th><th>Usuarios</th><th>Proyectos</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Editor</td><td>120</td><td>45</td></tr>
+          <tr><td>IA</td><td>80</td><td>30</td></tr>
+          <tr><td>Gaming</td><td>65</td><td>20</td></tr>
+          <tr><td>Articulos</td><td>70</td><td>25</td></tr>
+          <tr><td>Turco Mecánico</td><td>Unknown</td><td>Unknown</td></tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="articulo">
+      <h2>🗂 Estructura del Proyecto</h2>
+      <p>Archivos principales del sistema RETROTERM.AI.</p>
+      <table>
+        <thead>
+          <tr><th>Archivo</th><th>Función</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>index.html</td><td>HUB principal</td></tr>
+          <tr><td>portal.html</td><td>Portal secreto</td></tr>
+          <tr><td>editor.html</td><td>CODE_CRT v0.3</td></tr>
+          <tr><td>gaming.html</td><td>Selección de videojuegos</td></tr>
+          <tr><td>articulos.html</td><td>Articulos variados</td></tr>
+          <tr><td>asistente.html</td><td>Asistente IA "ARIA"</td></tr>
+          <tr><td>red.html</td><td>Red de nodos</td></tr>
+          <tr><td>turco.html</td><td>Clasificado</td></tr>
+        </tbody>
+      </table>
+    </article>
+  </div>
+
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#inicio">⬅ INICIO</a>
+    <a href="#restricted">ACCESO RESTRINGIDO</a>
+  </div>
+</section>
+
+<!-- ===== RESTRICTED ===== -->
+<section id="restricted" class="pantalla seccion">
+  <nav class="silo-breadcrumb">
+    <a href="#inicio">INICIO</a> <span class="sep">></span>
+    <a href="#logs">LOGS</a> <span class="sep">></span>
+    <a href="#core">CORE</a> <span class="sep">></span>
+    <span class="actual">RESTRICTED</span>
+  </nav>
+  <h1>ACCESS GRANTED</h1>
+  <p>Zona clasificada. Felicidades, has desbloqueado el contenido secreto.</p>
+  <p style="color:#66ffb3; font-size:0.85rem;">El Turco Mecánico lleva siglos esperando un rival digno. Ahora es tu turno.</p>
+
+  <div style="text-align:center;">
+    <a href="turco.html" style="display:inline-block; margin-top:20px; padding:8px 18px; border:1px solid #00ffff; color:#00ffff; font-family:'Courier New',monospace; text-decoration:none; transition:0.3s;" onmouseover="this.style.background='#00ffff';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#00ffff'">♟ TURCO_v1 — ACCESO CONCEDIDO</a>
+  </div>
+
+  <div class="silo-menu">
+    <a href="index.html">🏠 HUB</a>
+    <a href="#inicio">⬅ INICIO</a>
+  </div>
+</section>
+
+<script>
+//  NAVEGACIÓN HASH 
+function mostrarSeccion(id) {
+  document.querySelectorAll('.pantalla').forEach(s => s.classList.remove('activa'));
+  const seccion = document.getElementById(id);
+  if (seccion) seccion.classList.add('activa');
+}
+
+window.addEventListener('load', () => {
+  const hash = location.hash ? location.hash.substring(1) : 'inicio';
+  mostrarSeccion(hash);
+});
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.substring(1);
+  mostrarSeccion(hash);
+});
+
+//  MINI PUZZLE 
+function verificarCodigo() {
+  const codigo = document.getElementById('codigo').value;
+  const msg = document.getElementById('msgPuzzle');
+  if (codigo === "1770") {
+    msg.textContent = "Código correcto. Acceso al CORE concedido.";
+    msg.style.color = "#00ffff";
+    setTimeout(() => { location.hash = 'core'; }, 1000);
+  } else {
+    msg.textContent = "Código incorrecto. La respuesta está más cerca de lo que crees.";
+    msg.style.color = "#ff5555";
+  }
+}
+</script>
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var STAR_COUNT=90, WAVE_COUNT=5, CONN_DIST=180, SPEED=0.18, WAVE_SPEED=0.0004;
+  var COLOR_NODE_A="rgba(0, 255, 102,", COLOR_NODE_B="rgba(255, 176, 0,";
+  var COLOR_LINE="rgba(0, 220, 90,", COLOR_WAVE="rgba(255, 176, 0,";
+  var stars=[], waves=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(var i=0;i<STAR_COUNT;i++){
+      var a=Math.random()>0.75;
+      stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?COLOR_NODE_B:COLOR_NODE_A,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});
+    }
+  }
+  function initWaves(){
+    waves=[];
+    for(var i=0;i<WAVE_COUNT;i++){
+      waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});
+    }
+  }
+  function drawWaves(){
+    for(var w=0;w<waves.length;w++){
+      var wv=waves[w]; wv.phase+=wv.speed*60;
+      ctx.beginPath(); ctx.moveTo(0,H*wv.yBase);
+      for(var x=0;x<=W;x+=4){ ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp); }
+      ctx.strokeStyle=COLOR_WAVE+wv.alpha+")"; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+  function drawConnections(){
+    for(var i=0;i<stars.length;i++){
+      for(var j=i+1;j<stars.length;j++){
+        var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<CONN_DIST){ ctx.beginPath(); ctx.moveTo(stars[i].x,stars[i].y); ctx.lineTo(stars[j].x,stars[j].y); ctx.strokeStyle=COLOR_LINE+(1-dist/CONN_DIST)*0.18+")"; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+  }
+  function drawStars(){
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.phase+=s.pspeed;
+      var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);
+      var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);
+      grad.addColorStop(0,s.col+(alpha*0.5)+")"); grad.addColorStop(1,s.col+"0)");
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius*4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius,0,Math.PI*2); ctx.fillStyle=s.col+alpha+")"; ctx.fill();
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<-20)s.x=W+20; if(s.x>W+20)s.x=-20;
+      if(s.y<-20)s.y=H+20; if(s.y>H+20)s.y=-20;
+    }
+  }
+  function draw(){ ctx.clearRect(0,0,W,H); drawWaves(); drawConnections(); drawStars(); requestAnimationFrame(draw); }
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize",function(){ resize(); initStars(); initWaves(); });
+})();
+</script>
+
+</body>
+</html>

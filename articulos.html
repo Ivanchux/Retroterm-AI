@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artículos - RETROTERM.AI</title>
+  <meta name="description" content="Artículos publicados en RETROTERM.AI: sistemas, redes, bases de datos, hardware, web y proyecto.">
+  <meta property="og:title" content="Artículos — RETROTERM.AI">
+  <meta property="og:description" content="Artículos técnicos sobre Linux, redes, bases de datos y desarrollo web.">
+  <meta property="og:image" content="https://ivanchux.github.io/Imagenes/retroterm_ai.jpg">
+  <meta property="og:url" content="https://ivanchux.github.io/articulos.html">
+  <link rel="canonical" href="https://ivanchux.github.io/articulos.html">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "La evolución retrofuturista de RETROTERM.AI",
+  "image": "https://ivanchux.github.io/Imagenes/retroterm_ai.jpg",
+  "author": {
+    "@type": "Person",
+    "name": "Iván Brihuega Crespo",
+    "url": "https://ivanchux.github.io/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "RETROTERM.AI",
+    "url": "https://ivanchux.github.io/"
+  },
+  "datePublished": "2025-09-01T00:00:00+00:00",
+  "dateModified": "2025-09-02T00:00:00+00:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://ivanchux.github.io/articulos.html"
+  }
+}
+  </script>
+
+  <style>
+    /* ── CABECERA CON VÍDEO ── */
+    .art-hero {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid #003300;
+    }
+    .art-hero video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+      display: block;
+    }
+    .art-hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 20px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, transparent 100%);
+    }
+    .art-hero-overlay h1 {
+      font-size: 1.6rem;
+      margin: 0 0 4px;
+      text-shadow: 0 0 12px #00ff66;
+    }
+    .art-hero-overlay p {
+      font-size: 0.75rem;
+      color: #66ffb3;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+
+    /* ── LAYOUT PRINCIPAL ── */
+    .art-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── SIDEBAR ── */
+    .art-sidebar {
+      border: 1px solid #003300;
+      background: rgba(0,15,0,0.6);
+      font-size: 0.75rem;
+      position: sticky;
+      top: 20px;
+    }
+    .art-sidebar-header {
+      padding: 8px 12px;
+      background: #001a00;
+      border-bottom: 1px solid #003300;
+      color: #66ffb3;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+    }
+    .art-cat-grupo {
+      border-bottom: 1px solid #001a00;
+    }
+    .art-cat-grupo:last-child { border-bottom: none; }
+    .art-cat-titulo {
+      padding: 8px 12px;
+      color: #00ff6688;
+      font-size: 0.67rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: color 0.15s;
+    }
+    .art-cat-titulo:hover{
+      color: #00ff66; 
+    }
+
+    .art-cat-titulo.abierta{
+      color: #00ff66; 
+    }
+    
+    .art-cat-flecha{ 
+      font-size: 0.6rem; 
+      transition: transform 0.2s; 
+    }
+    
+    .art-cat-titulo.abierta .art-cat-flecha{ 
+      transform: rotate(90deg); 
+    }
+    .art-cat-lista {
+      display: none;
+      padding: 0 0 6px;
+    }
+    .art-cat-lista.visible{ 
+      display: block; 
+    }
+    .art-cat-enlace{
+      display: block;
+      padding: 5px 12px 5px 20px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.7rem;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+    }
+    .art-cat-enlace:hover,.art-cat-enlace.activo {
+      color: #00ff66;
+      border-left-color: #00ff66;
+      background: rgba(0,255,102,0.04);
+    }
+
+    /* ── ZONA DERECHA ── */
+    .art-contenido { min-width: 0; }
+
+    /* Artículo destacado */
+    .art-destacado {
+      border: 1px solid #00ff6644;
+      background: rgba(0,20,0,0.8);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 12px #00ff6611;
+    }
+    .art-destacado-tag {
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      color: #00ff66;
+      border: 1px solid #00ff6644;
+      padding: 1px 8px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .art-destacado h2 {
+      font-size: 1.1rem;
+      color: #66ffb3;
+      margin: 0 0 10px;
+      text-shadow: 0 0 6px #00ff6633;
+    }
+    .art-destacado p {
+      font-size: 0.82rem;
+      color: #ccc;
+      line-height: 1.6;
+      margin: 0 0 14px;
+    }
+    .art-destacado-meta {
+      font-size: 0.65rem;
+      color: #00ff6644;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    /* Grid de tarjetas */
+    .art-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .tarjeta {
+      border: 1px solid #003300;
+      background: rgba(0,15,0,0.7);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .tarjeta:hover { border-color: #00ff6666; box-shadow: 0 0 8px #00ff6622; }
+    .tarjeta.oculta { display: none; }
+    .tarjeta-cat {
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: #00ff6677;
+      border: 1px solid #00ff6622;
+      display: inline-block;
+      padding: 1px 6px;
+      align-self: flex-start;
+    }
+    .tarjeta h3{ 
+      font-size: 0.82rem; 
+      color: #66ffb3; 
+      margin: 0; 
+      line-height: 1.4; 
+    }
+    .tarjeta p{ 
+      font-size: 0.76rem; 
+      color: #999; 
+      margin: 0; 
+      line-height: 1.5; 
+      flex: 1; 
+    }
+    .tarjeta-fecha{ 
+      font-size: 0.62rem; 
+      color: #00ff6633; 
+      letter-spacing: 1px; 
+    }
+    .tarjeta-link {
+      font-size: 0.72rem;
+      color: #00ff66;
+      text-decoration: none;
+      border: 1px solid #00ff6633;
+      padding: 3px 9px;
+      align-self: flex-start;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    .tarjeta-link:hover{ 
+      background: #00ff66; 
+      color: #000; 
+    }
+
+    #sin-resultados {
+      display: none;
+      text-align: center;
+      color: #00ff6633;
+      font-size: 0.78rem;
+      padding: 30px 0;
+      letter-spacing: 2px;
+      grid-column: 1 / -1;
+    }
+
+    /* Botón leer más */
+    .btn-leer {
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid #00ff66;
+      color: #00ff66;
+      text-decoration: none;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .btn-leer:hover{ 
+      background: #00ff66; 
+      color: #000; 
+      box-shadow: 0 0 10px #00ff66; 
+    }
+
+    /* Volver */
+    .volver-hub {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 6px 14px;
+      border: 1px solid #00ff6655;
+      color: #00ff66;
+      text-decoration: none;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      transition: 0.2s;
+    }
+    .volver-hub:hover{ 
+      background: #00ff66; 
+      color: #000; 
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 820px) {
+      .art-layout { grid-template-columns: 180px 1fr; }
+      .art-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      .art-layout { grid-template-columns: 1fr; }
+      .art-sidebar { position: static; }
+      .art-hero { height: 120px; }
+      .art-hero-overlay h1 { font-size: 1.1rem; }
+      .art-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .art-contenido h3 { font-size: 0.85rem; }
+    }
+
+    @media (max-width: 480px) {
+      .art-layout { grid-template-columns: 1fr; }
+      .art-sidebar { position: static; }
+      .art-hero { height: 100px; }
+      .art-hero-overlay h1 { font-size: 1rem; }
+      .art-grid { grid-template-columns: 1fr; }
+      .art-card { flex-direction: row; }
+      .art-thumb { width: 80px; flex-shrink: 0; }
+      .art-thumb img { height: 80px; width: 80px; object-fit: cover; }
+      .filter-bar { gap: 6px; }
+      .filter-btn { font-size: 0.65rem; padding: 4px 8px; }
+    }
+
+    @media (max-width: 360px) {
+      .art-card { flex-direction: column; }
+      .art-thumb { width: 100%; }
+      .art-thumb img { height: 100px; width: 100%; }
+    }
+
+    .pantalla{ 
+      display: block !important; 
+    }
+    
+    .seccion{ 
+      opacity: 1 !important; 
+    }
+
+  
+  /* ── CANVAS FONDO ─── */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  /* fondo transparente sobre canvas */
+  .pantalla, .pantalla-wide {
+    background: transparent !important;
+    border-color: #00ff6633 !important;
+    box-shadow: 0 0 15px #00ff6622 !important;
+  }
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+
+<section class="pantalla seccion activa pantalla-wide">
+
+  <!-- CABECERA CON VÍDEO -->
+  <div class="art-hero">
+    <video src="Videos/articulos_principal.mp4" autoplay muted loop playsinline></video>
+    <div class="art-hero-overlay">
+      <h1>📚 ARTÍCULOS</h1>
+      <p>// Apuntes, guías y notas técnicas</p>
+    </div>
+  </div>
+
+  <!-- LAYOUT: SIDEBAR + CONTENIDO -->
+  <div class="art-layout">
+
+    <!-- SIDEBAR IZQUIERDO -->
+    <nav class="art-sidebar" aria-label="Categorías de artículos">
+      <div class="art-sidebar-header">// CATEGORÍAS</div>
+
+      <div class="art-cat-grupo">
+        <div class="art-cat-titulo abierta" onclick="toggleCat(this)">
+          LINUX <span class="art-cat-flecha">▶</span>
+        </div>
+        <div class="art-cat-lista visible">
+          <a href="articulo-linux.html" class="art-cat-enlace">Comandos de administración</a>
+          <!-- añade más enlaces aquí -->
+        </div>
+      </div>
+
+      <div class="art-cat-grupo">
+        <div class="art-cat-titulo abierta" onclick="toggleCat(this)">
+          REDES <span class="art-cat-flecha">▶</span>
+        </div>
+        <div class="art-cat-lista visible">
+          <a href="articulo-redes.html" class="art-cat-enlace">Subnetting y direccionamiento IP</a>
+        </div>
+      </div>
+
+      <div class="art-cat-grupo">
+        <div class="art-cat-titulo" onclick="toggleCat(this)">
+          BASES DE DATOS <span class="art-cat-flecha">▶</span>
+        </div>
+        <div class="art-cat-lista">
+          <a href="articulo-sql.html" class="art-cat-enlace">SQL — Guía general</a>
+          <a href="articulo-sql-plantillas.html" class="art-cat-enlace">SQL — Plantillas</a>
+          <a href="articulo-sql-ejercicios.html" class="art-cat-enlace">SQL — Ejercicios resueltos</a>
+        </div>
+      </div>
+
+      <div class="art-cat-grupo">
+        <div class="art-cat-titulo" onclick="toggleCat(this)">
+          HARDWARE / VMs <span class="art-cat-flecha">▶</span>
+        </div>
+        <div class="art-cat-lista">
+          <span class="art-cat-enlace" style="color:#00ff6633;cursor:default">Próximamente...</span>
+        </div>
+      </div>
+
+      <div class="art-cat-grupo">
+        <div class="art-cat-titulo" onclick="toggleCat(this)">
+          WEB / SEO <span class="art-cat-flecha">▶</span>
+        </div>
+        <div class="art-cat-lista">
+          <a href="articulo-seo.html" class="art-cat-enlace">SEO técnico en ASIR</a>
+        </div>
+      </div>
+
+      <div class="art-cat-grupo">
+        <div class="art-cat-titulo" onclick="toggleCat(this)">
+          PROYECTO <span class="art-cat-flecha">▶</span>
+        </div>
+        <div class="art-cat-lista">
+          <a href="articulo-retroterm.html" class="art-cat-enlace">Evolución de RETROTERM.AI</a>
+        </div>
+      </div>
+
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="art-contenido">
+
+      <!-- ARTÍCULO DESTACADO -->
+      <div class="art-destacado">
+        <span class="art-destacado-tag">PROYECTO</span>
+        <div class="art-destacado-meta">// 2025-10-08 — Iván Brihuega</div>
+        <h2>🚀 La evolución retrofuturista de RETROTERM.AI</h2>
+        <p>RETROTERM.AI nació de querer hacer algo diferente. Mezclando la estética de terminales de los años 80 con funcionalidades modernas: editor de código, asistente IA, red de proyectos y mucho más. Todavía en desarrollo, pero con una identidad visual muy clara.</p>
+        <a href="articulo-retroterm.html" class="btn-leer">📖 LEER ARTÍCULO →</a>
+      </div>
+
+      <!-- GRID DEL RESTO DE ARTÍCULOS -->
+      <div class="art-grid" id="grid">
+
+        <div class="tarjeta" data-cat="redes">
+          <span class="tarjeta-cat">REDES</span>
+          <h3>🌐 Subnetting y direccionamiento IP</h3>
+          <p>Modelo OSI, clases de red, CIDR, cálculo de subredes paso a paso y VLSM con ejemplos resueltos.</p>
+          <span class="tarjeta-fecha">// 2026-04-08</span>
+          <a href="articulo-redes.html" class="tarjeta-link">LEER →</a>
+        </div>
+
+        <div class="tarjeta" data-cat="linux">
+          <span class="tarjeta-cat">LINUX</span>
+          <h3>🖥️ Comandos Linux que todo administrador debe saber</h3>
+          <p>Archivos, procesos, red, usuarios y servicios. Los comandos que aparecen en los exámenes y en el mundo real.</p>
+          <span class="tarjeta-fecha">// 2025-10-26</span>
+          <a href="articulo-linux.html" class="tarjeta-link">LEER →</a>
+        </div>
+
+        <div class="tarjeta" data-cat="web">
+          <span class="tarjeta-cat">WEB / SEO</span>
+          <h3>🔧 Qué es el SEO técnico y por qué importa en ASIR</h3>
+          <p>robots.txt, sitemap.xml, meta canonical, Open Graph y Schema.org con ejemplos reales.</p>
+          <span class="tarjeta-fecha">// 2025-11-06</span>
+          <a href="articulo-seo.html" class="tarjeta-link">LEER →</a>
+        </div>
+
+        <div class="tarjeta" data-cat="bbdd">
+          <span class="tarjeta-cat">BASES DE DATOS</span>
+          <h3>🗄️ SQL — Guía de Bases de Datos</h3>
+          <p>DDL, DML, DCL, SELECT, JOINs, funciones y trucos de examen para ASIR.</p>
+          <span class="tarjeta-fecha">// 2026-01-25</span>
+          <a href="articulo-sql.html" class="tarjeta-link">LEER →</a>
+        </div>
+
+        <div class="tarjeta" data-cat="bbdd">
+          <span class="tarjeta-cat">BASES DE DATOS</span>
+          <h3>📋 SQL — Plantillas de consultas</h3>
+          <p>Consultas habituales listas para copiar: WHERE, JOIN, GROUP BY, subconsultas y fechas.</p>
+          <span class="tarjeta-fecha">// 2026-02-05</span>
+          <a href="articulo-sql-plantillas.html" class="tarjeta-link">LEER →</a>
+        </div>
+
+        <div class="tarjeta" data-cat="bbdd">
+          <span class="tarjeta-cat">BASES DE DATOS</span>
+          <h3>📝 SQL — Ejercicios resueltos</h3>
+          <p>15 ejercicios resueltos sobre dos bases de datos: tienda con productos y empresa con empleados.</p>
+          <span class="tarjeta-fecha">// 2026-02-12</span>
+          <a href="articulo-sql-ejercicios.html" class="tarjeta-link">LEER →</a>
+        </div>
+
+        <!-- Para añadir un artículo nuevo, copia este bloque:
+
+        <div class="tarjeta" data-cat="bbdd">
+          <span class="tarjeta-cat">BASES DE DATOS</span>
+          <h3>Título</h3>
+          <p>Descripción breve.</p>
+          <span class="tarjeta-fecha">// 2025-xx-xx</span>
+          <a href="articulo-nombre.html" class="tarjeta-link">LEER →</a>
+        </div>
+
+        data-cat disponibles: linux | redes | bbdd | hardware | web | proyecto
+        -->
+
+        <div id="sin-resultados">// SIN ARTÍCULOS EN ESTA CATEGORÍA</div>
+
+      </div><!-- /art-grid -->
+
+    </div><!-- /art-contenido -->
+
+  </div><!-- /art-layout -->
+
+  <a href="index.html" class="volver-hub">⬅ Volver al HUB</a>
+
+  <nav class="nav-pie" aria-label="Navegación secundaria">
+    <a href="editor.html">💻 Editor</a>
+    <a href="red.html">🌐 Red</a>
+  </nav>
+
+  <footer class="pie">
+    <p>RETROTERM.AI v0.2 © 2025 | Iván Brihuega Crespo</p>
+  </footer>
+
+</section>
+
+<script>
+// Abrir/cerrar categorías del sidebar
+function toggleCat(el) {
+  var lista = el.nextElementSibling;
+  el.classList.toggle('abierta');
+  lista.classList.toggle('visible');
+}
+</script>
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var STAR_COUNT=90, WAVE_COUNT=5, CONN_DIST=180, SPEED=0.18, WAVE_SPEED=0.0004;
+  var COLOR_NODE_A="rgba(0, 255, 102,", COLOR_NODE_B="rgba(255, 176, 0,";
+  var COLOR_LINE="rgba(0, 220, 90,", COLOR_WAVE="rgba(255, 176, 0,";
+  var stars=[], waves=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(var i=0;i<STAR_COUNT;i++){
+      var a=Math.random()>0.75;
+      stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?COLOR_NODE_B:COLOR_NODE_A,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});
+    }
+  }
+  function initWaves(){
+    waves=[];
+    for(var i=0;i<WAVE_COUNT;i++){
+      waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});
+    }
+  }
+  function drawWaves(){
+    for(var w=0;w<waves.length;w++){
+      var wv=waves[w]; wv.phase+=wv.speed*60;
+      ctx.beginPath(); ctx.moveTo(0,H*wv.yBase);
+      for(var x=0;x<=W;x+=4){ ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp); }
+      ctx.strokeStyle=COLOR_WAVE+wv.alpha+")"; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+  function drawConnections(){
+    for(var i=0;i<stars.length;i++){
+      for(var j=i+1;j<stars.length;j++){
+        var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<CONN_DIST){ ctx.beginPath(); ctx.moveTo(stars[i].x,stars[i].y); ctx.lineTo(stars[j].x,stars[j].y); ctx.strokeStyle=COLOR_LINE+(1-dist/CONN_DIST)*0.18+")"; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+  }
+  function drawStars(){
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.phase+=s.pspeed;
+      var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);
+      var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);
+      grad.addColorStop(0,s.col+(alpha*0.5)+")"); grad.addColorStop(1,s.col+"0)");
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius*4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius,0,Math.PI*2); ctx.fillStyle=s.col+alpha+")"; ctx.fill();
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<-20)s.x=W+20; if(s.x>W+20)s.x=-20;
+      if(s.y<-20)s.y=H+20; if(s.y>H+20)s.y=-20;
+    }
+  }
+  function draw(){ ctx.clearRect(0,0,W,H); drawWaves(); drawConnections(); drawStars(); requestAnimationFrame(draw); }
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize",function(){ resize(); initStars(); initWaves(); });
+})();
+</script>
+
+</body>
+</html>

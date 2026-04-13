@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subnetting y direccionamiento IP - Artículos - RETROTERM.AI</title>
+  <meta name="description" content="Guía completa de subnetting para ASIR: modelo OSI, clases de IP, máscaras, CIDR, cálculo de subredes y VLSM con ejemplos resueltos.">
+  <link rel="canonical" href="https://ivanchux.github.io/articulo-redes.html">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta name="robots" content="index,follow">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Subnetting y direccionamiento IP — Guía completa para ASIR",
+    "description": "Guía completa de subnetting para ASIR: modelo OSI, clases de IP, máscaras, CIDR, cálculo de subredes y VLSM con ejemplos resueltos.",
+    "author": {
+      "@type": "Person",
+      "name": "Iván Brihuega Crespo"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "RETROTERM.AI",
+      "url": "https://ivanchux.github.io/"
+    },
+    "datePublished": "2026-04-08",
+    "dateModified": "2026-04-08",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://ivanchux.github.io/articulo-redes.html"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Inicio",    "item": "https://ivanchux.github.io/" },
+      { "@type": "ListItem", "position": 2, "name": "Artículos", "item": "https://ivanchux.github.io/articulos.html" },
+      { "@type": "ListItem", "position": 3, "name": "Subnetting y direccionamiento IP", "item": "https://ivanchux.github.io/articulo-redes.html" }
+    ]
+  }
+  </script>
+
+  <style>
+    .pantalla  { display: block !important; }
+    .seccion   { opacity: 1 !important; }
+
+    /* ── CANVAS FONDO ─── */
+    #bg-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+    .pantalla, .pantalla-wide {
+      background: transparent !important;
+      border-color: #00ff6633 !important;
+      box-shadow: 0 0 15px #00ff6622 !important;
+    }
+
+    /* ── TABLA DE CONTENIDOS ─── */
+    .toc {
+      border: 1px solid #00ff6622;
+      background: rgba(0,20,0,0.6);
+      padding: 14px 18px;
+      margin: 1.4rem 0;
+      font-size: 0.78rem;
+    }
+    .toc-title {
+      color: #66ffb3;
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      margin-bottom: 10px;
+    }
+    .toc ol { margin: 0; padding-left: 1.2em; color: #00ff6688; }
+    .toc li { margin: 4px 0; }
+    .toc a  { color: #00ff66; text-decoration: none; transition: color 0.15s; }
+    .toc a:hover { color: #66ffb3; }
+
+    /* ── TABLAS ─── */
+    .t-tabla-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1rem 0;
+    }
+    .t-tabla {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      margin: 0;
+    }
+    .t-tabla th {
+      background: #001a00;
+      color: #66ffb3;
+      padding: 7px 12px;
+      text-align: left;
+      letter-spacing: 0.1em;
+      font-size: 0.66rem;
+      border-bottom: 1px solid #003300;
+    }
+    .t-tabla td {
+      padding: 6px 12px;
+      border-bottom: 1px solid #001100;
+      color: #c0c8c0;
+      vertical-align: top;
+    }
+    .t-tabla tr:hover td { background: rgba(0,40,0,0.4); }
+    .t-tabla .accent { color: #00ff66; font-weight: bold; }
+    .t-tabla .dim    { color: #556655; font-size: 0.72rem; }
+
+    /* ── CALLOUTS ─── */
+    .callout {
+      border-left: 3px solid #00ff66;
+      background: rgba(0,30,0,0.5);
+      padding: 10px 16px;
+      margin: 1rem 0;
+      font-size: 0.8rem;
+      color: #aaccaa;
+      line-height: 1.6;
+    }
+    .callout.warn  { border-left-color: #ffaa22; background: rgba(30,15,0,0.5); color: #ccaa88; }
+    .callout.info  { border-left-color: #3399ff; background: rgba(0,10,25,0.5); color: #99bbcc; }
+    .callout strong { color: #00ff66; }
+    .callout.warn  strong { color: #ffaa22; }
+    .callout.info  strong { color: #3399ff; }
+
+    /* ── EJEMPLO RESUELTO ─── */
+    .ejemplo {
+      border: 1px solid #00ff6622;
+      background: rgba(0,15,0,0.7);
+      padding: 14px 18px;
+      margin: 1rem 0;
+      font-size: 0.8rem;
+    }
+    .ejemplo-titulo {
+      color: #00ff66;
+      font-size: 0.64rem;
+      letter-spacing: 0.16em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ejemplo-titulo::before {
+      content: '▶';
+      font-size: 0.5rem;
+    }
+
+    /* ── ÍNDICE OSI ─── */
+    .osi-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin: 1rem 0;
+    }
+    .osi-layer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 7px 14px;
+      border: 1px solid #001a00;
+      font-size: 0.76rem;
+      transition: border-color 0.15s;
+    }
+    .osi-layer:hover { border-color: #00ff6633; }
+    .osi-num   { color: #00ff6644; font-size: 0.62rem; min-width: 16px; text-align: center; }
+    .osi-name  { color: #00ff66; font-weight: bold; min-width: 120px; }
+    .osi-desc  { color: #778877; font-size: 0.72rem; }
+    .osi-proto { color: #446644; font-size: 0.68rem; margin-left: auto; font-style: italic; }
+    .osi-layer.osi-highlight { background: rgba(0,40,0,0.5); border-color: #00ff6644; }
+    .osi-layer.osi-highlight .osi-name { color: #66ffb3; }
+
+    /* ── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .osi-proto { display: none; }
+      .osi-name  { min-width: 90px; }
+      .ejemplo { padding: 12px 14px; }
+    }
+
+    @media (max-width: 480px) {
+      .osi-layer { flex-wrap: wrap; gap: 6px; padding: 8px 10px; }
+      .osi-desc { width: 100%; font-size: 0.68rem; }
+      .osi-name { min-width: unset; }
+      .callout { padding: 8px 12px; font-size: 0.76rem; }
+      .ejemplo { padding: 10px 10px; font-size: 0.76rem; }
+      .toc { padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<section class="pantalla seccion activa pantalla-wide">
+
+  <nav class="breadcrumbs" aria-label="Ruta de navegación">
+    <a href="index.html">INICIO</a>
+    <span class="bread-sep">&gt;</span>
+    <a href="articulos.html">ARTÍCULOS</a>
+    <span class="bread-sep">&gt;</span>
+    <span class="bread-current">SUBNETTING / REDES</span>
+  </nav>
+
+  <header class="cabecera">
+    <h1>🌐 ARTÍCULO</h1>
+    <p class="subtitulo">Subnetting y direccionamiento IP — Guía completa para ASIR</p>
+  </header>
+
+  <article class="articulo articulo-completo">
+
+    <p class="articulo-meta"><span class="articulo-tag">REDES</span> // 2026-04-08 — Iván Brihuega</p>
+
+    <p>Las redes son el pilar de ASIR. El subnetting es el tema que más cuesta al principio, pero una vez que lo entiendes de verdad, todo lo demás encaja. Esta guía va desde la base hasta el cálculo de subredes con VLSM, con ejemplos resueltos paso a paso.</p>
+
+    <div class="toc">
+      <p class="toc-title">// TABLA DE CONTENIDOS</p>
+      <ol>
+        <li><a href="#osi">Modelo OSI y TCP/IP</a></li>
+        <li><a href="#ip">Direccionamiento IPv4</a></li>
+        <li><a href="#clases">Clases de red y rangos privados</a></li>
+        <li><a href="#mascara">Máscara de subred</a></li>
+        <li><a href="#cidr">Notación CIDR</a></li>
+        <li><a href="#subnetting">Cálculo de subredes paso a paso</a></li>
+        <li><a href="#vlsm">VLSM — Subredes de tamaño variable</a></li>
+        <li><a href="#comandos">Comandos útiles de red</a></li>
+        <li><a href="#trucos">Trucos de examen</a></li>
+      </ol>
+    </div>
+
+    <!-- ══ 1. MODELO OSI ══ -->
+    <h2 id="osi">1. Modelo OSI y TCP/IP</h2>
+
+    <p>El modelo OSI es el marco de referencia estándar para entender cómo se comunican los dispositivos. Tiene 7 capas, cada una con una función específica. En la práctica se usa más TCP/IP (4 capas), pero OSI aparece en todos los exámenes.</p>
+
+    <div class="osi-layers" aria-label="Capas del modelo OSI">
+      <div class="osi-layer"><span class="osi-num">7</span><span class="osi-name">Aplicación</span><span class="osi-desc">Interfaz con el usuario</span><span class="osi-proto">HTTP, FTP, DNS, SMTP</span></div>
+      <div class="osi-layer"><span class="osi-num">6</span><span class="osi-name">Presentación</span><span class="osi-desc">Cifrado, compresión, formato</span><span class="osi-proto">SSL/TLS, JPEG, ASCII</span></div>
+      <div class="osi-layer"><span class="osi-num">5</span><span class="osi-name">Sesión</span><span class="osi-desc">Gestión de sesiones</span><span class="osi-proto">NetBIOS, RPC</span></div>
+      <div class="osi-layer osi-highlight"><span class="osi-num">4</span><span class="osi-name">Transporte</span><span class="osi-desc">Extremo a extremo, puertos</span><span class="osi-proto">TCP, UDP</span></div>
+      <div class="osi-layer osi-highlight"><span class="osi-num">3</span><span class="osi-name">Red</span><span class="osi-desc">Enrutamiento, direcciones IP</span><span class="osi-proto">IP, ICMP, ARP</span></div>
+      <div class="osi-layer"><span class="osi-num">2</span><span class="osi-name">Enlace de datos</span><span class="osi-desc">Tramas, direcciones MAC</span><span class="osi-proto">Ethernet, Wi-Fi, PPP</span></div>
+      <div class="osi-layer"><span class="osi-num">1</span><span class="osi-name">Física</span><span class="osi-desc">Bits, cables, señales</span><span class="osi-proto">RJ45, fibra óptica</span></div>
+    </div>
+
+    <div class="callout info">
+      <strong>TCP/IP vs OSI:</strong> TCP/IP agrupa las capas 5, 6 y 7 en una sola (Aplicación), y las capas 1 y 2 en Acceso a red. En el día a día trabajas con TCP/IP; en los exámenes te preguntan OSI.
+    </div>
+
+    <!-- ══ 2. DIRECCIONAMIENTO IPv4 ══ -->
+    <h2 id="ip">2. Direccionamiento IPv4</h2>
+
+    <p>Una dirección IPv4 son 32 bits divididos en 4 octetos de 8 bits cada uno, escritos en decimal separados por puntos.</p>
+
+    <div class="codigo-bloque">192      .168      .1        .100
+11000000 .10101000 .00000001 .01100100
+  ↑          ↑         ↑          ↑
+octeto 1  octeto 2  octeto 3  octeto 4
+
+Rango por octeto: 0 — 255</div>
+
+    <p>Cada dirección tiene dos partes: la <strong style="color:#66ffb3">parte de red</strong> (identifica la red) y la <strong style="color:#66ffb3">parte de host</strong> (identifica el dispositivo dentro de esa red). La máscara de subred es la que separa ambas partes.</p>
+
+    <div class="callout warn">
+      <strong>Dirección especial:</strong> la primera dirección de una subred es la <strong>dirección de red</strong> (no asignable) y la última es el <strong>broadcast</strong> (tampoco asignable). Los hosts usables están entre ambas.
+    </div>
+
+    <!-- ══ 3. CLASES ══ -->
+    <h2 id="clases">3. Clases de red y rangos privados</h2>
+
+    <table class="t-tabla" aria-label="Clases de red IPv4">
+      <thead>
+        <tr><th>CLASE</th><th>RANGO</th><th>MÁSCARA POR DEFECTO</th><th>HOSTS POR RED</th><th>USO</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="accent">A</td><td>1.0.0.0 — 126.255.255.255</td><td>255.0.0.0 /8</td><td>16.777.214</td><td>Grandes empresas</td></tr>
+        <tr><td class="accent">B</td><td>128.0.0.0 — 191.255.255.255</td><td>255.255.0.0 /16</td><td>65.534</td><td>Empresas medianas</td></tr>
+        <tr><td class="accent">C</td><td>192.0.0.0 — 223.255.255.255</td><td>255.255.255.0 /24</td><td>254</td><td>Redes pequeñas</td></tr>
+        <tr><td class="accent">D</td><td>224.0.0.0 — 239.255.255.255</td><td>—</td><td>—</td><td>Multicast</td></tr>
+        <tr><td class="accent">E</td><td>240.0.0.0 — 255.255.255.255</td><td>—</td><td>—</td><td>Reservada</td></tr>
+      </tbody>
+    </table>
+
+    <p>Dentro de cada clase hay rangos <strong style="color:#66ffb3">privados</strong> (RFC 1918) que no se enrutan por Internet y se usan en redes locales:</p>
+
+    <table class="t-tabla" aria-label="Rangos de IP privadas">
+      <thead>
+        <tr><th>CLASE</th><th>RANGO PRIVADO</th><th>CIDR</th><th>DÓNDE LO VES</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="accent">A</td><td>10.0.0.0 — 10.255.255.255</td><td>/8</td><td>Redes corporativas grandes</td></tr>
+        <tr><td class="accent">B</td><td>172.16.0.0 — 172.31.255.255</td><td>/12</td><td>Empresas medianas</td></tr>
+        <tr><td class="accent">C</td><td>192.168.0.0 — 192.168.255.255</td><td>/16</td><td>Routers domésticos, aulas ASIR</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <strong>127.0.0.0/8</strong> es el rango de loopback. <code>127.0.0.1</code> siempre apunta al propio dispositivo. Muy usado para probar servicios en local.
+    </div>
+
+    <!-- ══ 4. MÁSCARA ══ -->
+    <h2 id="mascara">4. Máscara de subred</h2>
+
+    <p>La máscara de subred es otro número de 32 bits donde los 1s indican la parte de red y los 0s la parte de host. Siempre son 1s contiguos seguidos de 0s contiguos.</p>
+
+    <div class="codigo-bloque">Máscara /24:
+Decimal:  255    .255    .255    .0
+Binario:  11111111.11111111.11111111.00000000
+          ←────── red ──────────────→ ←host→
+
+IP:       192.168.1.100
+Máscara:  255.255.255.0
+          ─────────────
+Red:      192.168.1.0        ← parte de red (AND lógico)
+Broadcast:192.168.1.255      ← todos los bits de host a 1
+Hosts:    192.168.1.1 — 192.168.1.254  (254 hosts)</div>
+
+    <p>El <strong style="color:#66ffb3">AND lógico</strong> entre la IP y la máscara te da siempre la dirección de red:</p>
+
+    <div class="codigo-bloque">   192.168.1.100  →  11000000.10101000.00000001.01100100
+AND 255.255.255.0  →  11111111.11111111.11111111.00000000
+    ─────────────────────────────────────────────────────
+=   192.168.1.0    →  11000000.10101000.00000001.00000000</div>
+
+    <!-- ══ 5. CIDR ══ -->
+    <h2 id="cidr">5. Notación CIDR</h2>
+
+    <p>CIDR (Classless Inter-Domain Routing) simplifica la máscara con un número que indica cuántos bits son de red. Es lo que ves detrás de la barra: <code>192.168.1.0/<strong style="color:#66ffb3">24</strong></code>.</p>
+
+    <table class="t-tabla" aria-label="Prefijos CIDR más comunes">
+      <thead>
+        <tr><th>PREFIJO</th><th>MÁSCARA</th><th>HOSTS USABLES</th><th>USO TÍPICO</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="accent">/8</td><td>255.0.0.0</td><td>16.777.214</td><td>Clase A completa</td></tr>
+        <tr><td class="accent">/16</td><td>255.255.0.0</td><td>65.534</td><td>Clase B completa</td></tr>
+        <tr><td class="accent">/24</td><td>255.255.255.0</td><td>254</td><td>LAN típica, aulas</td></tr>
+        <tr><td class="accent">/25</td><td>255.255.255.128</td><td>126</td><td>Dividir /24 en 2</td></tr>
+        <tr><td class="accent">/26</td><td>255.255.255.192</td><td>62</td><td>Dividir /24 en 4</td></tr>
+        <tr><td class="accent">/27</td><td>255.255.255.224</td><td>30</td><td>Subredes pequeñas</td></tr>
+        <tr><td class="accent">/28</td><td>255.255.255.240</td><td>14</td><td>Grupos reducidos</td></tr>
+        <tr><td class="accent">/29</td><td>255.255.255.248</td><td>6</td><td>Enlaces punto a punto</td></tr>
+        <tr><td class="accent">/30</td><td>255.255.255.252</td><td>2</td><td>Enlace router-router</td></tr>
+        <tr><td class="accent">/32</td><td>255.255.255.255</td><td>1 (host único)</td><td>Rutas de host, loopback</td></tr>
+      </tbody>
+    </table>
+
+    <p>Fórmulas clave:</p>
+    <div class="codigo-bloque">Hosts usables    = 2^(bits de host) - 2
+Número subredes  = 2^(bits prestados)
+Bits de host     = 32 - prefijo CIDR
+
+Ejemplo /26:
+  bits de host     = 32 - 26 = 6
+  hosts usables    = 2^6 - 2 = 62
+  salto entre redes = 256 - 192 = 64   (192 = último octeto de 255.255.255.192)</div>
+
+    <!-- ══ 6. SUBNETTING ══ -->
+    <h2 id="subnetting">6. Cálculo de subredes paso a paso</h2>
+
+    <p>El método más rápido en examen usa el <strong style="color:#66ffb3">bloque o salto</strong>: el valor del último octeto significativo de la máscara restado a 256.</p>
+
+    <div class="ejemplo">
+      <p class="ejemplo-titulo">EJEMPLO RESUELTO — Red 192.168.10.0/26</p>
+      <div class="codigo-bloque">Máscara: 255.255.255.192   → último octeto = 192
+Salto:   256 - 192 = 64
+
+Subredes que genera:
+  Subred 0:  192.168.10.0   — Red
+             192.168.10.1   — Primer host
+             192.168.10.62  — Último host
+             192.168.10.63  — Broadcast
+  ─────────────────────────────────────────
+  Subred 1:  192.168.10.64  — Red
+             192.168.10.65  — Primer host
+             192.168.10.126 — Último host
+             192.168.10.127 — Broadcast
+  ─────────────────────────────────────────
+  Subred 2:  192.168.10.128 — Red
+  Subred 3:  192.168.10.192 — Red
+             (y así hasta completar el /24)
+
+Total: 4 subredes × 62 hosts usables = 248 hosts</div>
+    </div>
+
+    <div class="ejemplo">
+      <p class="ejemplo-titulo">EJEMPLO RESUELTO — ¿A qué subred pertenece 172.16.45.200/20?</p>
+      <div class="codigo-bloque">Prefijo /20 → máscara 255.255.240.0
+El octeto interesante es el 3º: 240
+
+Salto: 256 - 240 = 16
+
+Múltiplos de 16: 0, 16, 32, 48...
+El 3er octeto de la IP es 45.
+¿Entre qué múltiplos cae 45?  →  32 ≤ 45 < 48
+
+Dirección de red:  172.16.32.0 /20
+Broadcast:         172.16.47.255
+Hosts:             172.16.32.1 — 172.16.47.254  (4094 hosts)</div>
+    </div>
+
+    <!-- ══ 7. VLSM ══ -->
+    <h2 id="vlsm">7. VLSM — Subredes de tamaño variable</h2>
+
+    <p>VLSM (Variable Length Subnet Masking) permite asignar a cada subred exactamente el tamaño que necesita, en lugar de dividir todo en bloques iguales. Es lo que se usa en entornos reales.</p>
+
+    <p>La regla fundamental: <strong style="color:#66ffb3">ordenar los requerimientos de mayor a menor</strong> y asignar siempre empezando desde el bloque más grande.</p>
+
+    <div class="ejemplo">
+      <p class="ejemplo-titulo">EJEMPLO RESUELTO — Red 10.0.0.0/24 con 4 departamentos</p>
+      <div class="codigo-bloque">Requisitos:
+  Departamento A: 60 hosts
+  Departamento B: 25 hosts
+  Departamento C: 10 hosts
+  Enlace router:   2 hosts
+
+Ordenados de mayor a menor:
+  60 hosts → necesita al menos 62 (64-2) → /26  (salto 64)
+  25 hosts → necesita al menos 30 (32-2) → /27  (salto 32)
+  10 hosts → necesita al menos 14 (16-2) → /28  (salto 16)
+   2 hosts → necesita al menos  2  (4-2) → /30  (salto  4)
+
+Asignación:
+  Dpto A: 10.0.0.0/26    → hosts 10.0.0.1  — 10.0.0.62
+  Dpto B: 10.0.0.64/27   → hosts 10.0.0.65 — 10.0.0.94
+  Dpto C: 10.0.0.96/28   → hosts 10.0.0.97 — 10.0.0.110
+  Enlace: 10.0.0.112/30  → hosts 10.0.0.113 — 10.0.0.114
+
+Espacio restante sin usar: 10.0.0.116 — 10.0.0.255</div>
+    </div>
+
+    <div class="callout warn">
+      <strong>Error clásico en VLSM:</strong> intentar asignar una subred que empieza en una dirección que no es múltiplo de su bloque. Las subredes deben estar alineadas con su salto (10.0.0.64 para /27 está bien; 10.0.0.68 para /27 está mal).
+    </div>
+
+    <!-- ══ 8. COMANDOS ══ -->
+    <h2 id="comandos">8. Comandos útiles de red</h2>
+
+    <p>Los imprescindibles que aparecen en prácticas y exámenes de ASIR:</p>
+
+    <h2 style="font-size:0.85rem;color:#66ffb3">Linux / Unix</h2>
+    <div class="codigo-bloque">ip a                      # ver interfaces y direcciones IP
+ip r                      # tabla de enrutamiento
+ip route add X.X.X.X/Y   # añadir ruta estática
+ping -c 4 8.8.8.8         # test conectividad (4 paquetes)
+traceroute 8.8.8.8        # ruta hasta destino
+nslookup google.com       # resolver DNS
+dig google.com            # resolución DNS detallada
+ss -tulnp                 # puertos abiertos con proceso
+arp -a                    # tabla ARP (IP ↔ MAC)
+nmcli con show            # conexiones NetworkManager</div>
+
+    <h2 style="font-size:0.85rem;color:#66ffb3">Windows (CMD / PowerShell)</h2>
+    <div class="codigo-bloque">ipconfig /all             # ver config de red completa
+ipconfig /release         # liberar IP (DHCP)
+ipconfig /renew           # solicitar nueva IP (DHCP)
+ipconfig /flushdns        # limpiar caché DNS
+ping 8.8.8.8              # test conectividad
+tracert 8.8.8.8           # ruta hasta destino
+nslookup google.com       # resolver DNS
+route print               # tabla de enrutamiento
+netstat -ano              # conexiones activas con PID
+arp -a                    # tabla ARP</div>
+
+    <h2 style="font-size:0.85rem;color:#66ffb3">Cisco IOS (routers/switches)</h2>
+    <div class="codigo-bloque">show ip interface brief    # resumen de interfaces
+show ip route             # tabla de enrutamiento
+show running-config       # configuración activa
+interface GigabitEthernet0/0
+  ip address 192.168.1.1 255.255.255.0
+  no shutdown             # activar interfaz
+ip route 0.0.0.0 0.0.0.0 192.168.1.254  # ruta por defecto</div>
+
+    <!-- ══ 9. TRUCOS ══ -->
+    <h2 id="trucos">9. Trucos de examen</h2>
+
+    <div class="callout">
+      <strong>Calcular máscara desde prefijo en segundos:</strong> rellena los bits de izquierda a derecha. Si el prefijo es /20, los primeros 20 bits son 1 y el resto 0. Los primeros dos octetos completos son 255.255. Quedan 4 bits de 1 en el tercer octeto: 11110000 = 128+64+32+16 = 240. Resultado: 255.255.240.0
+    </div>
+
+    <div class="callout">
+      <strong>Encontrar el rango de una subred sin calcular:</strong> multiplica el número de subred por el salto para obtener la dirección de red. El broadcast es (siguiente red) - 1. Con /26 (salto 64) la subred 2 empieza en 128, termina en 191.
+    </div>
+
+    <div class="callout warn">
+      <strong>En VLSM, el orden importa siempre.</strong> Si asignas primero el bloque pequeño en una dirección que no es múltiplo del bloque grande que viene después, te quedas sin espacio contiguo.
+    </div>
+
+    <div class="callout info">
+      <strong>Comprueba tus cálculos</strong> con la calculadora CIDR de RETROTERM — introduce la red en notación CIDR y te da de golpe la red, broadcast, primer/último host, wildcard y número de hosts. <a href="herramientas.html" style="color:#3399ff">→ Ir a TOOLS</a>
+    </div>
+
+  </article>
+
+  <div class="nav-inferior">
+    <a href="articulos.html" class="volver">⬅ Volver a Artículos</a>
+    <a href="herramientas.html" class="volver">🔧 TOOLS</a>
+  </div>
+
+  <nav class="nav-pie" aria-label="Navegación secundaria">
+    <a href="index.html">🏠 Inicio</a>
+    <a href="articulos.html">📚 Artículos</a>
+    <a href="asistente.html">🤖 Aria</a>
+    <a href="red.html">🌐 Red</a>
+  </nav>
+
+  <footer class="pie">
+    <p>RETROTERM.AI v0.2 © 2026 | Iván Brihuega Crespo</p>
+  </footer>
+
+</section>
+
+<script src="accesibilidad.js"></script>
+<script>
+(function() {
+  var canvas = document.getElementById("bg-canvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var W, H;
+  var STAR_COUNT=90, WAVE_COUNT=5, CONN_DIST=180, SPEED=0.18, WAVE_SPEED=0.0004;
+  var COLOR_NODE_A="rgba(0, 255, 102,", COLOR_NODE_B="rgba(255, 176, 0,";
+  var COLOR_LINE="rgba(0, 220, 90,", COLOR_WAVE="rgba(255, 176, 0,";
+  var stars=[], waves=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  function initStars(){
+    stars=[];
+    for(var i=0;i<STAR_COUNT;i++){
+      var a=Math.random()>0.75;
+      stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?COLOR_NODE_B:COLOR_NODE_A,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});
+    }
+  }
+  function initWaves(){
+    waves=[];
+    for(var i=0;i<WAVE_COUNT;i++){
+      waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});
+    }
+  }
+  function drawWaves(){
+    for(var w=0;w<waves.length;w++){
+      var wv=waves[w]; wv.phase+=wv.speed*60;
+      ctx.beginPath(); ctx.moveTo(0,H*wv.yBase);
+      for(var x=0;x<=W;x+=4){ ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp); }
+      ctx.strokeStyle=COLOR_WAVE+wv.alpha+")"; ctx.lineWidth=1; ctx.stroke();
+    }
+  }
+  function drawConnections(){
+    for(var i=0;i<stars.length;i++){
+      for(var j=i+1;j<stars.length;j++){
+        var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<CONN_DIST){ ctx.beginPath(); ctx.moveTo(stars[i].x,stars[i].y); ctx.lineTo(stars[j].x,stars[j].y); ctx.strokeStyle=COLOR_LINE+(1-dist/CONN_DIST)*0.18+")"; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+  }
+  function drawStars(){
+    for(var i=0;i<stars.length;i++){
+      var s=stars[i]; s.phase+=s.pspeed;
+      var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);
+      var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);
+      grad.addColorStop(0,s.col+(alpha*0.5)+")"); grad.addColorStop(1,s.col+"0)");
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius*4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x,s.y,radius,0,Math.PI*2); ctx.fillStyle=s.col+alpha+")"; ctx.fill();
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<-20)s.x=W+20; if(s.x>W+20)s.x=-20;
+      if(s.y<-20)s.y=H+20; if(s.y>H+20)s.y=-20;
+    }
+  }
+  function draw(){ ctx.clearRect(0,0,W,H); drawWaves(); drawConnections(); drawStars(); requestAnimationFrame(draw); }
+  resize(); initStars(); initWaves(); draw();
+  window.addEventListener("resize",function(){ resize(); initStars(); initWaves(); });
+})();
+</script>
+
+</body>
+</html>

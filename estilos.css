@@ -1,0 +1,1036 @@
+/* =========== RESET GLOBAL ===================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* =========== PANTALLA PRINCIPAL ===================== */
+
+body {
+  background-color: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+.pantalla {
+  width: 90%;
+  max-width: 900px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  padding: 20px;
+  background: radial-gradient(circle at center, #001800 0%, #000 80%);
+  margin: 40px auto;
+  display: none; 
+}
+
+.pantalla-wide {
+  max-width: 1400px;
+  width: 95%;
+}
+
+.activa,
+:target {
+  display: block;
+}
+
+
+.cabecera {
+  text-align: center;
+}
+h1 {
+  font-size: 2rem;
+  text-shadow: 0 0 8px #00ff66;
+}
+.subtitulo {
+  color: #66ffb3;
+  font-size: 0.9rem;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;              
+  justify-content: center;      
+  align-items: center;
+  gap: 25px;                    
+  margin-top: 40px;
+}
+
+.opcion {
+  border: 2px solid #00ff66;
+  padding: 20px 30px;           
+  text-align: center;
+  text-decoration: none;
+  color: #00ff66;
+  background: rgba(0, 30, 0, 0.6);
+  transition: all 0.3s ease;
+  border-radius: 10px;          
+  flex: 1 1 200px;              
+  max-width: 250px;
+}
+
+.opcion:hover {
+  background-color: #00aa44;
+  color: #00ff66;
+  box-shadow: 0 0 10px #00ff66;
+  text-shadow: 0 0 10px #00ff66;
+  transform: scale(1.05);
+
+}
+
+
+
+.volver {
+  display: inline-block;
+  text-decoration: none;
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 6px 10px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+.volver:hover {
+  background-color: #00ff66;
+  color: #000;
+}
+
+
+.pie {
+  text-align: center;
+  border-top: 1px solid #00ff66;
+  margin-top: 30px;
+  padding-top: 10px;
+  color: #66ffb3;
+}
+
+
+
+/* Textareas y botones globales */
+textarea {
+  width: 100%;
+  height: 200px;
+  background: #000;
+  color: #00ff66;
+  border: 2px solid #00ff66;
+  font-family: 'Courier New', monospace;
+  padding: 10px;
+  resize: vertical;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #00ff66;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+}
+button:hover { 
+  box-shadow: 0 0 10px #00ff66; 
+  background: #00ff66;
+}
+
+
+
+/* ================ SUBSECCIÓN RED DE ARTICULOS =============== */
+
+
+.lista-articulos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.articulo {
+  border: 1px solid #00ff66;
+  padding: 15px;
+  background: rgba(0, 20, 0, 0.8);
+  box-shadow: 0 0 10px #00ff66;
+}
+
+.articulo h3 {
+  color: #66ffb3;
+  margin-bottom: 10px;
+}
+
+.articulo p {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.imagen-articulo {
+  text-align: center;
+  margin: 15px 0 20px 0;
+}
+
+.imagen-articulo img {
+  width: 100%;
+  max-width: 200px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  border-radius: 8px;
+}
+
+
+
+
+/* =============== SUBSECCIÓN RED DE PROYECTOS =========== */
+
+
+.red-page {
+  background: radial-gradient(circle at center, #000 60%, #001122 100%);
+  color: #00ffff;
+  text-align: center;
+  padding: 40px;
+}
+
+.red-page h1 {
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff;
+}
+
+.lista-proyectos {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0;
+}
+
+.lista-proyectos li {
+  margin: 15px 0;
+}
+
+.red-page .proyecto {
+  display: inline-block;
+  padding: 12px 25px;
+  border: 1px solid #00ffff;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #00ffff;
+  font-family: "Courier New", monospace;
+  transition: all 0.3s ease;
+}
+
+.red-page .proyecto:hover {
+  background-color: #00ffff;
+  color: #000;
+  box-shadow: 0 0 10px #00ffff;
+}
+
+.red-page .volver {
+  display: inline-block;
+  margin-top: 30px;
+  color: #00ffff;
+  text-decoration: none;
+  border: 1px solid #00ffff;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.red-page .volver:hover {
+  background-color: #00ffff;
+  color: #000;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1;}
+  51%, 100% { opacity: 0;}
+}
+
+
+
+/*============Cursor blink INICIO & SILO===============*/
+.cursor-link {
+  text-decoration: none;
+  color: #00ff66;
+}
+
+.cursor-blink {
+  position: relative;
+  display: inline-block;
+  margin-left: 6px;
+  color: #00ff66;
+  animation: blink 1.5s infinite;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+
+.cursor-blink:hover {
+  animation: none;              
+  transform: scaleY(1.3);       
+  text-shadow:
+    0 0 6px #00ff66,
+    0 0 12px rgba(0, 255, 102, 0.6),
+    0 0 20px rgba(0, 255, 102, 0.3);
+}
+
+
+
+
+.seccion{
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1;}
+}
+
+
+
+/* ======================= MÓDULO EDITOR RETRO CRT ======================= */
+
+.editor-marco {
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  background: #000;
+  box-shadow: 0 0 15px #00ff66;
+}
+
+.editor-barra {
+  padding: 8px 12px;
+  background: #001a00;
+  border-bottom: 2px solid #00ff66;
+  color: #66ffb3;
+  font-size: 0.9rem;
+  text-shadow: 0 0 6px #00ff66;
+  letter-spacing: 1px;
+}
+
+.editor-contenedor {
+  width: 100%;
+  overflow: hidden;
+}
+
+textarea#editor-crt {
+  width: 100%;
+  min-height: 420px;
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  padding: 12px;
+  resize: vertical;
+  box-sizing: border-box;
+  caret-color: #00ff66;
+
+  /* Scanlines CRT */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 102, 0.04) 0px,
+    rgba(0, 255, 102, 0.04) 2px,
+    rgba(0, 0, 0, 0.25) 3px
+  );
+}
+
+textarea#editor-crt:focus {
+  box-shadow: inset 0 0 10px #00ff66;
+}
+
+/* ===== Editor CODE_CRT ===== */
+
+.editor-marco {
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  background: #000;
+  box-shadow: 0 0 15px #00ff66;
+  padding: 15px;
+}
+
+.editor-barra {
+  padding: 8px 12px;
+  background: #001a00;
+  border-bottom: 2px solid #00ff66;
+  color: #66ffb3;
+  font-size: 0.9rem;
+  text-shadow: 0 0 6px #00ff66;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.editor-contenedor {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.editor-crt {
+  flex: 1 1 0;
+  min-height: 350px;
+  background: #000;
+  color: #00ff66;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  border: 2px solid #00ff66;
+  outline: none;
+  padding: 12px;
+  resize: vertical;
+  box-sizing: border-box;
+  caret-color: #00ff66;
+
+  /* Efecto scanlines */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 255, 102, 0.05) 0px,
+    rgba(0, 255, 102, 0.05) 2px,
+    rgba(0, 0, 0, 0.3) 3px
+  );
+}
+
+.editor-crt:focus {
+  box-shadow: inset 0 0 12px #00ff66;
+}
+
+.editor-botones {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.editor-botones button {
+  padding: 10px 22px;
+  border: 1px solid #00ff66;
+  background: #001a00;
+  color: #00ff66;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+.editor-botones button:hover {
+  background: #00ff66;
+  color: #000;
+  box-shadow: 0 0 12px #00ff66;
+}
+
+#preview {
+  width: 100%;
+  height: 350px;
+  margin-top: 25px;
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 15px #00ff66;
+  background: #000;
+  border-radius: 4px;
+}
+
+/* Ajuste responsive */
+@media (max-width: 900px) {
+  .editor-contenedor {
+    flex-wrap: wrap;
+  }
+
+  .editor-crt {
+    width: 100%;
+    min-height: 200px;
+  }
+
+  #preview {
+    height: 250px;
+  }
+}
+
+
+
+
+
+
+
+
+/* ============================================================
+   SILO — Estructura de navegación jerárquica
+   index.html → articulos.html → articulo-retroterm.html
+   ============================================================ */
+
+/* Migas de pan (breadcrumbs) visuales */
+.breadcrumbs {
+  font-family: 'Courier New', monospace;
+  font-size: 0.75rem;
+  color: #66ffb3;
+  margin-bottom: 18px;
+  padding: 6px 10px;
+  border-left: 2px solid #00ff66;
+  background: rgba(0, 30, 0, 0.5);
+  letter-spacing: 1px;
+}
+
+.breadcrumbs a {
+  color: #00ff66;
+  text-decoration: none;
+  transition: text-shadow 0.2s;
+}
+
+.breadcrumbs a:hover {
+  text-shadow: 0 0 6px #00ff66;
+}
+
+.bread-sep {
+  margin: 0 8px;
+  color: #006633;
+}
+
+.bread-current {
+  color: #ffffff;
+}
+
+/* Enlace "Leer más" en tarjetas de artículo */
+.leer-mas {
+  display: inline-block;
+  margin-top: 15px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+/* Artículo completo (página individual del silo) */
+.articulo-completo {
+  margin-top: 20px;
+}
+
+.articulo-completo h4 {
+  color: #00ff66;
+  margin-top: 20px;
+  border-bottom: 1px solid #003300;
+  padding-bottom: 5px;
+}
+
+.articulo-completo ul,
+.articulo-completo ol {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  padding-left: 20px;
+}
+
+/* Botones de nav inferior en artículo individual */
+.nav-inferior {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* Enlace de texto inline */
+.texto-link {
+  color: #00ff66;
+  text-decoration: underline;
+  transition: text-shadow 0.2s;
+}
+.texto-link:hover {
+  text-shadow: 0 0 6px #00ff66;
+}
+
+
+
+/* ============================================================
+   MENÚ HAMBURGUESA — visible solo en móvil
+   Técnica: checkbox oculto + label visible + nav como overlay
+   ============================================================ */
+
+/* Ocultar el checkbox real */
+.menu-toggle-input {
+  display: none;
+}
+
+/* Botón hamburguesa: solo visible en móvil (se activa en media query) */
+.hamburguesa {
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #00ff66;
+  text-shadow: 0 0 6px #00ff66;
+  user-select: none;
+  margin-bottom: 10px;
+}
+
+
+
+/* ============================================================
+   RESPONSIVE — Sistema de breakpoints completo
+   xs: < 480px (móvil pequeño)
+   sm: < 640px (móvil grande)
+   md: < 768px (tablet)
+   lg: < 1024px (tablet grande / portátil pequeño)
+   ============================================================ */
+
+/* ── Base global segura ── */
+img, video, iframe, embed {
+  max-width: 100%;
+  height: auto;
+}
+
+textarea {
+  max-width: 100%;
+}
+
+/* ── Tablet grande (< 1024px) ── */
+@media (max-width: 1024px) {
+  .pantalla {
+    width: 95%;
+    padding: 20px 16px;
+  }
+
+  .pantalla-wide {
+    width: 98%;
+  }
+}
+
+/* ── Tablet (< 768px) ── */
+@media (max-width: 768px) {
+  .pantalla {
+    width: 96%;
+    padding: 16px 14px;
+    margin: 20px auto;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .menu {
+    gap: 16px;
+    margin-top: 25px;
+  }
+
+  .opcion {
+    flex: 1 1 160px;
+    max-width: 220px;
+    padding: 16px 18px;
+  }
+
+  /* Editor doble panel → apilado */
+  .editor-contenedor {
+    flex-direction: column;
+  }
+
+  .editor-crt {
+    width: 100%;
+    min-height: 250px;
+  }
+
+  #preview {
+    height: 280px;
+  }
+}
+
+/* ── Móvil grande (< 640px) ── */
+@media (max-width: 640px) {
+  .pantalla {
+    width: 97%;
+    padding: 14px 12px;
+    margin: 12px auto;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    word-break: break-word;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+  }
+
+  .menu {
+    gap: 12px;
+  }
+
+  .opcion {
+    flex: 1 1 140px;
+    max-width: none;
+    padding: 14px 12px;
+  }
+
+  .articulo-completo ul,
+  .articulo-completo ol {
+    padding-left: 14px;
+  }
+
+  .nav-pie {
+    gap: 8px;
+  }
+
+  .nav-pie a {
+    font-size: 0.7rem;
+  }
+}
+
+/* ── Móvil pequeño (< 480px) ── */
+@media (max-width: 480px) {
+
+  /* --- Layout general --- */
+  .pantalla {
+    width: 100%;
+    padding: 14px 10px;
+    margin: 8px auto;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* --- Tipografía y cabecera --- */
+  h1 {
+    font-size: 1.3rem;
+    word-break: break-word;
+  }
+
+  h2 {
+    font-size: 1.05rem;
+  }
+
+  .subtitulo {
+    font-size: 0.75rem;
+    padding: 0 5px;
+  }
+
+  /* --- Mostrar el botón hamburguesa --- */
+  .hamburguesa {
+    display: block;
+  }
+
+  /* --- Ocultar menú por defecto en móvil --- */
+  .menu {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+    width: 100%;
+  }
+
+  /* --- Mostrar menú al activar el checkbox --- */
+  .menu-toggle-input:checked ~ .pantalla .menu,
+  .menu-toggle-input:checked ~ section .menu {
+    display: flex;
+  }
+
+  .menu-toggle-input:checked + section .menu,
+  .menu-toggle-input:checked + .pantalla .menu {
+    display: flex;
+  }
+
+  /* --- Opciones de menú adaptadas --- */
+  .opcion {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    flex: none;
+  }
+
+  /* --- Imágenes de artículo: ocupan ancho completo en móvil --- */
+  .imagen-articulo img {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 4px;
+  }
+
+  /* --- Artículos: reducir padding --- */
+  .articulo {
+    padding: 12px 10px;
+    overflow-x: hidden;
+  }
+
+  .articulo h3 {
+    font-size: 0.95rem;
+  }
+
+  .articulo p,
+  .articulo li {
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* --- Breadcrumbs en móvil: más compactos --- */
+  .breadcrumbs {
+    font-size: 0.68rem;
+    letter-spacing: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* --- Botones "volver" y navegación inferior --- */
+  .volver {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .nav-inferior {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* --- Pie de página --- */
+  .pie {
+    font-size: 0.75rem;
+    margin-top: 20px;
+    padding-top: 8px;
+    word-break: break-word;
+  }
+
+  /* --- Red de proyectos: lista vertical --- */
+  .lista-proyectos li {
+    margin: 10px 0;
+  }
+
+  .red-page {
+    padding: 20px 10px;
+  }
+
+  .red-page .proyecto {
+    display: block;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  /* --- Menú de artículo-completo también colapsable --- */
+  .menu-articulo {
+    display: none;
+  }
+
+  .menu-toggle-input:checked ~ .pantalla .menu-articulo {
+    display: flex;
+  }
+
+  /* --- Editor: panel único en móvil --- */
+  .editor-contenedor {
+    flex-direction: column;
+  }
+
+  .editor-crt {
+    width: 100%;
+    min-height: 200px;
+  }
+
+  #preview {
+    height: 220px;
+  }
+
+  /* --- Textarea global: no desbordarse --- */
+  textarea {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 0.85rem;
+  }
+
+  /* --- Botones: tamaño táctil mínimo --- */
+  button {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    touch-action: manipulation;
+  }
+
+  /* --- Share bar compacta --- */
+  .share-bar {
+    gap: 6px;
+  }
+}
+
+/* ---- Clase añadida por JS al hacer click en hamburguesa ---- */
+@media (max-width: 640px) {
+  .menu.menu-visible {
+    display: flex !important;
+  }
+}
+
+/* ---- Nav pie: enlaces pequeños de navegación secundaria ---- */
+.nav-pie {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 25px;
+  padding-top: 12px;
+  border-top: 1px solid #003300;
+}
+
+.nav-pie a {
+  color: #66ffb3;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  opacity: 0.7;
+  transition: opacity 0.2s, text-shadow 0.2s;
+}
+
+.nav-pie a:hover {
+  opacity: 1;
+  text-shadow: 0 0 6px #00ff66;
+}
+
+/* ---- Meta del artículo: tag + fecha ---- */
+.articulo-meta {
+  font-size: 0.75rem;
+  color: #66ffb3;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.articulo-tag {
+  border: 1px solid #00ff66;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  color: #00ff66;
+  margin-right: 6px;
+  letter-spacing: 2px;
+}
+
+/* ---- Bloque de código estilo terminal ---- */
+.codigo-bloque {
+  background: #000;
+  color: #00ff66;
+  border: 1px solid #003300;
+  padding: 12px 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  margin: 10px 0 18px 0;
+  white-space: pre;
+}
+
+@media (max-width: 768px) {
+  .codigo-bloque {
+    font-size: 0.8rem;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .codigo-bloque {
+    font-size: 0.72rem;
+    padding: 8px 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ---- Tabla SEO con divs ---- */
+.tabla-seo {
+  border: 1px solid #00ff66;
+  margin: 15px 0 20px 0;
+  font-size: 0.85rem;
+}
+
+.tabla-fila {
+  display: flex;
+  border-bottom: 1px solid #003300;
+}
+
+.tabla-fila:last-child {
+  border-bottom: none;
+}
+
+.tabla-fila div {
+  padding: 8px 12px;
+  flex: 1;
+  border-right: 1px solid #003300;
+  color: #e0e0e0;
+}
+
+.tabla-fila div:last-child {
+  border-right: none;
+}
+
+.tabla-cabecera div {
+  color: #00ff66;
+  background: rgba(0, 30, 0, 0.6);
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .tabla-fila div {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-fila {
+    flex-direction: column;
+  }
+  .tabla-fila div {
+    border-right: none;
+    border-bottom: 1px solid #003300;
+    padding: 6px 10px;
+  }
+  .tabla-fila div:last-child {
+    border-bottom: none;
+  }
+  .tabla-cabecera {
+    display: none;
+  }
+}
+
+/* ===== BARRA COMPARTIR EN REDES ===== */
+.share-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #003300;
+  flex-wrap: wrap;
+}
+
+.share-label {
+  font-size: 0.7rem;
+  color: #00ff6655;
+  letter-spacing: 2px;
+}
+
+.share-btn {
+  display: inline-block;
+  padding: 5px 14px;
+  border: 1px solid #00ff6655;
+  color: #00ff66;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+  font-size: 0.78rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+.share-btn:hover {
+  background: #00ff66;
+  color: #000;
+  box-shadow: 0 0 10px #00ff66;
+  border-color: #00ff66;
+}
+
+@media (max-width: 640px) {
+  .share-bar { gap: 8px; }
+  .share-btn { padding: 6px 12px; font-size: 0.74rem; }
+}
+
+@media (max-width: 480px) {
+  .share-bar { gap: 6px; }
+  .share-btn { padding: 5px 9px; font-size: 0.72rem; }
+}
