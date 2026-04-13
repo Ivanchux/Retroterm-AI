@@ -69,10 +69,10 @@ Una plataforma web con estética de terminal retro que funciona como HUB central
 
 ## Lo que me gustaría añadir en el futuro
 
-- Backend real con base de datos para los artículos
-- Sistema de usuarios para la red de proyectos
-- Modo claro para accesibilidad
-- Más artículos técnicos
+- Backend real con base de datos para los artículos.
+- Sistema de usuarios para la red de proyectos.
+- Modo claro para accesibilidad.
+- Más artículos técnicos.
 
 ---
 
