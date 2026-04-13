@@ -31,14 +31,8 @@ jobs:
             "$FIREBASE_APP_ID" \
             "$FIREBASE_MEASUREMENT_ID" > firebase-config.js
 
-      - name: Verificar archivos antes del deploy
-        run: |
-          echo "=== Directorio actual ==="
-          pwd
-          echo "=== Archivos en raiz ==="
-          ls -la
-          echo "=== Contenido firebase-config.js ==="
-          cat firebase-config.js
+      - name: Excluir firebase-config del gitignore para deploy
+        run: sed -i '/firebase-config.js/d' .gitignore
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
