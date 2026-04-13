@@ -3,692 +3,562 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PERFIL DE USUARIO — RETROTERM.AI</title>
-  <meta name="description" content="Perfil de usuario del sistema RETROTERM.AI. Gestiona tus datos, proyectos y configuración.">
-  <link rel="canonical" href="https://ivanchux.github.io/perfil.html">
+  <title>PERFIL — RETROTERM.AI</title>
+  <meta name="description" content="Perfil de usuario del sistema RETROTERM.AI.">
+  <link rel="canonical" href="https://ivanchux.github.io/Retroterm-AI/perfil.html">
   <link rel="stylesheet" href="estilos.css">
   <link rel="stylesheet" href="accesibilidad.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta name="robots" content="noindex,nofollow">
 
   <style>
-    /* ── Layout principal ─────────────────────────────────── */
-    .perfil-wrap {
-      max-width: 820px;
+    /* ── SKIP LINK OCULTO ── */
+    .skip-link { position:absolute; left:-9999px; }
+
+    /* ── CANVAS FONDO ── */
+    #bg-canvas {
+      position: fixed; top:0; left:0;
+      width:100%; height:100%;
+      z-index:0; pointer-events:none; opacity:0.35;
+    }
+
+    .pantalla, .pantalla-wide {
+      background: transparent !important;
+      border-color: #00ff6633 !important;
+      box-shadow: 0 0 15px #00ff6622 !important;
+      position: relative; z-index: 1;
+    }
+
+    /* ── WRAP ── */
+    .pw {
+      max-width: 740px;
       margin: 0 auto;
-      padding: 0 0 30px;
+      padding: 0 0 40px;
     }
 
-    /* ── Cabecera de sección ──────────────────────────────── */
-    .perfil-header {
-      text-align: center;
-      margin-bottom: 32px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #003300;
-    }
-
-    .perfil-header h1 {
-      font-size: 1.6rem;
-      text-shadow: 0 0 8px #00ff66;
-      margin: 0 0 6px;
-    }
-
-    .perfil-header p {
-      color: #66ffb3;
-      font-size: 0.8rem;
-      margin: 0;
-      letter-spacing: 1px;
-    }
-
-    /* ── Bloque de identidad (avatar + datos básicos) ─────── */
-    .perfil-identidad {
+    /* ── HEADER ── */
+    .ph {
       display: flex;
-      gap: 28px;
-      align-items: flex-start;
-      margin-bottom: 32px;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #002200;
+      margin-bottom: 24px;
       flex-wrap: wrap;
     }
 
-    .perfil-avatar-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
+    /* Avatar con iniciales */
+    .p-avatar {
+      width: 64px; height: 64px;
       flex-shrink: 0;
-    }
-
-    .perfil-avatar {
-      width: 100px;
-      height: 100px;
-      border: 2px solid #00ff66;
-      box-shadow: 0 0 12px #00ff66;
+      border: 1px solid #00ff66;
+      box-shadow: 0 0 10px #00ff6633;
       background: #001a00;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; font-weight: bold;
       color: #00ff66;
-      position: relative;
-      overflow: hidden;
+      letter-spacing: -1px;
+      position: relative; overflow: hidden;
+      font-family: 'Courier New', monospace;
+    }
+    .p-avatar::after {
+      content:'';
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.15) 4px);
+      pointer-events:none;
     }
 
-    /* Scanline effect en el avatar */
-    .perfil-avatar::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 3px,
-        rgba(0,0,0,0.18) 4px
-      );
-      pointer-events: none;
+    .p-info { flex:1; min-width: 180px; }
+
+    .p-username {
+      font-size: 1.3rem;
+      color: #00ff66;
+      text-shadow: 0 0 8px #00ff6644;
+      letter-spacing: 2px;
+      margin: 0 0 4px;
+      font-family: 'Courier New', monospace;
     }
 
-    /* Placeholder hasta que haya foto real */
-    .perfil-avatar-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .perfil-avatar-label {
-      font-size: 0.65rem;
-      color: #004400;
+    .p-email {
+      font-size: 0.72rem;
+      color: #336633;
       letter-spacing: 1px;
-      text-align: center;
+      margin: 0 0 8px;
     }
 
-    /* Botón de cambiar avatar — conectar al backend */
-    .perfil-avatar-btn {
-      display: inline-block;
-      font-size: 0.65rem;
-      color: #00ff66;
+    .p-badges {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+
+    .badge {
+      font-size: 0.58rem;
+      letter-spacing: 1.5px;
+      padding: 2px 7px;
+      border: 1px solid;
+      text-transform: uppercase;
+      font-family: 'Courier New', monospace;
+    }
+    .badge.verde  { color:#00ff66; border-color:#003300; }
+    .badge.cyan   { color:#00ffff; border-color:#003333; }
+    .badge.amber  { color:#ffaa00; border-color:#443300; }
+
+    /* Botón engranaje config */
+    .p-gear-wrap { position: relative; margin-left: auto; }
+
+    .p-gear {
+      background: transparent;
       border: 1px solid #003300;
-      padding: 3px 8px;
-      text-decoration: none;
+      color: #336633;
+      width: 36px; height: 36px;
       cursor: pointer;
-      background: none;
-      font-family: 'Courier New', monospace;
-      transition: all 0.2s;
-      letter-spacing: 1px;
-    }
-
-    .perfil-avatar-btn:hover {
-      border-color: #00ff66;
-      background: rgba(0,255,102,0.06);
-    }
-
-    /* ── Datos del usuario ────────────────────────────────── */
-    .perfil-datos {
-      flex: 1;
-      min-width: 220px;
-    }
-
-    .perfil-campo {
-      margin-bottom: 16px;
-    }
-
-    .perfil-campo label {
-      display: block;
-      font-size: 0.65rem;
-      color: #004d00;
-      letter-spacing: 2px;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-    }
-
-    /* Valor en modo lectura */
-    .perfil-valor {
       font-size: 1rem;
-      color: #00ff66;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
       font-family: 'Courier New', monospace;
-      padding: 6px 0;
-      border-bottom: 1px solid #002200;
-      min-height: 28px;
     }
-
-    /* Valor secundario / subtítulo */
-    .perfil-valor.secundario {
-      font-size: 0.82rem;
-      color: #66ffb3;
-    }
-
-    /* Input en modo edición — oculto por defecto, activar con backend */
-    .perfil-input {
-      width: 100%;
-      background: #000;
-      color: #00ff66;
-      border: none;
-      border-bottom: 1px solid #00ff66;
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      padding: 5px 0;
-      outline: none;
-      display: none; /* activar cuando backend esté listo */
-    }
-
-    .perfil-input:focus {
-      border-bottom-color: #66ffb3;
-      box-shadow: 0 2px 0 #00ff6633;
-    }
-
-    /* Textarea para bio */
-    .perfil-textarea {
-      width: 100%;
-      background: #000;
-      color: #00ff66;
-      border: 1px solid #003300;
-      font-family: 'Courier New', monospace;
-      font-size: 0.82rem;
-      padding: 8px;
-      resize: vertical;
-      min-height: 70px;
-      outline: none;
-      display: none; /* activar cuando backend esté listo */
-    }
-
-    /* ── Secciones con título tipo terminal ──────────────── */
-    .perfil-seccion {
-      margin-bottom: 28px;
-    }
-
-    .perfil-seccion-titulo {
-      font-size: 0.7rem;
-      letter-spacing: 3px;
-      color: #004d00;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #002200;
-    }
-
-    .perfil-seccion-titulo::before {
-      content: '> ';
-      color: #00ff66;
-    }
-
-    /* ── Estadísticas del sistema ─────────────────────────── */
-    .perfil-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .stat-bloque {
-      border: 1px solid #003300;
-      padding: 12px 10px;
-      text-align: center;
-      background: rgba(0,20,0,0.4);
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .stat-bloque:hover {
+    .p-gear:hover, .p-gear.open {
       border-color: #00ff66;
-      box-shadow: 0 0 8px rgba(0,255,102,0.15);
+      color: #00ff66;
+      box-shadow: 0 0 8px #00ff6622;
     }
 
-    .stat-num {
-      display: block;
-      font-size: 1.8rem;
-      color: #00ff66;
-      text-shadow: 0 0 6px #00ff66;
-      line-height: 1;
+    /* Panel config desplegable */
+    .p-config-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      width: 240px;
+      background: #000e00;
+      border: 1px solid #003300;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      z-index: 100;
+      padding: 10px 0;
+    }
+    .p-config-panel.open { display: block; }
+
+    .p-config-title {
+      font-size: 0.6rem;
+      color: #004400;
+      letter-spacing: 2px;
+      padding: 4px 14px 8px;
+      border-bottom: 1px solid #002200;
       margin-bottom: 4px;
     }
 
-    .stat-label {
-      font-size: 0.6rem;
-      color: #004d00;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    /* ── Lista de accesos rápidos / módulos activos ───────── */
-    .perfil-modulos {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .modulo-fila {
+    .p-config-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 10px;
-      border: 1px solid #002200;
-      font-size: 0.8rem;
-      transition: border-color 0.2s;
-    }
-
-    .modulo-fila:hover {
-      border-color: #004400;
-    }
-
-    .modulo-nombre {
+      padding: 8px 14px;
+      font-size: 0.72rem;
       color: #66ffb3;
+      cursor: pointer;
+      transition: background 0.15s;
     }
+    .p-config-item:hover { background: rgba(0,255,102,0.04); }
 
-    .modulo-estado {
-      font-size: 0.65rem;
-      letter-spacing: 1px;
-    }
-
-    .modulo-estado.activo {
-      color: #00ff66;
-    }
-
-    .modulo-estado.pendiente {
-      color: #666;
-    }
-
-    .modulo-estado.proximamente {
-      color: #ffaa00;
-    }
-
-    /* ── Zona de configuración (mock backend) ────────────── */
-    .perfil-config-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-    }
-
-    .config-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border: 1px solid #002200;
-      font-size: 0.78rem;
-      color: #66ffb3;
-    }
-
-    .config-toggle {
-      width: 36px;
-      height: 18px;
+    .p-toggle {
+      width: 32px; height: 16px;
       border: 1px solid #003300;
       background: #001200;
       position: relative;
-      cursor: pointer;
-      transition: border-color 0.2s;
       flex-shrink: 0;
+      transition: border-color 0.2s;
     }
-
-    .config-toggle.on {
-      border-color: #00ff66;
-      background: rgba(0,255,102,0.08);
-    }
-
-    .config-toggle::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 12px;
-      height: 12px;
-      background: #003300;
+    .p-toggle.on { border-color: #00ff66; background: rgba(0,255,102,0.06); }
+    .p-toggle::after {
+      content:'';
+      position:absolute; top:2px; left:2px;
+      width:10px; height:10px;
+      background:#003300;
       transition: left 0.2s, background 0.2s;
     }
+    .p-toggle.on::after { left:18px; background:#00ff66; }
 
-    .config-toggle.on::after {
-      left: 20px;
-      background: #00ff66;
-    }
-
-    /* ── Zona "conectar backend" — aviso visible ─────────── */
-    .perfil-backend-aviso {
-      border: 1px dashed #003300;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-      font-size: 0.72rem;
-      color: #004d00;
-      line-height: 1.8;
-    }
-
-    .perfil-backend-aviso strong {
-      color: #00ff66;
-    }
-
-    .perfil-backend-aviso code {
-      color: #66ffb3;
-      font-size: 0.7rem;
-    }
-
-    /* ── Botones de acción ────────────────────────────────── */
-    .perfil-acciones {
+    /* ── STATUS BAR ── */
+    .p-status {
+      font-size: 0.65rem;
+      color: #004400;
+      letter-spacing: 1px;
+      padding: 6px 10px;
+      border: 1px solid #002200;
+      background: rgba(0,10,0,0.4);
+      margin-bottom: 22px;
       display: flex;
-      gap: 12px;
+      align-items: center;
+      gap: 8px;
+    }
+    .p-status-dot {
+      width: 6px; height: 6px;
+      background: #00ff66;
+      border-radius: 50%;
+      box-shadow: 0 0 4px #00ff66;
+      flex-shrink: 0;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity:1; }
+      50% { opacity:0.3; }
+    }
+    .p-status span { color: #66ffb3; }
+
+    /* ── STATS ── */
+    .p-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: #002200;
+      border: 1px solid #002200;
+      margin-bottom: 24px;
+    }
+
+    .p-stat {
+      background: #000;
+      padding: 14px 10px;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .p-stat:hover { background: #000e00; }
+
+    .p-stat-n {
+      display: block;
+      font-size: 1.6rem;
+      color: #00ff66;
+      text-shadow: 0 0 8px #00ff6633;
+      line-height: 1;
+      margin-bottom: 4px;
+      font-family: 'Courier New', monospace;
+    }
+    .p-stat-l {
+      font-size: 0.55rem;
+      color: #334433;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── DATOS ── */
+    .p-datos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #002200;
+      border: 1px solid #002200;
+      margin-bottom: 24px;
+    }
+
+    .p-dato {
+      background: #000;
+      padding: 12px 14px;
+    }
+
+    .p-dato-label {
+      font-size: 0.58rem;
+      color: #334433;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .p-dato-val {
+      font-size: 0.88rem;
+      color: #00ff66;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.5px;
+    }
+    .p-dato-val.dim { color: #336633; font-size: 0.78rem; }
+
+    /* ── MÓDULOS GRID ── */
+    .p-modulos-titulo {
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      color: #334433;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .p-modulos-titulo::before { content: '> '; color: #00ff66; }
+
+    .p-modulos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .p-modulo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 8px;
+      border: 1px solid #002200;
+      text-decoration: none;
+      background: #000;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .p-modulo::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .p-modulo:hover { border-color: #004400; background: #000e00; }
+    .p-modulo:hover::before { background: #00ff66; }
+    .p-modulo.inactivo { opacity: 0.35; pointer-events: none; }
+
+    .p-mod-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+    .p-mod-name {
+      font-size: 0.6rem;
+      color: #66ffb3;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+    .p-mod-tag {
+      font-size: 0.52rem;
+      color: #334433;
+      letter-spacing: 1px;
+    }
+    .p-mod-tag.activo { color: #00ff66; }
+    .p-mod-tag.prox   { color: #664400; }
+
+    /* ── ACCIONES ── */
+    .p-acciones {
+      display: flex;
+      gap: 10px;
       flex-wrap: wrap;
-      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #002200;
     }
 
     .btn-perfil {
-      padding: 8px 18px;
+      padding: 8px 16px;
       font-family: 'Courier New', monospace;
-      font-size: 0.78rem;
-      letter-spacing: 1px;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
       cursor: pointer;
       transition: all 0.2s;
+      border: 1px solid;
+      text-transform: uppercase;
       text-decoration: none;
       display: inline-block;
-      border: 1px solid;
     }
-
-    .btn-perfil.primario {
-      background: #00ff66;
-      color: #000;
-      border-color: #00ff66;
-    }
-
-    .btn-perfil.primario:hover {
-      background: #00cc55;
-      border-color: #00cc55;
-      box-shadow: 0 0 8px #00ff66;
-    }
-
-    .btn-perfil.secundario {
-      background: transparent;
-      color: #00ff66;
-      border-color: #003300;
-    }
-
-    .btn-perfil.secundario:hover {
-      border-color: #00ff66;
-      background: rgba(0,255,102,0.06);
-    }
-
     .btn-perfil.danger {
       background: transparent;
       color: #ff4444;
       border-color: #440000;
     }
-
     .btn-perfil.danger:hover {
       border-color: #ff4444;
       background: rgba(255,68,68,0.06);
+      box-shadow: 0 0 8px rgba(255,68,68,0.15);
     }
-
-    /* ── Insignias / roles ────────────────────────────────── */
-    .perfil-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 6px;
+    .btn-perfil.danger:disabled {
+      opacity: 0.3; cursor: not-allowed;
     }
-
-    .badge {
-      font-size: 0.6rem;
-      letter-spacing: 1.5px;
-      padding: 3px 8px;
-      border: 1px solid;
-      text-transform: uppercase;
+    .btn-perfil.sec {
+      background: transparent;
+      color: #336633;
+      border-color: #002200;
     }
-
-    .badge.verde  { color: #00ff66; border-color: #003300; }
-    .badge.cyan   { color: #00ffff; border-color: #003333; }
-    .badge.amber  { color: #ffaa00; border-color: #443300; }
-
-    /* ── Footer ───────────────────────────────────────────── */
-    .perfil-footer {
-      text-align: center;
-      border-top: 1px solid #003300;
-      margin-top: 36px;
-      padding-top: 14px;
-      font-size: 0.72rem;
-      color: #004400;
-    }
-
-    .perfil-footer a {
+    .btn-perfil.sec:hover {
+      border-color: #336633;
       color: #66ffb3;
-      text-decoration: none;
     }
 
-    .perfil-footer a:hover {
-      color: #00ff66;
+    /* ── FOOTER ── */
+    .p-footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 14px;
+      border-top: 1px solid #001a00;
+      font-size: 0.65rem;
+      color: #223322;
     }
+    .p-footer a { color: #336633; text-decoration: none; }
+    .p-footer a:hover { color: #66ffb3; }
 
-    /* ── Responsive ───────────────────────────────────────── */
+    /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
-      .perfil-identidad {
-        flex-direction: column;
-        align-items: center;
-        gap: 16px;
-      }
-      .perfil-datos {
-        width: 100%;
-      }
-      .perfil-stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .perfil-campo { font-size: 0.8rem; }
-      .perfil-label { font-size: 0.6rem; }
+      .ph { gap: 14px; }
+      .p-avatar { width:50px; height:50px; font-size:1.2rem; }
+      .p-stats { grid-template-columns: repeat(2,1fr); }
+      .p-datos { grid-template-columns: 1fr; }
+      .p-modulos { grid-template-columns: repeat(2,1fr); }
+      .p-username { font-size: 1.1rem; }
     }
-
-    @media (max-width: 480px) {
-      .perfil-stats {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-      .perfil-stat-num { font-size: 1.3rem; }
-      .perfil-habilidades { flex-wrap: wrap; gap: 6px; }
-      .perfil-tag { font-size: 0.65rem; padding: 3px 8px; }
-      .perfil-backend-aviso { font-size: 0.72rem; padding: 10px 12px; }
-      .perfil-header h1 { font-size: 1.2rem; }
+    @media (max-width: 400px) {
+      .p-modulos { grid-template-columns: repeat(2,1fr); }
+      .p-stat-n { font-size: 1.3rem; }
     }
-
-    @media (max-width: 360px) {
-      .perfil-stats { grid-template-columns: 1fr 1fr; gap: 6px; }
-      .perfil-avatar { width: 70px; height: 70px; font-size: 2rem; }
-    }
-  
-  /* ── CANVAS FONDO ─── */
-  #bg-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.45;
-  }
-
-  /* fondo transparente sobre canvas */
-  .pantalla, .pantalla-wide {
-    background: transparent !important;
-    border-color: #00ff6633 !important;
-    box-shadow: 0 0 15px #00ff6622 !important;
-  }
   </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 
 <section class="pantalla activa" id="perfil-seccion">
-  <div class="perfil-wrap">
+<div class="pw">
 
-    <!-- CABECERA -->
-    <div class="perfil-header">
-      <h1>👤 PERFIL DE USUARIO</h1>
-      <p>// MÓDULO EN PREPARACIÓN — BASE LISTA PARA BACKEND</p>
-    </div>
+  <!-- HEADER: avatar + info + engranaje -->
+  <div class="ph">
 
-    <!-- AVISO BACKEND -->
-    <div class="perfil-backend-aviso">
-      <strong>// NOTA DEL SISTEMA:</strong> Esta sección está preparada estructuralmente.<br>
-      Los campos muestran datos de ejemplo. Para activar la edición real conectar:<br>
-      <code>API_ENDPOINT /api/users/:id</code> · <code>AUTH: JWT / session</code>
-    </div>
+    <div class="p-avatar" id="p-avatar" aria-label="Avatar">??</div>
 
-    <!-- IDENTIDAD -->
-    <div class="perfil-identidad">
-
-      <!-- Avatar -->
-      <div class="perfil-avatar-col">
-        <div class="perfil-avatar" role="img" aria-label="Avatar del usuario">
-          <!-- Cuando haya backend: <img class="perfil-avatar-img" src="" alt="Avatar"> -->
-          👤
-        </div>
-        <span class="perfil-avatar-label">// AVATAR</span>
-        <!-- Activar con backend: <button class="perfil-avatar-btn" disabled title="Disponible próximamente">[ CAMBIAR ]</button> -->
-        <span class="perfil-avatar-btn" aria-disabled="true" title="Disponible con backend">[ CAMBIAR ]</span>
-      </div>
-
-      <!-- Datos básicos -->
-      <div class="perfil-datos">
-
-        <div class="perfil-campo">
-          <label for="campo-nombre">NOMBRE DE USUARIO</label>
-          <div class="perfil-valor" id="campo-nombre">ivanchux</div>
-          <!-- <input class="perfil-input" id="campo-nombre-edit" type="text" value="ivanchux" maxlength="32"> -->
-        </div>
-
-        <div class="perfil-campo">
-          <label for="campo-nombre-real">NOMBRE REAL</label>
-          <div class="perfil-valor secundario" id="campo-nombre-real">Iván Brihuega Crespo</div>
-        </div>
-
-        <div class="perfil-campo">
-          <label for="campo-email">EMAIL</label>
-          <div class="perfil-valor secundario" id="campo-email">usuario@retroterm.ai</div>
-          <!-- <input class="perfil-input" id="campo-email-edit" type="email"> -->
-        </div>
-
-        <div class="perfil-campo">
-          <label>ROL / INSIGNIAS</label>
-          <div class="perfil-badges">
-            <span class="badge verde">ADMIN</span>
-            <span class="badge cyan">DEVELOPER</span>
-            <span class="badge amber">ASIR 2025</span>
-          </div>
-        </div>
-
+    <div class="p-info">
+      <div class="p-username" id="campo-nombre">—</div>
+      <div class="p-email" id="campo-email">—</div>
+      <div class="p-badges">
+        <span class="badge verde" id="badge-role">USER</span>
+        <span class="badge cyan">RETROTERM</span>
+        <span class="badge amber">ASIR 2025</span>
       </div>
     </div>
 
-    <!-- BIO -->
-    <div class="perfil-seccion">
-      <div class="perfil-seccion-titulo">BIOGRAFÍA</div>
-      <div class="perfil-valor secundario" id="campo-bio" style="line-height:1.7; font-size:0.82rem;">
-        Desarrollador y estudiante de ASIR. Creador de RETROTERM.AI, un sistema retrofuturista inspirado en terminales clásicas de los 80/90. Apasionado de los sistemas, la IA y la estética vintage.
-      </div>
-      <!-- <textarea class="perfil-textarea" id="campo-bio-edit" maxlength="300"></textarea> -->
-    </div>
-
-    <!-- ESTADÍSTICAS -->
-    <div class="perfil-seccion">
-      <div class="perfil-seccion-titulo">ESTADÍSTICAS DEL SISTEMA</div>
-      <div class="perfil-stats">
-        <div class="stat-bloque">
-          <span class="stat-num" id="stat-sesiones">—</span>
-          <span class="stat-label">SESIONES</span>
-        </div>
-        <div class="stat-bloque">
-          <span class="stat-num" id="stat-proyectos">0</span>
-          <span class="stat-label">PROYECTOS</span>
-        </div>
-        <div class="stat-bloque">
-          <span class="stat-num" id="stat-articulos">6</span>
-          <span class="stat-label">ARTÍCULOS</span>
-        </div>
-        <div class="stat-bloque">
-          <span class="stat-num" id="stat-registro">—</span>
-          <span class="stat-label">REGISTRO</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MÓDULOS ACTIVOS -->
-    <div class="perfil-seccion">
-      <div class="perfil-seccion-titulo">MÓDULOS DEL SISTEMA</div>
-      <div class="perfil-modulos">
-        <div class="modulo-fila">
-          <span class="modulo-nombre">💻 Editor de código (CODE_CRT)</span>
-          <span class="modulo-estado activo">● ACTIVO</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">🤖 Asistente IA (ARIA)</span>
-          <span class="modulo-estado activo">● ACTIVO</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">🎮 Gaming</span>
-          <span class="modulo-estado activo">● ACTIVO</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">💰 DeFi / Cripto</span>
-          <span class="modulo-estado activo">● ACTIVO</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">📚 Artículos</span>
-          <span class="modulo-estado activo">● ACTIVO</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">🌐 Red de Proyectos</span>
-          <span class="modulo-estado activo">● ACTIVO</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">🔐 Autenticación (Login/Registro)</span>
-          <span class="modulo-estado proximamente">◌ PRÓXIMAMENTE</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">💾 Proyectos guardados</span>
-          <span class="modulo-estado proximamente">◌ PRÓXIMAMENTE</span>
-        </div>
-        <div class="modulo-fila">
-          <span class="modulo-nombre">🔔 Notificaciones</span>
-          <span class="modulo-estado pendiente">○ PENDIENTE</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- CONFIGURACIÓN -->
-    <div class="perfil-seccion">
-      <div class="perfil-seccion-titulo">CONFIGURACIÓN</div>
-      <div class="perfil-config-grid">
-        <div class="config-item">
-          <span>Tema oscuro</span>
-          <div class="config-toggle on" role="switch" aria-checked="true" aria-label="Tema oscuro" tabindex="0" onclick="toggleConfig(this)"></div>
-        </div>
-        <div class="config-item">
+    <!-- Engranaje config -->
+    <div class="p-gear-wrap">
+      <button class="p-gear" id="btn-gear" aria-label="Configuración" title="Configuración">⚙</button>
+      <div class="p-config-panel" id="config-panel">
+        <div class="p-config-title">// CONFIGURACIÓN</div>
+        <div class="p-config-item" onclick="toggleCfg('cfg-crt', this)">
           <span>Animaciones CRT</span>
-          <div class="config-toggle on" role="switch" aria-checked="true" aria-label="Animaciones CRT" tabindex="0" onclick="toggleConfig(this)"></div>
+          <div class="p-toggle on" id="cfg-crt"></div>
         </div>
-        <div class="config-item">
+        <div class="p-config-item" onclick="toggleCfg('cfg-sound', this)">
           <span>Efectos de sonido</span>
-          <div class="config-toggle" role="switch" aria-checked="false" aria-label="Efectos de sonido" tabindex="0" onclick="toggleConfig(this)"></div>
+          <div class="p-toggle" id="cfg-sound"></div>
         </div>
-        <div class="config-item">
+        <div class="p-config-item" onclick="toggleCfg('cfg-notif', this)">
           <span>Notificaciones</span>
-          <div class="config-toggle" role="switch" aria-checked="false" aria-label="Notificaciones" tabindex="0" onclick="toggleConfig(this)"></div>
+          <div class="p-toggle" id="cfg-notif"></div>
+        </div>
+        <div class="p-config-item" onclick="toggleCfg('cfg-bg', this)">
+          <span>Fondo animado</span>
+          <div class="p-toggle on" id="cfg-bg"></div>
         </div>
       </div>
-    </div>
-
-    <!-- ACCIONES -->
-    <div class="perfil-seccion">
-      <div class="perfil-seccion-titulo">ACCIONES</div>
-      <div class="perfil-acciones">
-        <button class="btn-perfil primario" disabled title="Disponible cuando se conecte el backend">[ GUARDAR CAMBIOS ]</button>
-        <button class="btn-perfil secundario" disabled title="Disponible cuando se conecte el backend">[ CAMBIAR CONTRASEÑA ]</button>
-        <button class="btn-perfil danger" id="btn-cerrar-sesion" disabled>[ CERRAR SESIÓN ]</button>
-      </div>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="perfil-footer">
-      <a href="index.html" class="volver">⬅ Volver al HUB</a>
-      <br><br>
-      Esta sección forma parte del sistema RETROTERM.AI.<br>
-      <a href="editor.html">💻 Editor</a> ·
-      <a href="asistente.html">🤖 ARIA</a> ·
-      <a href="red.html">🌐 Red</a> ·
-      <a href="articulos.html">📚 Artículos</a>
-      <br><br>
-      RETROTERM.AI v0.2 © 2025 | Perfil de Usuario
     </div>
 
   </div>
+
+  <!-- STATUS BAR -->
+  <div class="p-status">
+    <div class="p-status-dot"></div>
+    <span id="p-status-txt">// Cargando sesión...</span>
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="p-stats">
+    <div class="p-stat">
+      <span class="p-stat-n" id="stat-sesiones">—</span>
+      <span class="p-stat-l">Sesiones</span>
+    </div>
+    <div class="p-stat">
+      <span class="p-stat-n" id="stat-proyectos">—</span>
+      <span class="p-stat-l">Proyectos</span>
+    </div>
+    <div class="p-stat">
+      <span class="p-stat-n" id="stat-articulos">—</span>
+      <span class="p-stat-l">Artículos</span>
+    </div>
+    <div class="p-stat">
+      <span class="p-stat-n" id="stat-registro">—</span>
+      <span class="p-stat-l">Registro</span>
+    </div>
+  </div>
+
+  <!-- DATOS -->
+  <div class="p-datos">
+    <div class="p-dato">
+      <div class="p-dato-label">Usuario</div>
+      <div class="p-dato-val" id="dato-user">—</div>
+    </div>
+    <div class="p-dato">
+      <div class="p-dato-label">Email</div>
+      <div class="p-dato-val dim" id="campo-email2">—</div>
+    </div>
+    <div class="p-dato">
+      <div class="p-dato-label">Rol</div>
+      <div class="p-dato-val" id="dato-role">USER</div>
+    </div>
+    <div class="p-dato">
+      <div class="p-dato-label">UID</div>
+      <div class="p-dato-val dim" id="dato-uid" style="font-size:0.65rem;letter-spacing:0">—</div>
+    </div>
+  </div>
+
+  <!-- MÓDULOS -->
+  <div class="p-modulos-titulo">ACCESO RÁPIDO</div>
+  <div class="p-modulos">
+    <a href="editor.html" class="p-modulo">
+      <span class="p-mod-icon">⌨</span>
+      <span class="p-mod-name">Editor</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="asistente.html" class="p-modulo">
+      <span class="p-mod-icon">◈</span>
+      <span class="p-mod-name">ARIA</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="gaming.html" class="p-modulo">
+      <span class="p-mod-icon">▶</span>
+      <span class="p-mod-name">Gaming</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="articulos.html" class="p-modulo">
+      <span class="p-mod-icon">§</span>
+      <span class="p-mod-name">Artículos</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="defi.html" class="p-modulo">
+      <span class="p-mod-icon">₿</span>
+      <span class="p-mod-name">DeFi</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="red.html" class="p-modulo">
+      <span class="p-mod-icon">⌬</span>
+      <span class="p-mod-name">Red</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="herramientas.html" class="p-modulo">
+      <span class="p-mod-icon">⚙</span>
+      <span class="p-mod-name">Tools</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="terminal.html" class="p-modulo">
+      <span class="p-mod-icon">&gt;_</span>
+      <span class="p-mod-name">Terminal</span>
+      <span class="p-mod-tag activo">● activo</span>
+    </a>
+    <a href="#" class="p-modulo inactivo">
+      <span class="p-mod-icon">💾</span>
+      <span class="p-mod-name">Guardados</span>
+      <span class="p-mod-tag prox">◌ pronto</span>
+    </a>
+  </div>
+
+  <!-- ACCIONES -->
+  <div class="p-acciones">
+    <button class="btn-perfil danger" id="btn-cerrar-sesion" disabled>[ CERRAR SESIÓN ]</button>
+    <a href="index.html" class="btn-perfil sec">[ ← HUB ]</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="p-footer">
+    RETROTERM.AI v2.1 © 2025 ·
+    <a href="editor.html">Editor</a> ·
+    <a href="asistente.html">ARIA</a> ·
+    <a href="articulos.html">Artículos</a>
+  </div>
+
+</div>
 </section>
 
 <script src="accesibilidad.js"></script>
@@ -700,83 +570,107 @@
   import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
   import { db }             from './firebase-config.js';
 
-  // ── 1. Proteger ruta — redirige a login.html si no hay sesión ──
+  // 1. Proteger ruta
   let currentUser;
   try {
     currentUser = await requireAuth();
-  } catch (_) {
-    // requireAuth ya redirige; esta línea no se alcanza
-    throw _;
-  }
+  } catch (_) { throw _; }
 
-  // ── 2. Cargar documento del usuario en Firestore ──
+  // 2. Cargar Firestore
   const snap = await getDoc(doc(db, 'users', currentUser.uid));
   const data = snap.exists() ? snap.data() : {};
 
-  // ── 3. Inyectar datos en el HTML ──
+  // 3. Inyectar datos
   const set = (id, val) => {
     const el = document.getElementById(id);
     if (el && val !== undefined && val !== null) el.textContent = val;
   };
 
-  set('campo-nombre',      data.username  || currentUser.email?.split('@')[0] || '—');
-  set('campo-nombre-real', data.fullname  || '—');
-  set('campo-email',       data.email     || currentUser.email || '—');
-  set('campo-bio',         data.bio       || '—');
-  set('stat-proyectos',    data.proyectos ?? 0);
-  set('stat-articulos',    data.articulos ?? 0);
+  const username = data.username || currentUser.email?.split('@')[0] || '?';
+  const email    = data.email    || currentUser.email || '—';
+  const role     = data.role     || 'USER';
 
-  // Sesiones: incrementar en cada carga
+  // Avatar con iniciales
+  const av = document.getElementById('p-avatar');
+  if (av) av.textContent = username.slice(0,2).toUpperCase();
+
+  set('campo-nombre',   username);
+  set('campo-email',    email);
+  set('campo-email2',   email);
+  set('dato-user',      username);
+  set('dato-role',      role);
+  set('dato-uid',       currentUser.uid.slice(0,16) + '…');
+  set('badge-role',     role);
+  set('stat-proyectos', data.proyectos ?? 0);
+  set('stat-articulos', data.articulos ?? 0);
+
+  // Sesiones
   const sesiones = (data.sesiones ?? 0) + 1;
   set('stat-sesiones', sesiones);
   updateDoc(doc(db, 'users', currentUser.uid), { sesiones }).catch(() => {});
 
   // Fecha de registro
   if (data.createdAt?.toDate) {
-    const fecha = data.createdAt.toDate();
-    set('stat-registro', fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'short' }));
+    const f = data.createdAt.toDate();
+    set('stat-registro', f.toLocaleDateString('es-ES', { year:'numeric', month:'short' }));
   }
 
-  // Actualizar aviso de backend con saludo
-  const aviso = document.querySelector('.perfil-backend-aviso');
-  if (aviso) {
-    aviso.innerHTML = `<strong>// SESIÓN ACTIVA:</strong> Conectado como <code>${data.username || currentUser.email}</code> · UID: <code style="font-size:0.62rem">${currentUser.uid.slice(0,12)}…</code>`;
-  }
+  // Status bar
+  const st = document.getElementById('p-status-txt');
+  if (st) st.innerHTML = '// SESIÓN ACTIVA · <span>' + username + '</span> · node/RETROTERM-AI';
 
-  // Módulo auth → marcar como activo
-  document.querySelectorAll('.modulo-fila').forEach(fila => {
-    if (fila.textContent.includes('Autenticación')) {
-      const est = fila.querySelector('.modulo-estado');
-      if (est) { est.textContent = '● ACTIVO'; est.className = 'modulo-estado activo'; }
-    }
-  });
-
-  // Habilitar botones de acción
+  // Botón cerrar sesión
   const btnCerrar = document.getElementById('btn-cerrar-sesion');
   if (btnCerrar) {
     btnCerrar.disabled = false;
     btnCerrar.addEventListener('click', async () => {
       btnCerrar.disabled = true;
+      btnCerrar.textContent = '[ CERRANDO... ]';
       await logoutUser();
-      window.location.replace('index.html');
+      window.location.replace('/Retroterm-AI/index.html');
     });
   }
+</script>
 
-  // ── 4. Toggle de configuración local ──
-  window.toggleConfig = (el) => {
-    const isOn = el.classList.toggle('on');
-    el.setAttribute('aria-checked', isOn.toString());
-  };
+<!-- Engranaje lógica -->
+<script>
+  // Abrir/cerrar panel config
+  const gear  = document.getElementById('btn-gear');
+  const panel = document.getElementById('config-panel');
 
-  document.querySelectorAll('.config-toggle').forEach(t => {
-    t.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        window.toggleConfig(t);
-      }
-    });
+  gear.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = panel.classList.toggle('open');
+    gear.classList.toggle('open', open);
+  });
+
+  document.addEventListener('click', () => {
+    panel.classList.remove('open');
+    gear.classList.remove('open');
+  });
+
+  panel.addEventListener('click', e => e.stopPropagation());
+
+  // Toggle config con localStorage
+  function toggleCfg(id, item) {
+    const toggle = document.getElementById(id);
+    if (!toggle) return;
+    const isOn = toggle.classList.toggle('on');
+    localStorage.setItem('rt_' + id, isOn ? '1' : '0');
+  }
+  window.toggleCfg = toggleCfg;
+
+  // Restaurar config guardada
+  ['cfg-crt','cfg-sound','cfg-notif','cfg-bg'].forEach(id => {
+    const saved = localStorage.getItem('rt_' + id);
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (saved === '0') el.classList.remove('on');
+    if (saved === '1') el.classList.add('on');
   });
 </script>
+
+<!-- Fondo animado -->
 <script>
 (function() {
   var canvas = document.getElementById("bg-canvas");
