@@ -12,7 +12,7 @@
   <meta name="robots" content="noindex,nofollow">
 
   <style>
-    /* ── SKIP LINK OCULTO ── */
+    /* ── SKIP LINK ── */
     .skip-link { position:absolute; left:-9999px; }
 
     /* ── CANVAS FONDO ── */
@@ -22,7 +22,7 @@
       z-index:0; pointer-events:none; opacity:0.35;
     }
 
-    .pantalla, .pantalla-wide {
+    .pantalla {
       background: transparent !important;
       border-color: #00ff6633 !important;
       box-shadow: 0 0 15px #00ff6622 !important;
@@ -31,53 +31,168 @@
 
     /* ── WRAP ── */
     .pw {
-      max-width: 740px;
+      max-width: 760px;
       margin: 0 auto;
-      padding: 0 0 40px;
+      padding: 0 0 50px;
     }
 
-    /* ── HEADER ── */
+    /* ════════════════════════════════
+       HEADER SECTION
+    ════════════════════════════════ */
     .ph {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 20px;
-      padding-bottom: 20px;
+      padding-bottom: 24px;
       border-bottom: 1px solid #002200;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
-    /* Avatar con iniciales */
+    /* Avatar interactivo */
+    .p-avatar-wrap { position: relative; flex-shrink: 0; }
+
     .p-avatar {
-      width: 64px; height: 64px;
-      flex-shrink: 0;
+      width: 72px; height: 72px;
       border: 1px solid #00ff66;
-      box-shadow: 0 0 10px #00ff6633;
+      box-shadow: 0 0 12px #00ff6633, inset 0 0 20px rgba(0,255,102,0.04);
       background: #001a00;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem; font-weight: bold;
+      font-size: 1.8rem; font-weight: bold;
       color: #00ff66;
       letter-spacing: -1px;
       position: relative; overflow: hidden;
       font-family: 'Courier New', monospace;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      user-select: none;
     }
     .p-avatar::after {
       content:'';
       position:absolute; inset:0;
-      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.15) 4px);
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.12) 4px);
       pointer-events:none;
     }
+    .p-avatar:hover {
+      border-color: #00ff66;
+      box-shadow: 0 0 20px #00ff6644;
+    }
+    .p-avatar-hint {
+      position: absolute;
+      bottom: -18px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.5rem;
+      color: #334433;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      font-family: 'Courier New', monospace;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .p-avatar-wrap:hover .p-avatar-hint { opacity: 1; }
 
-    .p-info { flex:1; min-width: 180px; }
+    /* Picker de avatar */
+    .avatar-picker {
+      display: none;
+      position: absolute;
+      top: calc(100% + 24px); left: 0;
+      background: #000e00;
+      border: 1px solid #003300;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.9);
+      z-index: 200;
+      padding: 10px;
+      width: 220px;
+    }
+    .avatar-picker.open { display: block; }
+    .ap-title {
+      font-size: 0.55rem;
+      color: #334433;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #002200;
+    }
+    .ap-icons {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .ap-icon {
+      height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      border: 1px solid #002200;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: #000;
+    }
+    .ap-icon:hover, .ap-icon.sel { border-color: #00ff66; background: rgba(0,255,102,0.06); }
+    .ap-colors {
+      display: flex; gap: 5px; flex-wrap: wrap;
+    }
+    .ap-color {
+      width: 20px; height: 20px;
+      border: 1px solid #002200;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .ap-color:hover, .ap-color.sel { border-color: #fff; transform: scale(1.2); }
+    .ap-save {
+      margin-top: 8px;
+      width: 100%;
+      background: transparent;
+      border: 1px solid #003300;
+      color: #66ffb3;
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 1.5px;
+      padding: 5px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .ap-save:hover { border-color: #00ff66; background: rgba(0,255,102,0.04); }
 
+    /* Info bloque */
+    .p-info { flex: 1; min-width: 180px; }
+
+    /* Username editable */
+    .p-username-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
     .p-username {
       font-size: 1.3rem;
       color: #00ff66;
       text-shadow: 0 0 8px #00ff6644;
       letter-spacing: 2px;
-      margin: 0 0 4px;
+      font-family: 'Courier New', monospace;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 0;
+      width: auto;
+      max-width: 260px;
+      pointer-events: none;
+    }
+    .p-username.editing {
+      pointer-events: all;
+      border-bottom: 1px solid #00ff66;
+      color: #66ffb3;
+    }
+    .p-edit-btn {
+      background: transparent;
+      border: none;
+      color: #334433;
+      cursor: pointer;
+      font-size: 0.7rem;
+      padding: 0 4px;
+      transition: color 0.15s;
       font-family: 'Courier New', monospace;
     }
+    .p-edit-btn:hover { color: #00ff66; }
 
     .p-email {
       font-size: 0.72rem;
@@ -87,9 +202,8 @@
     }
 
     .p-badges {
-      display: flex; flex-wrap: wrap; gap: 6px;
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
     }
-
     .badge {
       font-size: 0.58rem;
       letter-spacing: 1.5px;
@@ -102,9 +216,55 @@
     .badge.cyan   { color:#00ffff; border-color:#003333; }
     .badge.amber  { color:#ffaa00; border-color:#443300; }
 
-    /* Botón engranaje config */
-    .p-gear-wrap { position: relative; margin-left: auto; }
+    /* Bio editable */
+    .p-bio-wrap { position: relative; }
+    .p-bio {
+      font-size: 0.72rem;
+      color: #557755;
+      letter-spacing: 0.5px;
+      font-family: 'Courier New', monospace;
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      resize: none;
+      padding: 0;
+      pointer-events: none;
+      min-height: 1.2em;
+      overflow: hidden;
+      line-height: 1.4;
+    }
+    .p-bio.editing {
+      pointer-events: all;
+      border: 1px solid #003300;
+      padding: 4px 6px;
+      color: #66ffb3;
+      background: rgba(0,20,0,0.4);
+    }
+    .p-bio-controls {
+      display: none;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .p-bio-controls.show { display: flex; }
+    .p-bio-btn {
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      padding: 3px 8px;
+      border: 1px solid;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      background: transparent;
+      text-transform: uppercase;
+      transition: all 0.15s;
+    }
+    .p-bio-btn.save { color:#00ff66; border-color:#003300; }
+    .p-bio-btn.save:hover { background: rgba(0,255,102,0.06); border-color:#00ff66; }
+    .p-bio-btn.cancel { color:#664400; border-color:#332200; }
+    .p-bio-btn.cancel:hover { color:#ffaa00; border-color:#664400; }
 
+    /* Engranaje */
+    .p-gear-wrap { position: relative; margin-left: auto; }
     .p-gear {
       background: transparent;
       border: 1px solid #003300;
@@ -122,13 +282,11 @@
       box-shadow: 0 0 8px #00ff6622;
     }
 
-    /* Panel config desplegable */
     .p-config-panel {
       display: none;
       position: absolute;
-      top: calc(100% + 6px);
-      right: 0;
-      width: 240px;
+      top: calc(100% + 6px); right: 0;
+      width: 250px;
       background: #000e00;
       border: 1px solid #003300;
       box-shadow: 0 4px 20px rgba(0,0,0,0.8);
@@ -136,47 +294,132 @@
       padding: 10px 0;
     }
     .p-config-panel.open { display: block; }
-
     .p-config-title {
-      font-size: 0.6rem;
-      color: #004400;
-      letter-spacing: 2px;
-      padding: 4px 14px 8px;
-      border-bottom: 1px solid #002200;
-      margin-bottom: 4px;
+      font-size: 0.6rem; color: #004400;
+      letter-spacing: 2px; padding: 4px 14px 8px;
+      border-bottom: 1px solid #002200; margin-bottom: 4px;
     }
-
     .p-config-item {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
       padding: 8px 14px;
-      font-size: 0.72rem;
-      color: #66ffb3;
-      cursor: pointer;
-      transition: background 0.15s;
+      font-size: 0.72rem; color: #66ffb3;
+      cursor: pointer; transition: background 0.15s;
     }
     .p-config-item:hover { background: rgba(0,255,102,0.04); }
-
     .p-toggle {
       width: 32px; height: 16px;
       border: 1px solid #003300;
       background: #001200;
-      position: relative;
-      flex-shrink: 0;
+      position: relative; flex-shrink: 0;
       transition: border-color 0.2s;
     }
     .p-toggle.on { border-color: #00ff66; background: rgba(0,255,102,0.06); }
     .p-toggle::after {
-      content:'';
-      position:absolute; top:2px; left:2px;
+      content:''; position:absolute; top:2px; left:2px;
       width:10px; height:10px;
       background:#003300;
       transition: left 0.2s, background 0.2s;
     }
     .p-toggle.on::after { left:18px; background:#00ff66; }
 
-    /* ── STATUS BAR ── */
+    /* ════════════════════════════════
+       TERMINAL DE BIENVENIDA
+    ════════════════════════════════ */
+    .p-terminal {
+      background: rgba(0,8,0,0.6);
+      border: 1px solid #002200;
+      padding: 12px 14px;
+      margin-bottom: 22px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      min-height: 42px;
+      position: relative;
+      overflow: hidden;
+    }
+    .p-terminal::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.08) 4px);
+      pointer-events: none;
+    }
+    .p-term-prompt { color: #336633; }
+    .p-term-text { color: #66ffb3; }
+    .p-term-cursor {
+      display: inline-block;
+      width: 7px; height: 12px;
+      background: #00ff66;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+      margin-left: 1px;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ════════════════════════════════
+       XP BAR
+    ════════════════════════════════ */
+    .p-xp-wrap {
+      margin-bottom: 22px;
+      border: 1px solid #002200;
+      background: rgba(0,8,0,0.4);
+      padding: 12px 14px;
+    }
+    .p-xp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .p-xp-level {
+      font-size: 0.65rem;
+      color: #334433;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: 'Courier New', monospace;
+    }
+    .p-xp-level span { color: #00ff66; font-size: 0.9rem; }
+    .p-xp-label {
+      font-size: 0.58rem;
+      color: #334433;
+      letter-spacing: 1px;
+    }
+    .p-xp-track {
+      height: 6px;
+      background: #001200;
+      border: 1px solid #002200;
+      position: relative;
+      overflow: hidden;
+    }
+    .p-xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #003300, #00ff66);
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.22, 0.61, 0.36, 1);
+      position: relative;
+    }
+    .p-xp-fill::after {
+      content: '';
+      position: absolute; right: 0; top: 0;
+      width: 4px; height: 100%;
+      background: #fff;
+      box-shadow: 0 0 6px #00ff66;
+      opacity: 0.8;
+    }
+    .p-xp-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 3px;
+      padding: 0 1px;
+    }
+    .p-xp-tick {
+      font-size: 0.5rem;
+      color: #223322;
+      letter-spacing: 0.5px;
+    }
+
+    /* ════════════════════════════════
+       STATUS BAR
+    ════════════════════════════════ */
     .p-status {
       font-size: 0.65rem;
       color: #004400;
@@ -188,6 +431,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
     }
     .p-status-dot {
       width: 6px; height: 6px;
@@ -198,12 +442,16 @@
       animation: pulse-dot 2s ease-in-out infinite;
     }
     @keyframes pulse-dot {
-      0%, 100% { opacity:1; }
-      50% { opacity:0.3; }
+      0%, 100% { opacity:1; box-shadow: 0 0 4px #00ff66; }
+      50% { opacity:0.3; box-shadow: none; }
     }
     .p-status span { color: #66ffb3; }
+    .p-status-sep { color: #002200; }
+    .p-status-lastseen { color: #334433; margin-left: auto; font-size: 0.6rem; }
 
-    /* ── STATS ── */
+    /* ════════════════════════════════
+       STATS
+    ════════════════════════════════ */
     .p-stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -212,22 +460,29 @@
       border: 1px solid #002200;
       margin-bottom: 24px;
     }
-
     .p-stat {
       background: #000;
-      padding: 14px 10px;
+      padding: 16px 10px;
       text-align: center;
       transition: background 0.2s;
+      position: relative;
     }
     .p-stat:hover { background: #000e00; }
-
+    .p-stat::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: transparent;
+      transition: background 0.2s;
+    }
+    .p-stat:hover::after { background: #00ff6622; }
     .p-stat-n {
       display: block;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       color: #00ff66;
-      text-shadow: 0 0 8px #00ff6633;
+      text-shadow: 0 0 10px #00ff6633;
       line-height: 1;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       font-family: 'Courier New', monospace;
     }
     .p-stat-l {
@@ -237,7 +492,9 @@
       text-transform: uppercase;
     }
 
-    /* ── DATOS ── */
+    /* ════════════════════════════════
+       DATOS
+    ════════════════════════════════ */
     .p-datos {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -246,12 +503,10 @@
       border: 1px solid #002200;
       margin-bottom: 24px;
     }
-
     .p-dato {
       background: #000;
       padding: 12px 14px;
     }
-
     .p-dato-label {
       font-size: 0.58rem;
       color: #334433;
@@ -259,7 +514,6 @@
       text-transform: uppercase;
       margin-bottom: 5px;
     }
-
     .p-dato-val {
       font-size: 0.88rem;
       color: #00ff66;
@@ -268,7 +522,9 @@
     }
     .p-dato-val.dim { color: #336633; font-size: 0.78rem; }
 
-    /* ── MÓDULOS GRID ── */
+    /* ════════════════════════════════
+       MÓDULOS
+    ════════════════════════════════ */
     .p-modulos-titulo {
       font-size: 0.6rem;
       letter-spacing: 3px;
@@ -284,104 +540,84 @@
       gap: 8px;
       margin-bottom: 24px;
     }
-
     .p-modulo {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      padding: 14px 8px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px; padding: 14px 8px;
       border: 1px solid #002200;
-      text-decoration: none;
-      background: #000;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
+      text-decoration: none; background: #000;
+      transition: all 0.2s; position: relative; overflow: hidden;
     }
     .p-modulo::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: transparent;
-      transition: background 0.2s;
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: transparent; transition: background 0.2s;
     }
     .p-modulo:hover { border-color: #004400; background: #000e00; }
     .p-modulo:hover::before { background: #00ff66; }
     .p-modulo.inactivo { opacity: 0.35; pointer-events: none; }
-
-    .p-mod-icon {
-      font-size: 1.3rem;
-      line-height: 1;
-    }
+    .p-mod-icon { font-size: 1.3rem; line-height: 1; }
     .p-mod-name {
-      font-size: 0.6rem;
-      color: #66ffb3;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      text-align: center;
-      font-family: 'Courier New', monospace;
+      font-size: 0.6rem; color: #66ffb3;
+      letter-spacing: 1px; text-transform: uppercase;
+      text-align: center; font-family: 'Courier New', monospace;
     }
-    .p-mod-tag {
-      font-size: 0.52rem;
-      color: #334433;
-      letter-spacing: 1px;
-    }
+    .p-mod-tag { font-size: 0.52rem; color: #334433; letter-spacing: 1px; }
     .p-mod-tag.activo { color: #00ff66; }
     .p-mod-tag.prox   { color: #664400; }
 
-    /* ── ACCIONES ── */
+    /* ════════════════════════════════
+       ACCIONES
+    ════════════════════════════════ */
     .p-acciones {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding-top: 20px;
-      border-top: 1px solid #002200;
+      display: flex; gap: 10px; flex-wrap: wrap;
+      padding-top: 20px; border-top: 1px solid #002200;
     }
-
     .btn-perfil {
       padding: 8px 16px;
       font-family: 'Courier New', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 1.5px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid;
-      text-transform: uppercase;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .btn-perfil.danger {
+      font-size: 0.72rem; letter-spacing: 1.5px;
+      cursor: pointer; transition: all 0.2s;
+      border: 1px solid; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
       background: transparent;
-      color: #ff4444;
-      border-color: #440000;
     }
+    .btn-perfil.danger { color: #ff4444; border-color: #440000; }
     .btn-perfil.danger:hover {
-      border-color: #ff4444;
-      background: rgba(255,68,68,0.06);
+      border-color: #ff4444; background: rgba(255,68,68,0.06);
       box-shadow: 0 0 8px rgba(255,68,68,0.15);
     }
-    .btn-perfil.danger:disabled {
-      opacity: 0.3; cursor: not-allowed;
-    }
-    .btn-perfil.sec {
-      background: transparent;
-      color: #336633;
-      border-color: #002200;
-    }
-    .btn-perfil.sec:hover {
-      border-color: #336633;
+    .btn-perfil.danger:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-perfil.sec { color: #336633; border-color: #002200; }
+    .btn-perfil.sec:hover { border-color: #336633; color: #66ffb3; }
+
+    /* ── TOAST ── */
+    .p-toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: #001a00;
+      border: 1px solid #00ff66;
       color: #66ffb3;
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      padding: 8px 14px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
     }
+    .p-toast.show {
+      opacity: 1; transform: translateY(0);
+    }
+    .p-toast.error { border-color: #ff4444; color: #ff8888; }
 
     /* ── FOOTER ── */
     .p-footer {
       text-align: center;
-      margin-top: 32px;
-      padding-top: 14px;
+      margin-top: 32px; padding-top: 14px;
       border-top: 1px solid #001a00;
-      font-size: 0.65rem;
-      color: #223322;
+      font-size: 0.65rem; color: #223322;
     }
     .p-footer a { color: #336633; text-decoration: none; }
     .p-footer a:hover { color: #66ffb3; }
@@ -389,40 +625,80 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
       .ph { gap: 14px; }
-      .p-avatar { width:50px; height:50px; font-size:1.2rem; }
-      .p-stats { grid-template-columns: repeat(2,1fr); }
+      .p-avatar { width: 56px; height: 56px; font-size: 1.4rem; }
+      .p-stats { grid-template-columns: repeat(2, 1fr); }
       .p-datos { grid-template-columns: 1fr; }
-      .p-modulos { grid-template-columns: repeat(2,1fr); }
+      .p-modulos { grid-template-columns: repeat(2, 1fr); }
       .p-username { font-size: 1.1rem; }
     }
     @media (max-width: 400px) {
-      .p-modulos { grid-template-columns: repeat(2,1fr); }
-      .p-stat-n { font-size: 1.3rem; }
+      .p-modulos { grid-template-columns: repeat(2, 1fr); }
+      .p-stat-n { font-size: 1.4rem; }
     }
+
+    /* ── CRT OFF mode ── */
+    body.crt-off .p-avatar::after,
+    body.crt-off .p-terminal::before { display: none; }
+    body.crt-off .p-avatar { animation: none; }
+
+    /* ── BG OFF mode ── */
+    body.bg-off #bg-canvas { display: none; }
   </style>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 
+<!-- TOAST -->
+<div class="p-toast" id="p-toast"></div>
+
 <section class="pantalla activa" id="perfil-seccion">
 <div class="pw">
 
-  <!-- HEADER: avatar + info + engranaje -->
+  <!-- ────── HEADER ────── -->
   <div class="ph">
 
-    <div class="p-avatar" id="p-avatar" aria-label="Avatar">??</div>
+    <div class="p-avatar-wrap">
+      <div class="p-avatar" id="p-avatar" aria-label="Avatar" role="button" tabindex="0">??</div>
+      <div class="p-avatar-hint">[ CLICK ]</div>
 
-    <div class="p-info">
-      <div class="p-username" id="campo-nombre">—</div>
-      <div class="p-email" id="campo-email">—</div>
-      <div class="p-badges">
-        <span class="badge verde" id="badge-role">USER</span>
-        <span class="badge cyan">RETROTERM</span>
-        <span class="badge amber">ASIR 2025</span>
+      <!-- PICKER -->
+      <div class="avatar-picker" id="avatar-picker">
+        <div class="ap-title">// ICONO</div>
+        <div class="ap-icons" id="ap-icons-grid">
+          <!-- se llena con JS -->
+        </div>
+        <div class="ap-title" style="margin-top:6px">// COLOR</div>
+        <div class="ap-colors" id="ap-colors-grid">
+          <!-- se llena con JS -->
+        </div>
+        <button class="ap-save" id="ap-save">[ GUARDAR AVATAR ]</button>
       </div>
     </div>
 
-    <!-- Engranaje config -->
+    <div class="p-info">
+      <div class="p-username-wrap">
+        <input class="p-username" id="campo-nombre" value="—" readonly
+               aria-label="Nombre de usuario" maxlength="20">
+        <button class="p-edit-btn" id="btn-edit-name" title="Editar nombre">✎</button>
+      </div>
+      <div class="p-email" id="campo-email">—</div>
+      <div class="p-badges">
+        <span class="badge verde"  id="badge-role">USER</span>
+        <span class="badge cyan">RETROTERM</span>
+        <span class="badge amber">ASIR 2025</span>
+      </div>
+      <!-- BIO -->
+      <div class="p-bio-wrap">
+        <textarea class="p-bio" id="p-bio" rows="2"
+                  placeholder="// Sin bio aún..." readonly></textarea>
+        <div class="p-bio-controls" id="bio-controls">
+          <button class="p-bio-btn save" id="btn-bio-save">[ GUARDAR ]</button>
+          <button class="p-bio-btn cancel" id="btn-bio-cancel">[ CANCELAR ]</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENGRANAJE -->
     <div class="p-gear-wrap">
       <button class="p-gear" id="btn-gear" aria-label="Configuración" title="Configuración">⚙</button>
       <div class="p-config-panel" id="config-panel">
@@ -448,24 +724,46 @@
 
   </div>
 
-  <!-- STATUS BAR -->
+  <!-- ────── TERMINAL BIENVENIDA ────── -->
+  <div class="p-terminal" id="p-terminal">
+    <span class="p-term-prompt">retroterm@system:~$ </span><span class="p-term-text" id="term-text"></span><span class="p-term-cursor" id="term-cursor"></span>
+  </div>
+
+  <!-- ────── XP BAR ────── -->
+  <div class="p-xp-wrap">
+    <div class="p-xp-header">
+      <div class="p-xp-level">NIVEL <span id="xp-level">—</span></div>
+      <div class="p-xp-label" id="xp-label">— / — XP</div>
+    </div>
+    <div class="p-xp-track">
+      <div class="p-xp-fill" id="xp-fill"></div>
+    </div>
+    <div class="p-xp-ticks">
+      <span class="p-xp-tick" id="xp-rank">—</span>
+      <span class="p-xp-tick" id="xp-next-rank">—</span>
+    </div>
+  </div>
+
+  <!-- ────── STATUS BAR ────── -->
   <div class="p-status">
     <div class="p-status-dot"></div>
     <span id="p-status-txt">// Cargando sesión...</span>
+    <span class="p-status-sep">·</span>
+    <span class="p-status-lastseen" id="p-lastseen"></span>
   </div>
 
-  <!-- ESTADÍSTICAS -->
+  <!-- ────── ESTADÍSTICAS ────── -->
   <div class="p-stats">
     <div class="p-stat">
-      <span class="p-stat-n" id="stat-sesiones">—</span>
+      <span class="p-stat-n" id="stat-sesiones">0</span>
       <span class="p-stat-l">Sesiones</span>
     </div>
     <div class="p-stat">
-      <span class="p-stat-n" id="stat-proyectos">—</span>
+      <span class="p-stat-n" id="stat-proyectos">0</span>
       <span class="p-stat-l">Proyectos</span>
     </div>
     <div class="p-stat">
-      <span class="p-stat-n" id="stat-articulos">—</span>
+      <span class="p-stat-n" id="stat-articulos">0</span>
       <span class="p-stat-l">Artículos</span>
     </div>
     <div class="p-stat">
@@ -474,7 +772,7 @@
     </div>
   </div>
 
-  <!-- DATOS -->
+  <!-- ────── DATOS ────── -->
   <div class="p-datos">
     <div class="p-dato">
       <div class="p-dato-label">Usuario</div>
@@ -494,57 +792,21 @@
     </div>
   </div>
 
-  <!-- MÓDULOS -->
+  <!-- ────── MÓDULOS ────── -->
   <div class="p-modulos-titulo">ACCESO RÁPIDO</div>
   <div class="p-modulos">
-    <a href="editor.html" class="p-modulo">
-      <span class="p-mod-icon">⌨</span>
-      <span class="p-mod-name">Editor</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="asistente.html" class="p-modulo">
-      <span class="p-mod-icon">◈</span>
-      <span class="p-mod-name">ARIA</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="gaming.html" class="p-modulo">
-      <span class="p-mod-icon">▶</span>
-      <span class="p-mod-name">Gaming</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="articulos.html" class="p-modulo">
-      <span class="p-mod-icon">§</span>
-      <span class="p-mod-name">Artículos</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="defi.html" class="p-modulo">
-      <span class="p-mod-icon">₿</span>
-      <span class="p-mod-name">DeFi</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="red.html" class="p-modulo">
-      <span class="p-mod-icon">⌬</span>
-      <span class="p-mod-name">Red</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="herramientas.html" class="p-modulo">
-      <span class="p-mod-icon">⚙</span>
-      <span class="p-mod-name">Tools</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="terminal.html" class="p-modulo">
-      <span class="p-mod-icon">&gt;_</span>
-      <span class="p-mod-name">Terminal</span>
-      <span class="p-mod-tag activo">● activo</span>
-    </a>
-    <a href="#" class="p-modulo inactivo">
-      <span class="p-mod-icon">💾</span>
-      <span class="p-mod-name">Guardados</span>
-      <span class="p-mod-tag prox">◌ pronto</span>
-    </a>
+    <a href="editor.html"       class="p-modulo"><span class="p-mod-icon">⌨</span><span class="p-mod-name">Editor</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="asistente.html"    class="p-modulo"><span class="p-mod-icon">◈</span><span class="p-mod-name">ARIA</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="gaming.html"       class="p-modulo"><span class="p-mod-icon">▶</span><span class="p-mod-name">Gaming</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="articulos.html"    class="p-modulo"><span class="p-mod-icon">§</span><span class="p-mod-name">Artículos</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="defi.html"         class="p-modulo"><span class="p-mod-icon">₿</span><span class="p-mod-name">DeFi</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="red.html"          class="p-modulo"><span class="p-mod-icon">⌬</span><span class="p-mod-name">Red</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="herramientas.html" class="p-modulo"><span class="p-mod-icon">⚙</span><span class="p-mod-name">Tools</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="terminal.html"     class="p-modulo"><span class="p-mod-icon">&gt;_</span><span class="p-mod-name">Terminal</span><span class="p-mod-tag activo">● activo</span></a>
+    <a href="#"                 class="p-modulo inactivo"><span class="p-mod-icon">💾</span><span class="p-mod-name">Guardados</span><span class="p-mod-tag prox">◌ pronto</span></a>
   </div>
 
-  <!-- ACCIONES -->
+  <!-- ────── ACCIONES ────── -->
   <div class="p-acciones">
     <button class="btn-perfil danger" id="btn-cerrar-sesion" disabled>[ CERRAR SESIÓN ]</button>
     <a href="index.html" class="btn-perfil sec">[ ← HUB ]</a>
@@ -552,7 +814,7 @@
 
   <!-- FOOTER -->
   <div class="p-footer">
-    RETROTERM.AI v2.1 © 2025 ·
+    RETROTERM.AI v2.2 © 2025 ·
     <a href="editor.html">Editor</a> ·
     <a href="asistente.html">ARIA</a> ·
     <a href="articulos.html">Artículos</a>
@@ -563,78 +825,345 @@
 
 <script src="accesibilidad.js"></script>
 
-<!-- ── FIREBASE: autenticación + datos de perfil ── -->
+<!-- ══ FIREBASE ══ -->
 <script type="module">
-  import { requireAuth }    from './middleware.js';
-  import { logoutUser }     from './auth.js';
-  import { doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-  import { db }             from './firebase-config.js';
+  import { requireAuth }  from './middleware.js';
+  import { logoutUser }   from './auth.js';
+  import { doc, getDoc, updateDoc, serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  import { db } from './firebase-config.js';
 
-  // 1. Proteger ruta
+  // ── 1. Proteger ruta
   let currentUser;
-  try {
-    currentUser = await requireAuth();
-  } catch (_) { throw _; }
+  try { currentUser = await requireAuth(); }
+  catch (_) { throw _; }
 
-  // 2. Cargar Firestore
-  const snap = await getDoc(doc(db, 'users', currentUser.uid));
+  // ── 2. Cargar Firestore
+  const uRef = doc(db, 'users', currentUser.uid);
+  const snap = await getDoc(uRef);
   const data = snap.exists() ? snap.data() : {};
 
-  // 3. Inyectar datos
-  const set = (id, val) => {
-    const el = document.getElementById(id);
+  // ── 3. Helpers
+  const $ = id => document.getElementById(id);
+  function set(id, val) {
+    const el = $(id);
     if (el && val !== undefined && val !== null) el.textContent = val;
-  };
+  }
+  function toast(msg, isErr = false) {
+    const t = $('p-toast');
+    t.textContent = msg;
+    t.className = 'p-toast show' + (isErr ? ' error' : '');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 2800);
+  }
 
+  // ── 4. Datos base
   const username = data.username || currentUser.email?.split('@')[0] || '?';
   const email    = data.email    || currentUser.email || '—';
   const role     = data.role     || 'USER';
+  const bio      = data.bio      || '';
 
-  // Avatar con iniciales
-  const av = document.getElementById('p-avatar');
-  if (av) av.textContent = username.slice(0,2).toUpperCase();
+  // ── 5. Avatar
+  const avatarIcon  = data.avatarIcon  || null;
+  const avatarColor = data.avatarColor || '#00ff66';
+  const av = $('p-avatar');
 
-  set('campo-nombre',   username);
-  set('campo-email',    email);
-  set('campo-email2',   email);
-  set('dato-user',      username);
-  set('dato-role',      role);
-  set('dato-uid',       currentUser.uid.slice(0,16) + '…');
-  set('badge-role',     role);
-  set('stat-proyectos', data.proyectos ?? 0);
-  set('stat-articulos', data.articulos ?? 0);
+  function renderAvatar(icon, color) {
+    av.style.color = color;
+    av.style.borderColor = color;
+    av.style.boxShadow = `0 0 12px ${color}44, inset 0 0 20px ${color}06`;
+    av.textContent = icon || username.slice(0,2).toUpperCase();
+  }
+  renderAvatar(avatarIcon, avatarColor);
 
-  // Sesiones
-  const sesiones = (data.sesiones ?? 0) + 1;
-  set('stat-sesiones', sesiones);
-  updateDoc(doc(db, 'users', currentUser.uid), { sesiones }).catch(() => {});
+  // ── 6. Info
+  $('campo-nombre').value = username;
+  set('campo-email',  email);
+  set('campo-email2', email);
+  set('dato-user',    username);
+  set('dato-role',    role);
+  set('dato-uid',     currentUser.uid.slice(0,16) + '…');
+  set('badge-role',   role);
 
-  // Fecha de registro
+  const bioEl = $('p-bio');
+  bioEl.value = bio;
+  if (!bio) bioEl.style.color = '#334433';
+
+  // ── 7. Stats con animación de conteo
+  const sesiones  = (data.sesiones  ?? 0) + 1;
+  const proyectos = data.proyectos ?? 0;
+  const articulos = data.articulos ?? 0;
+
+  function animCount(el, target, suffix='') {
+    if (isNaN(target)) { el.textContent = target + suffix; return; }
+    const dur = 900, steps = 30;
+    let i = 0;
+    const iv = setInterval(() => {
+      i++;
+      el.textContent = Math.round(target * (i/steps)) + suffix;
+      if (i >= steps) { el.textContent = target + suffix; clearInterval(iv); }
+    }, dur/steps);
+  }
+
+  animCount($('stat-sesiones'),  sesiones);
+  animCount($('stat-proyectos'), proyectos);
+  animCount($('stat-articulos'), articulos);
+
   if (data.createdAt?.toDate) {
     const f = data.createdAt.toDate();
     set('stat-registro', f.toLocaleDateString('es-ES', { year:'numeric', month:'short' }));
   }
 
-  // Status bar
-  const st = document.getElementById('p-status-txt');
-  if (st) st.innerHTML = '// SESIÓN ACTIVA · <span>' + username + '</span> · node/RETROTERM-AI';
+  // ── 8. Status bar
+  $('p-status-txt').innerHTML = '// SESIÓN ACTIVA · <span>' + username + '</span> · node/RETROTERM-AI';
 
-  // Botón cerrar sesión
-  const btnCerrar = document.getElementById('btn-cerrar-sesion');
-  if (btnCerrar) {
-    btnCerrar.disabled = false;
-    btnCerrar.addEventListener('click', async () => {
-      btnCerrar.disabled = true;
-      btnCerrar.textContent = '[ CERRANDO... ]';
-      await logoutUser();
-      window.location.replace('/Retroterm-AI/index.html');
-    });
+  // Last seen
+  const lastSeenEl = $('p-lastseen');
+  if (data.lastSeen?.toDate) {
+    const ls = data.lastSeen.toDate();
+    const diff = Date.now() - ls.getTime();
+    const mins  = Math.floor(diff/60000);
+    const hours = Math.floor(diff/3600000);
+    const days  = Math.floor(diff/86400000);
+    let txt;
+    if (mins < 2)       txt = 'última vez: ahora mismo';
+    else if (mins < 60) txt = `última vez: hace ${mins}m`;
+    else if (hours < 24)txt = `última vez: hace ${hours}h`;
+    else                txt = `última vez: hace ${days}d`;
+    lastSeenEl.textContent = txt;
   }
+
+  // ── 9. XP / Nivel
+  const XP_TOTAL = sesiones * 10 + proyectos * 50 + articulos * 25;
+  const LEVELS = [
+    { name: 'INICIADO',   min:0,   max:100  },
+    { name: 'TÉCNICO',    min:100, max:300  },
+    { name: 'OPERATIVO',  min:300, max:700  },
+    { name: 'EXPERTO',    min:700, max:1500 },
+    { name: 'MAESTRO',    min:1500,max:3000 },
+    { name: 'LEYENDA',    min:3000,max:9999 },
+  ];
+  const lvlIdx  = LEVELS.findIndex(l => XP_TOTAL < l.max);
+  const lvlData = LEVELS[Math.max(0, lvlIdx)];
+  const nextLvl = LEVELS[Math.min(LEVELS.length-1, lvlIdx+1)];
+  const progress = lvlIdx >= 0
+    ? Math.min(100, ((XP_TOTAL - lvlData.min) / (lvlData.max - lvlData.min)) * 100)
+    : 100;
+
+  set('xp-level', lvlIdx + 1);
+  $('xp-label').textContent = XP_TOTAL + ' XP';
+  $('xp-rank').textContent  = lvlData.name;
+  $('xp-next-rank').textContent = nextLvl.name;
+
+  setTimeout(() => {
+    $('xp-fill').style.width = progress + '%';
+  }, 400);
+
+  // ── 10. Terminal typewriter
+  const greetings = [
+    `BIENVENIDO, ${username.toUpperCase()}. TODOS LOS SISTEMAS OPERATIVOS.`,
+    `ACCESO VERIFICADO. NIVEL ${lvlIdx+1} · ${XP_TOTAL} XP ACUMULADO.`,
+    `HOLA DE NUEVO, ${username.toUpperCase()}. SESIÓN #${sesiones} INICIADA.`,
+    `SISTEMA ONLINE · ${new Date().toLocaleDateString('es-ES')} · ESTADO: ÓPTIMO.`,
+  ];
+  const msg = greetings[sesiones % greetings.length];
+  const termText = $('term-text');
+  const termCursor = $('term-cursor');
+  let ci = 0;
+  function typeWriter() {
+    if (ci < msg.length) {
+      termText.textContent += msg[ci++];
+      setTimeout(typeWriter, 28 + Math.random() * 20);
+    } else {
+      setTimeout(() => { termCursor.style.display = 'none'; }, 2000);
+    }
+  }
+  setTimeout(typeWriter, 500);
+
+  // ── 11. Cerrar sesión
+  const btnCerrar = $('btn-cerrar-sesion');
+  btnCerrar.disabled = false;
+  btnCerrar.addEventListener('click', async () => {
+    btnCerrar.disabled = true;
+    btnCerrar.textContent = '[ CERRANDO... ]';
+    await logoutUser();
+    window.location.replace('/Retroterm-AI/index.html');
+  });
+
+  // ── 12. Guardar lastSeen + sesiones en Firestore
+  updateDoc(uRef, {
+    sesiones,
+    lastSeen: serverTimestamp()
+  }).catch(() => {});
+
+  // ── 13. EDITAR NOMBRE
+  const nameInput = $('campo-nombre');
+  const btnEditName = $('btn-edit-name');
+  let editingName = false;
+  let prevName = username;
+
+  btnEditName.addEventListener('click', () => {
+    if (!editingName) {
+      // entrar modo edición
+      prevName = nameInput.value;
+      nameInput.readOnly = false;
+      nameInput.classList.add('editing');
+      nameInput.focus();
+      nameInput.select();
+      btnEditName.textContent = '✓';
+      editingName = true;
+    } else {
+      saveName();
+    }
+  });
+  nameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveName();
+    if (e.key === 'Escape') cancelName();
+  });
+
+  async function saveName() {
+    const newName = nameInput.value.trim().slice(0, 20);
+    if (!newName) { toast('// Nombre vacío', true); return; }
+    nameInput.readOnly = true;
+    nameInput.classList.remove('editing');
+    btnEditName.textContent = '✎';
+    editingName = false;
+    if (newName === prevName) return;
+
+    try {
+      await updateDoc(uRef, { username: newName });
+      // refrescar los sitios que muestran el nombre
+      set('dato-user', newName);
+      $('p-status-txt').innerHTML = '// SESIÓN ACTIVA · <span>' + newName + '</span> · node/RETROTERM-AI';
+      renderAvatar(data.avatarIcon || null, avatarColor);
+      toast('// Nombre actualizado');
+    } catch (e) {
+      toast('// Error al guardar', true);
+      nameInput.value = prevName;
+    }
+  }
+  function cancelName() {
+    nameInput.value = prevName;
+    nameInput.readOnly = true;
+    nameInput.classList.remove('editing');
+    btnEditName.textContent = '✎';
+    editingName = false;
+  }
+
+  // ── 14. EDITAR BIO
+  const bioCtrl = $('bio-controls');
+  let prevBio = bio;
+  let editingBio = false;
+
+  bioEl.addEventListener('click', () => {
+    if (editingBio) return;
+    bioEl.readOnly = false;
+    bioEl.classList.add('editing');
+    bioEl.style.color = '';
+    bioCtrl.classList.add('show');
+    bioEl.focus();
+    editingBio = true;
+  });
+  $('btn-bio-save').addEventListener('click', saveBio);
+  $('btn-bio-cancel').addEventListener('click', () => {
+    bioEl.value = prevBio;
+    bioEl.readOnly = true;
+    bioEl.classList.remove('editing');
+    bioCtrl.classList.remove('show');
+    if (!prevBio) bioEl.style.color = '#334433';
+    editingBio = false;
+  });
+
+  async function saveBio() {
+    const newBio = bioEl.value.trim().slice(0, 160);
+    bioEl.readOnly = true;
+    bioEl.classList.remove('editing');
+    bioCtrl.classList.remove('show');
+    editingBio = false;
+    if (!newBio) bioEl.style.color = '#334433';
+    if (newBio === prevBio) return;
+    try {
+      await updateDoc(uRef, { bio: newBio });
+      prevBio = newBio;
+      toast('// Bio actualizada');
+    } catch (e) {
+      toast('// Error al guardar', true);
+      bioEl.value = prevBio;
+    }
+  }
+
+  // ── 15. AVATAR PICKER
+  const ICONS = ['◈','⌬','⊕','⌘','◉','⏣','⋈','◎','⊛','⌖','⚡','★'];
+  const COLORS = ['#00ff66','#00ffff','#ffaa00','#ff66aa','#aa66ff','#ff4444'];
+
+  const iconsGrid  = $('ap-icons-grid');
+  const colorsGrid = $('ap-colors-grid');
+  let selIcon  = avatarIcon;
+  let selColor = avatarColor;
+
+  ICONS.forEach(ic => {
+    const d = document.createElement('div');
+    d.className = 'ap-icon' + (ic === selIcon ? ' sel' : '');
+    d.textContent = ic;
+    d.addEventListener('click', () => {
+      iconsGrid.querySelectorAll('.ap-icon').forEach(x => x.classList.remove('sel'));
+      d.classList.add('sel');
+      selIcon = ic;
+      renderAvatar(selIcon, selColor);
+    });
+    iconsGrid.appendChild(d);
+  });
+
+  // Opción "iniciales"
+  const initBtn = document.createElement('div');
+  initBtn.className = 'ap-icon' + (!selIcon ? ' sel' : '');
+  initBtn.textContent = 'Ab';
+  initBtn.style.fontSize = '0.6rem';
+  initBtn.title = 'Usar iniciales';
+  initBtn.addEventListener('click', () => {
+    iconsGrid.querySelectorAll('.ap-icon').forEach(x => x.classList.remove('sel'));
+    initBtn.classList.add('sel');
+    selIcon = null;
+    renderAvatar(null, selColor);
+  });
+  iconsGrid.appendChild(initBtn);
+
+  COLORS.forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'ap-color' + (c === selColor ? ' sel' : '');
+    d.style.background = c;
+    d.style.boxShadow = `0 0 6px ${c}55`;
+    d.addEventListener('click', () => {
+      colorsGrid.querySelectorAll('.ap-color').forEach(x => x.classList.remove('sel'));
+      d.classList.add('sel');
+      selColor = c;
+      renderAvatar(selIcon, selColor);
+    });
+    colorsGrid.appendChild(d);
+  });
+
+  const avatarPicker = $('avatar-picker');
+  av.addEventListener('click', (e) => {
+    e.stopPropagation();
+    avatarPicker.classList.toggle('open');
+  });
+  document.addEventListener('click', () => avatarPicker.classList.remove('open'));
+  avatarPicker.addEventListener('click', e => e.stopPropagation());
+
+  $('ap-save').addEventListener('click', async () => {
+    try {
+      await updateDoc(uRef, { avatarIcon: selIcon ?? '', avatarColor: selColor });
+      avatarPicker.classList.remove('open');
+      toast('// Avatar guardado');
+    } catch (e) {
+      toast('// Error al guardar', true);
+    }
+  });
+
 </script>
 
-<!-- Engranaje lógica -->
+<!-- ══ CONFIG (engranaje) ══ -->
 <script>
-  // Abrir/cerrar panel config
   const gear  = document.getElementById('btn-gear');
   const panel = document.getElementById('config-panel');
 
@@ -643,24 +1172,29 @@
     const open = panel.classList.toggle('open');
     gear.classList.toggle('open', open);
   });
-
   document.addEventListener('click', () => {
     panel.classList.remove('open');
     gear.classList.remove('open');
   });
-
   panel.addEventListener('click', e => e.stopPropagation());
 
-  // Toggle config con localStorage
   function toggleCfg(id, item) {
     const toggle = document.getElementById(id);
     if (!toggle) return;
     const isOn = toggle.classList.toggle('on');
     localStorage.setItem('rt_' + id, isOn ? '1' : '0');
+
+    // Efectos reales
+    if (id === 'cfg-bg') {
+      document.getElementById('bg-canvas').style.display = isOn ? '' : 'none';
+    }
+    if (id === 'cfg-crt') {
+      document.body.classList.toggle('crt-off', !isOn);
+    }
   }
   window.toggleCfg = toggleCfg;
 
-  // Restaurar config guardada
+  // Restaurar config
   ['cfg-crt','cfg-sound','cfg-notif','cfg-bg'].forEach(id => {
     const saved = localStorage.getItem('rt_' + id);
     const el = document.getElementById(id);
@@ -668,9 +1202,15 @@
     if (saved === '0') el.classList.remove('on');
     if (saved === '1') el.classList.add('on');
   });
+
+  // Aplicar estado al cargar
+  if (localStorage.getItem('rt_cfg-bg') === '0')
+    document.getElementById('bg-canvas').style.display = 'none';
+  if (localStorage.getItem('rt_cfg-crt') === '0')
+    document.body.classList.add('crt-off');
 </script>
 
-<!-- Fondo animado -->
+<!-- ══ FONDO ANIMADO ══ -->
 <script>
 (function() {
   var canvas = document.getElementById("bg-canvas");
