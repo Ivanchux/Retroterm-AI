@@ -693,6 +693,44 @@ html, body {
 .rt-nav a:hover { color: #ffaa00; }
 .rt-nav .rt-sep { color: #2a1e08; margin: 0 4px; }
 .rt-nav .rt-cur { color: #ffaa0088; }
+.rt-spacer { flex: 1; }
+.rt-theme-btn {
+  background: transparent;
+  border: 1px solid #2a1e08;
+  color: #6a4010;
+  font-size: 0.8rem;
+  width: 24px; height: 24px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s, border-color 0.2s;
+  font-family: inherit;
+  padding: 0;
+}
+.rt-theme-btn:hover { color: #ffaa00; border-color: #ffaa0066; }
+.rt-acceso {
+  color: #6a4010;
+  text-decoration: none;
+  border: 1px solid #2a1e08;
+  padding: 3px 8px;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  transition: color 0.2s, border-color 0.2s, opacity 0.3s;
+}
+.rt-acceso:hover { color: #ffaa00; border-color: #ffaa0066; }
+
+/* Modo claro */
+body.light-mode {
+  --c-bg: #f5f0e8;
+  --c-bg2: #ede8dc;
+  --c-amber: #8a5a00;
+  --c-amber2: #6a4010;
+  background: #f5f0e8;
+}
+body.light-mode .rt-nav { background: rgba(240,235,220,0.95); border-color: #c8b090; }
+body.light-mode .rt-nav a, body.light-mode .rt-cur { color: #8a5a00; }
+body.light-mode .rt-sep { color: #c8b090; }
+body.light-mode .rt-acceso { color: #8a5a00; border-color: #c8b090; }
+body.light-mode .crt-overlay, body.light-mode .vignette { opacity: 0; }
 
 /* compensar barra fija en pantallas del juego */
 .screen { padding-top: 36px; }
@@ -715,6 +753,9 @@ html, body {
   <a href="gaming.html">GAMING</a>
   <span class="rt-sep">/</span>
   <span class="rt-cur">WONDER IV</span>
+  <span class="rt-spacer"></span>
+  <button class="rt-theme-btn" id="btn-theme" title="Cambiar tema" aria-label="Cambiar tema">◑</button>
+  <a href="login.html" id="btn-acceso" class="rt-acceso" style="opacity:0;transition:opacity 0.3s;" aria-label="Acceso al sistema">[ LOGIN ]</a>
 </nav>
 
 <!-- ══ LEVEL SELECT ══ -->
@@ -2247,4 +2288,21 @@ buildSelectScreen();
 </script>
 <script src="accesibilidad.js"></script>
 </body>
+
+<!-- ── NAV AUTH + TEMA ── -->
+<script type="module" src="nav-auth.js"></script>
+<script>
+(function() {
+  const btn = document.getElementById('btn-theme');
+  const saved = localStorage.getItem('rt_wonder_theme');
+  if (saved === 'light') document.body.classList.add('light-mode');
+
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      localStorage.setItem('rt_wonder_theme', isLight ? 'light' : 'dark');
+    });
+  }
+})();
+</script>
 </html>
