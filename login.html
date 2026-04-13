@@ -102,14 +102,17 @@
   // Procesar resultado de redirect de Google
   handleGoogleRedirect().catch(console.error);
 
-  // Solo redirigir si ya habia sesion activa AL CARGAR la pagina
-  // No redirigir durante login/registro manual (handleSubmit ya lo hace)
-  let sesionPrevia = false;
+  // Solo redirigir si habia sesion ANTES de que el usuario hiciera algo
+  let primeraLlamada = true;
   onAuthStateChanged(auth, (user) => {
-    if (user && sesionPrevia) {
-      window.location.replace('/Retroterm-AI/perfil.html');
+    if (primeraLlamada) {
+      primeraLlamada = false;
+      if (user) {
+        window.location.replace('/Retroterm-AI/perfil.html');
+      }
+      return;
     }
-    sesionPrevia = true;
+    // Las llamadas siguientes las gestiona handleSubmit directamente
   });
 
   const log = (msg, cls = 'log-info') => {
@@ -149,7 +152,6 @@
         await loginUser(email, password);
         log('// OK Autenticacion exitosa. Accediendo...', 'log-ok');
       }
-      // Redirigir despues de que registerUser/loginUser terminen completamente
       setTimeout(() => window.location.replace('/Retroterm-AI/perfil.html'), 800);
     } catch (err) {
       btn.disabled = false;
