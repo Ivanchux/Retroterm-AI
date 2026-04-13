@@ -776,5 +776,9 @@ init();
 })();
 </script>
 
+<script type="module">
+  import { requireAuth } from './middleware.js';
+  await requireAuth();
+</script>
 </body>
 </html>

@@ -1214,6 +1214,10 @@ const defaultHTML = `<!DOCTYPE html>
     <p id="txt">Hola mundo</p>
     <button onclick="cambiar()">Cambiar texto</button>
   </div>
+<script type="module">
+  import { requireAuth } from './middleware.js';
+  await requireAuth();
+</script>
 </body>
 </html>`;
 
