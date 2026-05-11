@@ -687,9 +687,34 @@
     @media (max-width: 600px) {
       .pg-estado { display:none; }
     }
+
+  /* BOOT SCREEN */
+  #boot-screen {
+    position: fixed; inset: 0; background: #000; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'Courier New', monospace; transition: opacity 0.4s ease;
+  }
+  .boot-title { color: #00ff66; font-size: 0.78rem; letter-spacing: 4px; margin-bottom: 6px; text-shadow: 0 0 10px rgba(0,255,102,0.5); }
+  .boot-sub   { color: #1a4a2a; font-size: 0.62rem; letter-spacing: 2px; margin-bottom: 20px; }
+  .boot-dots  { display: flex; gap: 6px; }
+  .boot-dot   { width: 5px; height: 5px; background: #00ff66; border-radius: 50%; animation: bootPulse 1.2s infinite; }
+  .boot-dot:nth-child(2) { animation-delay: 0.2s; }
+  .boot-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bootPulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.2; transform:scale(0.6); } }
   </style>
 </head>
 <body>
+<!-- Boot screen auth -->
+<div id="boot-screen">
+  <div class="boot-title">PERFIL · RETROTERM.AI</div>
+  <div class="boot-sub">// VERIFICANDO SESIÓN...</div>
+  <div class="boot-dots">
+    <div class="boot-dot"></div>
+    <div class="boot-dot"></div>
+    <div class="boot-dot"></div>
+  </div>
+</div>
+
 <canvas id="bg-canvas"></canvas>
 
 <!-- TOAST -->
@@ -904,7 +929,11 @@
 
   // ── 1. Proteger ruta
   let currentUser;
-  try { currentUser = await requireAuth(); }
+  try {
+    currentUser = await requireAuth();
+    const boot = document.getElementById('boot-screen');
+    if (boot) { boot.style.opacity = '0'; setTimeout(() => boot.remove(), 400); }
+  }
   catch (_) { throw _; }
 
   // ── 2. Cargar Firestore
