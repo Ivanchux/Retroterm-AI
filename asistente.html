@@ -1251,7 +1251,7 @@ async function enviar() {
 
     const contentType = res.headers.get('Content-Type') || '';
 
-    // ── MODO STREAMING (SSE) ──────────────────────
+    // ── MODO STREAMING (SSE) + TYPEWRITER ────────
     if (contentType.includes('text/event-stream')) {
       mostrarTyping(false);
       statusEl.textContent = 'ARIA ESCRIBIENDO...';
@@ -1263,40 +1263,63 @@ async function enviar() {
         <div class="msg-icon">
           <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAADi0lEQVR4nJVUXWhbZRh+vpMsOaeuVFlPuv4gtmw3Nk1sMzOmbq0Z2rCuNYPFZpRNQv0Bb8XrIcxLb8a88AcUJTAEMbZKN1Cb+sNiJA1JOnoR1kahbcyhkNqRc5am5/XiS89pzirDc/V+73me93m+97zvYTqR5BTBAOiAgP/zCP8RP/LRAQiSKKoPtEfiAL0RkKlkbwAIYE2Ecb/XUmO9ak8vZfbDBACS2GIRH/d7Z1N3OWG92hDoaqkDgo5mMvezu7uXJ8z9nrVTfY8Agw/U9zeGOZ1Ozqzt1CRRNF743IPffPrefjsXXr8KIJtP15nQRAagahonj/sH1qt2CxNApai4I9MCBEDnPTJdTEamVU2zoPtOngfQd/J8pai0HT0iQN/drQON7prkmXjMiN8afZ40PXrtxr2FGQD3Fmb6w1EAOgSb7aE7G84BSGJL7uYnANqOHrE47zk9ETrlnU3l+bFpqvYaVuc6AJgobJU2mSgA2CptOgXE72QNvHUkJbFF1Wp+ry967cZWadN0KAruyHQdgt/rO9i2YV4SRUAY8J2JvXv58afkSlHxTE43j+BByjyjalpw+DQR+sPRSlEZmowOnBhxD41MhKbMWXqILASCF8dCV8rJWz8k5vue7H7GHwDwQIcsu2RZ3lZrL41FAsFXeQnTts89aGvreOxwK2Ps+/gXAF44car72NPbaq20sdbZ1UNEjDEARJRL/djZ6zGV00uZqqrN3/6aiM69crkQj6WyaQCtkqOzq8eAEVFpY62z17O0+HOTbcYQCF5UFIUxdjw0Vdup3dd2ADjUvwFw2dLGmv2QgzE0LcmLo2FemB/HQlcK8RgRFVZWHU/0/DT3Fc8v55J8HALBiLXbvLyilPnxkrtjOZcsrKxOXJg6LB4ql8sDvjN8EImoidzeLt/f/ofHkX6XJ/JGMPzyuL8fQGFlldZzvfbNvZuDMWa5M6uqWm4xkU0nPrr920ToEoAPr7+/nPv1mLjNMdl0or1dPkCZiFwu19nRsNc3YmvrMPJ/Jb/7NpVnXZ7Z1N2zo2HGmMvlUhRF/M7uoRHecEPhWfdgce3PzNznPPPa1S9bJcdMPGYgTeWlxQRjIALvt0BI5zPPHe+uFBXSGiNZWFnVAVmWAeTTCcti6Pz/eG542EjdWpjP3fws+Udm9peF+J2szWbqHbBV1oEnHUz4+J233/zgOmAH6cZ6/QtVVHfB0naRnAAAAABJRU5ErkJggg==" width="20" height="28" style="image-rendering:pixelated;display:block;" alt="ARIA">
         </div>
-        <div class="stream-burbuja" id="stream-content">
-          <span class="stream-cursor">▌</span>
-        </div>`;
+        <div class="stream-burbuja" id="stream-content"><span class="stream-cursor">▌</span></div>`;
       chatArea.insertBefore(streamRow, typingEl);
       chatArea.scrollTop = chatArea.scrollHeight;
 
       const contentEl = streamRow.querySelector('#stream-content');
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = '';
-      let buffer = '';
+      let fullText = '';       // texto completo recibido del stream
+      let displayed = '';      // texto ya mostrado por el typewriter
+      let charQueue = '';      // cola pendiente de mostrar
+      let streamDone = false;
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        for (const line of lines) {
-          if (!line.startsWith('data: ')) continue;
-          const data = line.slice(6).trim();
-          if (data === '[DONE]') continue;
+      // Typewriter: drena la cola a velocidad controlada
+      // independientemente de la velocidad del stream
+      await new Promise(resolve => {
+        const SPEED = 22; // ms por carácter — ajusta aquí (+ = más lento)
+        const timer = setInterval(() => {
+          if (charQueue.length > 0) {
+            // Drain siempre 1 char para efecto typewriter real y visible
+            // Solo acelera si la cola se dispara mucho (respuesta muy larga)
+            const n = charQueue.length > 300 ? 3 : charQueue.length > 150 ? 2 : 1;
+            displayed += charQueue.slice(0, n);
+            charQueue  = charQueue.slice(n);
+            contentEl.innerHTML = escHTML(displayed) + '<span class="stream-cursor">▌</span>';
+            chatArea.scrollTop = chatArea.scrollHeight;
+          } else if (streamDone) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, SPEED);
+
+        // Lee el stream en paralelo y alimenta la cola
+        (async () => {
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buf = '';
           try {
-            const parsed = JSON.parse(data);
-            // Formato OpenAI/Groq
-            const chunk = parsed.choices?.[0]?.delta?.content;
-            if (chunk) {
-              fullText += chunk;
-              contentEl.innerHTML = escHTML(fullText) + '<span class="stream-cursor">▌</span>';
-              chatArea.scrollTop = chatArea.scrollHeight;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              buf += decoder.decode(value, { stream: true });
+              const lines = buf.split('\n');
+              buf = lines.pop() || '';
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const data = line.slice(6).trim();
+                if (data === '[DONE]') continue;
+                try {
+                  const parsed = JSON.parse(data);
+                  const chunk = parsed.choices?.[0]?.delta?.content;
+                  if (chunk) { fullText += chunk; charQueue += chunk; }
+                } catch(e) {}
+              }
             }
-          } catch(e) {}
-        }
-      }
+          } finally {
+            streamDone = true;
+          }
+        })();
+      });
 
       // Render final con markdown completo
       streamRow.remove();
