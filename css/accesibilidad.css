@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    ACCESIBILIDAD — RETROTERM.AI
    Mejoras de accesibilidad sin modificar HTML estructural
    ============================================================ */
@@ -11,7 +11,7 @@
   top: -100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #00ff66;
+  background: var(--c-pri);
   color: #000;
   padding: 12px 24px;
   font-family: 'Courier New', monospace;
@@ -20,7 +20,7 @@
   letter-spacing: 1px;
   text-decoration: none;
   z-index: 10000;
-  border: 2px solid #00ff66;
+  border: 2px solid var(--c-pri);
   border-radius: 4px;
   transition: top 0.2s;
 }
@@ -28,7 +28,7 @@
 .skip-link:focus {
   top: 10px;
   color: #000;
-  box-shadow: 0 0 20px #00ff66;
+  box-shadow: 0 0 20px var(--c-pri);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -42,48 +42,48 @@ input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid #00ff66 !important;
+  outline: 3px solid var(--c-pri) !important;
   outline-offset: 3px !important;
-  box-shadow: 0 0 12px rgba(0, 255, 102, 0.5) !important;
+  box-shadow: 0 0 12px var(--c-a55) !important;
 }
 
 /* Focus específico para enlaces */
 a:focus-visible {
-  outline: 3px solid #00ff66 !important;
+  outline: 3px solid var(--c-pri) !important;
   outline-offset: 3px !important;
   border-radius: 2px;
 }
 
 /* Focus para botones */
 button:focus-visible {
-  outline: 3px solid #00ff66 !important;
+  outline: 3px solid var(--c-pri) !important;
   outline-offset: 3px !important;
 }
 
 /* Focus para inputs y textareas */
 input:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid #00ff66 !important;
+  outline: 3px solid var(--c-pri) !important;
   outline-offset: 2px !important;
-  border-color: #00ff66 !important;
+  border-color: var(--c-pri) !important;
 }
 
 /* Focus para tarjetas de juego */
 .game-card:focus-visible {
-  outline: 3px solid #00ff66 !important;
+  outline: 3px solid var(--c-pri) !important;
   outline-offset: 3px !important;
-  box-shadow: 0 0 20px rgba(0, 255, 102, 0.6) !important;
+  box-shadow: 0 0 20px var(--c-a88) !important;
 }
 
 /* Focus para tarjetas de proyecto */
 .proyecto-card:focus-visible {
-  outline: 3px solid #00ff66 !important;
+  outline: 3px solid var(--c-pri) !important;
   outline-offset: 3px !important;
 }
 
 /* Focus para tarjetas de artículos */
 .tarjeta:focus-visible {
-  outline: 3px solid #00ff66 !important;
+  outline: 3px solid var(--c-pri) !important;
   outline-offset: 3px !important;
 }
 
@@ -116,7 +116,7 @@ button:focus:not(:focus-visible) {
 }
 
 .sb-footer span {
-  color: #66ffb3 !important; /* Era #1a5a2a → Más visible */
+  color: var(--c-alt) !important; /* Era #1a5a2a → Más visible */
 }
 
 /* ARIA topbar */
@@ -125,17 +125,17 @@ button:focus:not(:focus-visible) {
 }
 
 .aria-status {
-  color: #66ffb3 !important; /* Era #1a5a2a → Más visible */
+  color: var(--c-alt) !important; /* Era #1a5a2a → Más visible */
 }
 
 .topbar-btn {
-  color: #66ffb3 !important; /* Era #1a4a2a → Más visible */
+  color: var(--c-alt) !important; /* Era #1a4a2a → Más visible */
   border-color: #004400 !important;
 }
 
 .topbar-btn:hover {
-  color: #00ff66 !important;
-  border-color: #00ff66 !important;
+  color: var(--c-pri) !important;
+  border-color: var(--c-pri) !important;
 }
 
 /* Chat input placeholder */
@@ -167,26 +167,26 @@ button:focus:not(:focus-visible) {
 
 /* Typing text */
 .typing-text {
-  color: #66ffb3 !important; /* Ya era accesible */
+  color: var(--c-alt) !important; /* Ya era accesible */
 }
 
 /* Gaming footer */
 .gaming-footer {
-  color: #66ffb3 !important; /* Era #1a4a2a (2.2:1) → Ahora ~10:1 */
+  color: var(--c-alt) !important; /* Era #1a4a2a (2.2:1) → Ahora ~10:1 */
 }
 
 .gaming-footer a {
-  color: #00ff66 !important; /* Ya cumple */
+  color: var(--c-pri) !important; /* Ya cumple */
 }
 
 /* DeFi footer */
 .defi-footer {
-  color: #66ffb3 !important; /* Era #1a4a2a (2.2:1) → Ahora ~10:1 */
+  color: var(--c-alt) !important; /* Era #1a4a2a (2.2:1) → Ahora ~10:1 */
 }
 
 /* DeFi tabla headers */
 .precios-tabla th {
-  color: #66ffb3 !important; /* Era #1a4a2a (2.2:1) → Ahora ~10:1 */
+  color: var(--c-alt) !important; /* Era #1a4a2a (2.2:1) → Ahora ~10:1 */
 }
 
 /* DeFi tabs inactivos */
@@ -196,7 +196,7 @@ button:focus:not(:focus-visible) {
 
 .defi-tab:hover,
 .defi-tab.activo {
-  color: #00ff66 !important;
+  color: var(--c-pri) !important;
 }
 
 /* DeFi gráfica título */
@@ -214,13 +214,13 @@ button:focus:not(:focus-visible) {
 }
 
 .noticia-meta .tag {
-  color: #00ff66 !important;
-  border-color: #00ff66 !important;
+  color: var(--c-pri) !important;
+  border-color: var(--c-pri) !important;
 }
 
 /* DeFi detalle datos */
 .dato {
-  color: #66ffb3 !important; /* Ya era accesible */
+  color: var(--c-alt) !important; /* Ya era accesible */
   border-color: #004400 !important; /* Más visible */
 }
 
@@ -230,7 +230,7 @@ button:focus:not(:focus-visible) {
 
 /* Red footer */
 .red-footer {
-  color: #66ffb3 !important; /* Era #1a4a2a → Más visible */
+  color: var(--c-alt) !important; /* Era #1a4a2a → Más visible */
 }
 
 /* Red card preview placeholder */
@@ -240,16 +240,16 @@ button:focus:not(:focus-visible) {
 
 /* Artículos sidebar */
 .art-sidebar-header {
-  color: #66ffb3 !important; /* Ya era accesible */
+  color: var(--c-alt) !important; /* Ya era accesible */
 }
 
 .art-cat-titulo {
-  color: #4aff8a !important; /* Era #00ff6688 → Más visible */
+  color: #4aff8a !important; /* Era var(--c-a88) → Más visible */
 }
 
 .art-cat-titulo:hover,
 .art-cat-titulo.abierta {
-  color: #00ff66 !important;
+  color: var(--c-pri) !important;
 }
 
 .art-cat-enlace {
@@ -258,7 +258,7 @@ button:focus:not(:focus-visible) {
 
 .art-cat-enlace:hover,
 .art-cat-enlace.activo {
-  color: #00ff66 !important;
+  color: var(--c-pri) !important;
 }
 
 /* Tarjetas artículos */
@@ -267,39 +267,39 @@ button:focus:not(:focus-visible) {
 }
 
 .tarjeta-cat {
-  color: #4aff8a !important; /* Era #00ff6677 → Más visible */
-  border-color: #00ff6644 !important;
+  color: #4aff8a !important; /* Era var(--c-pri)77 → Más visible */
+  border-color: var(--c-a44) !important;
 }
 
 .tarjeta-fecha {
-  color: #4aff6a !important; /* Era #00ff6633 → Más visible */
+  color: #4aff6a !important; /* Era var(--c-a33) → Más visible */
 }
 
 .tarjeta-link {
-  border-color: #00ff6666 !important; /* Más visible */
+  border-color: var(--c-a55) !important; /* Más visible */
 }
 
 /* Destacado artículos */
 .art-destacado {
-  border-color: #00ff6688 !important;
+  border-color: var(--c-a88) !important;
 }
 
 .art-destacado-tag {
-  border-color: #00ff6688 !important;
+  border-color: var(--c-a88) !important;
 }
 
 .art-destacado-meta {
-  color: #4aff6a !important; /* Era #00ff6644 → Más visible */
+  color: #4aff6a !important; /* Era var(--c-a44) → Más visible */
 }
 
 /* Sin resultados */
 #sin-resultados {
-  color: #4aff6a !important; /* Era #00ff6633 → Más visible */
+  color: #4aff6a !important; /* Era var(--c-a33) → Más visible */
 }
 
 /* Breadcrumbs */
 .breadcrumbs {
-  color: #66ffb3 !important;
+  color: var(--c-alt) !important;
 }
 
 .bread-sep {
@@ -308,17 +308,17 @@ button:focus:not(:focus-visible) {
 
 /* Nav pie */
 .nav-pie a {
-  color: #66ffb3 !important;
+  color: var(--c-alt) !important;
   opacity: 1 !important; /* Quitar opacidad que reduce contraste */
 }
 
 /* Share bar */
 .share-label {
-  color: #4aff6a !important; /* Era #00ff6655 → Más visible */
+  color: #4aff6a !important; /* Era var(--c-a55) → Más visible */
 }
 
 .share-btn {
-  border-color: #00ff6688 !important; /* Más visible */
+  border-color: var(--c-a88) !important; /* Más visible */
 }
 
 /* Código bloque */
@@ -328,7 +328,7 @@ button:focus:not(:focus-visible) {
 
 /* Tabla SEO */
 .tabla-seo {
-  border-color: #00ff66 !important;
+  border-color: var(--c-pri) !important;
 }
 
 .tabla-fila {
@@ -341,31 +341,31 @@ button:focus:not(:focus-visible) {
 }
 
 .tabla-cabecera div {
-  color: #00ff66 !important;
+  color: var(--c-pri) !important;
 }
 
 /* Portal — silo breadcrumb */
 .silo-breadcrumb {
-  color: #66ffb3 !important;
+  color: var(--c-alt) !important;
 }
 
 .silo-breadcrumb .actual {
-  color: #66ffb3 !important;
+  color: var(--c-alt) !important;
 }
 
 /* Portal — puzzle */
 #puzzle {
-  border-color: #00ff66 !important;
+  border-color: var(--c-pri) !important;
 }
 
 #puzzle input {
-  border-color: #00ff66 !important;
+  border-color: var(--c-pri) !important;
 }
 
 /* Portal — log entries */
 .log-entry {
   border-left-color: #004400 !important; /* Más visible */
-  color: #66ffb3 !important;
+  color: var(--c-alt) !important;
 }
 
 .log-entry .log-warn {
@@ -373,7 +373,7 @@ button:focus:not(:focus-visible) {
 }
 
 .log-entry .log-ok {
-  color: #00ff66 !important;
+  color: var(--c-pri) !important;
 }
 
 .log-entry .log-hint {
@@ -392,7 +392,7 @@ button:focus:not(:focus-visible) {
 
 /* DeFi — coin sym */
 .coin-sym {
-  color: #66ffb3 !important; /* Era #1a4a2a → Más visible */
+  color: var(--c-alt) !important; /* Era #1a4a2a → Más visible */
 }
 
 /* Subida/bajada — añadir símbolo para no depender solo del color */
@@ -518,14 +518,14 @@ button:focus:not(:focus-visible) {
   --bg-tertiary: #001a00;
   --bg-card: rgba(0, 20, 0, 0.8);
   --bg-card-hover: #00aa44;
-  --text-primary: #00ff66;
-  --text-secondary: #66ffb3;
+  --text-primary: var(--c-pri);
+  --text-secondary: var(--c-alt);
   --text-body: #e0e0e0;
   --text-muted: #4aff6a;
-  --border-primary: #00ff66;
+  --border-primary: var(--c-pri);
   --border-secondary: #004400;
   --border-dim: #003300;
-  --shadow-glow: 0 0 15px #00ff66;
+  --shadow-glow: 0 0 15px var(--c-pri);
   --gradient-bg: radial-gradient(circle at center, #001800 0%, #000 80%);
   --gradient-bg-alt: radial-gradient(circle at center, #000 60%, #001122 100%);
 }

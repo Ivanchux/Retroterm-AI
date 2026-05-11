@@ -352,8 +352,117 @@
     position: relative;
     z-index: 1;
   }
+
+  /* ══════════════════════════════════════════════════════════
+     LAYOUT: MATRIX — 4 columnas uniformes [BETA]
+     ══════════════════════════════════════════════════════════ */
+  html[data-layout="matrix"] .bento {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 145px 105px 105px 85px;
+  }
+  html[data-layout="matrix"] .b-editor  { grid-column: 1/3; grid-row: 1; }
+  html[data-layout="matrix"] .b-aria    { grid-column: 3/5; grid-row: 1; }
+  html[data-layout="matrix"] .b-gaming  { grid-column: 1;   grid-row: 2; }
+  html[data-layout="matrix"] .b-arts    { grid-column: 2;   grid-row: 2; }
+  html[data-layout="matrix"] .b-defi    { grid-column: 3;   grid-row: 2; }
+  html[data-layout="matrix"] .b-red     { grid-column: 4;   grid-row: 2; }
+  html[data-layout="matrix"] .b-mural   { grid-column: 1;   grid-row: 3; }
+  html[data-layout="matrix"] .b-perfil  { grid-column: 2;   grid-row: 3; }
+  html[data-layout="matrix"] .b-term    { grid-column: 3;   grid-row: 3; }
+  html[data-layout="matrix"] .b-subnet  { grid-column: 4;   grid-row: 3; }
+  html[data-layout="matrix"] .b-wonder  { grid-column: 1/4; grid-row: 4; }
+  html[data-layout="matrix"] .b-roadmap { grid-column: 4;   grid-row: 4; }
+  /* Leve ajuste en tamaños de glyph y texto para celdas más pequeñas */
+  html[data-layout="matrix"] .b-gaming .b-glyph,
+  html[data-layout="matrix"] .b-arts .b-glyph,
+  html[data-layout="matrix"] .b-defi .b-glyph,
+  html[data-layout="matrix"] .b-red .b-glyph,
+  html[data-layout="matrix"] .b-mural .b-glyph,
+  html[data-layout="matrix"] .b-perfil .b-glyph,
+  html[data-layout="matrix"] .b-term .b-glyph,
+  html[data-layout="matrix"] .b-subnet .b-glyph { font-size: 2rem; }
+
+  /* ══════════════════════════════════════════════════════════
+     LAYOUT: FOCUS — Terminal list, 2 columnas [ALPHA]
+     ══════════════════════════════════════════════════════════ */
+  html[data-layout="focus"] .bento {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: unset;
+    grid-auto-rows: 60px;
+  }
+  /* Reset posiciones BENTO para que fluyan automáticamente */
+  html[data-layout="focus"] .b-editor,
+  html[data-layout="focus"] .b-aria,
+  html[data-layout="focus"] .b-gaming,
+  html[data-layout="focus"] .b-arts,
+  html[data-layout="focus"] .b-defi,
+  html[data-layout="focus"] .b-red,
+  html[data-layout="focus"] .b-mural,
+  html[data-layout="focus"] .b-perfil,
+  html[data-layout="focus"] .b-term,
+  html[data-layout="focus"] .b-subnet,
+  html[data-layout="focus"] .b-wonder,
+  html[data-layout="focus"] .b-roadmap {
+    grid-column: auto;
+    grid-row: auto;
+    min-height: unset;
+  }
+  /* Anchos especiales */
+  html[data-layout="focus"] .b-editor  { grid-column: 1/3; min-height: 78px; }
+  html[data-layout="focus"] .b-aria    { grid-column: 1/3; min-height: 78px; }
+  /* Celdas tipo fila de terminal */
+  html[data-layout="focus"] .bento-cell {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 18px 0 40px;
+    gap: 14px;
+    border-radius: 5px !important;
+    transform: none !important;
+  }
+  html[data-layout="focus"] .bento-cell:hover {
+    transform: translateX(4px) !important;
+  }
+  html[data-layout="focus"] .b-glyph {
+    position: static;
+    font-size: 1.1rem;
+    opacity: 0.5;
+    order: -1;
+    flex-shrink: 0;
+  }
+  html[data-layout="focus"] .bento-cell:hover .b-glyph { opacity: 0.9; }
+  html[data-layout="focus"] .b-dot {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  html[data-layout="focus"] .b-tag,
+  html[data-layout="focus"] .b-desc { display: none; }
+  html[data-layout="focus"] .b-name {
+    font-size: 0.72rem;
+    margin-bottom: 0;
+  }
+  /* Hover: desplazamiento horizontal en lugar de vertical */
+  html[data-layout="focus"] .bento-cell:hover { z-index: 10; }
+
+  /* ── Indicador de layout ALPHA en header del HUB ────────── */
+  .layout-badge {
+    display: none;
+    font-size: 0.44rem;
+    padding: 1px 5px;
+    border: 1px solid var(--c-dim);
+    color: var(--c-dim);
+    letter-spacing: 1.5px;
+    vertical-align: middle;
+    margin-left: 8px;
+    font-family: 'Courier New', monospace;
+  }
+  html[data-layout="matrix"] .layout-badge,
+  html[data-layout="focus"] .layout-badge { display: inline-block; }
+  html[data-layout="matrix"] .layout-badge::before { content: 'MATRIX BETA'; }
+  html[data-layout="focus"]  .layout-badge::before { content: 'FOCUS ALPHA'; }
   </style>
   <script src="js/theme.js?v=2"></script>
+  <script src="js/layout.js"></script>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
@@ -364,7 +473,7 @@
 
     <header class="hub-header">
       <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú">&#9776;</label>
-      <h1 class="hub-title">RETROTERM.AI<a href="portal.html">|</a></h1>
+      <h1 class="hub-title">RETROTERM.AI<a href="portal.html">|</a><span class="layout-badge" aria-hidden="true"></span></h1>
       <p class="hub-status" id="hub-status">SYS/<span id="s1">ONLINE</span> ··· NODE/<span id="s2">ivanchux</span> ··· v2.1<span>▮</span></p>
     </header>
       <a href="login.html" id="btn-acceso" class="volver" style="display:inline-block;margin-top:10px;font-size:0.7rem;letter-spacing:2px;opacity:0;transition:opacity 0.3s;" aria-label="Acceso al sistema">[ LOGIN ]</a>

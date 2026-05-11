@@ -1,16 +1,16 @@
 /* ===== Contenedor principal ===== */
 h1 {
   font-size: 2rem;
-  text-shadow: 0 0 8px #00ff66;
+  text-shadow: 0 0 8px var(--c-pri);
 }
 
 .pantalla {
   width: 90%;
   max-width: 900px;
-  border: 2px solid #00ff66;
-  box-shadow: 0 0 15px #00ff66;
+  border: 2px solid var(--c-pri);
+  box-shadow: 0 0 15px var(--c-pri);
   padding: 20px;
-  background: radial-gradient(circle at center, #001800 0%, #000 80%);
+  background: radial-gradient(circle at center, var(--c-panel) 0%, #000 80%);
   margin: 40px auto;
   display: none;
 }
@@ -35,7 +35,7 @@ h1 {
 }
 
 .subtitulo {
-  color: #66ffb3;
+  color: var(--c-alt);
   font-size: 0.9rem;
 }
 
@@ -43,15 +43,15 @@ h1 {
 .volver {
   display: inline-block;
   text-decoration: none;
-  color: #00ff66;
-  border: 1px solid #00ff66;
+  color: var(--c-pri);
+  border: 1px solid var(--c-pri);
   padding: 6px 10px;
   margin-top: 20px;
   transition: all 0.3s ease;
 }
 
 .volver:hover {
-  background-color: #00ff66;
+  background-color: var(--c-pri);
   color: #000;
 }
 
@@ -74,7 +74,7 @@ h1 {
 /* ===== Tipografía y cuerpo ===== */
 body {
   background-color: #000;
-  color: #00ff66;
+  color: var(--c-pri);
   font-family: 'Courier New', monospace;
   margin: 0;
   padding: 0;
@@ -83,7 +83,7 @@ body {
 }
 .editor-contenedor {
   width: 100%;
-  border: 2px solid #00ff66;
+  border: 2px solid var(--c-pri);
   border-radius: 4px;
   overflow: hidden;
   box-sizing: border-box;
@@ -97,7 +97,7 @@ body {
   font-family: 'Courier New', monospace;
   font-size: 1rem;
   background: #000;
-  color: #00ff66;
+  color: var(--c-pri);
   border: none;
   outline: none;
   padding: 12px;
@@ -105,9 +105,9 @@ body {
   resize: vertical;
 }
 
-#html-editor{ 
-  border-left: 3px solid #00ff66; 
-  background: #001a00; 
+#html-editor{
+  border-left: 3px solid var(--c-pri);
+  background: var(--c-panel);
 }  
 
 #css-editor{ 
@@ -126,19 +126,19 @@ body {
 }
 
 .editor-barra {
-  background: #001a00;
-  border: 2px solid #00ff66;
+  background: var(--c-panel);
+  border: 2px solid var(--c-pri);
   border-bottom: none;
   padding: 6px 12px;
   font-size: 0.8rem;
-  color: #66ffb3;
+  color: var(--c-alt);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .editor-barra-estado {
-  color: #00ff66;
+  color: var(--c-pri);
   font-size: 0.75rem;
 }
 
@@ -181,8 +181,8 @@ body {
 .editor-botones button {
   padding: 8px 16px;
   background: #000;
-  color: #00ff66;
-  border: 1px solid #00ff66;
+  color: var(--c-pri);
+  border: 1px solid var(--c-pri);
   font-family: 'Courier New', monospace;
   font-size: 0.85rem;
   cursor: pointer;
@@ -191,9 +191,9 @@ body {
 }
 
 .editor-botones button:hover {
-  background: #00ff66;
+  background: var(--c-pri);
   color: #000;
-  box-shadow: 0 0 10px #00ff66;
+  box-shadow: 0 0 10px var(--c-pri);
 }
 
 /* ===== Preview iframe ===== */
@@ -201,8 +201,8 @@ body {
   width: 100%;
   height: 300px;
   margin-top: 14px;
-  border: 2px solid #00ff66;
+  border: 2px solid var(--c-pri);
   background: #fff;
-  box-shadow: 0 0 10px #00ff6644;
+  box-shadow: 0 0 10px var(--c-a44);
 }
 
