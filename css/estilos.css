@@ -1,3 +1,25 @@
+/* =========== SISTEMA DE TEMAS — RETROTERM.AI ==================
+   Variables globales. Sobreescritas por js/theme.js en runtime.
+   Tema por defecto: FÓSFORO (verde terminal clásico)
+   ============================================================ */
+:root {
+  --c-pri:     var(--c-pri);               /* color primario */
+  --c-alt:     var(--c-alt);               /* variante clara */
+  --c-border:  var(--c-border);               /* bordes */
+  --c-panel:   var(--c-panel);               /* fondos de panel/barra */
+  --c-dim:     var(--c-dim);               /* texto muy atenuado */
+  --c-hover:   var(--c-hover);               /* hover mid-tone */
+  --c-bg-sub:  rgba(0,20,0,0.8);      /* fondo sutil oscuro */
+  --c-scan:    rgba(0,255,102,0.05);  /* efecto scanline */
+  --c-pri-dim: rgba(0,255,102,0.33);  /* primario semitransparente */
+  --canvas-hue:0deg;                  /* rotación de tono del canvas */
+}
+
+/* Canvas: filter de tema aplicado globalmente */
+#bg-canvas {
+  filter: hue-rotate(var(--canvas-hue)) saturate(1.1);
+}
+
 /* =========== RESET GLOBAL ===================== */
 
 *, *::before, *::after {
@@ -8,7 +30,7 @@
 
 body {
   background-color: #000;
-  color: #00ff66;
+  color: var(--c-pri);
   font-family: 'Courier New', monospace;
   margin: 0;
   padding: 0;
@@ -20,10 +42,10 @@ body {
 .pantalla {
   width: 90%;
   max-width: 900px;
-  border: 2px solid #00ff66;
-  box-shadow: 0 0 15px #00ff66;
+  border: 2px solid var(--c-pri);
+  box-shadow: 0 0 15px var(--c-pri);
   padding: 20px;
-  background: radial-gradient(circle at center, #001800 0%, #000 80%);
+  background: radial-gradient(circle at center, var(--c-panel) 0%, #000 80%);
   margin: 40px auto;
   display: none; 
 }
@@ -44,10 +66,10 @@ body {
 }
 h1 {
   font-size: 2rem;
-  text-shadow: 0 0 8px #00ff66;
+  text-shadow: 0 0 8px var(--c-pri);
 }
 .subtitulo {
-  color: #66ffb3;
+  color: var(--c-alt);
   font-size: 0.9rem;
 }
 
@@ -61,11 +83,11 @@ h1 {
 }
 
 .opcion {
-  border: 2px solid #00ff66;
+  border: 2px solid var(--c-pri);
   padding: 20px 30px;           
   text-align: center;
   text-decoration: none;
-  color: #00ff66;
+  color: var(--c-pri);
   background: rgba(0, 30, 0, 0.6);
   transition: all 0.3s ease;
   border-radius: 10px;          
@@ -74,10 +96,10 @@ h1 {
 }
 
 .opcion:hover {
-  background-color: #00aa44;
-  color: #00ff66;
-  box-shadow: 0 0 10px #00ff66;
-  text-shadow: 0 0 10px #00ff66;
+  background-color: var(--c-hover);
+  color: var(--c-pri);
+  box-shadow: 0 0 10px var(--c-pri);
+  text-shadow: 0 0 10px var(--c-pri);
   transform: scale(1.05);
 
 }
@@ -87,24 +109,24 @@ h1 {
 .volver {
   display: inline-block;
   text-decoration: none;
-  color: #00ff66;
-  border: 1px solid #00ff66;
+  color: var(--c-pri);
+  border: 1px solid var(--c-pri);
   padding: 6px 10px;
   margin-top: 20px;
   transition: all 0.3s ease;
 }
 .volver:hover {
-  background-color: #00ff66;
+  background-color: var(--c-pri);
   color: #000;
 }
 
 
 .pie {
   text-align: center;
-  border-top: 1px solid #00ff66;
+  border-top: 1px solid var(--c-pri);
   margin-top: 30px;
   padding-top: 10px;
-  color: #66ffb3;
+  color: var(--c-alt);
 }
 
 
@@ -114,8 +136,8 @@ textarea {
   width: 100%;
   height: 200px;
   background: #000;
-  color: #00ff66;
-  border: 2px solid #00ff66;
+  color: var(--c-pri);
+  border: 2px solid var(--c-pri);
   font-family: 'Courier New', monospace;
   padding: 10px;
   resize: vertical;
@@ -124,15 +146,15 @@ textarea {
 button {
   margin-top: 15px;
   padding: 10px 20px;
-  background: #00ff66;
+  background: var(--c-pri);
   color: #000;
   border: none;
   cursor: pointer;
   font-family: 'Courier New', monospace;
 }
 button:hover { 
-  box-shadow: 0 0 10px #00ff66; 
-  background: #00ff66;
+  box-shadow: 0 0 10px var(--c-pri); 
+  background: var(--c-pri);
 }
 
 
@@ -148,14 +170,14 @@ button:hover {
 }
 
 .articulo {
-  border: 1px solid #00ff66;
+  border: 1px solid var(--c-pri);
   padding: 15px;
-  background: rgba(0, 20, 0, 0.8);
-  box-shadow: 0 0 10px #00ff66;
+  background: var(--c-bg-sub);
+  box-shadow: 0 0 10px var(--c-pri);
 }
 
 .articulo h3 {
-  color: #66ffb3;
+  color: var(--c-alt);
   margin-bottom: 10px;
 }
 
@@ -172,8 +194,8 @@ button:hover {
 .imagen-articulo img {
   width: 100%;
   max-width: 200px;
-  border: 2px solid #00ff66;
-  box-shadow: 0 0 15px #00ff66;
+  border: 2px solid var(--c-pri);
+  box-shadow: 0 0 15px var(--c-pri);
   border-radius: 8px;
 }
 
@@ -248,14 +270,14 @@ button:hover {
 /*============Cursor blink INICIO & SILO===============*/
 .cursor-link {
   text-decoration: none;
-  color: #00ff66;
+  color: var(--c-pri);
 }
 
 .cursor-blink {
   position: relative;
   display: inline-block;
   margin-left: 6px;
-  color: #00ff66;
+  color: var(--c-pri);
   animation: blink 1.5s infinite;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -266,7 +288,7 @@ button:hover {
   animation: none;              
   transform: scaleY(1.3);       
   text-shadow:
-    0 0 6px #00ff66,
+    0 0 6px var(--c-pri),
     0 0 12px rgba(0, 255, 102, 0.6),
     0 0 20px rgba(0, 255, 102, 0.3);
 }
@@ -289,18 +311,18 @@ button:hover {
 
 .editor-marco {
   margin-top: 25px;
-  border: 2px solid #00ff66;
+  border: 2px solid var(--c-pri);
   background: #000;
-  box-shadow: 0 0 15px #00ff66;
+  box-shadow: 0 0 15px var(--c-pri);
 }
 
 .editor-barra {
   padding: 8px 12px;
-  background: #001a00;
-  border-bottom: 2px solid #00ff66;
-  color: #66ffb3;
+  background: var(--c-panel);
+  border-bottom: 2px solid var(--c-pri);
+  color: var(--c-alt);
   font-size: 0.9rem;
-  text-shadow: 0 0 6px #00ff66;
+  text-shadow: 0 0 6px var(--c-pri);
   letter-spacing: 1px;
 }
 
@@ -313,7 +335,7 @@ textarea#editor-crt {
   width: 100%;
   min-height: 420px;
   background: #000;
-  color: #00ff66;
+  color: var(--c-pri);
   font-family: 'Courier New', monospace;
   font-size: 1rem;
   border: none;
@@ -321,38 +343,38 @@ textarea#editor-crt {
   padding: 12px;
   resize: vertical;
   box-sizing: border-box;
-  caret-color: #00ff66;
+  caret-color: var(--c-pri);
 
   /* Scanlines CRT */
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(0, 255, 102, 0.04) 0px,
-    rgba(0, 255, 102, 0.04) 2px,
+    var(--c-scan) 0px,
+    var(--c-scan) 2px,
     rgba(0, 0, 0, 0.25) 3px
   );
 }
 
 textarea#editor-crt:focus {
-  box-shadow: inset 0 0 10px #00ff66;
+  box-shadow: inset 0 0 10px var(--c-pri);
 }
 
 /* ===== Editor CODE_CRT ===== */
 
 .editor-marco {
   margin-top: 25px;
-  border: 2px solid #00ff66;
+  border: 2px solid var(--c-pri);
   background: #000;
-  box-shadow: 0 0 15px #00ff66;
+  box-shadow: 0 0 15px var(--c-pri);
   padding: 15px;
 }
 
 .editor-barra {
   padding: 8px 12px;
-  background: #001a00;
-  border-bottom: 2px solid #00ff66;
-  color: #66ffb3;
+  background: var(--c-panel);
+  border-bottom: 2px solid var(--c-pri);
+  color: var(--c-alt);
   font-size: 0.9rem;
-  text-shadow: 0 0 6px #00ff66;
+  text-shadow: 0 0 6px var(--c-pri);
   letter-spacing: 1px;
   font-weight: bold;
 }
@@ -368,27 +390,27 @@ textarea#editor-crt:focus {
   flex: 1 1 0;
   min-height: 350px;
   background: #000;
-  color: #00ff66;
+  color: var(--c-pri);
   font-family: 'Courier New', monospace;
   font-size: 1rem;
-  border: 2px solid #00ff66;
+  border: 2px solid var(--c-pri);
   outline: none;
   padding: 12px;
   resize: vertical;
   box-sizing: border-box;
-  caret-color: #00ff66;
+  caret-color: var(--c-pri);
 
   /* Efecto scanlines */
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(0, 255, 102, 0.05) 0px,
-    rgba(0, 255, 102, 0.05) 2px,
+    var(--c-scan) 0px,
+    var(--c-scan) 2px,
     rgba(0, 0, 0, 0.3) 3px
   );
 }
 
 .editor-crt:focus {
-  box-shadow: inset 0 0 12px #00ff66;
+  box-shadow: inset 0 0 12px var(--c-pri);
 }
 
 .editor-botones {
@@ -401,9 +423,9 @@ textarea#editor-crt:focus {
 
 .editor-botones button {
   padding: 10px 22px;
-  border: 1px solid #00ff66;
-  background: #001a00;
-  color: #00ff66;
+  border: 1px solid var(--c-pri);
+  background: var(--c-panel);
+  color: var(--c-pri);
   cursor: pointer;
   font-family: 'Courier New', monospace;
   font-weight: bold;
@@ -413,17 +435,17 @@ textarea#editor-crt:focus {
 }
 
 .editor-botones button:hover {
-  background: #00ff66;
+  background: var(--c-pri);
   color: #000;
-  box-shadow: 0 0 12px #00ff66;
+  box-shadow: 0 0 12px var(--c-pri);
 }
 
 #preview {
   width: 100%;
   height: 350px;
   margin-top: 25px;
-  border: 2px solid #00ff66;
-  box-shadow: 0 0 15px #00ff66;
+  border: 2px solid var(--c-pri);
+  box-shadow: 0 0 15px var(--c-pri);
   background: #000;
   border-radius: 4px;
 }
@@ -460,27 +482,27 @@ textarea#editor-crt:focus {
 .breadcrumbs {
   font-family: 'Courier New', monospace;
   font-size: 0.75rem;
-  color: #66ffb3;
+  color: var(--c-alt);
   margin-bottom: 18px;
   padding: 6px 10px;
-  border-left: 2px solid #00ff66;
+  border-left: 2px solid var(--c-pri);
   background: rgba(0, 30, 0, 0.5);
   letter-spacing: 1px;
 }
 
 .breadcrumbs a {
-  color: #00ff66;
+  color: var(--c-pri);
   text-decoration: none;
   transition: text-shadow 0.2s;
 }
 
 .breadcrumbs a:hover {
-  text-shadow: 0 0 6px #00ff66;
+  text-shadow: 0 0 6px var(--c-pri);
 }
 
 .bread-sep {
   margin: 0 8px;
-  color: #006633;
+  color: var(--c-dim);
 }
 
 .bread-current {
@@ -501,9 +523,9 @@ textarea#editor-crt:focus {
 }
 
 .articulo-completo h4 {
-  color: #00ff66;
+  color: var(--c-pri);
   margin-top: 20px;
-  border-bottom: 1px solid #003300;
+  border-bottom: 1px solid var(--c-border);
   padding-bottom: 5px;
 }
 
@@ -525,12 +547,12 @@ textarea#editor-crt:focus {
 
 /* Enlace de texto inline */
 .texto-link {
-  color: #00ff66;
+  color: var(--c-pri);
   text-decoration: underline;
   transition: text-shadow 0.2s;
 }
 .texto-link:hover {
-  text-shadow: 0 0 6px #00ff66;
+  text-shadow: 0 0 6px var(--c-pri);
 }
 
 
@@ -550,8 +572,8 @@ textarea#editor-crt:focus {
   display: none;
   font-size: 1.8rem;
   cursor: pointer;
-  color: #00ff66;
-  text-shadow: 0 0 6px #00ff66;
+  color: var(--c-pri);
+  text-shadow: 0 0 6px var(--c-pri);
   user-select: none;
   margin-bottom: 10px;
 }
@@ -864,11 +886,11 @@ textarea {
   justify-content: center;
   margin-top: 25px;
   padding-top: 12px;
-  border-top: 1px solid #003300;
+  border-top: 1px solid var(--c-border);
 }
 
 .nav-pie a {
-  color: #66ffb3;
+  color: var(--c-alt);
   text-decoration: none;
   font-size: 0.75rem;
   font-family: 'Courier New', monospace;
@@ -879,22 +901,22 @@ textarea {
 
 .nav-pie a:hover {
   opacity: 1;
-  text-shadow: 0 0 6px #00ff66;
+  text-shadow: 0 0 6px var(--c-pri);
 }
 
 /* ---- Meta del artículo: tag + fecha ---- */
 .articulo-meta {
   font-size: 0.75rem;
-  color: #66ffb3;
+  color: var(--c-alt);
   margin-bottom: 12px;
   letter-spacing: 1px;
 }
 
 .articulo-tag {
-  border: 1px solid #00ff66;
+  border: 1px solid var(--c-pri);
   padding: 1px 6px;
   font-size: 0.7rem;
-  color: #00ff66;
+  color: var(--c-pri);
   margin-right: 6px;
   letter-spacing: 2px;
 }
@@ -902,8 +924,8 @@ textarea {
 /* ---- Bloque de código estilo terminal ---- */
 .codigo-bloque {
   background: #000;
-  color: #00ff66;
-  border: 1px solid #003300;
+  color: var(--c-pri);
+  border: 1px solid var(--c-border);
   padding: 12px 15px;
   font-family: 'Courier New', monospace;
   font-size: 0.85rem;
@@ -931,14 +953,14 @@ textarea {
 
 /* ---- Tabla SEO con divs ---- */
 .tabla-seo {
-  border: 1px solid #00ff66;
+  border: 1px solid var(--c-pri);
   margin: 15px 0 20px 0;
   font-size: 0.85rem;
 }
 
 .tabla-fila {
   display: flex;
-  border-bottom: 1px solid #003300;
+  border-bottom: 1px solid var(--c-border);
 }
 
 .tabla-fila:last-child {
@@ -948,7 +970,7 @@ textarea {
 .tabla-fila div {
   padding: 8px 12px;
   flex: 1;
-  border-right: 1px solid #003300;
+  border-right: 1px solid var(--c-border);
   color: #e0e0e0;
 }
 
@@ -957,7 +979,7 @@ textarea {
 }
 
 .tabla-cabecera div {
-  color: #00ff66;
+  color: var(--c-pri);
   background: rgba(0, 30, 0, 0.6);
   font-weight: bold;
 }
@@ -975,7 +997,7 @@ textarea {
   }
   .tabla-fila div {
     border-right: none;
-    border-bottom: 1px solid #003300;
+    border-bottom: 1px solid var(--c-border);
     padding: 6px 10px;
   }
   .tabla-fila div:last-child {
@@ -994,21 +1016,21 @@ textarea {
   gap: 12px;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #003300;
+  border-top: 1px solid var(--c-border);
   flex-wrap: wrap;
 }
 
 .share-label {
   font-size: 0.7rem;
-  color: #00ff6655;
+  color: var(--c-pri)55;
   letter-spacing: 2px;
 }
 
 .share-btn {
   display: inline-block;
   padding: 5px 14px;
-  border: 1px solid #00ff6655;
-  color: #00ff66;
+  border: 1px solid var(--c-pri)55;
+  color: var(--c-pri);
   text-decoration: none;
   font-family: 'Courier New', monospace;
   font-size: 0.78rem;
@@ -1019,10 +1041,10 @@ textarea {
 }
 
 .share-btn:hover {
-  background: #00ff66;
+  background: var(--c-pri);
   color: #000;
-  box-shadow: 0 0 10px #00ff66;
-  border-color: #00ff66;
+  box-shadow: 0 0 10px var(--c-pri);
+  border-color: var(--c-pri);
 }
 
 @media (max-width: 640px) {
