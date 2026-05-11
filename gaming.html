@@ -1,0 +1,2371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAMING — RETROTERM.AI</title>
+  <meta name="description" content="Selección de juegos recomendados por RETROTERM.AI: mundo abierto, acción, comedia y clásicos.">
+  <meta property="og:title" content="Gaming — RETROTERM.AI">
+  <meta property="og:description" content="Selección personal de videojuegos: mundo abierto, acción, comedia y clásicos.">
+  <meta property="og:image" content="https://ivanchux.github.io/Imagenes/retroterm_ai.jpg">
+  <meta property="og:url" content="https://ivanchux.github.io/gaming.html">
+  <link rel="canonical" href="https://ivanchux.github.io/gaming.html">
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    :root {
+      --g: #00ff66; --g2: #66ffb3; --amber: #ffb000;
+      --dim: #003300; --bg: #000; --panel-w: 720px;
+    }
+    #gaming { opacity: 1 !important; display: block !important; }
+    #g-panel, #g-overlay { display: block; }
+
+    /* BG CANVAS */
+    #bg-canvas { position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.45; }
+    .pantalla, .pantalla-wide { background:transparent!important;border-color:#00ff6633!important;box-shadow:0 0 15px #00ff6622!important; }
+    #gaming-wrapper { position:relative;z-index:1;padding:0; }
+
+    /* ── CABECERA ── */
+    .g-header { text-align:center;padding:40px 20px 28px;position:relative; }
+    .g-header-eyebrow { font-size:0.65rem;letter-spacing:6px;color:var(--amber);margin-bottom:10px;opacity:0.8; }
+    .g-header h1 { font-size:clamp(2rem,6vw,3.6rem);letter-spacing:12px;text-shadow:0 0 30px #00ff6666,0 0 60px #00ff6622;margin:0;position:relative;display:inline-block; }
+    .g-header h1::after { content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,0.18) 3px,rgba(0,0,0,0.18) 4px);pointer-events:none; }
+    .g-header-sub { font-size:0.72rem;letter-spacing:3px;color:var(--g2);margin-top:10px;min-height:1.2em; }
+    .g-header-stats { display:flex;justify-content:center;gap:28px;margin-top:18px;flex-wrap:wrap; }
+    .g-stat { font-size:0.65rem;letter-spacing:2px;color:#1a4a2a; }
+    .g-stat span { color:var(--amber);font-size:0.85rem; }
+
+    /* ── TABS ── */
+    .g-tabs { display:flex;gap:0;border-bottom:1px solid var(--dim);margin:0 0 20px 0;overflow-x:auto;scrollbar-width:none; }
+    .g-tabs::-webkit-scrollbar { display:none; }
+    .g-tab { padding:10px 20px;font-size:0.7rem;letter-spacing:2px;color:#1a4a2a;cursor:pointer;border:none;background:none;font-family:'Courier New',monospace;position:relative;white-space:nowrap;transition:color 0.2s; }
+    .g-tab::after { content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--g);transform:scaleX(0);transition:transform 0.25s ease; }
+    .g-tab:hover { color:var(--g2); }
+    .g-tab-count { font-size:0.58rem;opacity:0.5;letter-spacing:0; }
+    .g-tab.active { color:var(--g); }
+    .g-tab.active::after { transform:scaleX(1); }
+
+    /* ── FILTROS AVANZADOS ── */
+    .g-filters-bar {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px; flex-wrap: wrap;
+      padding: 10px 14px;
+      border: 1px solid #001a00;
+      background: rgba(0,10,0,0.5);
+      position: relative;
+    }
+    .g-filters-toggle {
+      background: none; border: 1px solid #003300;
+      color: #1a4a2a; font-family: 'Courier New', monospace;
+      font-size: 0.62rem; letter-spacing: 2px;
+      padding: 5px 14px; cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      display: flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+    }
+    .g-filters-toggle:hover, .g-filters-toggle.active {
+      border-color: var(--g); color: var(--g);
+    }
+    .g-filters-toggle .g-filter-arrow { transition: transform 0.25s; }
+    .g-filters-toggle.active .g-filter-arrow { transform: rotate(180deg); }
+    .g-filters-expanded {
+      display: none; width: 100%;
+      padding-top: 12px; margin-top: 8px;
+      border-top: 1px solid #001a00;
+      gap: 16px; flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .g-filters-expanded.open { display: flex; }
+    .g-filter-group { display: flex; flex-direction: column; gap: 6px; min-width: 140px; }
+    .g-filter-label { font-size: 0.55rem; letter-spacing: 3px; color: #1a4a2a; }
+    .g-filter-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .g-chip {
+      font-size: 0.58rem; letter-spacing: 1.5px;
+      padding: 3px 10px; border: 1px solid #002200;
+      color: #334433; cursor: pointer;
+      font-family: 'Courier New', monospace;
+      transition: all 0.15s; background: none;
+      white-space: nowrap;
+    }
+    .g-chip:hover { border-color: #004400; color: #556655; }
+    .g-chip.active { border-color: var(--g); color: var(--g); background: rgba(0,255,102,0.06); }
+    .g-chip[data-plat].active { border-color: var(--g2); color: var(--g2); }
+    .g-filters-reset {
+      font-size: 0.55rem; letter-spacing: 2px;
+      color: #334433; cursor: pointer; background: none;
+      border: none; font-family: 'Courier New', monospace;
+      padding: 3px 8px; transition: color 0.2s;
+    }
+    .g-filters-reset:hover { color: var(--amber); }
+    .g-filter-active-count {
+      font-size: 0.55rem; letter-spacing: 1px;
+      color: var(--amber); margin-left: auto;
+      display: none;
+    }
+    .g-filter-active-count.visible { display: block; }
+
+    /* ── GRID / CARRUSEL ── */
+    .g-grid-wrapper { perspective: 1200px; }
+    .g-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;padding:4px 4px 40px; }
+    .g-carousel-outer { position:relative;margin-bottom:40px; }
+    .g-carousel-fade-l,.g-carousel-fade-r { position:absolute;top:0;bottom:20px;width:40px;z-index:2;pointer-events:none; }
+    .g-carousel-fade-l { left:0;background:linear-gradient(90deg,#000 0%,transparent 100%); }
+    .g-carousel-fade-r { right:0;background:linear-gradient(270deg,#000 0%,transparent 100%); }
+    .g-carousel { display:flex;gap:20px;overflow-x:scroll;overflow-y:visible;padding:8px 40px 20px;scrollbar-width:none;cursor:grab;user-select:none;-webkit-overflow-scrolling:touch; }
+    .g-carousel::-webkit-scrollbar { display:none; }
+    .g-carousel.is-dragging { cursor:grabbing; }
+    .g-carousel.is-dragging .g-card { pointer-events:none; }
+    .g-carousel .g-card { flex:0 0 220px; }
+    @media (max-width:600px) { .g-carousel .g-card { flex:0 0 180px; } }
+    @media (max-width:380px) { .g-carousel .g-card { flex:0 0 155px; } }
+
+    /* ── CARD ── */
+    .g-card { position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform 0.1s ease-out,box-shadow 0.3s;will-change:transform;border-radius:2px;animation:cardIn 0.4s ease both; }
+    .g-card-inner { background:#020c02;border:1px solid #00ff6620;overflow:hidden;position:relative;transition:border-color 0.3s,box-shadow 0.3s; }
+    .g-card:hover .g-card-inner { border-color:#00ff6666;box-shadow:0 0 20px #00ff6620,0 20px 60px rgba(0,0,0,0.8),inset 0 0 30px rgba(0,255,102,0.03); }
+    .g-card-cover { width:100%;aspect-ratio:3/4;overflow:hidden;position:relative;background:#020c02; }
+    .g-card-cover img { width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.82) saturate(0.9);transition:filter 0.4s,transform 0.4s; }
+    .g-card:hover .g-card-cover img { filter:brightness(1) saturate(1.1);transform:scale(1.04); }
+    .g-card-cover::before { content:'';position:absolute;inset:0;z-index:2;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);pointer-events:none; }
+    .g-card-cover::after { content:'';position:absolute;top:0;left:-100%;bottom:0;width:60%;background:linear-gradient(90deg,transparent,rgba(0,255,102,0.06),transparent);z-index:3;transition:left 0.5s ease;pointer-events:none; }
+    .g-card:hover .g-card-cover::after { left:150%; }
+    .g-card-info { padding:12px 14px 14px;position:relative; }
+    .g-card-titulo { font-size:0.82rem;font-weight:bold;letter-spacing:1.5px;color:var(--g);margin-bottom:4px;line-height:1.3; }
+    .g-card-genero { font-size:0.6rem;color:#1a4a2a;letter-spacing:1.5px;margin-bottom:6px; }
+    .g-card-desc { font-size:0.68rem;color:#556655;line-height:1.6; }
+    .g-card-cta { display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid #001a00;font-size:0.6rem;letter-spacing:2px;color:var(--g2);opacity:0;transform:translateY(4px);transition:opacity 0.25s,transform 0.25s; }
+    .g-card:hover .g-card-cta { opacity:1;transform:translateY(0); }
+    .g-card-cta::before { content:'▶';font-size:0.5rem; }
+    .g-card-inner::before,.g-card-inner::after { content:'';position:absolute;width:12px;height:12px;z-index:4;pointer-events:none;opacity:0;transition:opacity 0.3s; }
+    .g-card-inner::before { top:0;left:0;border-top:1px solid var(--g);border-left:1px solid var(--g); }
+    .g-card-inner::after { bottom:0;right:0;border-bottom:1px solid var(--g);border-right:1px solid var(--g); }
+    .g-card:hover .g-card-inner::before,.g-card:hover .g-card-inner::after { opacity:1; }
+    .g-card[data-cat="rpg"] .g-card-titulo { color:var(--g); }
+    .g-card[data-cat="accion"] .g-card-titulo { color:#ff8866; }
+    .g-card[data-cat="comedia"] .g-card-titulo { color:var(--amber); }
+    .g-card[data-cat="clasico"] .g-card-titulo { color:#66aaff; }
+    @keyframes cardIn { from{opacity:0;transform:translateY(16px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+    /* CARD: AÑO */
+    .g-card-anio { position:absolute;top:0;right:0;z-index:5;font-size:0.6rem;letter-spacing:3px;color:#000;background:var(--amber);padding:4px 10px 4px 14px;clip-path:polygon(12px 0%,100% 0%,100% 100%,0% 100%);pointer-events:none;font-weight:bold; }
+
+    /* CARD: HOT BADGE */
+    .g-card-hot {
+      position: absolute; top: 32px; right: 0; z-index: 5;
+      font-size: 0.5rem; letter-spacing: 2px;
+      color: #000; background: #ff4444;
+      padding: 3px 8px 3px 12px;
+      clip-path: polygon(10px 0%,100% 0%,100% 100%,0% 100%);
+      pointer-events: none; font-weight: bold;
+      animation: hotPulse 2s ease-in-out infinite;
+    }
+    @keyframes hotPulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+
+    /* CARD: NUEVO BADGE */
+    .g-card-nuevo {
+      position: absolute; top: 56px; right: 0; z-index: 5;
+      font-size: 0.5rem; letter-spacing: 2px;
+      color: #000; background: var(--g);
+      padding: 3px 8px 3px 12px;
+      clip-path: polygon(10px 0%,100% 0%,100% 100%,0% 100%);
+      pointer-events: none; font-weight: bold;
+    }
+
+    /* CARD: TIEMPO */
+    .g-card-tiempo {
+      font-size: 0.55rem; letter-spacing: 2px; color: #1a5a2a;
+      margin-top: 4px; display: flex; align-items: center; gap: 4px;
+    }
+
+    /* MODO ÁMBAR */
+    .amber-mode { --g: #ffb000; --g2: #ffcc55; --dim: #331a00; }
+    .amber-mode .g-card-anio { background: var(--g2); }
+    .amber-mode .g-card-nuevo { background: var(--g2); }
+    .amber-mode body, .amber-mode { background: #0d0800; }
+
+    /* BTN ÁMBAR */
+    #btn-amber { border-color: #331a00; color: #331a00; transition: border-color 0.2s, color 0.2s, box-shadow 0.2s; }
+    #btn-amber:hover, #btn-amber.active { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 8px rgba(255,176,0,0.2); }
+
+    /* CARD: RATING EDITORIAL */
+    .g-card-rating { display:flex;gap:3px;margin-top:6px;position:relative; }
+    .g-card-rating-block { width:14px;height:5px;background:var(--dim);cursor:default; }
+    .g-card-rating-block.filled { background:var(--amber);box-shadow:0 0 4px rgba(255,176,0,0.5); }
+    .g-rating-tooltip { position:absolute;bottom:calc(100% + 6px);left:0;background:#010d01;border:1px solid #003300;color:var(--amber);font-size:0.55rem;letter-spacing:2px;padding:3px 9px;white-space:nowrap;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity 0.15s,transform 0.15s;z-index:10; }
+    .g-card-rating:hover .g-rating-tooltip { opacity:1;transform:translateY(0); }
+
+    /* CARD: PUNTUACIÓN COMUNIDAD */
+    .g-card-community {
+      display: flex; align-items: center; gap: 6px;
+      margin-top: 5px; padding-top: 6px;
+      border-top: 1px solid #001500;
+    }
+    .g-card-community-score {
+      font-size: 0.75rem; font-weight: bold;
+      color: var(--g2); letter-spacing: 1px;
+    }
+    .g-card-community-score.empty { color: #223322; }
+    .g-card-community-bar-wrap {
+      flex: 1; height: 3px; background: #001a00;
+      overflow: hidden;
+    }
+    .g-card-community-bar {
+      height: 100%; background: var(--g2);
+      box-shadow: 0 0 6px rgba(102,255,179,0.4);
+      transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+    }
+    .g-card-community-count {
+      font-size: 0.52rem; letter-spacing: 1px; color: #1a4a2a;
+      white-space: nowrap;
+    }
+
+    /* CARD: ESTADO */
+    .g-card-estado { position:absolute;top:8px;left:8px;z-index:5;font-size:0.5rem;letter-spacing:2px;padding:2px 8px;border:1px solid currentColor;cursor:pointer;transition:background 0.2s,color 0.2s;user-select:none; }
+    .g-card-estado[data-estado="ninguno"] { color:#556655;border-color:#223322;background:rgba(0,0,0,0.82); }
+    .g-card-estado[data-estado="jugado"] { color:var(--g);border-color:var(--g);background:rgba(0,255,102,0.08); }
+    .g-card-estado[data-estado="jugando"] { color:var(--amber);border-color:var(--amber);background:rgba(255,176,0,0.08); }
+    .g-card-estado[data-estado="lista"] { color:#44aaff;border-color:#44aaff;background:rgba(68,170,255,0.08); }
+
+    /* ── PANEL ── */
+    .g-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;opacity:0;pointer-events:none;transition:opacity 0.35s;backdrop-filter:blur(2px); }
+    .g-overlay.open { opacity:1;pointer-events:all; }
+    .g-panel { position:fixed;top:0;right:0;bottom:0;width:min(var(--panel-w),100vw);background:#020c02;border-left:1px solid #00ff6633;z-index:101;transform:translateX(100%);transition:transform 0.38s cubic-bezier(0.16,1,0.3,1);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#003300 #000;display:flex;flex-direction:column; }
+    .g-panel.open { transform:translateX(0); }
+    .g-panel-hero { position:relative;height:160px;overflow:hidden;flex-shrink:0; }
+    .g-panel-hero-bg { position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(8px) brightness(0.5) saturate(0.8);transform:scale(1.15); }
+    .g-panel-hero-cover { display:none; }
+    .g-panel-close { position:absolute;top:14px;right:14px;background:none;border:1px solid #00ff6633;color:var(--g);font-family:'Courier New',monospace;font-size:0.7rem;letter-spacing:2px;padding:5px 12px;cursor:pointer;transition:background 0.2s,color 0.2s; }
+    .g-panel-close:hover { background:var(--g);color:#000; }
+    .g-panel-cat-bar { position:absolute;top:14px;left:14px;font-size:0.55rem;letter-spacing:3px;padding:3px 10px;border:1px solid currentColor;opacity:0.7; }
+    .g-panel-nav { display:flex;justify-content:space-between;align-items:center;padding:10px 28px;border-bottom:1px solid #001a00;flex-shrink:0; }
+    .g-panel-nav-btn { background:none;border:1px solid #003300;color:#1a4a2a;font-family:'Courier New',monospace;font-size:0.62rem;letter-spacing:2px;padding:5px 14px;cursor:pointer;transition:border-color 0.2s,color 0.2s,background 0.2s;display:flex;align-items:center;gap:6px; }
+    .g-panel-nav-btn:hover { border-color:var(--g);color:var(--g); }
+    .g-panel-nav-btn:disabled { opacity:0.2;cursor:default;pointer-events:none; }
+    .g-panel-nav-counter { font-size:0.6rem;letter-spacing:2px;color:#1a4a2a; }
+    .g-panel-nav-counter span { color:var(--amber); }
+    .g-panel-body { padding:20px 28px 28px;flex:1; }
+    .g-panel-top { display:flex;gap:18px;align-items:flex-start;margin-bottom:14px; }
+    .g-panel-body-cover { width:90px;height:120px;object-fit:cover;flex-shrink:0;border:1px solid #00ff6644;box-shadow:0 8px 30px rgba(0,0,0,0.9); }
+    .g-panel-top-meta { flex:1;min-width:0; }
+    .g-panel-titulo { font-size:1.15rem;letter-spacing:3px;text-shadow:0 0 10px #00ff6644;margin:0 0 4px;line-height:1.2; }
+    .g-panel-genero { font-size:0.65rem;color:var(--g2);letter-spacing:2px;margin:0 0 8px; }
+    .g-panel-plats { display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px; }
+    .g-plat-badge { font-size:0.55rem;letter-spacing:2px;padding:3px 9px;border:1px solid currentColor;font-weight:bold; }
+    .g-plat-badge.pc { color:#00ff66; } .g-plat-badge.ps { color:#0088ff; }
+    .g-plat-badge.xbox { color:#52b043; } .g-plat-badge.mac { color:#aaaaaa; }
+    .g-plat-badge.movil { color:#ffb000; } .g-plat-badge.arcade { color:#ff6644; }
+    .g-plat-badge.dc { color:#ff8800; }
+    .g-panel-estado { display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0; }
+    .g-panel-estado-btn { padding:4px 12px;border:1px solid currentColor;cursor:pointer;background:none;font-family:'Courier New',monospace;font-size:0.58rem;letter-spacing:2px;transition:background 0.2s,color 0.2s; }
+    .g-panel-estado-btn.ninguno { color:#1a4a2a; }
+    .g-panel-estado-btn.jugado { color:var(--g);background:rgba(0,255,102,0.08); }
+    .g-panel-estado-btn.jugando { color:var(--amber);background:rgba(255,176,0,0.08); }
+    .g-panel-estado-btn.lista { color:#44aaff;background:rgba(68,170,255,0.08); }
+    .g-panel-datos { display:flex;flex-wrap:wrap;gap:8px;margin:16px 0; }
+    .g-panel-dato { border:1px solid #001a00;padding:4px 12px;font-size:0.65rem;color:var(--g2);letter-spacing:1px; }
+    .g-panel-dato span { color:#556655; }
+    .g-panel-trailer { width:100%;aspect-ratio:16/9;border:1px solid #001a00;margin:20px 0;background:#000;position:relative;overflow:hidden; }
+    .g-panel-trailer iframe { width:100%;height:100%;border:none;display:block; }
+    .g-panel-yt-link { display:inline-flex;align-items:center;gap:7px;margin-top:8px;font-size:0.62rem;letter-spacing:2px;color:#666;text-decoration:none;transition:color 0.2s; }
+    .g-panel-yt-link:hover { color:var(--g2); }
+    .g-panel-yt-link::before { content:'▶';font-size:0.5rem;color:#ff4444; }
+    .g-panel-texto { font-size:0.82rem;color:#889988;line-height:1.85; }
+    .g-panel-texto p { margin-bottom:12px; }
+    .g-panel-texto h3 { color:var(--g);font-size:0.7rem;letter-spacing:3px;border-bottom:1px solid var(--dim);padding-bottom:4px;margin:20px 0 10px; }
+    .g-panel-texto h3::before { content:'▸ ';color:var(--amber); }
+
+    /* ── PANEL: PUNTUACIÓN COMUNIDAD (en panel) ── */
+    .g-panel-community {
+      margin: 16px 0;
+      padding: 16px;
+      border: 1px solid #001a00;
+      background: rgba(0,10,0,0.4);
+    }
+    .g-panel-community-header {
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .g-panel-community-title {
+      font-size: 0.62rem; letter-spacing: 3px; color: #1a4a2a;
+    }
+    .g-panel-community-avg {
+      font-size: 1.6rem; font-weight: bold;
+      color: var(--g2); letter-spacing: -1px;
+      line-height: 1;
+    }
+    .g-panel-community-avg-sub {
+      font-size: 0.6rem; letter-spacing: 2px; color: #1a4a2a;
+    }
+    .g-panel-community-bars { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+    .g-panel-bar-row { display: flex; align-items: center; gap: 8px; }
+    .g-panel-bar-label { font-size: 0.58rem; color: #1a4a2a; letter-spacing: 1px; width: 20px; text-align: right; }
+    .g-panel-bar-track { flex: 1; height: 4px; background: #001500; overflow: hidden; }
+    .g-panel-bar-fill { height: 100%; background: var(--g2); transition: width 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .g-panel-bar-count { font-size: 0.52rem; color: #223322; letter-spacing: 1px; width: 20px; }
+
+    /* ── PANEL: FORMULARIO DE REVIEW ── */
+    .g-panel-review-form {
+      margin-top: 16px; padding: 16px;
+      border: 1px solid #002200;
+      background: rgba(0,5,0,0.6);
+    }
+    .g-panel-review-form-title {
+      font-size: 0.62rem; letter-spacing: 3px;
+      color: var(--g2); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .g-panel-review-form-title::before { content: '▸'; color: var(--amber); }
+    .g-review-score-selector {
+      display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .g-score-btn {
+      width: 32px; height: 32px;
+      background: none; border: 1px solid #002200;
+      color: #334433; font-family: 'Courier New', monospace;
+      font-size: 0.65rem; cursor: pointer;
+      transition: all 0.15s; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .g-score-btn:hover { border-color: var(--g2); color: var(--g2); }
+    .g-score-btn.selected {
+      border-color: var(--g2); color: #000;
+      background: var(--g2);
+    }
+    .g-review-user-input {
+      width: 100%; background: rgba(0,10,0,0.7);
+      border: 1px solid #002200; color: var(--g);
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem; letter-spacing: 1.5px;
+      padding: 7px 12px; outline: none;
+      transition: border-color 0.2s; box-sizing: border-box;
+      margin-bottom: 8px;
+    }
+    .g-review-user-input:focus { border-color: var(--g); }
+    .g-review-user-input::placeholder { color: #1a4a2a; }
+    .g-review-textarea {
+      width: 100%; background: rgba(0,10,0,0.7);
+      border: 1px solid #002200; color: #889988;
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem; letter-spacing: 1px; line-height: 1.6;
+      padding: 8px 12px; outline: none; resize: vertical;
+      min-height: 70px; box-sizing: border-box;
+      transition: border-color 0.2s; margin-bottom: 10px;
+    }
+    .g-review-textarea:focus { border-color: var(--g); }
+    .g-review-textarea::placeholder { color: #1a4a2a; }
+    .g-review-submit {
+      background: none; border: 1px solid var(--g);
+      color: var(--g); font-family: 'Courier New', monospace;
+      font-size: 0.65rem; letter-spacing: 2px;
+      padding: 7px 20px; cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .g-review-submit:hover { background: var(--g); color: #000; }
+    .g-review-submit:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
+    /* ── PANEL: LISTA DE REVIEWS ── */
+    .g-panel-reviews-list { margin-top: 16px; }
+    .g-panel-reviews-list-title {
+      font-size: 0.6rem; letter-spacing: 3px;
+      color: #1a4a2a; margin-bottom: 12px;
+      padding-bottom: 6px; border-bottom: 1px solid #001500;
+    }
+    .g-review-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #001000;
+      animation: cardIn 0.3s ease both;
+    }
+    .g-review-item-header {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 5px;
+    }
+    .g-review-item-user {
+      font-size: 0.65rem; color: var(--g);
+      letter-spacing: 1.5px;
+    }
+    .g-review-item-score {
+      font-size: 0.7rem; font-weight: bold;
+      color: var(--g2); letter-spacing: 1px;
+    }
+    .g-review-item-date {
+      font-size: 0.52rem; color: #1a4a2a;
+      letter-spacing: 1px; margin-left: auto;
+    }
+    .g-review-item-text {
+      font-size: 0.72rem; color: #667766;
+      line-height: 1.7; letter-spacing: 0.5px;
+    }
+    .g-reviews-empty {
+      text-align: center; padding: 20px;
+      font-size: 0.65rem; letter-spacing: 2px;
+      color: #1a4a2a;
+    }
+
+    /* ── PANEL: MI PERFIL ── */
+    .g-panel-profile {
+      background: rgba(0,8,0,0.6);
+      border: 1px solid #001a00;
+      padding: 16px; margin-bottom: 16px;
+    }
+    .g-panel-profile-title {
+      font-size: 0.6rem; letter-spacing: 3px;
+      color: #1a4a2a; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .g-panel-profile-title::before { content: '◈'; color: var(--amber); }
+    .g-profile-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+    .g-profile-stat { text-align: center; }
+    .g-profile-stat-val {
+      font-size: 1.2rem; font-weight: bold;
+      color: var(--amber); display: block; line-height: 1;
+    }
+    .g-profile-stat-label {
+      font-size: 0.5rem; letter-spacing: 2px;
+      color: #1a4a2a; display: block; margin-top: 3px;
+    }
+    .g-profile-export-btn {
+      margin-top: 12px; background: none;
+      border: 1px solid #003300; color: #1a4a2a;
+      font-family: 'Courier New', monospace;
+      font-size: 0.58rem; letter-spacing: 2px;
+      padding: 5px 14px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .g-profile-export-btn:hover {
+      border-color: var(--amber); color: var(--amber);
+    }
+
+    /* ── SECCIONES ── */
+    .g-seccion { margin-bottom:36px;overflow:hidden; }
+    .g-seccion.hidden { display:none; }
+    .g-seccion-header { display:flex;align-items:baseline;gap:12px;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--dim); }
+    .g-seccion-titulo { font-size:0.82rem;letter-spacing:3px;color:var(--g2); }
+    .g-seccion-count { font-size:0.6rem;letter-spacing:1px;color:#1a4a2a; }
+    .g-seccion-line { flex:1;height:1px;background:linear-gradient(90deg,var(--dim),transparent); }
+    .g-seccion-hint { font-size:0.55rem;letter-spacing:2px;color:#1a3a1a;white-space:nowrap; }
+
+    /* ── BUSCADOR ── */
+    .g-search-wrap { position:relative;margin-bottom:16px; }
+    .g-search-prefix { position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:0.72rem;color:var(--g);pointer-events:none;letter-spacing:1px; }
+    #g-search { width:100%;background:rgba(0,10,0,0.7);border:1px solid #003300;border-radius:0;color:var(--g);font-family:'Courier New',monospace;font-size:0.72rem;letter-spacing:2px;padding:9px 14px 9px 36px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;box-sizing:border-box; }
+    #g-search::placeholder { color:#1a4a2a; }
+    #g-search:focus { border-color:var(--g);box-shadow:0 0 10px rgba(0,255,102,0.1); }
+    .g-search-clear { position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#1a4a2a;font-size:0.8rem;cursor:pointer;padding:0;display:none;transition:color 0.2s; }
+    .g-search-clear:hover { color:var(--g); }
+    .g-search-noresult { text-align:center;padding:40px 0;font-size:0.75rem;letter-spacing:3px;color:#1a4a2a;display:none; }
+
+    /* ── ACCIONES ── */
+    .g-actions { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px; }
+    .g-fichas-vistas { font-size:0.62rem;letter-spacing:2px;color:#1a4a2a; }
+    .g-fichas-vistas span { color:var(--amber); }
+    .g-actions-right { display: flex; gap: 8px; align-items: center; }
+    .g-btn-sorpresa { background:none;border:1px solid #003300;color:#1a4a2a;font-family:'Courier New',monospace;font-size:0.62rem;letter-spacing:2px;padding:6px 16px;cursor:pointer;transition:border-color 0.2s,color 0.2s,box-shadow 0.2s; }
+    .g-btn-sorpresa:hover { border-color:var(--amber);color:var(--amber);box-shadow:0 0 8px rgba(255,176,0,0.15); }
+
+    /* ── SCROLL BAR ── */
+    #scroll-bar { position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--g),var(--amber));z-index:200;transition:width 0.1s linear;box-shadow:0 0 6px var(--g); }
+
+    /* ── TOAST ── */
+    .g-toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #010d01; border: 1px solid var(--g);
+      color: var(--g); font-family: 'Courier New', monospace;
+      font-size: 0.65rem; letter-spacing: 2px;
+      padding: 8px 20px; z-index: 300;
+      opacity: 0; transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .g-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── FOOTER ── */
+    .g-footer { margin-top:20px;padding:16px 0 20px;border-top:1px solid #001a00;text-align:center;font-size:0.68rem;color:#1a4a2a;line-height:2.2; }
+    .g-footer a { color:var(--g);text-decoration:none; }
+    .g-footer a:hover { color:var(--g2); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:900px) {
+      .g-panel { width:100vw; }
+    }
+    @media (max-width:600px) {
+      .g-grid { grid-template-columns:repeat(2,1fr);gap:10px; }
+      .g-panel-body { padding:14px 14px; }
+      .g-panel-top { gap:10px; }
+      .g-panel-body-cover { width:64px;height:85px; }
+      .g-panel-titulo { font-size:1rem;letter-spacing:2px; }
+      .g-header h1 { font-size:clamp(1.5rem,8vw,3.6rem); }
+      .g-tabs { gap:0; }
+      .g-tab { padding:10px 12px;font-size:0.62rem;letter-spacing:1px; }
+      #gaming-wrapper { padding:0 12px; }
+      .g-actions { gap:6px; }
+      .g-btn-sorpresa { font-size:0.56rem;padding:5px 10px; }
+    }
+    @media (max-width:380px) {
+      .g-grid { grid-template-columns:1fr; }
+      .g-panel-top { flex-direction:column; }
+      .g-panel-body-cover { width:100%;height:160px;object-fit:cover; }
+    }
+
+    /* ── AUTOCOMPLETE ── */
+    .g-autocomplete {
+      position:absolute;top:100%;left:0;right:0;z-index:50;
+      background:#010d01;border:1px solid #003300;border-top:none;
+      max-height:240px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#003300 #000;
+      display:none;
+    }
+    .g-autocomplete.open { display:block; }
+    .g-ac-item {
+      padding:8px 14px 8px 36px;font-size:0.68rem;letter-spacing:1.5px;
+      color:#556655;cursor:pointer;display:flex;align-items:center;gap:10px;
+      transition:background 0.15s,color 0.15s;border-bottom:1px solid #001500;
+    }
+    .g-ac-item:last-child { border-bottom:none; }
+    .g-ac-item:hover,.g-ac-item.ac-active { background:rgba(0,255,102,0.06);color:var(--g); }
+    .g-ac-item-cover { width:26px;height:34px;object-fit:cover;flex-shrink:0;opacity:0.7; }
+    .g-ac-item-info { flex:1;min-width:0; }
+    .g-ac-item-titulo { white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .g-ac-item-sub { font-size:0.55rem;color:#334433;letter-spacing:1px;margin-top:1px; }
+    .g-ac-item em { color:var(--g);font-style:normal; }
+
+    /* ── MODO COMPARAR ── */
+    .g-compare-bar {
+      position:fixed;bottom:0;left:0;right:0;z-index:150;
+      background:#010d01;border-top:1px solid var(--amber);
+      padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+      transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .g-compare-bar.open { transform:translateY(0); }
+    .g-compare-slots { display:flex;gap:10px;flex:1;flex-wrap:wrap; }
+    .g-compare-slot {
+      display:flex;align-items:center;gap:8px;padding:4px 10px;
+      border:1px solid #003300;font-size:0.62rem;letter-spacing:1.5px;color:#556655;
+      min-width:160px;
+    }
+    .g-compare-slot.filled { border-color:var(--amber);color:var(--amber); }
+    .g-compare-slot-remove { background:none;border:none;color:inherit;cursor:pointer;font-size:0.8rem;padding:0 2px;margin-left:auto; }
+    .g-compare-label { font-size:0.58rem;letter-spacing:3px;color:#1a4a2a;white-space:nowrap; }
+    .g-compare-go { background:none;border:1px solid var(--amber);color:var(--amber);font-family:'Courier New',monospace;font-size:0.62rem;letter-spacing:2px;padding:6px 16px;cursor:pointer;transition:background 0.2s,color 0.2s; }
+    .g-compare-go:hover { background:var(--amber);color:#000; }
+    .g-compare-go:disabled { opacity:0.3;cursor:default;pointer-events:none; }
+    .g-compare-clear { background:none;border:none;color:#334433;font-family:'Courier New',monospace;font-size:0.58rem;letter-spacing:2px;cursor:pointer;transition:color 0.2s; }
+    .g-compare-clear:hover { color:var(--g2); }
+    .g-card-compare-btn {
+      position:absolute;bottom:8px;right:8px;z-index:6;
+      background:rgba(0,0,0,0.8);border:1px solid #003300;
+      color:#334433;font-family:'Courier New',monospace;
+      font-size:0.5rem;letter-spacing:1px;padding:2px 7px;cursor:pointer;
+      transition:all 0.15s;opacity:0;
+    }
+    .g-card:hover .g-card-compare-btn { opacity:1; }
+    .g-card-compare-btn.in-compare { border-color:var(--amber);color:var(--amber);opacity:1; }
+
+    /* ── MODAL COMPARAR ── */
+    .g-compare-modal {
+      position:fixed;inset:0;z-index:200;background:#000;
+      overflow-y:auto;transform:translateY(100%);
+      transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .g-compare-modal.open { transform:translateY(0); }
+    .g-compare-modal-inner { max-width:1200px;margin:0 auto;padding:40px 24px 80px; }
+    .g-compare-modal-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:14px;border-bottom:1px solid var(--dim); }
+    .g-compare-modal-title { font-size:0.8rem;letter-spacing:4px;color:var(--amber); }
+    .g-compare-modal-close { background:none;border:1px solid #003300;color:#1a4a2a;font-family:'Courier New',monospace;font-size:0.65rem;letter-spacing:2px;padding:6px 14px;cursor:pointer;transition:all 0.2s; }
+    .g-compare-modal-close:hover { border-color:var(--g);color:var(--g); }
+    .g-compare-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px; }
+    .g-compare-col { border:1px solid #001a00;background:#020c02; }
+    .g-compare-col-hero { position:relative;height:200px;overflow:hidden; }
+    .g-compare-col-bg { position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(6px) brightness(0.4);transform:scale(1.1); }
+    .g-compare-col-img { position:absolute;bottom:-10px;left:16px;width:70px;height:93px;object-fit:cover;border:1px solid #00ff6633; }
+    .g-compare-col-name { position:absolute;bottom:14px;left:100px;right:14px;font-size:0.8rem;letter-spacing:2px;line-height:1.3; }
+    .g-compare-col-body { padding:16px; }
+    .g-compare-row { display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid #001000;font-size:0.68rem; }
+    .g-compare-row:last-child { border-bottom:none; }
+    .g-compare-row-key { color:#1a4a2a;letter-spacing:1px;font-size:0.6rem; }
+    .g-compare-row-val { color:var(--g2);text-align:right;max-width:60%; }
+    .g-compare-row-val.best { color:var(--amber); }
+    .g-compare-tags { display:flex;flex-wrap:wrap;gap:4px;margin-top:10px; }
+    .g-compare-tag { font-size:0.52rem;padding:2px 7px;border:1px solid #002200;color:#334433;letter-spacing:1px; }
+
+
+    /* ── FICHA COMPLETA BTN ── */
+    .g-panel-ficha-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 10px; padding: 9px 20px;
+      background: none; border: 1px solid var(--g);
+      color: var(--g); font-family: 'Courier New', monospace;
+      font-size: 0.68rem; letter-spacing: 2px;
+      text-decoration: none; cursor: pointer;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+      width: 100%; justify-content: center;
+      box-sizing: border-box;
+    }
+    .g-panel-ficha-btn:hover {
+      background: var(--g); color: #000;
+      box-shadow: 0 0 20px rgba(0,255,102,0.2);
+    }
+
+    /* ── PANEL TAGS ── */
+    .g-panel-tags {
+      display: flex; flex-wrap: wrap; gap: 5px;
+      margin: 8px 0 4px;
+    }
+    .g-panel-tag {
+      font-size: 0.55rem; letter-spacing: 1.5px;
+      padding: 2px 9px; border: 1px solid #002200;
+      color: #334433; cursor: pointer;
+      font-family: 'Courier New', monospace;
+      background: none; transition: all 0.15s;
+    }
+    .g-panel-tag:hover {
+      border-color: var(--g2); color: var(--g2);
+    }
+
+    /* ── WRAPPED MODAL ── */
+    .g-wrapped-modal {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 111; background: #000;
+      overflow-y: auto; scrollbar-width: thin; scrollbar-color: #003300 #000;
+      transform: translateY(100%);
+      transition: transform 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+    .g-wrapped-modal.open { transform: translateY(0); }
+    .g-wrapped-close {
+      position: fixed; top: 16px; right: 16px; z-index: 120;
+      background: none; border: 1px solid #003300;
+      color: #1a4a2a; font-family: 'Courier New', monospace;
+      font-size: 0.65rem; letter-spacing: 2px; padding: 6px 14px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .g-wrapped-close:hover { border-color: var(--g); color: var(--g); }
+    .g-wrapped-inner { max-width: 760px; margin: 0 auto; padding: 60px 30px 80px; }
+    .g-wrapped-header {
+      text-align: center; margin-bottom: 60px;
+      padding-bottom: 30px; border-bottom: 1px solid var(--dim);
+    }
+    .g-wrapped-eyebrow {
+      font-size: 0.6rem; letter-spacing: 6px; color: var(--amber);
+      margin-bottom: 12px; opacity: 0.8;
+    }
+    .g-wrapped-title {
+      font-size: clamp(1.4rem, 4vw, 2.4rem); letter-spacing: 8px;
+      text-shadow: 0 0 30px rgba(0,255,102,0.4);
+    }
+    .g-wrapped-sub { font-size: 0.68rem; letter-spacing: 2px; color: var(--g2); margin-top: 8px; }
+    .g-wrapped-section { margin-bottom: 48px; }
+    .g-wrapped-section-label {
+      font-size: 0.58rem; letter-spacing: 4px; color: #1a4a2a;
+      margin-bottom: 20px; padding-bottom: 8px;
+      border-bottom: 1px solid #001500;
+    }
+    .g-wrapped-big-stat {
+      text-align: center; padding: 30px;
+      border: 1px solid #001a00; background: rgba(0,5,0,0.5);
+      margin-bottom: 16px;
+    }
+    .g-wrapped-big-num {
+      font-size: clamp(3rem, 8vw, 5rem); font-weight: bold;
+      color: var(--amber); line-height: 1;
+      text-shadow: 0 0 30px rgba(255,176,0,0.3);
+    }
+    .g-wrapped-big-label {
+      font-size: 0.65rem; letter-spacing: 3px; color: #1a4a2a; margin-top: 8px;
+    }
+    .g-wrapped-stats-row {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
+      margin-bottom: 20px;
+    }
+    .g-wrapped-stat-card {
+      padding: 16px; border: 1px solid #001500; text-align: center;
+      background: rgba(0,5,0,0.4);
+    }
+    .g-wrapped-stat-val { font-size: 1.8rem; font-weight: bold; color: var(--g2); line-height: 1; }
+    .g-wrapped-stat-label { font-size: 0.52rem; letter-spacing: 2px; color: #1a4a2a; margin-top: 4px; }
+    .g-wrapped-cat-bars { display: flex; flex-direction: column; gap: 10px; }
+    .g-wrapped-cat-row { display: flex; align-items: center; gap: 12px; }
+    .g-wrapped-cat-name { font-size: 0.62rem; letter-spacing: 2px; width: 180px; flex-shrink: 0; }
+    .g-wrapped-cat-track { flex: 1; height: 6px; background: #001500; overflow: hidden; }
+    .g-wrapped-cat-fill { height: 100%; transition: width 1.2s cubic-bezier(0.16,1,0.3,1); }
+    .g-wrapped-cat-count { font-size: 0.58rem; color: #1a4a2a; width: 30px; }
+    .g-wrapped-top-game {
+      display: flex; gap: 16px; align-items: center;
+      padding: 16px; border: 1px solid #001a00;
+      background: rgba(0,5,0,0.4); margin-bottom: 12px;
+    }
+    .g-wrapped-top-cover { width: 50px; height: 67px; object-fit: cover; flex-shrink: 0; }
+    .g-wrapped-top-titulo { font-size: 0.82rem; color: var(--g); letter-spacing: 1.5px; margin-bottom: 4px; }
+    .g-wrapped-top-cat { font-size: 0.58rem; color: #1a4a2a; letter-spacing: 1px; }
+    .g-wrapped-tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+    .g-wrapped-tag {
+      padding: 4px 12px; border: 1px solid #002200;
+      font-size: 0.6rem; letter-spacing: 1.5px; color: #334433;
+    }
+    .g-wrapped-tag.highlight { border-color: var(--g2); color: var(--g2); background: rgba(102,255,179,0.05); }
+    .g-wrapped-progress {
+      display: flex; align-items: center; gap: 12px; margin-top: 16px;
+    }
+    .g-wrapped-progress-label { font-size: 0.62rem; letter-spacing: 2px; color: #1a4a2a; flex-shrink: 0; }
+    .g-wrapped-progress-track { flex: 1; height: 8px; background: #001500; overflow: hidden; }
+    .g-wrapped-progress-fill { height: 100%; background: linear-gradient(90deg, var(--g), var(--g2)); transition: width 1.5s cubic-bezier(0.16,1,0.3,1); }
+    .g-wrapped-progress-pct { font-size: 0.65rem; color: var(--amber); font-weight: bold; flex-shrink: 0; }
+    .g-wrapped-achievement {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 16px; border: 1px solid #001500;
+      background: rgba(0,5,0,0.4); margin-bottom: 8px;
+    }
+    .g-wrapped-achievement-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .g-wrapped-achievement-title { font-size: 0.7rem; color: var(--amber); letter-spacing: 1.5px; margin-bottom: 2px; }
+    .g-wrapped-achievement-desc { font-size: 0.62rem; color: #556655; letter-spacing: 1px; }
+    .g-btn-wrapped {
+      background: none; border: 1px solid #003300; color: #1a4a2a;
+      font-family: 'Courier New', monospace; font-size: 0.62rem;
+      letter-spacing: 2px; padding: 8px 18px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .g-btn-wrapped:hover { border-color: var(--g2); color: var(--g2); }
+  </style>
+</head>
+<body>
+<div id="scroll-bar"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="g-toast" id="g-toast"></div>
+
+<!-- OVERLAY + PANEL -->
+<div class="g-overlay" id="g-overlay"></div>
+<div class="g-panel" id="g-panel" role="dialog" aria-modal="true">
+  <div class="g-panel-hero">
+    <div class="g-panel-hero-bg" id="panel-hero-bg"></div>
+    <img class="g-panel-hero-cover" id="panel-cover" src="" alt="">
+    <span class="g-panel-cat-bar" id="panel-cat-bar"></span>
+    <button class="g-panel-close" id="panel-close-btn">✕ CERRAR</button>
+  </div>
+  <div class="g-panel-nav">
+    <button class="g-panel-nav-btn" id="panel-prev">‹ ANTERIOR</button>
+    <span class="g-panel-nav-counter"><span id="panel-nav-pos">1</span> / <span id="panel-nav-total">1</span></span>
+    <button class="g-panel-nav-btn" id="panel-next">SIGUIENTE ›</button>
+  </div>
+  <div class="g-panel-body">
+    <div class="g-panel-top">
+      <img class="g-panel-body-cover" id="panel-cover-body" src="" alt="">
+      <div class="g-panel-top-meta">
+        <div class="g-panel-titulo" id="panel-titulo"></div>
+        <div class="g-panel-genero" id="panel-genero"></div>
+        <div class="g-panel-plats" id="panel-plats"></div>
+        <div class="g-panel-estado" id="panel-estado-wrap">
+          <button class="g-panel-estado-btn" data-estado="jugado"  id="peb-jugado">● JUGADO</button>
+          <button class="g-panel-estado-btn" data-estado="jugando" id="peb-jugando">◐ JUGANDO</button>
+          <button class="g-panel-estado-btn" data-estado="lista"   id="peb-lista">○ EN LISTA</button>
+        </div>
+      </div>
+    </div>
+    <div class="g-panel-datos" id="panel-datos"></div>
+
+    <!-- MI PERFIL (solo en panel de inicio / sección dedicada) -->
+    <div class="g-panel-profile" id="panel-profile" style="display:none">
+      <div class="g-panel-profile-title">MI COLECCIÓN</div>
+      <div class="g-profile-stats" id="profile-stats"></div>
+      <button class="g-profile-export-btn" id="btn-export">⬇ EXPORTAR MI LISTA</button>
+    </div>
+
+    <!-- PUNTUACIÓN COMUNIDAD -->
+    <div class="g-panel-community" id="panel-community">
+      <div class="g-panel-community-header">
+        <span class="g-panel-community-title">// PUNTUACIÓN COMUNIDAD</span>
+        <span class="g-panel-community-avg" id="panel-comm-avg">—</span>
+        <span class="g-panel-community-avg-sub" id="panel-comm-sub">SIN VOTOS</span>
+      </div>
+      <div class="g-panel-community-bars" id="panel-comm-bars"></div>
+    </div>
+
+    <div class="g-panel-trailer" id="panel-trailer"></div>
+    <a class="g-panel-yt-link" id="panel-yt-link" href="#" target="_blank" rel="noopener">VER EN YOUTUBE</a>
+    <div class="g-panel-texto" id="panel-texto"></div>
+
+    <!-- FORMULARIO DE REVIEW -->
+    <div class="g-panel-review-form" id="panel-review-form">
+      <div class="g-panel-review-form-title">DEJAR VALORACIÓN</div>
+      <div class="g-review-score-selector" id="review-score-sel"></div>
+      <input class="g-review-user-input" id="review-username" placeholder="TU NICK (opcional)" maxlength="32" autocomplete="off" spellcheck="false">
+      <textarea class="g-review-textarea" id="review-text" placeholder="TU OPINIÓN (opcional)..." maxlength="400"></textarea>
+      <button class="g-review-submit" id="review-submit" disabled>ENVIAR VALORACIÓN</button>
+    </div>
+
+    <!-- LISTA DE REVIEWS -->
+    <div class="g-panel-reviews-list" id="panel-reviews-list">
+      <div class="g-panel-reviews-list-title">// VALORACIONES</div>
+      <div id="reviews-container"></div>
+    </div>
+
+    <!-- FICHA COMPLETA -->
+    <a class="g-panel-ficha-btn" id="panel-ficha-btn" href="gaming-ficha.html?id=">▶ VER FICHA COMPLETA</a>
+  </div>
+  <nav style="padding:0 28px 24px;border-top:1px solid #001a00;margin-top:10px;display:flex;gap:20px;font-size:0.65rem;letter-spacing:2px;">
+    <a href="gaming.html" style="color:var(--g);text-decoration:none;">🎮 GAMING</a>
+    <a href="index.html" style="color:#1a4a2a;text-decoration:none;">🏠 INICIO</a>
+    <a href="articulos.html" style="color:#1a4a2a;text-decoration:none;">📚 ARTÍCULOS</a>
+  </nav>
+</div>
+
+<!-- VISTA PRINCIPAL -->
+<section class="pantalla seccion activa pantalla-wide" id="gaming">
+<div id="gaming-wrapper">
+  <div class="g-header">
+    <div class="g-header-eyebrow">// RETROTERM.AI — MÓDULO</div>
+    <h1>🎮 GAMING</h1>
+    <div class="g-header-sub" id="typing-sub"></div>
+    <div class="g-header-stats">
+      <div class="g-stat"><span id="header-total">0</span> TÍTULOS</div>
+      <div class="g-stat"><span>4</span> CATEGORÍAS</div>
+      <div class="g-stat"><span id="header-vistas">0</span> FICHAS VISTAS</div>
+      <div class="g-stat"><span id="header-reviews">0</span> VALORACIONES</div>
+    </div>
+  </div>
+
+  <div class="g-tabs" id="g-tabs">
+    <button class="g-tab active" data-filter="all">TODOS <span class="g-tab-count" id="tab-count-all"></span></button>
+    <button class="g-tab" data-filter="rpg">🌍 MUNDO ABIERTO / RPG <span class="g-tab-count" id="tab-count-rpg"></span></button>
+    <button class="g-tab" data-filter="accion">🗡️ ACCIÓN / AVENTURA <span class="g-tab-count" id="tab-count-accion"></span></button>
+    <button class="g-tab" data-filter="comedia">😂 COMEDIA / OTROS <span class="g-tab-count" id="tab-count-comedia"></span></button>
+    <button class="g-tab" data-filter="clasico">🕹️ CLÁSICOS <span class="g-tab-count" id="tab-count-clasico"></span></button>
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="g-search-wrap">
+    <span class="g-search-prefix">&gt;_</span>
+    <input type="text" id="g-search" placeholder="BUSCAR JUEGO, GÉNERO, PLATAFORMA..." autocomplete="off" spellcheck="false">
+    <button class="g-search-clear" id="g-search-clear" aria-label="Limpiar">✕</button>
+    <div class="g-autocomplete" id="g-autocomplete"></div>
+  </div>
+
+  <!-- FILTROS AVANZADOS -->
+  <div class="g-filters-bar" id="g-filters-bar">
+    <button class="g-filters-toggle" id="g-filters-toggle">
+      ⚙ FILTROS AVANZADOS <span class="g-filter-arrow">▾</span>
+    </button>
+    <span class="g-filter-active-count" id="filter-active-count">● FILTROS ACTIVOS</span>
+    <div class="g-filters-expanded" id="g-filters-expanded">
+      <div class="g-filter-group">
+        <span class="g-filter-label">// PLATAFORMA</span>
+        <div class="g-filter-chips" id="filter-plats"></div>
+      </div>
+      <div class="g-filter-group">
+        <span class="g-filter-label">// AÑO</span>
+        <div class="g-filter-chips" id="filter-years"></div>
+      </div>
+      <div class="g-filter-group">
+        <span class="g-filter-label">// RATING EDITORIAL</span>
+        <div class="g-filter-chips" id="filter-ratings"></div>
+      </div>
+      <div class="g-filter-group">
+        <span class="g-filter-label">// ESTADO</span>
+        <div class="g-filter-chips" id="filter-estados"></div>
+      </div>
+      <div class="g-filter-group">
+        <span class="g-filter-label">// TIEMPO DE JUEGO</span>
+        <div class="g-filter-chips" id="filter-tiempos"></div>
+      </div>
+      <div class="g-filter-group">
+        <span class="g-filter-label">// MODO</span>
+        <div class="g-filter-chips" id="filter-modos"></div>
+      </div>
+      <div class="g-filter-group">
+        <span class="g-filter-label">// DIFICULTAD</span>
+        <div class="g-filter-chips" id="filter-dificultad"></div>
+      </div>
+      <button class="g-filters-reset" id="g-filters-reset">✕ LIMPIAR</button>
+    </div>
+  </div>
+
+  <!-- ACCIONES -->
+  <div class="g-actions">
+    <div class="g-fichas-vistas">MOSTRANDO <span id="fichas-count">0</span> / <span id="fichas-total">0</span> — <span id="fichas-vistas-count" style="color:#1a4a2a"></span> VISTAS</div>
+    <div class="g-actions-right">
+      <button class="g-btn-sorpresa" id="btn-amber">◐ MODO ÁMBAR</button>
+      <button class="g-btn-sorpresa" id="btn-comparar" style="border-color:#003300;color:#1a4a2a" onmouseenter="this.style.borderColor='#ffb000';this.style.color='#ffb000'" onmouseleave="this.style.borderColor='#003300';this.style.color='#1a4a2a'">⊞ COMPARAR</button>
+      <button class="g-btn-sorpresa" id="btn-perfil" style="border-color:#003300;color:#1a4a2a" onmouseenter="this.style.borderColor='#66ffb3';this.style.color='#66ffb3'" onmouseleave="this.style.borderColor='#003300';this.style.color='#1a4a2a'">◈ MI PERFIL</button>
+      <button class="g-btn-sorpresa" id="btn-sorpresa">? SORPRÉNDEME</button>
+    </div>
+  </div>
+
+  <div id="g-secciones"></div>
+  <div class="g-search-noresult" id="g-noresult">&gt; NO_RESULTS_FOUND — intenta con otro término o ajusta los filtros</div>
+
+  <div class="g-footer">
+    <a href="index.html">⬅ Volver al HUB</a><br>
+    <a href="wonder.html">◈ WONDER</a> · <a href="articulos.html">📚 Artículos</a> · <a href="red.html">🌐 Red</a> · <a href="editor.html">💻 Editor</a><br>
+    RETROTERM.AI v0.3 © 2025 | Gaming
+  </div>
+</div>
+</section>
+
+
+<!-- PERFIL WRAPPED MODAL -->
+<div class="g-overlay" id="wrapped-overlay" style="z-index:110"></div>
+<div class="g-wrapped-modal" id="wrapped-modal">
+  <button class="g-wrapped-close" id="wrapped-close">✕ CERRAR</button>
+  <div class="g-wrapped-inner" id="wrapped-inner"></div>
+</div>
+
+<!-- BARRA COMPARAR -->
+<div class="g-compare-bar" id="g-compare-bar">
+  <span class="g-compare-label">⊞ COMPARANDO</span>
+  <div class="g-compare-slots" id="g-compare-slots"></div>
+  <button class="g-compare-go" id="g-compare-go" disabled>VER COMPARATIVA ›</button>
+  <button class="g-compare-clear" id="g-compare-clear">✕ LIMPIAR</button>
+</div>
+
+<!-- MODAL COMPARAR -->
+<div class="g-compare-modal" id="g-compare-modal">
+  <div class="g-compare-modal-inner">
+    <div class="g-compare-modal-header">
+      <span class="g-compare-modal-title">// COMPARATIVA DE JUEGOS</span>
+      <button class="g-compare-modal-close" id="g-compare-modal-close">✕ CERRAR</button>
+    </div>
+    <div class="g-compare-grid" id="g-compare-modal-grid"></div>
+  </div>
+</div>
+
+<script src="js/accesibilidad.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   SUPABASE CONFIG
+   ═══════════════════════════════════════════════════════════════ */
+const SUPABASE_URL = 'https://kldtrfreyeiidkliahdy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsZHRyZnJleWVpaWRrbGlhaGR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODMyODEsImV4cCI6MjA5MTI1OTI4MX0.H8CCJkVI1Ir-JY7FrneFrdicXecEhGEWGFtJkRVpAKw';
+const SB_HEADERS   = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' };
+
+async function sbFetch(path, opts = {}) {
+  const r = await fetch(SUPABASE_URL + '/rest/v1/' + path, { headers: SB_HEADERS, ...opts });
+  return r.json();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CACHES — precargados en init() para que todo sea síncrono
+   ═══════════════════════════════════════════════════════════════ */
+const _estadoCache      = new Map();   // gameId → estado
+const _reviewStatsCache = new Map();   // gameId → { avg, count, dist }
+let   _reviewCountTotal = 0;
+
+async function preloadCaches() {
+  const sid = DB.getSessionId();
+  const [estados, reviews] = await Promise.all([
+    sbFetch(`user_estados?session_id=eq.${sid}`),
+    sbFetch('reviews?select=game_id,score')
+  ]);
+  if (Array.isArray(estados)) {
+    estados.forEach(r => _estadoCache.set(r.game_id, r.estado));
+  }
+  if (Array.isArray(reviews)) {
+    const grouped = {};
+    reviews.forEach(r => {
+      if (!grouped[r.game_id]) grouped[r.game_id] = [];
+      grouped[r.game_id].push(r.score);
+    });
+    Object.entries(grouped).forEach(([gameId, scores]) => {
+      const dist = {}; let sum = 0;
+      scores.forEach(s => { dist[s] = (dist[s] || 0) + 1; sum += s; });
+      _reviewStatsCache.set(gameId, { avg: (sum / scores.length).toFixed(1), count: scores.length, dist });
+    });
+    _reviewCountTotal = reviews.length;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DB ADAPTER — conectado a Supabase
+   ═══════════════════════════════════════════════════════════════ */
+const DB = {
+  /* ── REVIEWS ──────────────────────────────────────────────── */
+  async getReviews(gameId) {
+    const data = await sbFetch(`reviews?game_id=eq.${gameId}&order=created_at.desc`);
+    return Array.isArray(data) ? data : [];
+  },
+  async saveReview(gameId, review) {
+    const sid = this.getSessionId();
+    await sbFetch('reviews', {
+      method: 'POST',
+      body: JSON.stringify({ game_id: gameId, session_id: sid, score: review.score, nick: review.user, text: review.text })
+    });
+    // Actualiza cache local de stats
+    const cur = _reviewStatsCache.get(gameId) || { avg: null, count: 0, dist: {} };
+    const newDist = { ...cur.dist, [review.score]: (cur.dist[review.score] || 0) + 1 };
+    const newCount = cur.count + 1;
+    const rawAvg = Object.entries(newDist).reduce((s, [sc, c]) => s + Number(sc) * c, 0) / newCount;
+    _reviewStatsCache.set(gameId, { avg: rawAvg.toFixed(1), count: newCount, dist: newDist });
+    _reviewCountTotal++;
+    EventBus.emit('reviewAdded', { gameId, review });
+  },
+  getStats(gameId) {
+    return _reviewStatsCache.get(gameId) || { avg: null, count: 0, dist: {} };
+  },
+  getAllReviewCount() {
+    return _reviewCountTotal;
+  },
+
+  /* ── ESTADO PERSONAL ──────────────────────────────────────── */
+  getSessionId() {
+    let sid = localStorage.getItem('rt_session');
+    if (!sid) { sid = crypto.randomUUID(); localStorage.setItem('rt_session', sid); }
+    return sid;
+  },
+  getEstado(gameId) {
+    return _estadoCache.get(gameId) || 'ninguno';
+  },
+  setEstado(gameId, estado) {
+    _estadoCache.set(gameId, estado);
+    const sid = this.getSessionId();
+    sbFetch('user_estados', {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify({ session_id: sid, game_id: gameId, estado, updated_at: new Date().toISOString() })
+    });
+    EventBus.emit('estadoChanged', { gameId, estado });
+  },
+
+  /* ── VISTAS ───────────────────────────────────────────────── */
+  getVistas() {
+    try { return JSON.parse(localStorage.getItem('rt_vistas')) || []; } catch { return []; }
+  },
+  markVista(gameId) {
+    const v = this.getVistas();
+    if (!v.includes(gameId)) { v.push(gameId); localStorage.setItem('rt_vistas', JSON.stringify(v)); }
+    EventBus.emit('vistaAdded', { gameId });
+  },
+
+  /* ── HOT GAMES ────────────────────────────────────────────── */
+  getHotIds() {
+    try { return JSON.parse(localStorage.getItem('rt_opens')) || {}; } catch { return {}; }
+  },
+  trackOpen(gameId) {
+    const opens = this.getHotIds();
+    opens[gameId] = (opens[gameId] || 0) + 1;
+    localStorage.setItem('rt_opens', JSON.stringify(opens));
+  },
+  isHot(gameId) {
+    const opens = this.getHotIds();
+    const vals = Object.values(opens);
+    if (!vals.length) return false;
+    const max = Math.max(...vals);
+    const top3 = Object.entries(opens).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+    return max >= 2 && top3.includes(gameId);
+  },
+
+  /* ── EXPORTAR COLECCIÓN ───────────────────────────────────── */
+  exportCollection() {
+    return JUEGOS
+      .map(j => ({ id: j.id, titulo: j.titulo, cat: j.catLabel, estado: _estadoCache.get(j.id) || 'ninguno' }))
+      .filter(j => j.estado !== 'ninguno');
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   EVENT BUS
+   ═══════════════════════════════════════════════════════════════ */
+const EventBus = {
+  _listeners: {},
+  on(event, fn) { (this._listeners[event] = this._listeners[event] || []).push(fn); },
+  emit(event, data) { (this._listeners[event] || []).forEach(fn => fn(data)); },
+  off(event, fn) { this._listeners[event] = (this._listeners[event] || []).filter(f => f !== fn); }
+};
+
+/* __JUEGOS_START__ */
+let JUEGOS = []; // cargado desde Supabase
+/* __JUEGOS_END__ */
+
+/* ─────────── CATEGORÍAS ─────────── */
+const CATS = [
+  { id: "rpg",     label: "🌍 MUNDO ABIERTO / RPG",  color: "#00ff66" },
+  { id: "accion",  label: "🗡️ ACCIÓN / AVENTURA",    color: "#ff6644" },
+  { id: "comedia", label: "😂 COMEDIA / OTROS",       color: "#ffb000" },
+  { id: "clasico", label: "🕹️ CLÁSICOS",             color: "#44aaff" },
+];
+
+
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+const RATING_LABELS = { 1:'FLOJO', 2:'PASABLE', 3:'NOTABLE', 4:'MUY BUENO', 5:'IMPRESCINDIBLE' };
+const ESTADO_LABELS = { ninguno:'· · ·', jugado:'● JUGADO', jugando:'◐ JUGANDO', lista:'○ EN LISTA' };
+const PLAT_LABELS   = { pc:'PC', ps:'PS', xbox:'XBOX', mac:'MAC', movil:'MÓVIL', arcade:'ARCADE', dc:'DREAMCAST' };
+
+function makeRating(val) {
+  let html = '<div class="g-card-rating">';
+  html += `<div class="g-rating-tooltip">${RATING_LABELS[val] || ''}</div>`;
+  for (let i = 1; i <= 5; i++)
+    html += `<div class="g-card-rating-block${i <= val ? ' filled' : ''}"></div>`;
+  return html + '</div>';
+}
+
+function makeCommunityWidget(gameId) {
+  const stats = DB.getStats(gameId);
+  if (!stats.count) {
+    return `<div class="g-card-community">
+      <span class="g-card-community-score empty">—</span>
+      <span class="g-card-community-count">SIN VOTOS</span>
+    </div>`;
+  }
+  const pct = (stats.avg / 10 * 100).toFixed(0);
+  return `<div class="g-card-community">
+    <span class="g-card-community-score">${stats.avg}</span>
+    <div class="g-card-community-bar-wrap">
+      <div class="g-card-community-bar" style="width:${pct}%"></div>
+    </div>
+    <span class="g-card-community-count">${stats.count} VOTO${stats.count !== 1 ? 'S' : ''}</span>
+  </div>`;
+}
+
+function toastShow(msg, dur = 2200) {
+  const t = document.getElementById('g-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastShow._tid);
+  toastShow._tid = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FILTROS AVANZADOS
+   ═══════════════════════════════════════════════════════════════ */
+const FilterState = {
+  plats:       new Set(),
+  years:       new Set(),
+  ratings:     new Set(),
+  estados:     new Set(),
+  tiempos:     new Set(),
+  modos:       new Set(),
+  dificultades: new Set(),
+  clear() {
+    this.plats.clear(); this.years.clear(); this.ratings.clear();
+    this.estados.clear(); this.tiempos.clear(); this.modos.clear(); this.dificultades.clear();
+  },
+  isEmpty() {
+    return !this.plats.size && !this.years.size && !this.ratings.size &&
+           !this.estados.size && !this.tiempos.size && !this.modos.size && !this.dificultades.size;
+  },
+  count() {
+    return this.plats.size + this.years.size + this.ratings.size +
+           this.estados.size + this.tiempos.size + this.modos.size + this.dificultades.size;
+  }
+};
+
+function buildFilterChips() {
+  // Plataformas
+  const allPlats = [...new Set(JUEGOS.flatMap(j => j.plataformas))].sort();
+  document.getElementById('filter-plats').innerHTML = allPlats.map(p =>
+    `<button class="g-chip" data-plat="${p}">${PLAT_LABELS[p] || p.toUpperCase()}</button>`
+  ).join('');
+
+  // Años (décadas + exactos para recientes)
+  const years = [...new Set(JUEGOS.map(j => j.anio))].sort();
+  document.getElementById('filter-years').innerHTML = years.map(y =>
+    `<button class="g-chip" data-year="${y}">${y}</button>`
+  ).join('');
+
+  // Ratings
+  const ratingOpts = [5,4,3,2,1];
+  document.getElementById('filter-ratings').innerHTML = ratingOpts.map(r =>
+    `<button class="g-chip" data-rating="${r}">${r}★ ${RATING_LABELS[r]}</button>`
+  ).join('');
+
+  // Estados
+  document.getElementById('filter-estados').innerHTML = [
+    ['jugado','● JUGADO'], ['jugando','◐ JUGANDO'], ['lista','○ EN LISTA']
+  ].map(([val, label]) =>
+    `<button class="g-chip" data-estado-filter="${val}">${label}</button>`
+  ).join('');
+
+  // Tiempo de juego
+  document.getElementById('filter-tiempos').innerHTML = [
+    ['micro','⏱ < 10H'], ['corto','⏱ 10-30H'], ['medio','⏱ 30-60H'],
+    ['largo','⏱ 60-100H'], ['epico','⏱ +100H']
+  ].map(([val, label]) =>
+    `<button class="g-chip" data-tiempo="${val}">${label}</button>`
+  ).join('');
+
+  // Modo de juego
+  const allModos = [...new Set(JUEGOS.flatMap(j => j.modoJuego || []))].sort();
+  const modoLabels = { single:'SOLO', coop:'CO-OP', online:'ONLINE', local:'LOCAL' };
+  document.getElementById('filter-modos').innerHTML = allModos.map(m =>
+    `<button class="g-chip" data-modo="${m}">${modoLabels[m] || m.toUpperCase()}</button>`
+  ).join('');
+
+  // Dificultad
+  const dificOpts = ['BAJA','MEDIA','ALTA','MUY ALTA'];
+  document.getElementById('filter-dificultad').innerHTML = dificOpts.map(d =>
+    `<button class="g-chip" data-dificultad="${d}">${d}</button>`
+  ).join('');
+
+  // Event listeners en chips
+  document.querySelectorAll('.g-chip[data-plat]').forEach(btn => {
+    btn.addEventListener('click', () => toggleFilter(FilterState.plats, btn.dataset.plat, btn));
+  });
+  document.querySelectorAll('.g-chip[data-year]').forEach(btn => {
+    btn.addEventListener('click', () => toggleFilter(FilterState.years, btn.dataset.year, btn));
+  });
+  document.querySelectorAll('.g-chip[data-rating]').forEach(btn => {
+    btn.addEventListener('click', () => toggleFilter(FilterState.ratings, btn.dataset.rating, btn));
+  });
+  document.querySelectorAll('.g-chip[data-estado-filter]').forEach(btn => {
+    btn.addEventListener('click', () => toggleFilter(FilterState.estados, btn.dataset.estadoFilter, btn));
+  });
+  document.querySelectorAll('.g-chip[data-tiempo]').forEach(btn => {
+    btn.addEventListener('click', () => toggleFilter(FilterState.tiempos, btn.dataset.tiempo, btn));
+  });
+  document.querySelectorAll('.g-chip[data-modo]').forEach(btn => {
+    btn.addEventListener('click', () => toggleFilter(FilterState.modos, btn.dataset.modo, btn));
+  });
+  document.querySelectorAll('.g-chip[data-dificultad]').forEach(btn => {
+    btn.addEventListener('click', () => toggleFilter(FilterState.dificultades, btn.dataset.dificultad, btn));
+  });
+}
+
+function toggleFilter(set, val, btn) {
+  if (set.has(val)) { set.delete(val); btn.classList.remove('active'); }
+  else { set.add(val); btn.classList.add('active'); }
+  applyFilters();
+  const n = FilterState.count();
+  const badge = document.getElementById('filter-active-count');
+  badge.textContent = `● ${n} FILTRO${n !== 1 ? 'S' : ''} ACTIVO${n !== 1 ? 'S' : ''}`;
+  badge.classList.toggle('visible', n > 0);
+}
+
+function gameMatchesFilters(j) {
+  if (FilterState.isEmpty()) return true;
+  if (FilterState.plats.size && !j.plataformas.some(p => FilterState.plats.has(p))) return false;
+  if (FilterState.years.size && !FilterState.years.has(j.anio)) return false;
+  if (FilterState.ratings.size && !FilterState.ratings.has(String(j.rating))) return false;
+  if (FilterState.estados.size && !FilterState.estados.has(DB.getEstado(j.id))) return false;
+  if (FilterState.tiempos.size) {
+    const h = j.tiempoHoras || 0;
+    const ok = [...FilterState.tiempos].some(r =>
+      r === 'micro'  ? h > 0 && h <= 10 :
+      r === 'corto'  ? h > 10 && h <= 30 :
+      r === 'medio'  ? h > 30 && h <= 60 :
+      r === 'largo'  ? h > 60 && h <= 100 :
+      r === 'epico'  ? h > 100 : false
+    );
+    if (!ok) return false;
+  }
+  if (FilterState.modos.size && !(j.modoJuego || []).some(m => FilterState.modos.has(m))) return false;
+  if (FilterState.dificultades.size && !FilterState.dificultades.has(j.dificultad)) return false;
+  return true;
+}
+
+// Expand/collapse filtros
+document.getElementById('g-filters-toggle').addEventListener('click', () => {
+  const expanded = document.getElementById('g-filters-expanded');
+  const btn = document.getElementById('g-filters-toggle');
+  expanded.classList.toggle('open');
+  btn.classList.toggle('active');
+});
+
+document.getElementById('g-filters-reset').addEventListener('click', () => {
+  FilterState.clear();
+  document.querySelectorAll('.g-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('filter-active-count').classList.remove('visible');
+  applyFilters();
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER
+   ═══════════════════════════════════════════════════════════════ */
+let currentSearchQ = '';
+let currentTabFilter = 'all';
+
+function getVisibleJuegos() {
+  return JUEGOS.filter(j => {
+    const matchTab = currentTabFilter === 'all' || j.cat === currentTabFilter;
+    const matchSearch = !currentSearchQ || (
+      j.titulo.toLowerCase().includes(currentSearchQ) ||
+      j.genero.toLowerCase().includes(currentSearchQ) ||
+      j.catLabel.toLowerCase().includes(currentSearchQ) ||
+      j.desc.toLowerCase().includes(currentSearchQ) ||
+      j.plataformas.some(p => (PLAT_LABELS[p] || p).toLowerCase().includes(currentSearchQ)) ||
+      (j.tags || []).some(t => t.toLowerCase().includes(currentSearchQ))
+    );
+    const matchFilter = gameMatchesFilters(j);
+    return matchTab && matchSearch && matchFilter;
+  });
+}
+
+function applyFilters() {
+  const visible = getVisibleJuegos();
+  const visibleIds = new Set(visible.map(j => j.id));
+  let shown = 0;
+
+  document.querySelectorAll('.g-seccion').forEach(sec => {
+    const cat = sec.dataset.cat;
+    let secHasCards = false;
+    sec.querySelectorAll('.g-card').forEach(card => {
+      const id = card.dataset.id;
+      const show = visibleIds.has(id);
+      card.style.display = show ? '' : 'none';
+      if (show) { secHasCards = true; shown++; }
+    });
+    sec.classList.toggle('hidden', !secHasCards);
+  });
+
+  document.getElementById('fichas-count').textContent = shown;
+  document.getElementById('g-noresult').style.display = shown === 0 ? 'block' : 'none';
+}
+
+function makeCard(j, delay) {
+  const div = document.createElement('div');
+  div.className = 'g-card';
+  div.setAttribute('data-cat', j.cat);
+  div.setAttribute('data-id', j.id);
+  div.style.animationDelay = delay + 's';
+  const estado = DB.getEstado(j.id);
+  const isHot = DB.isHot(j.id);
+  div.innerHTML = `
+    <div class="g-card-inner">
+      <div class="g-card-cover">
+        <img src="${j.img}" alt="${j.titulo}" loading="lazy">
+        <div class="g-card-anio">${j.anio}</div>
+        ${isHot ? '<div class="g-card-hot">🔥 HOT</div>' : ''}
+        ${j.nuevo ? '<div class="g-card-nuevo">★ NUEVO</div>' : ''}
+        <div class="g-card-estado" data-estado="${estado}" data-id="${j.id}">${ESTADO_LABELS[estado]}</div>
+        <button class="g-card-compare-btn" data-id="${j.id}" title="Añadir a comparativa">⊞</button>
+      </div>
+      <div class="g-card-info">
+        <div class="g-card-titulo">${j.titulo}</div>
+        <div class="g-card-genero">${j.genero}</div>
+        ${j.tiempoHoras ? `<div class="g-card-tiempo">⏱ ~${j.tiempoHoras}H${j.dificultad ? ` · ${j.dificultad}` : ''}</div>` : ''}
+        ${makeRating(j.rating)}
+        ${makeCommunityWidget(j.id)}
+        <div class="g-card-cta">VER FICHA COMPLETA</div>
+      </div>
+    </div>`;
+
+  div.querySelector('.g-card-estado').addEventListener('click', e => {
+    e.stopPropagation();
+    const ciclo = ['ninguno','jugado','jugando','lista'];
+    const actual = DB.getEstado(j.id);
+    const next = ciclo[(ciclo.indexOf(actual) + 1) % ciclo.length];
+    DB.setEstado(j.id, next);
+    const badge = e.currentTarget;
+    badge.setAttribute('data-estado', next);
+    badge.textContent = ESTADO_LABELS[next];
+    syncPanelEstado(j.id);
+    if (FilterState.estados.size) applyFilters();
+  });
+
+  div.querySelector('.g-card-compare-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    toggleCompare(j.id, div.querySelector('.g-card-compare-btn'));
+  });
+
+  div.addEventListener('click', () => openPanel(j.id));
+  div.addEventListener('mousemove', handleTilt);
+  div.addEventListener('mouseleave', resetTilt);
+  return div;
+}
+
+function renderSecciones() {
+  const wrapper = document.getElementById('g-secciones');
+  wrapper.innerHTML = '';
+  let globalDelay = 0;
+  CATS.forEach(cat => {
+    const juegos = JUEGOS.filter(j => j.cat === cat.id);
+    const sec = document.createElement('div');
+    sec.className = 'g-seccion';
+    sec.setAttribute('data-cat', cat.id);
+    sec.innerHTML = `
+      <div class="g-seccion-header">
+        <span class="g-seccion-titulo">${cat.label}</span>
+        <span class="g-seccion-count">${juegos.length} título${juegos.length !== 1 ? 's' : ''}</span>
+        <div class="g-seccion-line"></div>
+        <span class="g-seccion-hint">← arrastrar →</span>
+      </div>
+      <div class="g-carousel-outer"><div class="g-carousel-fade-l"></div><div class="g-carousel-fade-r"></div><div class="g-carousel" id="grid-${cat.id}"></div></div>`;
+    wrapper.appendChild(sec);
+    const grid = sec.querySelector(`#grid-${cat.id}`);
+    juegos.forEach(j => { grid.appendChild(makeCard(j, globalDelay * 0.05)); globalDelay++; });
+    initCarousel(grid);
+  });
+}
+
+function updateTabCounts() {
+  const total = JUEGOS.length;
+  document.getElementById('tab-count-all').textContent = `(${total})`;
+  CATS.forEach(c => {
+    const el = document.getElementById(`tab-count-${c.id}`);
+    if (el) el.textContent = `(${JUEGOS.filter(j => j.cat === c.id).length})`;
+  });
+  document.getElementById('fichas-total').textContent = total;
+  document.getElementById('header-total').textContent = total;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARRUSEL
+   ═══════════════════════════════════════════════════════════════ */
+function initCarousel(el) {
+  // Estado
+  let pointerDown = false, startX = 0, startScroll = 0;
+  let velX = 0, lastX = 0, lastT = 0;
+  let rafId = null, hasDragged = false;
+
+  const stopInertia = () => { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } };
+
+  const runInertia = () => {
+    velX *= 0.94;               // fricción: 0.94 = deslizamiento largo y suave
+    el.scrollLeft += velX;
+    if (Math.abs(velX) > 0.3) {
+      rafId = requestAnimationFrame(runInertia);
+    } else {
+      rafId = null;
+    }
+  };
+
+  const onStart = (x) => {
+    stopInertia();
+    pointerDown = true; hasDragged = false;
+    startX = x; startScroll = el.scrollLeft;
+    lastX = x; lastT = performance.now();
+    velX = 0;
+  };
+
+  const onMove = (x) => {
+    if (!pointerDown) return;
+    const dx = x - startX;
+    if (!hasDragged && Math.abs(dx) > 6) {
+      hasDragged = true;
+      el.classList.add('is-dragging');
+    }
+    if (!hasDragged) return;
+    const now = performance.now();
+    const dt = now - lastT || 1;
+    velX = (lastX - x) / dt * 16;   // velocidad en px/frame
+    lastX = x; lastT = now;
+    el.scrollLeft = startScroll + (startX - x);
+  };
+
+  const onEnd = () => {
+    if (!pointerDown) return;
+    pointerDown = false;
+    el.classList.remove('is-dragging');
+    if (hasDragged && Math.abs(velX) > 0.5) {
+      rafId = requestAnimationFrame(runInertia);
+    }
+    hasDragged = false;
+  };
+
+  // ── Mouse ──
+  el.addEventListener('mousedown', e => { onStart(e.clientX); e.preventDefault(); });
+  window.addEventListener('mousemove', e => onMove(e.clientX));
+  window.addEventListener('mouseup', onEnd);
+
+  // ── Touch ──
+  el.addEventListener('touchstart', e => {
+    stopInertia();
+    onStart(e.touches[0].clientX);
+  }, { passive: true });
+
+  el.addEventListener('touchmove', e => {
+    if (!pointerDown) return;
+    const dx = e.touches[0].clientX - startX;
+    if (Math.abs(dx) > 6) e.preventDefault();   // bloquea scroll vertical sólo si arrastra horizontal
+    onMove(e.touches[0].clientX);
+  }, { passive: false });
+
+  el.addEventListener('touchend', onEnd);
+  el.addEventListener('touchcancel', onEnd);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TILT 3D
+   ═══════════════════════════════════════════════════════════════ */
+function handleTilt(e) {
+  const card=e.currentTarget;const rect=card.getBoundingClientRect();
+  const dx=(e.clientX-rect.left-rect.width/2)/(rect.width/2);const dy=(e.clientY-rect.top-rect.height/2)/(rect.height/2);
+  card.style.transform=`perspective(900px) rotateX(${-dy*10}deg) rotateY(${dx*12}deg) scale(1.03)`;
+  card.style.transition='transform 0.08s ease-out,box-shadow 0.3s';
+  const inner=card.querySelector('.g-card-inner');
+  const gx=((e.clientX-rect.left)/rect.width*100).toFixed(1);const gy=((e.clientY-rect.top)/rect.height*100).toFixed(1);
+  inner.style.background=`radial-gradient(circle at ${gx}% ${gy}%,#021a04,#020c02 60%)`;
+}
+function resetTilt(e) {
+  const card=e.currentTarget;
+  card.style.transform='perspective(900px) rotateX(0) rotateY(0) scale(1)';
+  card.style.transition='transform 0.45s cubic-bezier(0.16,1,0.3,1),box-shadow 0.3s';
+  card.querySelector('.g-card-inner').style.background='#020c02';
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PANEL DETALLE
+   ═══════════════════════════════════════════════════════════════ */
+let currentPanelIndex = 0;
+const catColors = { rpg:'#00ff66', accion:'#ff6644', comedia:'#ffb000', clasico:'#44aaff' };
+
+function syncPanelEstado(id) {
+  const estado = DB.getEstado(id);
+  ['jugado','jugando','lista'].forEach(e => {
+    const btn = document.getElementById('peb-' + e);
+    if (btn) btn.className = 'g-panel-estado-btn ' + (estado === e ? e : 'ninguno');
+  });
+  const badge = document.querySelector(`.g-card-estado[data-id="${id}"]`);
+  if (badge) { badge.setAttribute('data-estado', estado); badge.textContent = ESTADO_LABELS[estado]; }
+}
+
+function fillPanel(j) {
+  const col = catColors[j.cat] || '#00ff66';
+  document.getElementById('panel-hero-bg').style.backgroundImage = `url(${j.img})`;
+  // Cover ahora está en el body
+  const bodyCover = document.getElementById('panel-cover-body');
+  if (bodyCover) { bodyCover.src = j.img; bodyCover.alt = j.titulo; }
+  document.getElementById('panel-cat-bar').textContent = j.catLabel;
+  document.getElementById('panel-cat-bar').style.color = col;
+  document.getElementById('panel-titulo').textContent = j.titulo;
+  document.getElementById('panel-titulo').style.color = col;
+  document.getElementById('panel-genero').textContent = '// ' + j.genero;
+  document.getElementById('panel-plats').innerHTML = (j.plataformas || []).map(p =>
+    `<span class="g-plat-badge ${p}">${PLAT_LABELS[p] || p.toUpperCase()}</span>`).join('');
+  syncPanelEstado(j.id);
+  document.getElementById('panel-datos').innerHTML = j.datos.map(d =>
+    `<div class="g-panel-dato">${d.k} <span>${d.v}</span></div>`).join('');
+
+  // Tags
+  let tagsEl = document.getElementById('panel-tags');
+  if (!tagsEl) {
+    tagsEl = document.createElement('div');
+    tagsEl.id = 'panel-tags';
+    tagsEl.className = 'g-panel-tags';
+    document.getElementById('panel-datos').insertAdjacentElement('afterend', tagsEl);
+  }
+  tagsEl.innerHTML = (j.tags || []).map(t =>
+    `<button class="g-panel-tag" onclick="searchByTag('${t}')">#${t}</button>`
+  ).join('');
+
+  // Trailer
+  const ytId = (j.trailer.match(/embed\/([^?]+)/) || [])[1] || '';
+  document.getElementById('panel-trailer').innerHTML =
+    `<iframe loading="lazy" width="100%" height="100%" src="${j.trailer}" title="Trailer ${j.titulo}" allowfullscreen></iframe>`;
+  const ytLink = document.getElementById('panel-yt-link');
+  ytLink.href = ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#';
+  ytLink.style.display = ytId ? 'inline-flex' : 'none';
+
+  document.getElementById('panel-texto').innerHTML = j.texto;
+
+  // Nav
+  const idx = JUEGOS.indexOf(j);
+  document.getElementById('panel-nav-pos').textContent = idx + 1;
+  document.getElementById('panel-nav-total').textContent = JUEGOS.length;
+  document.getElementById('panel-prev').disabled = idx === 0;
+  document.getElementById('panel-next').disabled = idx === JUEGOS.length - 1;
+
+  // Community scores
+  fillCommunityPanel(j.id);
+
+  // Review form reset
+  resetReviewForm();
+  loadReviewsList(j.id);
+
+  // Perfil: ocultar aquí
+  document.getElementById('panel-profile').style.display = 'none';
+
+  // Botón ficha completa
+  const fichaBtn = document.getElementById('panel-ficha-btn');
+  if (fichaBtn) fichaBtn.href = 'gaming-ficha.html?id=' + j.id;
+
+  document.getElementById('g-panel').scrollTop = 0;
+}
+
+/* Puntuación comunidad en panel */
+function fillCommunityPanel(gameId) {
+  const stats = DB.getStats(gameId);
+  const avgEl = document.getElementById('panel-comm-avg');
+  const subEl = document.getElementById('panel-comm-sub');
+  const barsEl = document.getElementById('panel-comm-bars');
+
+  if (!stats.count) {
+    avgEl.textContent = '—';
+    subEl.textContent = 'SIN VOTOS';
+    barsEl.innerHTML = '';
+    return;
+  }
+  avgEl.textContent = stats.avg;
+  subEl.textContent = `${stats.count} VOTO${stats.count !== 1 ? 'S' : ''}`;
+  const maxDist = Math.max(...Object.values(stats.dist), 1);
+  let barsHtml = '';
+  for (let s = 10; s >= 1; s--) {
+    const cnt = stats.dist[s] || 0;
+    const pct = (cnt / maxDist * 100).toFixed(0);
+    barsHtml += `<div class="g-panel-bar-row">
+      <span class="g-panel-bar-label">${s}</span>
+      <div class="g-panel-bar-track"><div class="g-panel-bar-fill" style="width:${pct}%"></div></div>
+      <span class="g-panel-bar-count">${cnt}</span>
+    </div>`;
+  }
+  barsEl.innerHTML = barsHtml;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REVIEWS
+   ═══════════════════════════════════════════════════════════════ */
+let selectedScore = null;
+
+function buildScoreSelector() {
+  const sel = document.getElementById('review-score-sel');
+  sel.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'g-score-btn';
+    btn.textContent = i;
+    btn.addEventListener('click', () => {
+      selectedScore = i;
+      sel.querySelectorAll('.g-score-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('review-submit').disabled = false;
+    });
+    sel.appendChild(btn);
+  }
+}
+
+function resetReviewForm() {
+  selectedScore = null;
+  document.querySelectorAll('.g-score-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('review-username').value = '';
+  document.getElementById('review-text').value = '';
+  document.getElementById('review-submit').disabled = true;
+}
+
+async function loadReviewsList(gameId) {
+  const reviews = await DB.getReviews(gameId);
+  const container = document.getElementById('reviews-container');
+  if (!reviews.length) {
+    container.innerHTML = '<div class="g-reviews-empty">// SIN VALORACIONES AÚN — SÉ EL PRIMERO</div>';
+    return;
+  }
+  container.innerHTML = reviews.map(r => `
+    <div class="g-review-item">
+      <div class="g-review-item-header">
+        <span class="g-review-item-user">${r.nick || r.user || 'ANÓNIMO'}</span>
+        <span class="g-review-item-score">${r.score}/10</span>
+        <span class="g-review-item-date">${r.date || (r.created_at ? new Date(r.created_at).toLocaleDateString('es-ES') : '')}</span>
+      </div>
+      ${r.text ? `<div class="g-review-item-text">${r.text}</div>` : ''}
+    </div>`).join('');
+}
+
+document.getElementById('review-submit').addEventListener('click', () => {
+  if (!selectedScore) return;
+  const j = JUEGOS[currentPanelIndex];
+  const review = {
+    score: selectedScore,
+    user: document.getElementById('review-username').value.trim() || 'ANÓNIMO',
+    text: document.getElementById('review-text').value.trim(),
+    date: new Date().toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'}),
+    isOwn: true,
+    ts: Date.now()
+  };
+  DB.saveReview(j.id, review);
+  toastShow(`✓ VALORACIÓN ENVIADA — ${review.score}/10`);
+  fillCommunityPanel(j.id);
+  loadReviewsList(j.id);
+  resetReviewForm();
+  // Actualizar card en grid
+  updateCardCommunity(j.id);
+  updateGlobalReviewCount();
+});
+
+function updateCardCommunity(gameId) {
+  document.querySelectorAll(`.g-card[data-id="${gameId}"]`).forEach(card => {
+    const infoEl = card.querySelector('.g-card-community');
+    if (infoEl) infoEl.outerHTML = makeCommunityWidget(gameId);
+    else {
+      const ratingEl = card.querySelector('.g-card-rating');
+      if (ratingEl) ratingEl.insertAdjacentHTML('afterend', makeCommunityWidget(gameId));
+    }
+  });
+}
+
+function updateGlobalReviewCount() {
+  const n = DB.getAllReviewCount();
+  const el = document.getElementById('header-reviews');
+  if (el) el.textContent = n;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PANEL ABIERTO / CERRADO
+   ═══════════════════════════════════════════════════════════════ */
+function openPanel(id) {
+  const j = JUEGOS.find(x => x.id === id);
+  if (!j) return;
+  currentPanelIndex = JUEGOS.indexOf(j);
+  fillPanel(j);
+  document.getElementById('g-overlay').classList.add('open');
+  document.getElementById('g-panel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  DB.markVista(id);
+  DB.trackOpen(id);
+  updateVistasUI();
+}
+
+function closePanel() {
+  document.getElementById('g-overlay').classList.remove('open');
+  document.getElementById('g-panel').classList.remove('open');
+  document.getElementById('panel-trailer').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+function navPanel(dir) {
+  const next = currentPanelIndex + dir;
+  if (next < 0 || next >= JUEGOS.length) return;
+  currentPanelIndex = next;
+  document.getElementById('panel-trailer').innerHTML = '';
+  fillPanel(JUEGOS[currentPanelIndex]);
+}
+
+document.getElementById('panel-prev').addEventListener('click', () => navPanel(-1));
+document.getElementById('panel-next').addEventListener('click', () => navPanel(1));
+document.getElementById('panel-close-btn').addEventListener('click', closePanel);
+document.getElementById('g-overlay').addEventListener('click', closePanel);
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('g-panel').classList.contains('open')) return;
+  if (e.key === 'Escape') closePanel();
+  if (e.key === 'ArrowLeft') navPanel(-1);
+  if (e.key === 'ArrowRight') navPanel(1);
+});
+
+['jugado','jugando','lista'].forEach(e => {
+  document.getElementById('peb-' + e).addEventListener('click', () => {
+    const j = JUEGOS[currentPanelIndex];
+    const actual = DB.getEstado(j.id);
+    DB.setEstado(j.id, actual === e ? 'ninguno' : e);
+    syncPanelEstado(j.id);
+    if (FilterState.estados.size) applyFilters();
+    updateProfileUI();
+  });
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   MI PERFIL + EXPORTAR
+   ═══════════════════════════════════════════════════════════════ */
+function getProfileStats() {
+  const jugados  = JUEGOS.filter(j => DB.getEstado(j.id) === 'jugado').length;
+  const jugando  = JUEGOS.filter(j => DB.getEstado(j.id) === 'jugando').length;
+  const lista    = JUEGOS.filter(j => DB.getEstado(j.id) === 'lista').length;
+  const vistas   = DB.getVistas().length;
+  const reviews  = DB.getAllReviewCount();
+  return { jugados, jugando, lista, vistas, reviews };
+}
+
+function updateProfileUI() {
+  const s = getProfileStats();
+  const el = document.getElementById('profile-stats');
+  if (!el) return;
+  el.innerHTML = [
+    [s.jugados, 'JUGADOS'],
+    [s.jugando, 'JUGANDO'],
+    [s.lista, 'EN LISTA'],
+    [s.vistas, 'VISTAS'],
+    [s.reviews, 'REVIEWS']
+  ].map(([v, l]) => `<div class="g-profile-stat"><span class="g-profile-stat-val">${v}</span><span class="g-profile-stat-label">${l}</span></div>`).join('');
+}
+
+document.getElementById('btn-export').addEventListener('click', () => {
+  const data = DB.exportCollection();
+  if (!data.length) { toastShow('// SIN JUEGOS MARCADOS AÚN'); return; }
+  const lines = ['RETROTERM.AI — MI COLECCIÓN', '═'.repeat(40), ''];
+  const grupos = { jugado: '● JUGADOS', jugando: '◐ JUGANDO', lista: '○ EN LISTA' };
+  Object.entries(grupos).forEach(([estado, label]) => {
+    const items = data.filter(d => d.estado === estado);
+    if (!items.length) return;
+    lines.push(label, '─'.repeat(20));
+    items.forEach(d => lines.push(`  ${d.titulo} [${d.cat}]${d.miPuntuacion ? ` — ${d.miPuntuacion}/10` : ''}`));
+    lines.push('');
+  });
+  lines.push(`Exportado: ${new Date().toLocaleDateString('es-ES')}`);
+  const blob = new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'retroterm_coleccion.txt'; a.click();
+  URL.revokeObjectURL(a.href);
+  toastShow('⬇ COLECCIÓN EXPORTADA');
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   TABS
+   ═══════════════════════════════════════════════════════════════ */
+document.getElementById('g-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.g-tab');
+  if (!btn) return;
+  document.querySelectorAll('.g-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentTabFilter = btn.dataset.filter;
+  applyFilters();
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   BUSCADOR
+   ═══════════════════════════════════════════════════════════════ */
+const searchInput = document.getElementById('g-search');
+const searchClear = document.getElementById('g-search-clear');
+
+searchInput.addEventListener('input', e => {
+  currentSearchQ = e.target.value.trim().toLowerCase();
+  searchClear.style.display = currentSearchQ ? 'block' : 'none';
+  applyFilters();
+});
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  currentSearchQ = '';
+  searchClear.style.display = 'none';
+  applyFilters();
+  searchInput.focus();
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   VISTAS + COUNTERS
+   ═══════════════════════════════════════════════════════════════ */
+function updateVistasUI() {
+  const n = DB.getVistas().length;
+  const el1 = document.getElementById('fichas-vistas-count');
+  const el2 = document.getElementById('header-vistas');
+  if (el1) el1.textContent = n;
+  if (el2) el2.textContent = n;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SORPRÉNDEME INTELIGENTE
+   Sugiere juegos no jugados con tags afines a los que ya jugaste.
+   Si no hay historial, elige al azar entre los visibles.
+   ═══════════════════════════════════════════════════════════════ */
+function getSorpresaInteligente() {
+  const jugados = JUEGOS.filter(j => DB.getEstado(j.id) === 'jugado');
+  const visible = getVisibleJuegos();
+  const pool    = visible.length ? visible : JUEGOS;
+
+  if (!jugados.length) {
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  // Frecuencia de tags en los juegos jugados
+  const tagCount = {};
+  jugados.forEach(j => (j.tags || []).forEach(t => { tagCount[t] = (tagCount[t] || 0) + 1; }));
+
+  // Juegos del pool que no han sido jugados, puntuados por afinidad de tags
+  const nojugados = pool.filter(j => DB.getEstado(j.id) !== 'jugado');
+  if (!nojugados.length) return pool[Math.floor(Math.random() * pool.length)];
+
+  const scored = nojugados
+    .map(j => ({ j, score: (j.tags || []).reduce((s, t) => s + (tagCount[t] || 0), 0) }))
+    .sort((a, b) => b.score - a.score);
+
+  // Top 5 con más afinidad → elige uno al azar entre ellos
+  const top = scored.slice(0, 5);
+  const elegido = top[Math.floor(Math.random() * top.length)].j;
+  return elegido;
+}
+
+document.getElementById('btn-sorpresa').addEventListener('click', () => {
+  const j = getSorpresaInteligente();
+  openPanel(j.id);
+  if (JUEGOS.filter(x => DB.getEstado(x.id) === 'jugado').length > 0) {
+    toastShow('🎲 SUGERIDO POR TU HISTORIAL');
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   MODO ÁMBAR
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  const btn = document.getElementById('btn-amber');
+  const saved = localStorage.getItem('rt_colormode');
+  if (saved === 'amber') { document.documentElement.classList.add('amber-mode'); btn.classList.add('active'); }
+
+  btn.addEventListener('click', () => {
+    const on = document.documentElement.classList.toggle('amber-mode');
+    btn.classList.toggle('active', on);
+    localStorage.setItem('rt_colormode', on ? 'amber' : 'green');
+    toastShow(on ? '◐ MODO ÁMBAR ACTIVADO' : '◈ MODO VERDE ACTIVADO');
+  });
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLL PROGRESS BAR
+   ═══════════════════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('scroll-bar');
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  el.style.width = docH > 0 ? (window.scrollY / docH * 100) + '%' : '0%';
+}, { passive: true });
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPING EFFECT
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  const el = document.getElementById('typing-sub');
+  const txt = '// SELECCIÓN PERSONAL — MUNDO ABIERTO · ACCIÓN · COMEDIA · CLÁSICOS';
+  let i = 0;
+  function type() { if(i<=txt.length){el.textContent=txt.slice(0,i++)+(i<=txt.length?'█':'');setTimeout(type,28);} }
+  setTimeout(type, 400);
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   EVENT BUS LISTENERS (actualiza UI al cambiar datos)
+   ═══════════════════════════════════════════════════════════════ */
+EventBus.on('estadoChanged', () => { updateProfileUI(); updateVistasUI(); });
+EventBus.on('reviewAdded', () => updateGlobalReviewCount());
+EventBus.on('vistaAdded', () => updateVistasUI());
+
+/* ═══════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════ */
+function searchByTag(tag) {
+  closePanel();
+  const inp = document.getElementById('g-search');
+  inp.value = tag;
+  currentSearchQ = tag.toLowerCase();
+  document.getElementById('g-search-clear').style.display = 'block';
+  applyFilters();
+  inp.focus();
+  toastShow(`🏷 FILTRANDO POR: #${tag.toUpperCase()}`);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   PERFIL WRAPPED
+   ═══════════════════════════════════════════════════════════════ */
+function openWrapped() {
+  document.getElementById('wrapped-overlay').classList.add('open');
+  document.getElementById('wrapped-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderWrapped();
+}
+function closeWrapped() {
+  document.getElementById('wrapped-overlay').classList.remove('open');
+  document.getElementById('wrapped-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('wrapped-close').addEventListener('click', closeWrapped);
+document.getElementById('wrapped-overlay').addEventListener('click', closeWrapped);
+document.getElementById('btn-perfil').addEventListener('click', openWrapped);
+
+function renderWrapped() {
+  const jugados  = JUEGOS.filter(j => DB.getEstado(j.id) === 'jugado');
+  const jugando  = JUEGOS.filter(j => DB.getEstado(j.id) === 'jugando');
+  const lista    = JUEGOS.filter(j => DB.getEstado(j.id) === 'lista');
+  const vistas   = DB.getVistas();
+  const total    = JUEGOS.length;
+  const allMarked = [...jugados, ...jugando, ...lista];
+  const completePct = Math.round(jugados.length / total * 100);
+
+  // Categoría favorita (más jugados)
+  const catCount = {};
+  jugados.forEach(j => { catCount[j.catLabel] = (catCount[j.catLabel]||0)+1; });
+  const catFav = Object.entries(catCount).sort((a,b)=>b[1]-a[1])[0];
+
+  // Tags más frecuentes
+  const tagCount = {};
+  jugados.forEach(j => (j.tags||[]).forEach(t => { tagCount[t]=(tagCount[t]||0)+1; }));
+  const topTags = Object.entries(tagCount).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+  // Juego más visto (primero en vistas que está jugado)
+  const topVisto = vistas.map(id => JUEGOS.find(j=>j.id===id)).filter(Boolean)[0];
+
+  // Logros
+  const achievements = [];
+  if (jugados.length >= 1) achievements.push({ icon:'🏆', title:'PRIMER ARCHIVO', desc:'Marcaste tu primer juego como jugado' });
+  if (jugados.length >= 5) achievements.push({ icon:'⚡', title:'COLECCIONISTA', desc:'5 o más juegos completados' });
+  if (jugados.length >= 10) achievements.push({ icon:'🌟', title:'VETERANO', desc:'10 o más juegos en tu historial' });
+  if (lista.length >= 3) achievements.push({ icon:'📋', title:'PLANIFICADOR', desc:'3 o más juegos en tu lista de pendientes' });
+  if (jugando.length >= 1) achievements.push({ icon:'🎮', title:'EN PARTIDA', desc:'Tienes un juego activo ahora mismo' });
+  if (vistas.length >= JUEGOS.length * 0.5) achievements.push({ icon:'👁', title:'EXPLORADOR', desc:'Has visto más de la mitad del catálogo' });
+  const reviewCount = DB.getAllReviewCount();
+  if (reviewCount >= 1) achievements.push({ icon:'✍', title:'CRÍTICO', desc:'Has dejado al menos una valoración' });
+
+  // Cat bars
+  const catData = CATS.map(c => ({
+    label: c.label, color: c.color,
+    jugados: jugados.filter(j=>j.cat===c.id).length,
+    total: JUEGOS.filter(j=>j.cat===c.id).length
+  }));
+  const maxCatJugados = Math.max(...catData.map(c=>c.jugados), 1);
+
+  const el = document.getElementById('wrapped-inner');
+  el.innerHTML = `
+    <div class="g-wrapped-header">
+      <div class="g-wrapped-eyebrow">// RETROTERM.AI — ESTADÍSTICAS</div>
+      <div class="g-wrapped-title">MI COLECCIÓN</div>
+      <div class="g-wrapped-sub">// ${new Date().toLocaleDateString('es-ES',{month:'long',year:'numeric'}).toUpperCase()}</div>
+    </div>
+
+    <div class="g-wrapped-section">
+      <div class="g-wrapped-section-label">// RESUMEN GENERAL</div>
+      <div class="g-wrapped-stats-row">
+        <div class="g-wrapped-stat-card"><div class="g-wrapped-stat-val">${jugados.length}</div><div class="g-wrapped-stat-label">JUGADOS</div></div>
+        <div class="g-wrapped-stat-card"><div class="g-wrapped-stat-val" style="color:var(--amber)">${jugando.length}</div><div class="g-wrapped-stat-label">JUGANDO</div></div>
+        <div class="g-wrapped-stat-card"><div class="g-wrapped-stat-val" style="color:#44aaff">${lista.length}</div><div class="g-wrapped-stat-label">EN LISTA</div></div>
+        <div class="g-wrapped-stat-card"><div class="g-wrapped-stat-val" style="color:var(--g2)">${vistas.length}</div><div class="g-wrapped-stat-label">FICHAS VISTAS</div></div>
+        <div class="g-wrapped-stat-card"><div class="g-wrapped-stat-val" style="color:#ff8866">${reviewCount}</div><div class="g-wrapped-stat-label">VALORACIONES</div></div>
+      </div>
+      <div class="g-wrapped-progress">
+        <span class="g-wrapped-progress-label">COMPLETADO</span>
+        <div class="g-wrapped-progress-track">
+          <div class="g-wrapped-progress-fill" style="width:0%" id="wp-progress"></div>
+        </div>
+        <span class="g-wrapped-progress-pct">${completePct}%</span>
+      </div>
+    </div>
+
+    ${catFav ? `
+    <div class="g-wrapped-section">
+      <div class="g-wrapped-section-label">// TU CATEGORÍA FAVORITA</div>
+      <div class="g-wrapped-big-stat">
+        <div class="g-wrapped-big-num">${catFav[1]}</div>
+        <div class="g-wrapped-big-label">JUEGOS JUGADOS EN ${catFav[0].toUpperCase()}</div>
+      </div>
+    </div>` : ''}
+
+    <div class="g-wrapped-section">
+      <div class="g-wrapped-section-label">// DISTRIBUCIÓN POR CATEGORÍA</div>
+      <div class="g-wrapped-cat-bars">
+        ${catData.map(c => `
+          <div class="g-wrapped-cat-row">
+            <span class="g-wrapped-cat-name" style="color:${c.color}">${c.label}</span>
+            <div class="g-wrapped-cat-track">
+              <div class="g-wrapped-cat-fill" style="width:0%;background:${c.color}" data-pct="${(c.jugados/maxCatJugados*100).toFixed(0)}"></div>
+            </div>
+            <span class="g-wrapped-cat-count">${c.jugados}/${c.total}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    ${topTags.length ? `
+    <div class="g-wrapped-section">
+      <div class="g-wrapped-section-label">// TUS GÉNEROS MÁS JUGADOS</div>
+      <div class="g-wrapped-tag-cloud">
+        ${topTags.map(([tag, cnt], i) =>
+          `<span class="g-wrapped-tag${i<3?' highlight':''}">#${tag} <span style="opacity:.5">${cnt}</span></span>`
+        ).join('')}
+      </div>
+    </div>` : ''}
+
+    ${topVisto ? `
+    <div class="g-wrapped-section">
+      <div class="g-wrapped-section-label">// ÚLTIMO JUEGO EXPLORADO</div>
+      <div class="g-wrapped-top-game">
+        <img class="g-wrapped-top-cover" src="${topVisto.img}" alt="${topVisto.titulo}">
+        <div>
+          <div class="g-wrapped-top-titulo">${topVisto.titulo}</div>
+          <div class="g-wrapped-top-cat">${topVisto.catLabel} · ${topVisto.anio}</div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    ${achievements.length ? `
+    <div class="g-wrapped-section">
+      <div class="g-wrapped-section-label">// LOGROS DESBLOQUEADOS (${achievements.length})</div>
+      ${achievements.map(a => `
+        <div class="g-wrapped-achievement">
+          <span class="g-wrapped-achievement-icon">${a.icon}</span>
+          <div>
+            <div class="g-wrapped-achievement-title">${a.title}</div>
+            <div class="g-wrapped-achievement-desc">${a.desc}</div>
+          </div>
+        </div>`).join('')}
+    </div>` : `
+    <div class="g-wrapped-section">
+      <div class="g-wrapped-section-label">// LOGROS</div>
+      <div style="text-align:center;padding:30px;color:#1a4a2a;font-size:0.68rem;letter-spacing:2px">
+        // MARCA JUEGOS COMO JUGADOS PARA DESBLOQUEAR LOGROS
+      </div>
+    </div>`}
+
+    <div style="text-align:center;margin-top:20px">
+      <button class="g-btn-wrapped" onclick="closeWrapped()">‹ VOLVER AL CATÁLOGO</button>
+    </div>`;
+
+  // Animate bars after render
+  setTimeout(() => {
+    const prog = document.getElementById('wp-progress');
+    if (prog) prog.style.width = completePct + '%';
+    document.querySelectorAll('.g-wrapped-cat-fill[data-pct]').forEach(el => {
+      el.style.width = el.dataset.pct + '%';
+    });
+  }, 150);
+}
+
+// Handle ?search= param from tag links in gaming-ficha.html
+(function() {
+  const sp = new URLSearchParams(window.location.search);
+  const search = sp.get('search');
+  if (search) {
+    setTimeout(() => {
+      const inp = document.getElementById('g-search');
+      if (inp) {
+        inp.value = search;
+        currentSearchQ = search.toLowerCase();
+        document.getElementById('g-search-clear').style.display = 'block';
+        applyFilters();
+      }
+    }, 300);
+  }
+})();
+
+// INICIO — carga juegos desde Supabase y arranca la UI
+async function init() {
+  const data = await sbFetch('games?order=titulo.asc');
+  JUEGOS = Array.isArray(data) ? data.map(j => ({
+    id:          j.id,
+    titulo:      j.titulo,
+    cat:         j.cat,
+    catLabel:    j.cat_label,
+    genero:      j.genero,
+    anio:        j.anio,
+    rating:      j.rating,
+    plataformas: j.plataformas || [],
+    tags:        j.tags || [],
+    img:         j.img,
+    desc:        j.descripcion,
+    datos:       j.datos || [],
+    trailer:     j.trailer,
+    texto:       j.texto,
+    tiempoHoras: j.tiempo_horas,
+    dificultad:  j.dificultad,
+    modoJuego:   j.modo_juego || [],
+    hasGuia:     j.has_guia,
+    destacado:   j.destacado,
+    nuevo:       j.nuevo,
+    screenshots: j.screenshots || [],
+  })) : [];
+
+  try {
+    localStorage.setItem('rt_juegos_cache', JSON.stringify({ data: JUEGOS, ts: Date.now() }));
+  } catch(e) {}
+
+  // Precarga estados y stats de reviews en paralelo antes de renderizar
+  await preloadCaches();
+
+  renderSecciones();
+  updateTabCounts();
+  buildFilterChips();
+  buildScoreSelector();
+  updateVistasUI();
+  updateProfileUI();
+  updateGlobalReviewCount();
+  applyFilters();
+}
+
+init();
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTOCOMPLETADO
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  const input = document.getElementById('g-search');
+  const ac = document.getElementById('g-autocomplete');
+  let acIdx = -1;
+
+  function highlight(str, q) {
+    if (!q) return str;
+    const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'ig');
+    return str.replace(re, '<em>$1</em>');
+  }
+
+  function showAC(q) {
+    if (!q || q.length < 1) { ac.classList.remove('open'); return; }
+    const matches = JUEGOS.filter(j =>
+      j.titulo.toLowerCase().includes(q) ||
+      j.genero.toLowerCase().includes(q) ||
+      (j.tags||[]).some(t => t.toLowerCase().includes(q))
+    ).slice(0, 8);
+
+    if (!matches.length) { ac.classList.remove('open'); return; }
+
+    ac.innerHTML = matches.map((j,i) => `
+      <div class="g-ac-item" data-id="${j.id}" data-idx="${i}">
+        <img class="g-ac-item-cover" src="${j.img}" alt="">
+        <div class="g-ac-item-info">
+          <div class="g-ac-item-titulo">${highlight(j.titulo, q)}</div>
+          <div class="g-ac-item-sub">${j.catLabel} · ${j.anio}</div>
+        </div>
+      </div>`).join('');
+
+    ac.querySelectorAll('.g-ac-item').forEach(item => {
+      item.addEventListener('mousedown', e => {
+        e.preventDefault();
+        ac.classList.remove('open');
+        input.value = '';
+        currentSearchQ = '';
+        document.getElementById('g-search-clear').style.display = 'none';
+        applyFilters();
+        openPanel(item.dataset.id);
+      });
+    });
+
+    acIdx = -1;
+    ac.classList.add('open');
+  }
+
+  input.addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    showAC(q);
+  });
+
+  input.addEventListener('keydown', e => {
+    const items = ac.querySelectorAll('.g-ac-item');
+    if (!items.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      acIdx = Math.min(acIdx + 1, items.length - 1);
+      items.forEach((it,i) => it.classList.toggle('ac-active', i === acIdx));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      acIdx = Math.max(acIdx - 1, -1);
+      items.forEach((it,i) => it.classList.toggle('ac-active', i === acIdx));
+    } else if (e.key === 'Enter' && acIdx >= 0) {
+      e.preventDefault();
+      const active = items[acIdx];
+      if (active) { ac.classList.remove('open'); openPanel(active.dataset.id); }
+    } else if (e.key === 'Escape') {
+      ac.classList.remove('open');
+    }
+  });
+
+  input.addEventListener('blur', () => setTimeout(() => ac.classList.remove('open'), 150));
+})();
+
+/* ═══════════════════════════════════════════════════════════════
+   MODO COMPARAR
+   ═══════════════════════════════════════════════════════════════ */
+const CompareState = { ids: [] };
+
+function toggleCompare(id, btn) {
+  const idx = CompareState.ids.indexOf(id);
+  if (idx >= 0) {
+    CompareState.ids.splice(idx, 1);
+    if (btn) btn.classList.remove('in-compare');
+  } else {
+    if (CompareState.ids.length >= 4) { toastShow('// MÁXIMO 4 JUEGOS A LA VEZ'); return; }
+    CompareState.ids.push(id);
+    if (btn) btn.classList.add('in-compare');
+  }
+  renderCompareBar();
+}
+
+function renderCompareBar() {
+  const bar = document.getElementById('g-compare-bar');
+  const slots = document.getElementById('g-compare-slots');
+  const go = document.getElementById('g-compare-go');
+
+  if (!CompareState.ids.length) { bar.classList.remove('open'); return; }
+  bar.classList.add('open');
+
+  slots.innerHTML = CompareState.ids.map(id => {
+    const j = JUEGOS.find(x => x.id === id);
+    return j ? `<div class="g-compare-slot filled">
+      <img src="${j.img}" style="width:22px;height:29px;object-fit:cover;opacity:0.8" alt="">
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px">${j.titulo}</span>
+      <button class="g-compare-slot-remove" onclick="toggleCompare('${id}')">✕</button>
+    </div>` : '';
+  }).join('') + (CompareState.ids.length < 2 ?
+    `<div class="g-compare-slot" style="opacity:0.4">+ AÑADE UN JUEGO MÁS</div>` : '');
+
+  go.disabled = CompareState.ids.length < 2;
+
+  // Sync card buttons
+  document.querySelectorAll('.g-card-compare-btn').forEach(btn => {
+    btn.classList.toggle('in-compare', CompareState.ids.includes(btn.dataset.id));
+  });
+}
+
+function openCompareModal() {
+  const games = CompareState.ids.map(id => JUEGOS.find(x => x.id === id)).filter(Boolean);
+  if (games.length < 2) return;
+
+  const modal = document.getElementById('g-compare-modal');
+  const grid = document.getElementById('g-compare-modal-grid');
+
+  // Compute best values for highlight
+  const best = {
+    rating: Math.max(...games.map(g => g.rating)),
+    anio: Math.min(...games.map(g => parseInt(g.anio)))  // más antiguo = clásico
+  };
+
+  grid.innerHTML = games.map(g => {
+    const col = { rpg:'#00ff66', accion:'#ff6644', comedia:'#ffb000', clasico:'#44aaff' }[g.cat] || '#00ff66';
+    const commStats = DB.getStats(g.id);
+    const estLabel = { ninguno:'—', jugado:'✓ JUGADO', jugando:'◐ JUGANDO', lista:'○ EN LISTA' }[DB.getEstado(g.id)] || '—';
+
+    return `<div class="g-compare-col">
+      <div class="g-compare-col-hero">
+        <div class="g-compare-col-bg" style="background-image:url(${g.img})"></div>
+        <img class="g-compare-col-img" src="${g.img}" alt="${g.titulo}">
+        <div class="g-compare-col-name" style="color:${col}">${g.titulo}</div>
+      </div>
+      <div class="g-compare-col-body">
+        <div class="g-compare-row">
+          <span class="g-compare-row-key">CATEGORÍA</span>
+          <span class="g-compare-row-val">${g.catLabel}</span>
+        </div>
+        <div class="g-compare-row">
+          <span class="g-compare-row-key">AÑO</span>
+          <span class="g-compare-row-val ${parseInt(g.anio) === best.anio ? 'best':''}">${g.anio}</span>
+        </div>
+        <div class="g-compare-row">
+          <span class="g-compare-row-key">RATING</span>
+          <span class="g-compare-row-val ${g.rating === best.rating ? 'best':''}">${g.rating}/5 ${'★'.repeat(g.rating)}</span>
+        </div>
+        <div class="g-compare-row">
+          <span class="g-compare-row-key">PUNTUACIÓN COM.</span>
+          <span class="g-compare-row-val">${commStats.avg ? commStats.avg+'/10 ('+commStats.count+' votos)' : '—'}</span>
+        </div>
+        <div class="g-compare-row">
+          <span class="g-compare-row-key">PLATAFORMAS</span>
+          <span class="g-compare-row-val">${(g.plataformas||[]).map(p => (PLAT_LABELS[p]||p.toUpperCase())).join(' · ')}</span>
+        </div>
+        <div class="g-compare-row">
+          <span class="g-compare-row-key">MI ESTADO</span>
+          <span class="g-compare-row-val">${estLabel}</span>
+        </div>
+        <div class="g-compare-tags">${(g.tags||[]).map(t => `<span class="g-compare-tag">#${t}</span>`).join('')}</div>
+        <div style="margin-top:12px">
+          <a href="gaming-ficha.html?id=${g.id}" style="font-size:0.6rem;letter-spacing:2px;color:${col};text-decoration:none">▶ VER FICHA COMPLETA</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+document.getElementById('g-compare-go').addEventListener('click', openCompareModal);
+document.getElementById('g-compare-modal-close').addEventListener('click', () => {
+  document.getElementById('g-compare-modal').classList.remove('open');
+  document.body.style.overflow = '';
+});
+document.getElementById('g-compare-clear').addEventListener('click', () => {
+  CompareState.ids = [];
+  renderCompareBar();
+});
+document.getElementById('btn-comparar').addEventListener('click', () => {
+  if (CompareState.ids.length < 2) {
+    toastShow('// HAZ CLIC EN ⊞ EN LAS CARTAS PARA COMPARAR');
+  } else {
+    openCompareModal();
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   BG CANVAS
+   ═══════════════════════════════════════════════════════════════ */
+(function() {
+  var canvas=document.getElementById('bg-canvas');if(!canvas)return;
+  var ctx=canvas.getContext('2d');var W,H;
+  var STAR_COUNT=90,WAVE_COUNT=5,CONN_DIST=180,SPEED=0.18,WAVE_SPEED=0.0004;
+  var CNA='rgba(0, 255, 102,',CNB='rgba(255, 176, 0,',CL='rgba(0, 220, 90,',CW='rgba(255, 176, 0,';
+  var stars=[],waves=[];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function initStars(){stars=[];for(var i=0;i<STAR_COUNT;i++){var a=Math.random()>0.75;stars.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*SPEED,vy:(Math.random()-0.5)*SPEED,r:Math.random()*1.4+0.4,col:a?CNB:CNA,phase:Math.random()*Math.PI*2,pspeed:0.008+Math.random()*0.012});}}
+  function initWaves(){waves=[];for(var i=0;i<WAVE_COUNT;i++){waves.push({amp:30+Math.random()*60,freq:0.003+Math.random()*0.005,phase:Math.random()*Math.PI*2,speed:(Math.random()>0.5?1:-1)*(WAVE_SPEED+Math.random()*WAVE_SPEED),yBase:(i+1)*(1/(WAVE_COUNT+1)),alpha:0.018+Math.random()*0.022});}}
+  function drawWaves(){for(var w=0;w<waves.length;w++){var wv=waves[w];wv.phase+=wv.speed*60;ctx.beginPath();ctx.moveTo(0,H*wv.yBase);for(var x=0;x<=W;x+=4){ctx.lineTo(x,H*wv.yBase+Math.sin(x*wv.freq+wv.phase)*wv.amp);}ctx.strokeStyle=CW+wv.alpha+')';ctx.lineWidth=1;ctx.stroke();}}
+  function drawConnections(){for(var i=0;i<stars.length;i++){for(var j=i+1;j<stars.length;j++){var dx=stars[i].x-stars[j].x,dy=stars[i].y-stars[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<CONN_DIST){ctx.beginPath();ctx.moveTo(stars[i].x,stars[i].y);ctx.lineTo(stars[j].x,stars[j].y);ctx.strokeStyle=CL+(1-dist/CONN_DIST)*0.18+')';ctx.lineWidth=0.5;ctx.stroke();}}}}
+  function drawStars(){for(var i=0;i<stars.length;i++){var s=stars[i];s.phase+=s.pspeed;var pulse=0.5+0.5*Math.sin(s.phase),alpha=0.25+pulse*0.55,radius=s.r*(0.8+pulse*0.4);var grad=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,radius*4);grad.addColorStop(0,s.col+(alpha*0.5)+')');grad.addColorStop(1,s.col+'0)');ctx.beginPath();ctx.arc(s.x,s.y,radius*4,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();ctx.beginPath();ctx.arc(s.x,s.y,radius,0,Math.PI*2);ctx.fillStyle=s.col+alpha+')';ctx.fill();s.x+=s.vx;s.y+=s.vy;if(s.x<-20)s.x=W+20;if(s.x>W+20)s.x=-20;if(s.y<-20)s.y=H+20;if(s.y>H+20)s.y=-20;}}
+  function draw(){ctx.clearRect(0,0,W,H);drawWaves();drawConnections();drawStars();requestAnimationFrame(draw);}
+  resize();initStars();initWaves();draw();
+  window.addEventListener('resize',function(){resize();initStars();initWaves();});
+})();
+</script>
+</body>
+</html>

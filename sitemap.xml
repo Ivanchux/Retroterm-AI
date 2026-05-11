@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+<!-- Nivel 1: Inicio (raíz del SILO) -->
+<url>
+  <loc>https://ivanchux.github.io/</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+
+<!-- Nivel 2: Secciones principales indexables -->
+<url>
+  <loc>https://ivanchux.github.io/articulos.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/red.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/editor.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/defi.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/gaming.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/wonder.html</loc>
+  <lastmod>2026-04-09T00:00:00+00:00</lastmod>
+  <priority>0.75</priority>
+</url>
+
+<!-- Nivel 3: Artículos individuales (último nivel del SILO) -->
+<url>
+  <loc>https://ivanchux.github.io/articulo-retroterm.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.60</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/articulo-linux.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.60</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/articulo-seo.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.60</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/articulo-sql.html</loc>
+  <lastmod>2025-03-20T00:00:00+00:00</lastmod>
+  <priority>0.60</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/articulo-sql-ejercicios.html</loc>
+  <lastmod>2025-03-18T00:00:00+00:00</lastmod>
+  <priority>0.60</priority>
+</url>
+<url>
+  <loc>https://ivanchux.github.io/articulo-sql-plantillas.html</loc>
+  <lastmod>2025-03-18T00:00:00+00:00</lastmod>
+  <priority>0.60</priority>
+</url>
+
+<!-- Excluidos del sitemap (noindex o privadas):
+     portal.html    — contenido oculto / puzzle
+     asistente.html — herramienta, no contenido SEO
+     turco.html     — acceso restringido
+     perfil.html    — requiere autenticación (backend pendiente)
+     404.html       — página de error
+-->
+
+</urlset>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">GUÍA — RETROTERM.AI</title>
+  <meta name="description" content="Guía completa con builds, secretos y finales.">
+  <meta name="robots" content="index,follow">
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    :root { --g: #00ff66; --g2: #66ffb3; --amber: #ffb000; --dim: #003300; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #000; color: #00ff66; font-family: 'Courier New', monospace;
+           line-height: 1.7; min-height: 100vh; }
+
+    /* ── PROGRESS BAR ── */
+    #guide-progress {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: var(--g); width: 0%; z-index: 200;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px var(--g);
+    }
+
+    /* ── TOPBAR ── */
+    .g-topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.95); backdrop-filter: blur(8px);
+      border-bottom: 1px solid #001a00;
+      display: flex; align-items: center; gap: 16px;
+      padding: 10px 24px; font-size: 0.65rem; letter-spacing: 3px;
+    }
+    .g-topbar-back { color: #1a4a2a; text-decoration: none; transition: color 0.2s; }
+    .g-topbar-back:hover { color: var(--g); }
+    .g-topbar-sep { color: #001a00; }
+    .g-topbar-titulo { color: var(--g); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .g-topbar-cat { color: #1a4a2a; font-size: 0.55rem; }
+
+    /* ── HERO ── */
+    .g-hero {
+      position: relative; height: 260px; overflow: hidden;
+      border-bottom: 1px solid #001a00;
+    }
+    .g-hero-bg {
+      position: absolute; inset: 0;
+      background: #000 center/cover no-repeat;
+      filter: brightness(0.25) blur(2px);
+      transform: scale(1.05);
+    }
+    .g-hero-inner {
+      position: relative; z-index: 2;
+      display: flex; align-items: flex-end; gap: 28px;
+      padding: 0 40px 32px; height: 100%;
+    }
+    .g-hero-cover {
+      width: 100px; height: 140px; object-fit: cover;
+      border: 1px solid #003300; flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+    .g-hero-info { flex: 1; }
+    .g-hero-eyebrow { font-size: 0.6rem; letter-spacing: 4px; color: var(--amber); margin-bottom: 8px; }
+    .g-hero-titulo { font-size: 1.6rem; letter-spacing: 4px; color: var(--g); margin-bottom: 8px; line-height: 1.2; }
+    .g-hero-sub { font-size: 0.65rem; letter-spacing: 2px; color: #1a5a2a; }
+    .g-hero-meta { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+    .g-hero-badge {
+      font-size: 0.55rem; letter-spacing: 2px; padding: 3px 10px;
+      border: 1px solid #003300; color: #1a5a2a;
+    }
+    .g-hero-badge.verde { border-color: var(--g); color: var(--g); }
+
+    /* ── LAYOUT PRINCIPAL ── */
+    .g-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 0 80px;
+    }
+
+    /* ── SIDEBAR ── */
+    .g-sidebar {
+      position: sticky; top: 45px; align-self: start;
+      padding: 32px 16px 32px 24px;
+      border-right: 1px solid #001a00;
+      height: calc(100vh - 45px); overflow-y: auto;
+    }
+    .g-sidebar-title {
+      font-size: 0.55rem; letter-spacing: 4px; color: #1a4a2a;
+      margin-bottom: 20px; padding-bottom: 8px;
+      border-bottom: 1px solid #001a00;
+    }
+    .g-nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; margin-bottom: 4px;
+      font-size: 0.6rem; letter-spacing: 2px;
+      color: #1a4a2a; cursor: pointer; text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all 0.15s; border-radius: 0 2px 2px 0;
+    }
+    .g-nav-item:hover { color: var(--g2); border-left-color: #003300; }
+    .g-nav-item.active { color: var(--g); border-left-color: var(--g); background: rgba(0,255,102,0.04); }
+    .g-nav-item-icono { font-size: 0.7rem; width: 16px; text-align: center; flex-shrink: 0; }
+    .g-nav-divider { margin: 16px 0 12px; border: none; border-top: 1px solid #001a00; }
+    .g-nav-tips { font-size: 0.55rem; letter-spacing: 2px; color: #1a4a2a; padding: 8px 10px; }
+
+    /* ── CONTENIDO ── */
+    .g-content { padding: 40px 48px 40px 40px; }
+
+    /* ── SECCIONES ── */
+    .g-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 60px;
+    }
+    .g-section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px; padding-bottom: 12px;
+      border-bottom: 1px solid #001a00;
+    }
+    .g-section-icono {
+      font-size: 0.9rem; color: var(--g); width: 28px;
+      text-align: center; flex-shrink: 0;
+    }
+    .g-section-titulo {
+      font-size: 0.8rem; letter-spacing: 5px; color: var(--g);
+    }
+    .g-section-num {
+      margin-left: auto; font-size: 0.55rem; letter-spacing: 2px; color: #003300;
+    }
+
+    /* ── CONTENIDO HTML ── */
+    .g-section-body { font-size: 0.78rem; letter-spacing: 0.5px; color: #aaffcc; line-height: 1.9; }
+    .g-section-body p { margin-bottom: 14px; }
+    .g-section-body h4 {
+      font-size: 0.65rem; letter-spacing: 4px; color: var(--g2);
+      margin: 24px 0 12px; padding-left: 10px;
+      border-left: 2px solid var(--amber);
+    }
+    .g-section-body ul, .g-section-body ol {
+      padding-left: 20px; margin-bottom: 14px;
+    }
+    .g-section-body li { margin-bottom: 8px; color: #88ddaa; }
+    .g-section-body li strong { color: var(--g2); }
+    .g-section-body strong { color: var(--g2); }
+    .g-section-body em { color: var(--amber); font-style: normal; }
+
+    /* ── TIPS RÁPIDOS ── */
+    .g-tips-section {
+      margin-bottom: 64px; scroll-margin-top: 60px;
+    }
+    .g-tips-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px; padding-bottom: 12px;
+      border-bottom: 1px solid #001a00;
+    }
+    .g-tips-titulo { font-size: 0.8rem; letter-spacing: 5px; color: var(--amber); }
+    .g-tips-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .g-tip-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 12px 16px;
+      border: 1px solid #001a00;
+      font-size: 0.65rem; letter-spacing: 1px; color: #88ddaa;
+      line-height: 1.6;
+      transition: border-color 0.2s;
+    }
+    .g-tip-item:hover { border-color: #003300; }
+    .g-tip-icon { color: var(--amber); flex-shrink: 0; margin-top: 2px; }
+
+    /* ── FOOTER GUÍA ── */
+    .g-guide-footer {
+      padding: 32px 40px;
+      border-top: 1px solid #001a00;
+      display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
+    }
+    .g-guide-footer-link {
+      font-size: 0.6rem; letter-spacing: 3px; color: #1a4a2a;
+      text-decoration: none; padding: 8px 18px;
+      border: 1px solid #001a00;
+      transition: all 0.2s;
+    }
+    .g-guide-footer-link:hover { color: var(--g); border-color: #003300; }
+    .g-guide-footer-link.primary { color: var(--g); border-color: #003300; }
+    .g-guide-footer-link.primary:hover { background: rgba(0,255,102,0.06); }
+    .g-guide-version { margin-left: auto; font-size: 0.55rem; letter-spacing: 2px; color: #003300; }
+
+    /* ── CANVAS BG ── */
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.18; }
+    .g-topbar, .g-hero, .g-layout, .g-guide-footer { position: relative; z-index: 1; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .g-layout { grid-template-columns: 1fr; }
+      .g-sidebar {
+        position: static; height: auto; overflow: visible;
+        border-right: none; border-bottom: 1px solid #001a00;
+        padding: 20px 16px;
+        display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      }
+      .g-sidebar-title { width: 100%; margin-bottom: 8px; }
+      .g-nav-item { font-size: 0.55rem; padding: 6px 10px; border: 1px solid #001a00; border-left: 2px solid transparent; }
+      .g-nav-divider, .g-nav-tips { display: none; }
+      .g-content { padding: 24px 20px; }
+      .g-hero-inner { padding: 0 20px 24px; gap: 16px; }
+      .g-hero-cover { width: 70px; height: 98px; }
+      .g-hero-titulo { font-size: 1.1rem; }
+      .g-tips-grid { grid-template-columns: 1fr; }
+      .g-guide-footer { flex-direction: column; gap: 12px; }
+      .g-guide-version { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div id="guide-progress"></div>
+
+<!-- TOPBAR -->
+<nav class="g-topbar">
+  <a class="g-topbar-back" id="topbar-back" href="gaming.html">⬅ GAMING</a>
+  <span class="g-topbar-sep">/</span>
+  <a class="g-topbar-back" id="topbar-ficha" href="gaming.html">FICHA</a>
+  <span class="g-topbar-sep">/</span>
+  <span class="g-topbar-titulo" id="topbar-titulo">GUÍA</span>
+  <span class="g-topbar-cat" id="topbar-cat"></span>
+</nav>
+
+<!-- HERO -->
+<div class="g-hero" id="guide-hero">
+  <div class="g-hero-bg" id="hero-bg"></div>
+  <div class="g-hero-inner">
+    <img class="g-hero-cover" id="hero-cover" src="" alt="">
+    <div class="g-hero-info">
+      <div class="g-hero-eyebrow" id="hero-eyebrow">// GUÍA COMPLETA</div>
+      <div class="g-hero-titulo" id="hero-titulo">CARGANDO...</div>
+      <div class="g-hero-sub" id="hero-sub"></div>
+      <div class="g-hero-meta" id="hero-meta"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="g-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="g-sidebar" id="guide-sidebar">
+    <div class="g-sidebar-title">// ÍNDICE</div>
+    <nav id="guide-nav"></nav>
+    <hr class="g-nav-divider">
+    <div class="g-nav-tips">⚡ TIPS RÁPIDOS</div>
+    <a class="g-nav-item" href="#sec-tips">
+      <span class="g-nav-item-icono">⚡</span>
+      <span>VER TODOS</span>
+    </a>
+  </aside>
+
+  <!-- CONTENIDO -->
+  <main class="g-content" id="guide-content">
+    <!-- secciones inyectadas por JS -->
+  </main>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="g-guide-footer" id="guide-footer">
+  <a class="g-guide-footer-link primary" id="footer-ficha" href="#">‹ VOLVER A LA FICHA</a>
+  <a class="g-guide-footer-link" href="gaming.html">⬅ CATÁLOGO COMPLETO</a>
+  <span class="g-guide-version" id="footer-version"></span>
+</footer>
+
+<script src="js/accesibilidad.js"></script>
+<script src="js/gaming-data.js"></script>
+<script>
+/* ──────────────────────────────────────────────────────────────
+   CANVAS BG (igual que el resto del proyecto)
+   ────────────────────────────────────────────────────────────── */
+(function() {
+  const c = document.getElementById('bg-canvas');
+  const ctx = c.getContext('2d');
+  let nodes = [];
+  function resize() { c.width = innerWidth; c.height = innerHeight; }
+  function init() {
+    nodes = Array.from({length: 28}, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+      r: Math.random()*2+1
+    }));
+  }
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > c.width)  n.vx *= -1;
+      if (n.y < 0 || n.y > c.height) n.vy *= -1;
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fillStyle = '#00ff66'; ctx.fill();
+    });
+    nodes.forEach((a, i) => nodes.slice(i+1).forEach(b => {
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d < 120) {
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(0,255,102,${(1-d/120)*0.3})`;
+        ctx.lineWidth = .5; ctx.stroke();
+      }
+    }));
+    requestAnimationFrame(draw);
+  }
+  resize(); init(); draw();
+  window.addEventListener('resize', () => { resize(); init(); });
+})();
+
+/* ──────────────────────────────────────────────────────────────
+   PROGRESS BAR
+   ────────────────────────────────────────────────────────────── */
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('guide-progress');
+  const dH = document.documentElement.scrollHeight - window.innerHeight;
+  bar.style.width = dH > 0 ? (window.scrollY / dH * 100) + '%' : '0%';
+}, { passive: true });
+
+/* ──────────────────────────────────────────────────────────────
+   SCROLL SPY — activa el ítem del sidebar según la sección visible
+   ────────────────────────────────────────────────────────────── */
+function initScrollSpy() {
+  const items = document.querySelectorAll('.g-nav-item[data-sec]');
+  const sections = document.querySelectorAll('.g-section, .g-tips-section');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        items.forEach(it => it.classList.remove('active'));
+        const active = document.querySelector(`.g-nav-item[data-sec="${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+}
+
+/* ──────────────────────────────────────────────────────────────
+   RENDER
+   ────────────────────────────────────────────────────────────── */
+function renderGuia(j) {
+  const g = j.guia;
+  const col = { rpg:'#00ff66', accion:'#ff6644', comedia:'#ffb000', clasico:'#44aaff' }[j.cat] || '#00ff66';
+
+  // Topbar
+  document.title = `GUÍA: ${j.titulo} — RETROTERM.AI`;
+  document.getElementById('page-title').textContent = document.title;
+  document.getElementById('topbar-titulo').textContent = `GUÍA: ${j.titulo}`;
+  document.getElementById('topbar-cat').textContent = j.catLabel || '';
+  document.getElementById('topbar-ficha').href = `gaming-ficha.html?id=${j.id}`;
+  document.getElementById('topbar-back').href = 'gaming.html';
+
+  // Hero
+  document.getElementById('hero-bg').style.backgroundImage = `url(${j.img})`;
+  document.getElementById('hero-cover').src = j.img;
+  document.getElementById('hero-cover').alt = j.titulo;
+  document.getElementById('hero-titulo').textContent = j.titulo;
+  document.getElementById('hero-titulo').style.color = col;
+  document.getElementById('hero-sub').textContent = `${j.genero} · ${j.anio}`;
+  document.getElementById('hero-eyebrow').textContent = `// ${j.catLabel || 'GUÍA COMPLETA'}`;
+  const metaEl = document.getElementById('hero-meta');
+  metaEl.innerHTML = '';
+  if (j.tiempoHoras) metaEl.innerHTML += `<span class="g-hero-badge verde">⏱ ~${j.tiempoHoras}H</span>`;
+  if (j.dificultad)  metaEl.innerHTML += `<span class="g-hero-badge">${j.dificultad}</span>`;
+  metaEl.innerHTML += `<span class="g-hero-badge">v${g.version || '1.0'} · ${g.fechaUpdate || ''}</span>`;
+
+  // Sidebar índice
+  const nav = document.getElementById('guide-nav');
+  nav.innerHTML = g.secciones.map(s => `
+    <a class="g-nav-item" href="#sec-${s.id}" data-sec="sec-${s.id}">
+      <span class="g-nav-item-icono">${s.icono}</span>
+      <span>${s.titulo}</span>
+    </a>`).join('');
+
+  // Contenido principal
+  const content = document.getElementById('guide-content');
+  content.innerHTML = '';
+
+  g.secciones.forEach((s, i) => {
+    const sec = document.createElement('section');
+    sec.className = 'g-section';
+    sec.id = `sec-${s.id}`;
+    sec.innerHTML = `
+      <div class="g-section-header">
+        <span class="g-section-icono">${s.icono}</span>
+        <span class="g-section-titulo">${s.titulo}</span>
+        <span class="g-section-num">${String(i+1).padStart(2,'0')} / ${String(g.secciones.length).padStart(2,'0')}</span>
+      </div>
+      <div class="g-section-body">${s.contenido}</div>`;
+    content.appendChild(sec);
+  });
+
+  // Tips rápidos
+  if (g.tips && g.tips.length) {
+    const tipsEl = document.createElement('section');
+    tipsEl.className = 'g-tips-section';
+    tipsEl.id = 'sec-tips';
+    tipsEl.innerHTML = `
+      <div class="g-tips-header">
+        <span class="g-section-icono">⚡</span>
+        <span class="g-tips-titulo">TIPS RÁPIDOS</span>
+        <span class="g-section-num">${g.tips.length} CONSEJOS</span>
+      </div>
+      <div class="g-tips-grid">
+        ${g.tips.map(t => `
+          <div class="g-tip-item">
+            <span class="g-tip-icon">▸</span>
+            <span>${t}</span>
+          </div>`).join('')}
+      </div>`;
+    content.appendChild(tipsEl);
+  }
+
+  // Footer
+  document.getElementById('footer-ficha').href = `gaming-ficha.html?id=${j.id}`;
+  document.getElementById('footer-version').textContent = `GUÍA v${g.version || '1.0'} · Actualizado ${g.fechaUpdate || ''}`;
+
+  // Scroll spy
+  setTimeout(initScrollSpy, 100);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   INIT — busca el juego en gaming-data.js por ?id=
+   ────────────────────────────────────────────────────────────── */
+function initGuia() {
+  const id = new URLSearchParams(window.location.search).get('id');
+  if (!id) { window.location.href = 'gaming.html'; return; }
+
+  if (typeof JUEGOS === 'undefined' || !JUEGOS.length) {
+    console.error('RETROTERM: gaming-data.js no cargado');
+    window.location.href = 'gaming.html'; return;
+  }
+
+  const j = JUEGOS.find(x => x.id === id);
+  if (!j) { window.location.href = 'gaming.html'; return; }
+  if (!j.hasGuia || !j.guia) {
+    window.location.href = `gaming-ficha.html?id=${id}`; return;
+  }
+
+  renderGuia(j);
+}
+
+initGuia();
+</script>
+</body>
+</html>

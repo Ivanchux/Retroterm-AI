@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>RETROTERM · Migración de juegos a Supabase</title>
+  <style>
+    body { background:#000; color:#00ff66; font-family:'Courier New',monospace; padding:40px; }
+    h1 { font-size:1rem; letter-spacing:4px; border-bottom:1px solid #003300; padding-bottom:12px; }
+    #log { margin-top:20px; font-size:0.75rem; line-height:2; max-height:70vh; overflow-y:auto; }
+    .ok  { color:#00ff66; }
+    .err { color:#ff4444; }
+    .inf { color:#ffb000; }
+    button {
+      margin-top:24px; background:none; border:1px solid #00ff66; color:#00ff66;
+      font-family:'Courier New',monospace; font-size:0.75rem; letter-spacing:3px;
+      padding:10px 28px; cursor:pointer;
+    }
+    button:hover { background:#00ff66; color:#000; }
+    button:disabled { opacity:0.3; cursor:not-allowed; }
+    #progreso { margin-top:16px; font-size:0.7rem; color:#1a4a2a; }
+  </style>
+</head>
+<body>
+
+<h1>// RETROTERM.AI — MIGRACIÓN DE JUEGOS A SUPABASE</h1>
+<p style="font-size:0.7rem;color:#1a4a2a;letter-spacing:2px">
+  Este script inserta los 43 juegos de gaming-data.js en la tabla <strong style="color:#ffb000">games</strong> de Supabase.<br>
+  Ejecuta primero el SQL de <strong style="color:#ffb000">supabase-schema.sql</strong> en tu proyecto.<br>
+  Ábrelo directamente desde la carpeta del proyecto (file://) o desde un servidor local.
+</p>
+
+<button id="btn-migrar" onclick="migrar()">▶ INICIAR MIGRACIÓN</button>
+<div id="progreso"></div>
+<div id="log"></div>
+
+<script src="../js/gaming-data.js"></script>
+<script>
+const SUPABASE_URL = 'https://kldtrfreyeiidkliahdy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsZHRyZnJleWVpaWRrbGlhaGR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODMyODEsImV4cCI6MjA5MTI1OTI4MX0.H8CCJkVI1Ir-JY7FrneFrdicXecEhGEWGFtJkRVpAKw';
+const HEADERS = {
+  'apikey':        SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Content-Type':  'application/json',
+  'Prefer':        'resolution=merge-duplicates'
+};
+
+function log(msg, tipo = 'ok') {
+  const el = document.getElementById('log');
+  el.innerHTML += `<div class="${tipo}">${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function progreso(actual, total) {
+  document.getElementById('progreso').textContent = `Progreso: ${actual} / ${total}`;
+}
+
+function normalizeJuego(j) {
+  return {
+    id:          j.id,
+    titulo:      j.titulo,
+    cat:         j.cat,
+    cat_label:   j.catLabel || j.cat,
+    genero:      j.genero,
+    anio:        String(j.anio),
+    rating:      j.rating,
+    plataformas: j.plataformas || [],
+    tags:        j.tags || [],
+    img:         j.img,
+    descripcion: j.desc || j.descripcion || '',
+    datos:       j.datos || [],
+    trailer:     j.trailer || '',
+    texto:       j.texto || '',
+    tiempo_horas: j.tiempoHoras || null,
+    dificultad:  j.dificultad || null,
+    modo_juego:  j.modoJuego || [],
+    has_guia:    j.hasGuia || false,
+    destacado:   j.destacado || false,
+    nuevo:       j.nuevo || false,
+    fecha_add:   j.fechaAdd || null,
+  };
+}
+
+async function migrar() {
+  const btn = document.getElementById('btn-migrar');
+  btn.disabled = true;
+  document.getElementById('log').innerHTML = '';
+
+  if (typeof JUEGOS === 'undefined' || !JUEGOS.length) {
+    log('✗ ERROR: No se encontró el array JUEGOS. Asegúrate de que gaming-data.js se cargó correctamente.', 'err');
+    btn.disabled = false;
+    return;
+  }
+
+  log(`// Iniciando migración de ${JUEGOS.length} juegos...`, 'inf');
+  log(`// Destino: ${SUPABASE_URL}`, 'inf');
+  log('─'.repeat(60), 'inf');
+
+  let ok = 0, errores = 0;
+
+  for (let i = 0; i < JUEGOS.length; i++) {
+    const j = JUEGOS[i];
+    progreso(i + 1, JUEGOS.length);
+    try {
+      const body = normalizeJuego(j);
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/games`, {
+        method: 'POST',
+        headers: HEADERS,
+        body: JSON.stringify(body)
+      });
+      if (r.ok || r.status === 201 || r.status === 200) {
+        log(`  ✓ [${String(i+1).padStart(2,'0')}/${JUEGOS.length}] ${j.titulo}`);
+        ok++;
+      } else {
+        const err = await r.text();
+        log(`  ✗ [${String(i+1).padStart(2,'0')}/${JUEGOS.length}] ${j.titulo} — HTTP ${r.status}: ${err}`, 'err');
+        errores++;
+      }
+    } catch (e) {
+      log(`  ✗ [${String(i+1).padStart(2,'0')}/${JUEGOS.length}] ${j.titulo} — ${e.message}`, 'err');
+      errores++;
+    }
+    // Pequeña pausa para no saturar la API
+    await new Promise(res => setTimeout(res, 80));
+  }
+
+  log('─'.repeat(60), 'inf');
+  if (errores === 0) {
+    log(`// ✓ MIGRACIÓN COMPLETA — ${ok} juegos insertados sin errores.`, 'ok');
+    log('// Ahora puedes abrir gaming.html y los juegos cargarán desde Supabase.', 'ok');
+  } else {
+    log(`// ⚠ MIGRACIÓN PARCIAL — ${ok} OK, ${errores} errores.`, 'inf');
+    log('// Revisa los errores arriba. Los registros duplicados (merge-duplicates) se actualizan automáticamente.', 'inf');
+  }
+  btn.disabled = false;
+  btn.textContent = '↺ VOLVER A EJECUTAR';
+}
+</script>
+</body>
+</html>

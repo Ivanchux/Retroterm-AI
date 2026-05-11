@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CHECK IMAGES — RETROTERM</title>
+<style>
+  body { background:#000; color:#00ff66; font-family:'Courier New',monospace; margin:0; padding:20px; }
+  h1 { font-size:0.8rem; letter-spacing:4px; margin-bottom:20px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; }
+  .card { border:1px solid #002200; background:#020c02; overflow:hidden; }
+  .card img { width:100%; aspect-ratio:3/4; object-fit:cover; display:block; background:#011; }
+  .card .info { padding:6px 8px; font-size:0.6rem; letter-spacing:1px; }
+  .card .id { color:#334433; font-size:0.55rem; }
+  .card.noimg img { opacity:0.1; }
+  .card.noimg .info { color:#ff4444; }
+  #status { font-size:0.7rem; color:#336633; margin-bottom:16px; }
+</style>
+</head>
+<body>
+<h1>// VERIFICACIÓN DE PORTADAS — SUPABASE + IGDB</h1>
+<div id="status">Cargando...</div>
+<div class="grid" id="grid"></div>
+<script>
+const SUPA_URL = 'https://kldtrfreyeiidkliahdy.supabase.co/rest/v1/';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsZHRyZnJleWVpaWRrbGlhaGR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2ODMyODEsImV4cCI6MjA5MTI1OTI4MX0.H8CCJkVI1Ir-JY7FrneFrdicXecEhGEWGFtJkRVpAKw';
+
+(async () => {
+  const res   = await fetch(SUPA_URL + 'games?select=id,titulo,img&order=titulo.asc', {
+    headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY }
+  });
+  const games = await res.json();
+  const grid  = document.getElementById('grid');
+  let noImg = 0;
+
+  games.forEach(g => {
+    const hasImg = g.img && g.img.startsWith('http');
+    if (!hasImg) noImg++;
+    const card = document.createElement('div');
+    card.className = 'card' + (hasImg ? '' : ' noimg');
+    card.innerHTML = `
+      <img src="${hasImg ? g.img : ''}" alt="${g.titulo}"
+           onerror="this.style.opacity='0.05';this.parentElement.classList.add('noimg')">
+      <div class="info">
+        ${g.titulo}
+        <div class="id">${g.id}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('status').textContent =
+    `${games.length} juegos cargados · ${noImg} sin portada`;
+})();
+</script>
+</body>
+</html>

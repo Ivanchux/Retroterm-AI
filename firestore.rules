@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Colección "users" ─────────────────────────────────────────
+    // Cada usuario solo puede leer y escribir su propio documento.
+    // El docId debe coincidir exactamente con el uid del usuario autenticado.
+    match /users/{userId} {
+
+      // Leer: solo el propio usuario
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // Crear: solo el propio usuario, con los campos mínimos requeridos
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.keys().hasAll(['username', 'email', 'role'])
+                    && request.resource.data.username is string
+                    && request.resource.data.username.size() >= 1
+                    && request.resource.data.username.size() <= 32
+                    && request.resource.data.email == request.auth.token.email;
+
+      // Actualizar: solo el propio usuario
+      // No puede cambiar su propio uid ni el email de Firebase
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                        .hasAny(['role']); // el rol no se puede autoescalar
+
+      // Borrar: deshabilitado (gestionar desde Firebase Console o Cloud Functions)
+      allow delete: if false;
+    }
+
+    // ── Cualquier otra colección: denegado por defecto ────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
