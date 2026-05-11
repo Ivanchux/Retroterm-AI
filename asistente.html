@@ -489,11 +489,178 @@
     border-color: #00ff6633 !important;
     box-shadow: 0 0 15px #00ff6622 !important;
   }
+
+  /* ══════════════════════════════════════
+     MARKDOWN — estilos retro terminal
+  ══════════════════════════════════════ */
+  .md-content { display: contents; }
+  .md-content p { margin: 0 0 8px; line-height: 1.65; }
+  .md-content p:last-child { margin-bottom: 0; }
+  .md-content strong { color: #00ff66; font-weight: bold; }
+  .md-content em { color: #ffb000; font-style: italic; }
+
+  /* inline code */
+  .md-content code {
+    font-family: 'Courier New', monospace;
+    background: rgba(0,255,102,0.07);
+    border: 1px solid #003300;
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 0.82em;
+    color: #66ffb3;
+  }
+
+  /* code blocks */
+  .md-content pre {
+    margin: 10px 0;
+    border: 1px solid #003300;
+    border-left: 2px solid #00ff66;
+    overflow-x: auto;
+    background: rgba(0,8,0,0.85);
+  }
+  .md-content pre code {
+    display: block;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: #b0c8b0;
+    white-space: pre;
+  }
+
+  /* listas */
+  .md-content ul, .md-content ol {
+    margin: 6px 0 8px;
+    padding-left: 20px;
+  }
+  .md-content li { margin: 4px 0; color: #ccc; }
+  .md-content ul li::marker { color: #00ff66; content: "▸ "; }
+  .md-content ol li::marker { color: #00ff66; }
+
+  /* headings */
+  .md-content h1, .md-content h2, .md-content h3 {
+    color: #00ff66;
+    letter-spacing: 2px;
+    margin: 12px 0 6px;
+    font-size: 0.88rem;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(0,255,102,0.3);
+    border-bottom: 1px solid #002200;
+    padding-bottom: 4px;
+  }
+  .md-content h4, .md-content h5, .md-content h6 {
+    color: #66ffb3;
+    font-size: 0.82rem;
+    margin: 8px 0 4px;
+    letter-spacing: 1px;
+  }
+
+  /* blockquote */
+  .md-content blockquote {
+    border-left: 2px solid #003300;
+    margin: 8px 0;
+    padding: 4px 12px;
+    color: #1a6a3a;
+    font-style: italic;
+  }
+
+  /* links */
+  .md-content a { color: #00e5ff; text-decoration: underline; }
+  .md-content a:hover { color: #66ffff; }
+
+  /* hr */
+  .md-content hr { border: none; border-top: 1px solid #002200; margin: 12px 0; }
+
+  /* tablas */
+  .md-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+    font-size: 0.78rem;
+  }
+  .md-content th {
+    border: 1px solid #003300;
+    padding: 5px 10px;
+    color: #00ff66;
+    background: rgba(0,255,102,0.05);
+    letter-spacing: 1px;
+  }
+  .md-content td {
+    border: 1px solid #002200;
+    padding: 5px 10px;
+    color: #aaa;
+  }
+  .md-content tr:nth-child(even) td { background: rgba(0,255,102,0.02); }
+
+  /* highlight.js overrides — paleta retro */
+  .hljs { background: transparent !important; color: #b0c8b0 !important; }
+  .hljs-keyword  { color: #00ff66 !important; }
+  .hljs-string   { color: #ffb000 !important; }
+  .hljs-comment  { color: #1a5a2a !important; font-style: italic; }
+  .hljs-number   { color: #00e5ff !important; }
+  .hljs-function { color: #66ffb3 !important; }
+  .hljs-title    { color: #66ffb3 !important; }
+  .hljs-built_in { color: #00ccff !important; }
+  .hljs-type     { color: #cc66ff !important; }
+  .hljs-variable { color: #ddd !important; }
+  .hljs-attr     { color: #ffaa00 !important; }
+  .hljs-tag      { color: #00ff66 !important; }
+
+  /* BOOT SCREEN */
+  #boot-screen {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    transition: opacity 0.4s ease;
+  }
+  .boot-title {
+    color: #00ff66;
+    font-size: 0.78rem;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+    text-shadow: 0 0 10px rgba(0,255,102,0.5);
+  }
+  .boot-sub {
+    color: #1a4a2a;
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .boot-dots { display: flex; gap: 6px; }
+  .boot-dot {
+    width: 5px; height: 5px;
+    background: #00ff66;
+    border-radius: 50%;
+    animation: typeBounce 1.2s infinite;
+  }
+  .boot-dot:nth-child(2) { animation-delay: 0.2s; }
+  .boot-dot:nth-child(3) { animation-delay: 0.4s; }
   </style>
+
+<!-- Markdown + Syntax highlight -->
+<script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 </head>
 <body>
 <canvas id="bg-canvas"></canvas>
 
+<!-- Boot screen auth -->
+<div id="boot-screen">
+  <div class="boot-title">ARIA v1.0 · RETROTERM.AI</div>
+  <div class="boot-sub">// VERIFICANDO SESIÓN...</div>
+  <div class="boot-dots">
+    <div class="boot-dot"></div>
+    <div class="boot-dot"></div>
+    <div class="boot-dot"></div>
+  </div>
+</div>
 
 <div class="aria-root">
 
@@ -583,6 +750,44 @@
 </div><!-- /aria-root -->
 
 <script>
+// ══════════════════════════════════════════════════
+//  MARKDOWN — configuración inicial
+// ══════════════════════════════════════════════════
+(function initMarkdown() {
+  if (typeof marked === 'undefined') return;
+
+  // Renderer personalizado para bloques de código con highlight.js
+  const renderer = {
+    code(code, language) {
+      let highlighted = '';
+      try {
+        if (typeof hljs !== 'undefined' && language && hljs.getLanguage(language)) {
+          highlighted = hljs.highlight(code, { language, ignoreIllegals: true }).value;
+        } else if (typeof hljs !== 'undefined') {
+          highlighted = hljs.highlightAuto(code).value;
+        } else {
+          highlighted = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+      } catch(e) {
+        highlighted = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      }
+      const lang = language || '';
+      return `<pre><code class="hljs${lang ? ' language-'+lang : ''}">${highlighted}</code></pre>`;
+    }
+  };
+
+  marked.use({ renderer, breaks: true, gfm: true });
+})();
+
+function renderMarkdown(text) {
+  if (typeof marked === 'undefined') return escHTML(text);
+  try {
+    return marked.parse(text);
+  } catch(e) {
+    return escHTML(text);
+  }
+}
+
 // ══════════════════════════════════════════════════
 //  CONSTANTES Y ESTADO
 // ══════════════════════════════════════════════════
@@ -871,11 +1076,12 @@ function agregarMsgDOM(rol, texto, hora, scroll = true) {
     ? '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAADi0lEQVR4nJVUXWhbZRh+vpMsOaeuVFlPuv4gtmw3Nk1sMzOmbq0Z2rCuNYPFZpRNQv0Bb8XrIcxLb8a88AcUJTAEMbZKN1Cb+sNiJA1JOnoR1kahbcyhkNqRc5am5/XiS89pzirDc/V+73me93m+97zvYTqR5BTBAOiAgP/zCP8RP/LRAQiSKKoPtEfiAL0RkKlkbwAIYE2Ecb/XUmO9ak8vZfbDBACS2GIRH/d7Z1N3OWG92hDoaqkDgo5mMvezu7uXJ8z9nrVTfY8Agw/U9zeGOZ1Ozqzt1CRRNF743IPffPrefjsXXr8KIJtP15nQRAagahonj/sH1qt2CxNApai4I9MCBEDnPTJdTEamVU2zoPtOngfQd/J8pai0HT0iQN/drQON7prkmXjMiN8afZ40PXrtxr2FGQD3Fmb6w1EAOgSb7aE7G84BSGJL7uYnANqOHrE47zk9ETrlnU3l+bFpqvYaVuc6AJgobJU2mSgA2CptOgXE72QNvHUkJbFF1Wp+ry967cZWadN0KAruyHQdgt/rO9i2YV4SRUAY8J2JvXv58afkSlHxTE43j+BByjyjalpw+DQR+sPRSlEZmowOnBhxD41MhKbMWXqILASCF8dCV8rJWz8k5vue7H7GHwDwQIcsu2RZ3lZrL41FAsFXeQnTts89aGvreOxwK2Ps+/gXAF44car72NPbaq20sdbZ1UNEjDEARJRL/djZ6zGV00uZqqrN3/6aiM69crkQj6WyaQCtkqOzq8eAEVFpY62z17O0+HOTbcYQCF5UFIUxdjw0Vdup3dd2ADjUvwFw2dLGmv2QgzE0LcmLo2FemB/HQlcK8RgRFVZWHU/0/DT3Fc8v55J8HALBiLXbvLyilPnxkrtjOZcsrKxOXJg6LB4ql8sDvjN8EImoidzeLt/f/ofHkX6XJ/JGMPzyuL8fQGFlldZzvfbNvZuDMWa5M6uqWm4xkU0nPrr920ToEoAPr7+/nPv1mLjNMdl0or1dPkCZiFwu19nRsNc3YmvrMPJ/Jb/7NpVnXZ7Z1N2zo2HGmMvlUhTF/M7uoRHecEPhWfdgce3PzNznPPPa1S9bJcdMPGYgTeWlxQRjIALvt0BI5zPPHe+uFBXSGiNZWFnVAVmWAeTTCcti6Pz/eG542EjdWpjP3fws+Udm9peF+J2szWbqHbBV1oEnHUz4+J233/zgOmAH6cZ6/QtVVHfB0naRnAAAAABJRU5ErkJggg==" width="20" height="28" style="image-rendering:pixelated;display:block;" alt="ARIA">'
     : '👤';
   const prefijo = rol === 'aria' ? 'ARIA &gt;' : 'USR &gt;';
+  const contenido = rol === 'aria' ? renderMarkdown(texto) : escHTML(texto);
   row.innerHTML = `
     <div class="msg-icon">${icono}</div>
     <div class="msg-burbuja">
       <span class="msg-prefix">${prefijo}</span>
-      ${escHTML(texto)}
+      <div class="md-content">${contenido}</div>
       <span class="msg-timestamp">${hora || horaActual()}</span>
     </div>`;
   chatArea.insertBefore(row, typingEl);
@@ -1014,7 +1220,17 @@ if (convs.length > 0) {
 
 <script type="module">
   import { requireAuth } from './js/middleware.js';
-  await requireAuth();
+  try {
+    await requireAuth();
+    // Auth OK — ocultar boot screen con fade
+    const boot = document.getElementById('boot-screen');
+    if (boot) {
+      boot.style.opacity = '0';
+      setTimeout(() => boot.remove(), 400);
+    }
+  } catch(e) {
+    // Redirección ya gestionada en middleware
+  }
 </script>
 </body>
 </html>
