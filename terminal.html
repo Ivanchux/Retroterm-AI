@@ -14,13 +14,13 @@
   <style>
   /* ═══════════════════════════════════════════════
      TERMINAL — estilos propios
-     Acento principal: verde #00ff66
+     Acento principal: verde var(--c-pri)
   ═══════════════════════════════════════════════ */
   * { box-sizing: border-box; }
 
   body {
     background: #000;
-    color: #00ff66;
+    color: var(--c-pri);
     font-family: 'Courier New', monospace;
     margin: 0;
     padding: 0;
@@ -41,26 +41,26 @@
   }
   .term-breadcrumb {
     font-size: 0.6rem;
-    color: #00ff6633;
+    color: var(--c-a33);
     letter-spacing: 0.2em;
     margin-bottom: 0.6rem;
   }
   .term-breadcrumb a {
-    color: #00ff6644;
+    color: var(--c-a44);
     text-decoration: none;
     transition: color 0.2s;
   }
-  .term-breadcrumb a:hover { color: #00ff66; }
+  .term-breadcrumb a:hover { color: var(--c-pri); }
   .term-title {
     font-size: clamp(1.4rem, 3vw, 2rem);
-    color: #00ff66;
+    color: var(--c-pri);
     letter-spacing: 0.2em;
     margin: 0 0 0.3rem;
-    text-shadow: 0 0 18px #00ff6633;
+    text-shadow: 0 0 18px var(--c-a33);
   }
   .term-subtitle {
     font-size: 0.6rem;
-    color: #00ff6622;
+    color: var(--c-a22);
     letter-spacing: 0.22em;
   }
 
@@ -90,7 +90,7 @@
   .td-g { background: #27c93f; }
   .term-tabname {
     font-size: 0.63rem;
-    color: #00ff6644;
+    color: var(--c-a44);
     letter-spacing: 0.15em;
     margin-left: 8px;
   }
@@ -109,15 +109,15 @@
   #term-output::-webkit-scrollbar-thumb { background: #0d2010; border-radius: 2px; }
 
   /* Tipos de línea */
-  .tl       { color: #66ffb3; white-space: pre-wrap; word-break: break-word; }
-  .tl-cmd   { color: #00ff66; }
+  .tl       { color: var(--c-alt); white-space: pre-wrap; word-break: break-word; }
+  .tl-cmd   { color: var(--c-pri); }
   .tl-info  { color: #ffb000; }
   .tl-err   { color: #ff4444; }
   .tl-dim   { color: #1a3a22; }
   .tl-cyan  { color: #00e5ff; }
   .tl-white { color: #aaa; }
   .tl-sec   { color: #ffb000; letter-spacing: 0.08em; }
-  .tl-ok    { color: #00ff66; }
+  .tl-ok    { color: var(--c-pri); }
 
   /* Links en noticias */
   .hn-link {
@@ -159,22 +159,22 @@
     user-select: none;
   }
   .ps-host { color: #00e5ff; }
-  .ps-sep  { color: #66ffb3; }
+  .ps-sep  { color: var(--c-alt); }
   .ps-path { color: #ffb000; }
-  .ps-dol  { color: #00ff66; }
+  .ps-dol  { color: var(--c-pri); }
 
   #term-input {
     flex: 1;
     background: transparent;
     border: none;
     outline: none;
-    color: #00ff66;
+    color: var(--c-pri);
     font-family: 'Courier New', monospace;
     font-size: 0.81rem;
-    caret-color: #00ff66;
+    caret-color: var(--c-pri);
     min-width: 0;
   }
-  #term-input::selection { background: #00ff6622; }
+  #term-input::selection { background: var(--c-a22); }
 
   /* ── CHIPS DE COMANDOS RÁPIDOS ── */
   .term-chips {
@@ -189,7 +189,7 @@
     border-radius: 4px;
     padding: 3px 10px;
     font-size: 0.58rem;
-    color: #00ff6655;
+    color: var(--c-a55);
     cursor: pointer;
     letter-spacing: 0.08em;
     transition: all 0.18s;
@@ -198,8 +198,8 @@
     line-height: 1.8;
   }
   .chip:hover {
-    border-color: #00ff66;
-    color: #00ff66;
+    border-color: var(--c-pri);
+    color: var(--c-pri);
     background: rgba(0,255,102,0.04);
   }
 
@@ -208,13 +208,13 @@
     text-align: center;
     margin-top: 2rem;
     font-size: 0.58rem;
-    color: #00ff6618;
+    color: var(--c-a22);
     letter-spacing: 0.16em;
     border-top: 1px solid #050f07;
     padding-top: 1rem;
   }
-  .term-foot a { color: #00ff6622; text-decoration: none; }
-  .term-foot a:hover { color: #00ff66; }
+  .term-foot a { color: var(--c-a22); text-decoration: none; }
+  .term-foot a:hover { color: var(--c-pri); }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
@@ -367,7 +367,7 @@ function printPrompt(cmd) {
     `<span class="ps-sep">:</span>` +
     `<span class="ps-path">~</span>` +
     `<span class="ps-dol">$</span> ` +
-    `<span style="color:#00ff66">${esc(cmd)}</span>`,
+    `<span style="color:var(--c-pri)">${esc(cmd)}</span>`,
     'tl-cmd'
   );
 }
@@ -531,7 +531,7 @@ function cmdWhoami() {
   data.forEach(([k, v]) => {
     addLine(
       `  <span style="color:#ffb000;display:inline-block;min-width:12ch">${k}</span>` +
-      `<span style="color:#66ffb3">${esc(v)}</span>`,
+      `<span style="color:var(--c-alt)">${esc(v)}</span>`,
       'tl'
     );
   });
@@ -556,7 +556,7 @@ function cmdSysinfo() {
     ['ESTADO',   'TODOS LOS SISTEMAS OPERATIVOS'],
   ];
   rows.forEach(([k, v]) => {
-    const color = k === 'ESTADO' ? '#00ff66' : '#66ffb3';
+    const color = k === 'ESTADO' ? 'var(--c-pri)' : 'var(--c-alt)';
     addLine(
       `  <span style="color:#ffb000;display:inline-block;min-width:12ch">${k}</span>` +
       `<span style="color:${color}">${esc(v)}</span>`,
@@ -612,17 +612,17 @@ function cmdNeofetch() {
   const nfo = [
     `<span class="ps-host">retroterm</span><span class="ps-sep">@</span><span class="ps-host">ivanchux</span>`,
     `<span style="color:#0d3020">─────────────────────</span>`,
-    `<span style="color:#ffb000">OS:</span>       <span style="color:#66ffb3">RetroOS 2.1</span>`,
-    `<span style="color:#ffb000">Host:</span>     <span style="color:#66ffb3">GitHub Pages</span>`,
-    `<span style="color:#ffb000">Shell:</span>    <span style="color:#66ffb3">/bin/retroterm</span>`,
-    `<span style="color:#ffb000">Autor:</span>    <span style="color:#66ffb3">Iván Brihuega Crespo</span>`,
-    `<span style="color:#ffb000">Ciclo:</span>    <span style="color:#66ffb3">1º ASIR — CDM FP</span>`,
+    `<span style="color:#ffb000">OS:</span>       <span style="color:var(--c-alt)">RetroOS 2.1</span>`,
+    `<span style="color:#ffb000">Host:</span>     <span style="color:var(--c-alt)">GitHub Pages</span>`,
+    `<span style="color:#ffb000">Shell:</span>    <span style="color:var(--c-alt)">/bin/retroterm</span>`,
+    `<span style="color:#ffb000">Autor:</span>    <span style="color:var(--c-alt)">Iván Brihuega Crespo</span>`,
+    `<span style="color:#ffb000">Ciclo:</span>    <span style="color:var(--c-alt)">1º ASIR — CDM FP</span>`,
   ];
   const max = Math.max(art.length, nfo.length);
   for (let i = 0; i < max; i++) {
     const a = esc(art[i] || '                   ');
     const n = nfo[i] || '';
-    addLine(`  <span style="color:#00ff66;font-size:0.74rem">${a}</span>  ${n}`, 'tl');
+    addLine(`  <span style="color:var(--c-pri);font-size:0.74rem">${a}</span>  ${n}`, 'tl');
   }
   blank();
   addLine(

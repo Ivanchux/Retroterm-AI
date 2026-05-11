@@ -10,8 +10,8 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
     :root {
-      --g: #00ff66; --g2: #66ffb3; --amber: #ffb000;
-      --dim: #003300; --bg: #000;
+      --g: var(--c-pri); --g2: var(--c-alt); --amber: #ffb000;
+      --dim: var(--c-border); --bg: #000;
     }
     * { box-sizing: border-box; }
     body { background: #000; color: var(--g); font-family: 'Courier New', monospace; margin: 0; }
@@ -81,7 +81,7 @@
       font-size: 0.55rem; letter-spacing: 2px;
       padding: 3px 10px; border: 1px solid currentColor; font-weight: bold;
     }
-    .f-hero-badge.pc { color: #00ff66; } .f-hero-badge.ps { color: #0088ff; }
+    .f-hero-badge.pc { color: var(--c-pri); } .f-hero-badge.ps { color: #0088ff; }
     .f-hero-badge.xbox { color: #52b043; } .f-hero-badge.mac { color: #aaaaaa; }
     .f-hero-badge.movil { color: #ffb000; } .f-hero-badge.arcade { color: #ff6644; }
     .f-hero-badge.dc { color: #ff8800; }
@@ -95,11 +95,11 @@
     }
     .f-btn-primary { color: var(--g); border-color: var(--g); }
     .f-btn-primary:hover { background: var(--g); color: #000; }
-    .f-btn-secondary { color: #1a4a2a; border-color: #003300; }
+    .f-btn-secondary { color: #1a4a2a; border-color: var(--c-border); }
     .f-btn-secondary:hover { color: var(--g2); border-color: var(--g2); }
     .f-btn-guia { color: var(--g); border-color: var(--g); background: rgba(0,255,102,0.06); }
     .f-btn-guia:hover { background: rgba(0,255,102,0.14); box-shadow: 0 0 12px rgba(0,255,102,0.2); }
-    .f-btn-estado { color: #1a4a2a; border-color: #003300; }
+    .f-btn-estado { color: #1a4a2a; border-color: var(--c-border); }
     .f-btn-estado[data-estado="jugado"] { color: var(--g); border-color: var(--g); background: rgba(0,255,102,0.08); }
     .f-btn-estado[data-estado="jugando"] { color: var(--amber); border-color: var(--amber); background: rgba(255,176,0,0.08); }
     .f-btn-estado[data-estado="lista"] { color: #44aaff; border-color: #44aaff; background: rgba(68,170,255,0.08); }
@@ -107,7 +107,7 @@
     /* ── NAVBAR FICHA ── */
     .f-navbar {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(0,0,0,0.92); border-bottom: 1px solid #001a00;
+      background: rgba(0,0,0,0.92); border-bottom: 1px solid var(--c-panel);
       backdrop-filter: blur(8px);
       display: flex; align-items: center; gap: 0;
       padding: 0 40px; overflow-x: auto; scrollbar-width: none;
@@ -116,7 +116,7 @@
     .f-nav-back {
       color: #1a4a2a; font-size: 0.62rem; letter-spacing: 2px;
       text-decoration: none; padding: 14px 20px 14px 0;
-      border-right: 1px solid #001a00; margin-right: 20px;
+      border-right: 1px solid var(--c-panel); margin-right: 20px;
       white-space: nowrap; transition: color 0.2s;
       display: flex; align-items: center; gap: 6px;
     }
@@ -174,7 +174,7 @@
     /* ── RATINGS ── */
     .f-ratings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
     .f-rating-card {
-      padding: 16px; border: 1px solid #001a00;
+      padding: 16px; border: 1px solid var(--c-panel);
       background: rgba(0,5,0,0.4);
     }
     .f-rating-label { font-size: 0.55rem; letter-spacing: 3px; color: #1a4a2a; margin-bottom: 8px; }
@@ -204,7 +204,7 @@
     /* ── TRAILER ── */
     .f-trailer-wrap {
       width: 100%; aspect-ratio: 16/9;
-      border: 1px solid #001a00; background: #000;
+      border: 1px solid var(--c-panel); background: #000;
       overflow: hidden; position: relative;
     }
     .f-trailer-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
@@ -284,7 +284,7 @@
       gap: 16px;
     }
     .f-related-card {
-      border: 1px solid #00ff6615;
+      border: 1px solid var(--c-a22);
       background: #020c02;
       cursor: pointer; overflow: hidden;
       transition: border-color 0.3s, box-shadow 0.3s;
@@ -292,8 +292,8 @@
       position: relative;
     }
     .f-related-card:hover {
-      border-color: #00ff6655;
-      box-shadow: 0 0 20px #00ff6610, 0 8px 30px rgba(0,0,0,0.6);
+      border-color: var(--c-a55);
+      box-shadow: 0 0 20px var(--c-a22), 0 8px 30px rgba(0,0,0,0.6);
     }
     .f-related-cover {
       width: 100%; aspect-ratio: 3/4; overflow: hidden;
@@ -408,10 +408,10 @@
     .f-gallery-solo { grid-template-columns: 1fr; max-width: 480px; }
     .f-gallery-item {
       position: relative; aspect-ratio: 16/9; overflow: hidden;
-      cursor: zoom-in; border: 1px solid #001a00;
+      cursor: zoom-in; border: 1px solid var(--c-panel);
       transition: border-color 0.2s;
     }
-    .f-gallery-item:hover { border-color: #00ff6644; }
+    .f-gallery-item:hover { border-color: var(--c-a44); }
     .f-gallery-item img {
       width: 100%; height: 100%; object-fit: cover; display: block;
       transition: transform 0.4s, filter 0.3s;
@@ -421,11 +421,11 @@
     .f-gallery-overlay {
       position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
       background: rgba(0,255,102,0.04); opacity: 0; transition: opacity 0.2s;
-      font-size: 1.2rem; color: #00ff66;
+      font-size: 1.2rem; color: var(--c-pri);
     }
     .f-gallery-item:hover .f-gallery-overlay { opacity: 1; }
     .f-gallery-placeholder {
-      aspect-ratio: 16/9; background: #020c02; border: 1px solid #001a00;
+      aspect-ratio: 16/9; background: #020c02; border: 1px solid var(--c-panel);
       display: flex; align-items: center; justify-content: center;
       flex-direction: column; gap: 8px;
       font-size: 0.58rem; letter-spacing: 2px; color: #1a4a2a;
@@ -583,7 +583,7 @@
 </main>
 
 <!-- FOOTER -->
-<footer style="position:relative;z-index:1;border-top:1px solid #001a00;padding:20px 40px;text-align:center;font-size:0.65rem;letter-spacing:2px;color:#1a4a2a;line-height:2.2">
+<footer style="position:relative;z-index:1;border-top:1px solid var(--c-panel);padding:20px 40px;text-align:center;font-size:0.65rem;letter-spacing:2px;color:#1a4a2a;line-height:2.2">
   <a href="gaming.html" style="color:var(--g);text-decoration:none">🎮 GAMING</a> ·
   <a href="index.html" style="color:#1a4a2a;text-decoration:none">🏠 INICIO</a> ·
   <a href="articulos.html" style="color:#1a4a2a;text-decoration:none">📚 ARTÍCULOS</a><br>
@@ -651,7 +651,7 @@ const DB = {
 const PLAT_LABELS = { pc:'PC', ps:'PS', xbox:'XBOX', mac:'MAC', movil:'MÓVIL', arcade:'ARCADE', dc:'DREAMCAST' };
 const RATING_LABELS = { 1:'FLOJO', 2:'PASABLE', 3:'NOTABLE', 4:'MUY BUENO', 5:'IMPRESCINDIBLE' };
 const ESTADO_LABELS = { ninguno:'· · ·', jugado:'● JUGADO', jugando:'◐ JUGANDO', lista:'○ EN LISTA' };
-const CAT_COLORS = { rpg:'#00ff66', accion:'#ff6644', comedia:'#ffb000', clasico:'#44aaff' };
+const CAT_COLORS = { rpg:'var(--c-pri)', accion:'#ff6644', comedia:'#ffb000', clasico:'#44aaff' };
 
 /* ── LEER JUEGOS DESDE EL MISMO ARRAY (compartido con gaming.html via localStorage caché) ─── */
 /* En producción con Supabase: fetch('/api/games') */
@@ -686,7 +686,7 @@ function cycleEstadoFicha() {
 /* ── FILL PAGE ── */
 function fillPage(j) {
   currentGame = j;
-  const col = CAT_COLORS[j.cat] || '#00ff66';
+  const col = CAT_COLORS[j.cat] || 'var(--c-pri)';
 
   // Meta
   document.title = `${j.titulo} — RETROTERM.AI`;
@@ -864,7 +864,7 @@ function fillGaleria(j) {
       lb = document.createElement('div');
       lb.id = 'f-lightbox';
       lb.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
-      lb.innerHTML = '<img id="f-lb-img" style="max-width:92vw;max-height:92vh;object-fit:contain;box-shadow:0 0 60px #00ff6622;">';
+      lb.innerHTML = '<img id="f-lb-img" style="max-width:92vw;max-height:92vh;object-fit:contain;box-shadow:0 0 60px var(--c-a22);">';
       lb.addEventListener('click', () => lb.style.display = 'none');
       document.body.appendChild(lb);
     }
@@ -1005,7 +1005,7 @@ function fillRelated(j) {
   reasonEl.textContent = `// BASADO EN TAGS COMPARTIDOS: ${topTags.map(t=>'#'+t).join(' · ')}`;
 
   gridEl.innerHTML = related.map(({game:g, shared}) => {
-    const col = CAT_COLORS[g.cat]||'#00ff66';
+    const col = CAT_COLORS[g.cat]||'var(--c-pri)';
     const sharedDisplay = shared.slice(0,3).map(t=>`<span class="f-related-tag-shared">#${t}</span>`).join('');
     return `
       <a class="f-related-card" href="gaming-ficha.html?id=${g.id}">

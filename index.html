@@ -35,8 +35,8 @@
   }
   .hub-title {
     font-size: clamp(1.8rem, 4vw, 3rem);
-    color: #00ff66;
-    text-shadow: 0 0 18px #00ff6644, 0 0 50px #ffb00022;
+    color: var(--c-pri);
+    text-shadow: 0 0 18px var(--c-a44), 0 0 50px #ffb00022;
     letter-spacing: 0.12em;
     margin: 0;
     font-family: 'Courier New', monospace;
@@ -54,7 +54,7 @@
     letter-spacing: 0.18em;
     margin-top: 0.5rem;
   }
-  .hub-status span { color: #00ff66; margin: 0 5px; }
+  .hub-status span { color: var(--c-pri); margin: 0 5px; }
 
   /* ── BENTO LAYOUT ─── */
   .bento {
@@ -152,7 +152,7 @@
     background: radial-gradient(ellipse at 20% 60%, #030c03 0%, #010501 100%);
     border-radius: 8px 18px 6px 20px;
   }
-  .bc-green:hover { border-color: #00ff6655; box-shadow: 0 0 28px rgba(0,255,100,0.18), inset 0 0 40px rgba(0,255,100,0.04); }
+  .bc-green:hover { border-color: var(--c-a55); box-shadow: 0 0 28px rgba(0,255,100,0.18), inset 0 0 40px rgba(0,255,100,0.04); }
 
   .bc-teal {
     border-color: #001818;
@@ -207,7 +207,7 @@
   .dot-gold   { background:#ffb000; box-shadow:0 0 7px #ffb000; }
   .dot-cyan   { background:#00e5ff; box-shadow:0 0 7px #00e5ff; animation-delay:.5s; }
   .dot-violet { background:#cc66ff; box-shadow:0 0 7px #cc66ff; animation-delay:1s; }
-  .dot-green  { background:#00ff66; box-shadow:0 0 7px #00ff66; animation-delay:1.5s; }
+  .dot-green  { background:var(--c-pri); box-shadow:0 0 7px var(--c-pri); animation-delay:1.5s; }
   .dot-teal   { background:#00ffcc; box-shadow:0 0 7px #00ffcc; animation-delay:.3s; }
   .dot-dim    { background:#2a2a2a; animation-delay:2s; }
   .dot-ice    { background:#3399ff; box-shadow:0 0 7px #3399ff; animation-delay:0.8s; }
@@ -253,7 +253,7 @@
 
   .tc-gold   { color: #ffb000; }
   .tc-cyan   { color: #00e5ff; }
-  .tc-green  { color: #00ff66; }
+  .tc-green  { color: var(--c-pri); }
   .tc-violet { color: #cc66ff; }
   .tc-teal   { color: #00ffcc; }
   .tc-dim    { color: #484848; }

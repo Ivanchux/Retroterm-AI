@@ -33,24 +33,24 @@
   <style>
     .breadcrumbs{ 
       font-size:.72rem; 
-      color:#00ff6655; 
+      color:var(--c-a55); 
       margin-bottom:18px; 
       letter-spacing:1px; 
     }
     .breadcrumbs a{ 
-      color:#00ff6688; 
+      color:var(--c-a88); 
       text-decoration:none; 
     }
     .breadcrumbs a:hover{ 
-      color:#00ff66; 
+      color:var(--c-pri); 
     }
     .breadcrumbs span{ 
-      color:#00ff6633; 
+      color:var(--c-a33); 
       margin:0 6px; 
     }
 
     .bloque{ 
-      border:1px solid #003300; 
+      border:1px solid var(--c-border); 
       background:rgba(0,20,0,0.6); 
       margin:18px 0; 
       overflow:hidden; 
@@ -60,7 +60,7 @@
       padding:8px 14px; 
       font-size:.72rem; 
       letter-spacing:2px; 
-      border-bottom:1px solid #003300; 
+      border-bottom:1px solid var(--c-border); 
     }
     .bloque-titulo.tienda{ 
       color:#f0db4f; 
@@ -71,7 +71,7 @@
       background:rgba(79,195,255,0.04); 
     }
     .bloque-titulo.esquema{ 
-      color:#00ff66; 
+      color:var(--c-pri); 
       background:rgba(0,255,102,0.04); 
     }
     .bloque-body{ 
@@ -80,7 +80,7 @@
 
     .etiqueta{ 
       font-size:.65rem; 
-      color:#00ff6677; 
+      color:var(--c-a55); 
       letter-spacing:2px; 
       margin:14px 0 4px; 
       display:block; 
@@ -95,8 +95,8 @@
 
     .codigo-bloque {
       background:#000; 
-      border:1px solid #003300; 
-      border-left:2px solid #00ff6655;
+      border:1px solid var(--c-border); 
+      border-left:2px solid var(--c-a55);
       padding:10px 14px; 
       font-family:'Courier New',monospace; 
       font-size:.82rem;
@@ -104,7 +104,7 @@
       overflow-x:auto; 
       white-space:pre; 
       margin:6px 0 14px; 
-      color:#00ff66;
+      color:var(--c-pri);
     }
 
     .kw{ 
@@ -112,7 +112,7 @@
       font-weight:bold; 
     }
     .fn{
-      color:#00ff66; 
+      color:var(--c-pri); 
     }
     .str{ 
       color:#f1fa8c; 
@@ -139,17 +139,17 @@
     }
     .tabla-sql th{ 
       background:rgba(0,255,102,.06); 
-      color:#00ff66; 
+      color:var(--c-pri); 
       padding:6px 10px; 
       text-align:left; 
-      border-bottom:1px solid #003300; 
+      border-bottom:1px solid var(--c-border); 
       font-size:.7rem; 
       letter-spacing:1px; 
     }
 
     .tabla-sql td{ 
       padding:6px 10px; 
-      border-bottom:1px solid #001a00; 
+      border-bottom:1px solid var(--c-panel); 
       color:#ccc; 
       font-family:'Courier New',monospace; 
       font-size:.75rem; 
@@ -159,13 +159,13 @@
       border-bottom:none; 
     }
     .tabla-sql .k{ 
-      color:#00ff66; 
+      color:var(--c-pri); 
     }
 
     .ok-msg{ 
       background:rgba(0,255,102,.04); 
       border:1px solid rgba(0,255,102,.2); 
-      color:#66ffb3; 
+      color:var(--c-alt); 
       padding:6px 12px; 
       font-size:.78rem; 
       margin:8px 0; 
@@ -203,8 +203,8 @@
   /* fondo transparente sobre canvas */
   .pantalla, .pantalla-wide {
     background: transparent !important;
-    border-color: #00ff6633 !important;
-    box-shadow: 0 0 15px #00ff6622 !important;
+    border-color: var(--c-a33) !important;
+    box-shadow: 0 0 15px var(--c-a22) !important;
   }
   </style>
   <script src="js/theme.js?v=2"></script>

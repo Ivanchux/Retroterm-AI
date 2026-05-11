@@ -62,28 +62,28 @@
     }
     .pantalla, .pantalla-wide {
       background: transparent !important;
-      border-color: #00ff6633 !important;
-      box-shadow: 0 0 15px #00ff6622 !important;
+      border-color: var(--c-a33) !important;
+      box-shadow: 0 0 15px var(--c-a22) !important;
     }
 
     /* ── TABLA DE CONTENIDOS ─── */
     .toc {
-      border: 1px solid #00ff6622;
+      border: 1px solid var(--c-a22);
       background: rgba(0,20,0,0.6);
       padding: 14px 18px;
       margin: 1.4rem 0;
       font-size: 0.78rem;
     }
     .toc-title {
-      color: #66ffb3;
+      color: var(--c-alt);
       font-size: 0.65rem;
       letter-spacing: 0.18em;
       margin-bottom: 10px;
     }
-    .toc ol { margin: 0; padding-left: 1.2em; color: #00ff6688; }
+    .toc ol { margin: 0; padding-left: 1.2em; color: var(--c-a88); }
     .toc li { margin: 4px 0; }
-    .toc a  { color: #00ff66; text-decoration: none; transition: color 0.15s; }
-    .toc a:hover { color: #66ffb3; }
+    .toc a  { color: var(--c-pri); text-decoration: none; transition: color 0.15s; }
+    .toc a:hover { color: var(--c-alt); }
 
     /* ── TABLAS ─── */
     .t-tabla-wrap {
@@ -98,13 +98,13 @@
       margin: 0;
     }
     .t-tabla th {
-      background: #001a00;
-      color: #66ffb3;
+      background: var(--c-panel);
+      color: var(--c-alt);
       padding: 7px 12px;
       text-align: left;
       letter-spacing: 0.1em;
       font-size: 0.66rem;
-      border-bottom: 1px solid #003300;
+      border-bottom: 1px solid var(--c-border);
     }
     .t-tabla td {
       padding: 6px 12px;
@@ -113,12 +113,12 @@
       vertical-align: top;
     }
     .t-tabla tr:hover td { background: rgba(0,40,0,0.4); }
-    .t-tabla .accent { color: #00ff66; font-weight: bold; }
+    .t-tabla .accent { color: var(--c-pri); font-weight: bold; }
     .t-tabla .dim    { color: #556655; font-size: 0.72rem; }
 
     /* ── CALLOUTS ─── */
     .callout {
-      border-left: 3px solid #00ff66;
+      border-left: 3px solid var(--c-pri);
       background: rgba(0,30,0,0.5);
       padding: 10px 16px;
       margin: 1rem 0;
@@ -128,20 +128,20 @@
     }
     .callout.warn  { border-left-color: #ffaa22; background: rgba(30,15,0,0.5); color: #ccaa88; }
     .callout.info  { border-left-color: #3399ff; background: rgba(0,10,25,0.5); color: #99bbcc; }
-    .callout strong { color: #00ff66; }
+    .callout strong { color: var(--c-pri); }
     .callout.warn  strong { color: #ffaa22; }
     .callout.info  strong { color: #3399ff; }
 
     /* ── EJEMPLO RESUELTO ─── */
     .ejemplo {
-      border: 1px solid #00ff6622;
+      border: 1px solid var(--c-a22);
       background: rgba(0,15,0,0.7);
       padding: 14px 18px;
       margin: 1rem 0;
       font-size: 0.8rem;
     }
     .ejemplo-titulo {
-      color: #00ff66;
+      color: var(--c-pri);
       font-size: 0.64rem;
       letter-spacing: 0.16em;
       margin-bottom: 10px;
@@ -166,17 +166,17 @@
       align-items: center;
       gap: 12px;
       padding: 7px 14px;
-      border: 1px solid #001a00;
+      border: 1px solid var(--c-panel);
       font-size: 0.76rem;
       transition: border-color 0.15s;
     }
-    .osi-layer:hover { border-color: #00ff6633; }
-    .osi-num   { color: #00ff6644; font-size: 0.62rem; min-width: 16px; text-align: center; }
-    .osi-name  { color: #00ff66; font-weight: bold; min-width: 120px; }
+    .osi-layer:hover { border-color: var(--c-a33); }
+    .osi-num   { color: var(--c-a44); font-size: 0.62rem; min-width: 16px; text-align: center; }
+    .osi-name  { color: var(--c-pri); font-weight: bold; min-width: 120px; }
     .osi-desc  { color: #778877; font-size: 0.72rem; }
     .osi-proto { color: #446644; font-size: 0.68rem; margin-left: auto; font-style: italic; }
-    .osi-layer.osi-highlight { background: rgba(0,40,0,0.5); border-color: #00ff6644; }
-    .osi-layer.osi-highlight .osi-name { color: #66ffb3; }
+    .osi-layer.osi-highlight { background: rgba(0,40,0,0.5); border-color: var(--c-a44); }
+    .osi-layer.osi-highlight .osi-name { color: var(--c-alt); }
 
     /* ── RESPONSIVE ─── */
     @media (max-width: 768px) {
@@ -266,7 +266,7 @@ octeto 1  octeto 2  octeto 3  octeto 4
 
 Rango por octeto: 0 — 255</div>
 
-    <p>Cada dirección tiene dos partes: la <strong style="color:#66ffb3">parte de red</strong> (identifica la red) y la <strong style="color:#66ffb3">parte de host</strong> (identifica el dispositivo dentro de esa red). La máscara de subred es la que separa ambas partes.</p>
+    <p>Cada dirección tiene dos partes: la <strong style="color:var(--c-alt)">parte de red</strong> (identifica la red) y la <strong style="color:var(--c-alt)">parte de host</strong> (identifica el dispositivo dentro de esa red). La máscara de subred es la que separa ambas partes.</p>
 
     <div class="callout warn">
       <strong>Dirección especial:</strong> la primera dirección de una subred es la <strong>dirección de red</strong> (no asignable) y la última es el <strong>broadcast</strong> (tampoco asignable). Los hosts usables están entre ambas.
@@ -288,7 +288,7 @@ Rango por octeto: 0 — 255</div>
       </tbody>
     </table>
 
-    <p>Dentro de cada clase hay rangos <strong style="color:#66ffb3">privados</strong> (RFC 1918) que no se enrutan por Internet y se usan en redes locales:</p>
+    <p>Dentro de cada clase hay rangos <strong style="color:var(--c-alt)">privados</strong> (RFC 1918) que no se enrutan por Internet y se usan en redes locales:</p>
 
     <table class="t-tabla" aria-label="Rangos de IP privadas">
       <thead>
@@ -322,7 +322,7 @@ Red:      192.168.1.0        ← parte de red (AND lógico)
 Broadcast:192.168.1.255      ← todos los bits de host a 1
 Hosts:    192.168.1.1 — 192.168.1.254  (254 hosts)</div>
 
-    <p>El <strong style="color:#66ffb3">AND lógico</strong> entre la IP y la máscara te da siempre la dirección de red:</p>
+    <p>El <strong style="color:var(--c-alt)">AND lógico</strong> entre la IP y la máscara te da siempre la dirección de red:</p>
 
     <div class="codigo-bloque">   192.168.1.100  →  11000000.10101000.00000001.01100100
 AND 255.255.255.0  →  11111111.11111111.11111111.00000000
@@ -332,7 +332,7 @@ AND 255.255.255.0  →  11111111.11111111.11111111.00000000
     <!-- ══ 5. CIDR ══ -->
     <h2 id="cidr">5. Notación CIDR</h2>
 
-    <p>CIDR (Classless Inter-Domain Routing) simplifica la máscara con un número que indica cuántos bits son de red. Es lo que ves detrás de la barra: <code>192.168.1.0/<strong style="color:#66ffb3">24</strong></code>.</p>
+    <p>CIDR (Classless Inter-Domain Routing) simplifica la máscara con un número que indica cuántos bits son de red. Es lo que ves detrás de la barra: <code>192.168.1.0/<strong style="color:var(--c-alt)">24</strong></code>.</p>
 
     <table class="t-tabla" aria-label="Prefijos CIDR más comunes">
       <thead>
@@ -365,7 +365,7 @@ Ejemplo /26:
     <!-- ══ 6. SUBNETTING ══ -->
     <h2 id="subnetting">6. Cálculo de subredes paso a paso</h2>
 
-    <p>El método más rápido en examen usa el <strong style="color:#66ffb3">bloque o salto</strong>: el valor del último octeto significativo de la máscara restado a 256.</p>
+    <p>El método más rápido en examen usa el <strong style="color:var(--c-alt)">bloque o salto</strong>: el valor del último octeto significativo de la máscara restado a 256.</p>
 
     <div class="ejemplo">
       <p class="ejemplo-titulo">EJEMPLO RESUELTO — Red 192.168.10.0/26</p>
@@ -411,7 +411,7 @@ Hosts:             172.16.32.1 — 172.16.47.254  (4094 hosts)</div>
 
     <p>VLSM (Variable Length Subnet Masking) permite asignar a cada subred exactamente el tamaño que necesita, en lugar de dividir todo en bloques iguales. Es lo que se usa en entornos reales.</p>
 
-    <p>La regla fundamental: <strong style="color:#66ffb3">ordenar los requerimientos de mayor a menor</strong> y asignar siempre empezando desde el bloque más grande.</p>
+    <p>La regla fundamental: <strong style="color:var(--c-alt)">ordenar los requerimientos de mayor a menor</strong> y asignar siempre empezando desde el bloque más grande.</p>
 
     <div class="ejemplo">
       <p class="ejemplo-titulo">EJEMPLO RESUELTO — Red 10.0.0.0/24 con 4 departamentos</p>
@@ -445,7 +445,7 @@ Espacio restante sin usar: 10.0.0.116 — 10.0.0.255</div>
 
     <p>Los imprescindibles que aparecen en prácticas y exámenes de ASIR:</p>
 
-    <h2 style="font-size:0.85rem;color:#66ffb3">Linux / Unix</h2>
+    <h2 style="font-size:0.85rem;color:var(--c-alt)">Linux / Unix</h2>
     <div class="codigo-bloque">ip a                      # ver interfaces y direcciones IP
 ip r                      # tabla de enrutamiento
 ip route add X.X.X.X/Y   # añadir ruta estática
@@ -457,7 +457,7 @@ ss -tulnp                 # puertos abiertos con proceso
 arp -a                    # tabla ARP (IP ↔ MAC)
 nmcli con show            # conexiones NetworkManager</div>
 
-    <h2 style="font-size:0.85rem;color:#66ffb3">Windows (CMD / PowerShell)</h2>
+    <h2 style="font-size:0.85rem;color:var(--c-alt)">Windows (CMD / PowerShell)</h2>
     <div class="codigo-bloque">ipconfig /all             # ver config de red completa
 ipconfig /release         # liberar IP (DHCP)
 ipconfig /renew           # solicitar nueva IP (DHCP)
@@ -469,7 +469,7 @@ route print               # tabla de enrutamiento
 netstat -ano              # conexiones activas con PID
 arp -a                    # tabla ARP</div>
 
-    <h2 style="font-size:0.85rem;color:#66ffb3">Cisco IOS (routers/switches)</h2>
+    <h2 style="font-size:0.85rem;color:var(--c-alt)">Cisco IOS (routers/switches)</h2>
     <div class="codigo-bloque">show ip interface brief    # resumen de interfaces
 show ip route             # tabla de enrutamiento
 show running-config       # configuración activa

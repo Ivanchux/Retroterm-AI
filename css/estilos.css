@@ -13,6 +13,12 @@
   --c-scan:    rgba(0,255,102,0.05);  /* efecto scanline */
   --c-pri-dim: rgba(0,255,102,0.33);  /* primario semitransparente */
   --canvas-hue:0deg;                  /* rotación de tono del canvas */
+  /* — variantes alpha (para reemplazar #00ff66XX en páginas) — */
+  --c-a22: rgba(0,255,102,0.13);
+  --c-a33: rgba(0,255,102,0.20);
+  --c-a44: rgba(0,255,102,0.27);
+  --c-a55: rgba(0,255,102,0.33);
+  --c-a88: rgba(0,255,102,0.53);
 }
 
 /* Canvas: filter de tema aplicado globalmente */

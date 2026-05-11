@@ -8,7 +8,7 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
     :root {
-      --verde: #00ff66; --verde-dim: #66ffb3; --verde-dark: #003300;
+      --verde: var(--c-pri); --verde-dim: var(--c-alt); --verde-dark: var(--c-border);
       --rojo: #ff5555; --amber: #ffaa00; --bg: #000; --bg2: #010f01;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -723,7 +723,7 @@ async function cargarFG() {
     const r=await fetch('https://api.alternative.me/fng/?limit=3');
     const d=(await r.json()).data;
     const v=parseInt(d[0].value);
-    const col=v<=25?'#ff5555':v<=45?'#ff8800':v<=55?'#ffaa00':v<=75?'#aacc00':'#00ff66';
+    const col=v<=25?'#ff5555':v<=45?'#ff8800':v<=55?'#ffaa00':v<=75?'#aacc00':'var(--c-pri)';
     document.getElementById('fgwrap').innerHTML=`
       <div class="fgcard">
         <div class="fgtit">FEAR & GREED INDEX — ALTERNATIVE.ME</div>
@@ -732,7 +732,7 @@ async function cargarFG() {
         <div class="fgbarra">
           <div style="background:#ff5555"></div><div style="background:#ff8800"></div>
           <div style="background:#ffaa00"></div><div style="background:#aacc00"></div>
-          <div style="background:#00ff66"></div>
+          <div style="background:var(--c-pri)"></div>
         </div>
         <div class="fgneedle" style="margin-left:calc(${v}% - 5px)"></div>
         <div class="fghist">${d.map((x,i)=>{const l=['HOY','AYER','HACE 7D'],c2=parseInt(x.value)>50?'var(--verde)':'var(--rojo)';return `<span>${l[i]||''}: <span style="color:${c2}">${x.value}</span></span>`;}).join('')}</div>

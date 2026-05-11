@@ -37,27 +37,27 @@
     /* breadcrumbs */
     .breadcrumbs {
       font-size: 0.72rem;
-      color: #00ff6655;
+      color: var(--c-a55);
       margin-bottom: 18px;
       letter-spacing: 1px;
     }
     .breadcrumbs a{ 
-      color: #00ff6688; 
+      color: var(--c-a88); 
       text-decoration: none; 
     }
     
     .breadcrumbs a:hover{ 
-      color: #00ff66; 
+      color: var(--c-pri); 
     }
     
     .breadcrumbs span{ 
-      color: #00ff6633; 
+      color: var(--c-a33); 
       margin: 0 6px; 
     }
 
     /* secciones del artículo */
     .sql-seccion {
-      border: 1px solid #003300;
+      border: 1px solid var(--c-border);
       background: rgba(0,20,0,0.6);
       margin: 20px 0;
       overflow: hidden;
@@ -66,7 +66,7 @@
       padding: 8px 14px;
       font-size: 0.72rem;
       letter-spacing: 2px;
-      border-bottom: 1px solid #003300;
+      border-bottom: 1px solid var(--c-border);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -76,7 +76,7 @@
       background: rgba(255,107,107,0.06); 
     }
     .sql-seccion-titulo.dml{ 
-      color: #00ff66; 
+      color: var(--c-pri); 
       background: rgba(0,255,102,0.04); 
     }
     .sql-seccion-titulo.dcl{ 
@@ -106,8 +106,8 @@
     /* bloques de código */
     .codigo-bloque {
       background: #000;
-      border: 1px solid #003300;
-      border-left: 2px solid #00ff6655;
+      border: 1px solid var(--c-border);
+      border-left: 2px solid var(--c-a55);
       padding: 10px 14px;
       font-family: 'Courier New', monospace;
       font-size: 0.82rem;
@@ -115,7 +115,7 @@
       overflow-x: auto;
       white-space: pre;
       margin: 10px 0;
-      color: #00ff66;
+      color: var(--c-pri);
     }
 
     /* colores SQL */
@@ -124,7 +124,7 @@
       font-weight: bold; 
     }
     .fn{ 
-      color: #00ff66; 
+      color: var(--c-pri); 
     }
     .str{ 
       color: #f1fa8c; 
@@ -155,7 +155,7 @@
     .ok-msg {
       background: rgba(0,255,102,0.04);
       border: 1px solid rgba(0,255,102,0.2);
-      color: #66ffb3;
+      color: var(--c-alt);
       padding: 6px 12px;
       font-size: 0.78rem;
       margin: 8px 0;
@@ -179,16 +179,16 @@
     }
     .tabla-sql th {
       background: rgba(0,255,102,0.06);
-      color: #00ff66;
+      color: var(--c-pri);
       padding: 6px 10px;
       text-align: left;
-      border-bottom: 1px solid #003300;
+      border-bottom: 1px solid var(--c-border);
       font-size: 0.7rem;
       letter-spacing: 1px;
     }
     .tabla-sql td {
       padding: 6px 10px;
-      border-bottom: 1px solid #001a00;
+      border-bottom: 1px solid var(--c-panel);
       vertical-align: top;
       color: #ccc;
     }
@@ -196,14 +196,14 @@
       border-bottom: none; 
     }
     .tabla-sql .k{ 
-      color: #00ff66; 
+      color: var(--c-pri); 
       font-family: 'Courier New', monospace; 
     }
     .tabla-sql .tag-ddl{ 
       color: #ff6b6b; 
     }
     .tabla-sql .tag-dml{ 
-      color: #00ff66; 
+      color: var(--c-pri); 
     }
     .tabla-sql .tag-dcl{ 
       color: #c77dff; 
@@ -251,8 +251,8 @@
   /* fondo transparente sobre canvas */
   .pantalla, .pantalla-wide {
     background: transparent !important;
-    border-color: #00ff6633 !important;
-    box-shadow: 0 0 15px #00ff6622 !important;
+    border-color: var(--c-a33) !important;
+    box-shadow: 0 0 15px var(--c-a22) !important;
   }
   </style>
   <script src="js/theme.js?v=2"></script>

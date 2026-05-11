@@ -23,17 +23,17 @@
       text-align: center;
       margin-bottom: 28px;
       padding-bottom: 16px;
-      border-bottom: 1px solid #003300;
+      border-bottom: 1px solid var(--c-border);
     }
-    .sn-header h1 { font-size: 1.6rem; letter-spacing: 4px; text-shadow: 0 0 10px #00ff66; margin: 0 0 6px; }
-    .sn-header p  { color: #66ffb3; font-size: 0.75rem; letter-spacing: 2px; margin: 0; }
+    .sn-header h1 { font-size: 1.6rem; letter-spacing: 4px; text-shadow: 0 0 10px var(--c-pri); margin: 0 0 6px; }
+    .sn-header p  { color: var(--c-alt); font-size: 0.75rem; letter-spacing: 2px; margin: 0; }
 
     /* ── Tabs IPv4 / IPv6 ─────────────────────────────────── */
     .sn-tabs {
       display: flex;
       gap: 0;
       margin-bottom: 24px;
-      border-bottom: 1px solid #003300;
+      border-bottom: 1px solid var(--c-border);
     }
     .sn-tab {
       padding: 8px 24px;
@@ -42,19 +42,19 @@
       letter-spacing: 2px;
       cursor: pointer;
       color: #004400;
-      border: 1px solid #003300;
+      border: 1px solid var(--c-border);
       border-bottom: none;
       background: none;
       transition: all 0.2s;
       margin-bottom: -1px;
     }
     .sn-tab.activo {
-      color: #00ff66;
-      border-color: #00ff66;
+      color: var(--c-pri);
+      border-color: var(--c-pri);
       background: rgba(0,255,102,0.05);
       border-bottom: 1px solid rgba(0,10,0,1);
     }
-    .sn-tab:hover:not(.activo) { color: #66ffb3; border-color: #004400; }
+    .sn-tab:hover:not(.activo) { color: var(--c-alt); border-color: #004400; }
 
     .sn-panel { display: none; }
     .sn-panel.activo { display: block; }
@@ -76,8 +76,8 @@
     }
     .sn-input {
       background: #000;
-      color: #00ff66;
-      border: 1px solid #003300;
+      color: var(--c-pri);
+      border: 1px solid var(--c-border);
       font-family: 'Courier New', monospace;
       font-size: 0.95rem;
       padding: 8px 10px;
@@ -86,12 +86,12 @@
       width: 100%;
       box-sizing: border-box;
     }
-    .sn-input:focus { border-color: #00ff66; box-shadow: 0 0 6px rgba(0,255,102,0.2); }
+    .sn-input:focus { border-color: var(--c-pri); box-shadow: 0 0 6px rgba(0,255,102,0.2); }
     .sn-input.error { border-color: #ff4444; color: #ff4444; }
 
     .sn-btn {
       padding: 9px 22px;
-      background: #00ff66;
+      background: var(--c-pri);
       color: #000;
       border: none;
       font-family: 'Courier New', monospace;
@@ -107,8 +107,8 @@
     .sn-btn-sec {
       padding: 9px 16px;
       background: transparent;
-      color: #66ffb3;
-      border: 1px solid #003300;
+      color: var(--c-alt);
+      border: 1px solid var(--c-border);
       font-family: 'Courier New', monospace;
       font-size: 0.78rem;
       letter-spacing: 1px;
@@ -116,7 +116,7 @@
       transition: all 0.2s;
       align-self: flex-end;
     }
-    .sn-btn-sec:hover { border-color: #00ff66; color: #00ff66; }
+    .sn-btn-sec:hover { border-color: var(--c-pri); color: var(--c-pri); }
 
     .sn-error-msg {
       font-size: 0.72rem;
@@ -140,7 +140,7 @@
       padding-bottom: 5px;
       border-bottom: 1px solid #002200;
     }
-    .sn-seccion-titulo::before { content: '> '; color: #00ff66; }
+    .sn-seccion-titulo::before { content: '> '; color: var(--c-pri); }
 
     /* Grid de resultados */
     .sn-grid {
@@ -169,14 +169,14 @@
     }
     .sn-dato-val {
       font-size: 0.9rem;
-      color: #00ff66;
+      color: var(--c-pri);
       font-family: 'Courier New', monospace;
       word-break: break-all;
     }
     .sn-dato-val.grande { font-size: 1rem; text-shadow: 0 0 4px rgba(0,255,102,0.4); }
     .sn-dato-sub {
       font-size: 0.65rem;
-      color: #66ffb3;
+      color: var(--c-alt);
       font-family: 'Courier New', monospace;
       word-break: break-all;
     }
@@ -207,12 +207,12 @@
     }
     .sn-bin-valor {
       font-size: 0.75rem;
-      color: #00ff66;
+      color: var(--c-pri);
       font-family: 'Courier New', monospace;
       letter-spacing: 2px;
       white-space: nowrap;
     }
-    .sn-bin-valor .parte-red { color: #00ff66; }
+    .sn-bin-valor .parte-red { color: var(--c-pri); }
     .sn-bin-valor .parte-host { color: #336633; }
     .sn-bin-valor .punto { color: #004400; margin: 0 2px; }
 
@@ -223,7 +223,7 @@
       border: 1px solid #004400;
       font-size: 0.7rem;
       letter-spacing: 2px;
-      color: #00ff66;
+      color: var(--c-pri);
       margin-right: 8px;
     }
 
@@ -239,7 +239,7 @@
       font-family: 'Courier New', monospace;
     }
     .sn-tabla th {
-      color: #66ffb3;
+      color: var(--c-alt);
       text-align: left;
       padding: 6px 10px;
       border-bottom: 1px solid #004400;
@@ -248,13 +248,13 @@
       white-space: nowrap;
     }
     .sn-tabla td {
-      color: #00ff66;
+      color: var(--c-pri);
       padding: 5px 10px;
-      border-bottom: 1px solid #001a00;
+      border-bottom: 1px solid var(--c-panel);
       white-space: nowrap;
     }
     .sn-tabla tr:hover td { background: rgba(0,255,102,0.03); }
-    .sn-tabla tr.destacada td { color: #00ff66; background: rgba(0,255,102,0.05); }
+    .sn-tabla tr.destacada td { color: var(--c-pri); background: rgba(0,255,102,0.05); }
 
     .sn-tabla-aviso {
       font-size: 0.68rem;
@@ -278,27 +278,27 @@
     }
     .sn-select {
       background: #000;
-      color: #00ff66;
-      border: 1px solid #003300;
+      color: var(--c-pri);
+      border: 1px solid var(--c-border);
       font-family: 'Courier New', monospace;
       font-size: 0.75rem;
       padding: 4px 8px;
       outline: none;
       cursor: pointer;
     }
-    .sn-select:focus { border-color: #00ff66; }
+    .sn-select:focus { border-color: var(--c-pri); }
 
     /* ── Footer ───────────────────────────────────────────── */
     .sn-footer {
       text-align: center;
-      border-top: 1px solid #003300;
+      border-top: 1px solid var(--c-border);
       margin-top: 36px;
       padding-top: 14px;
       font-size: 0.72rem;
       color: #004400;
     }
-    .sn-footer a { color: #66ffb3; text-decoration: none; }
-    .sn-footer a:hover { color: #00ff66; }
+    .sn-footer a { color: var(--c-alt); text-decoration: none; }
+    .sn-footer a:hover { color: var(--c-pri); }
 
     /* ── Responsive ───────────────────────────────────────── */
     @media (max-width: 768px) {
@@ -344,8 +344,8 @@
   /* fondo transparente sobre canvas */
   .pantalla, .pantalla-wide {
     background: transparent !important;
-    border-color: #00ff6633 !important;
-    box-shadow: 0 0 15px #00ff6622 !important;
+    border-color: var(--c-a33) !important;
+    box-shadow: 0 0 15px var(--c-a22) !important;
   }
   </style>
 </head>
@@ -464,7 +464,7 @@
         </div>
       </div>
       <div style="font-size:0.62rem; color:#004400; margin-bottom:16px; letter-spacing:1px;">
-        <span style="color:#00ff66;">█</span> PARTE DE RED &nbsp;
+        <span style="color:var(--c-pri);">█</span> PARTE DE RED &nbsp;
         <span style="color:#336633;">█</span> PARTE DE HOST
       </div>
 
