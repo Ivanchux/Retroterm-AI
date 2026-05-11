@@ -72,9 +72,10 @@
   .b-arts    { grid-column: 4 / 7;  grid-row: 2; }
   .b-defi    { grid-column: 7 / 10; grid-row: 2; }
   .b-red     { grid-column: 10 / 13;grid-row: 2; }
-  .b-mural   { grid-column: 1 / 5;  grid-row: 3; }
-  .b-perfil  { grid-column: 5 / 9;  grid-row: 3; }
-  .b-term    { grid-column: 9 / 13; grid-row: 3; }
+  .b-mural   { grid-column: 1 / 4;  grid-row: 3; }
+  .b-perfil  { grid-column: 4 / 7;  grid-row: 3; }
+  .b-term    { grid-column: 7 / 10; grid-row: 3; }
+  .b-subnet  { grid-column: 10/ 13; grid-row: 3; }
   .b-wonder  { grid-column: 1 / 13; grid-row: 4; }
 
   /* ── CELDA BASE ─── */
@@ -282,7 +283,7 @@
     }
     .b-editor, .b-aria,
     .b-gaming, .b-arts, .b-defi, .b-red,
-    .b-mural, .b-perfil, .b-term, .b-wonder {
+    .b-mural, .b-perfil, .b-term, .b-subnet, .b-wonder {
       grid-column: span 1;
       grid-row: auto;
       min-height: 110px;
@@ -308,7 +309,7 @@
       min-height: 90px;
     }
     .b-gaming, .b-arts, .b-defi, .b-red,
-    .b-mural, .b-perfil, .b-term {
+    .b-mural, .b-perfil, .b-term, .b-subnet {
       grid-column: span 1;
       min-height: 85px;
     }
@@ -329,7 +330,7 @@
     }
     .b-editor, .b-aria,
     .b-gaming, .b-arts, .b-defi, .b-red,
-    .b-mural, .b-perfil, .b-term, .b-wonder {
+    .b-mural, .b-perfil, .b-term, .b-subnet, .b-wonder {
       grid-column: span 1;
       min-height: 75px;
     }
@@ -437,6 +438,14 @@
         <span class="b-glyph tc-green">&gt;_</span>
         <span class="b-tag tc-green">// shell interactiva</span>
         <span class="b-name tc-green">TERMINAL</span>
+      </a>
+
+      <!-- TOOLS / HERRAMIENTAS -->
+      <a href="herramientas.html" class="bento-cell b-subnet bc-ice">
+        <div class="b-dot dot-ice"></div>
+        <span class="b-glyph tc-ice">⚙</span>
+        <span class="b-tag tc-ice">// utilidades</span>
+        <span class="b-name tc-ice">TOOLS</span>
       </a>
 
       <!-- WONDER IV — JUEGO -->
