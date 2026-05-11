@@ -747,6 +747,27 @@
     cursor: pointer; transition: all 0.15s;
   }
   .meta-badge.action:hover { border-color: #00ff66; color: #00ff66; }
+
+  /* ══ STREAMING CURSOR ══ */
+  .stream-cursor {
+    display: inline-block;
+    color: #00ff66;
+    animation: blink 0.7s step-end infinite;
+    margin-left: 1px;
+    font-weight: bold;
+  }
+  .stream-burbuja {
+    border: 1px solid #003300;
+    border-left: 2px solid #00ff66;
+    background: rgba(0,20,0,0.7);
+    color: #ddd;
+    max-width: 76%;
+    padding: 9px 13px;
+    font-size: 0.85rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
   </style>
 
 <!-- Markdown + Syntax highlight -->
@@ -1187,7 +1208,7 @@ function renderSidebar() {
 }
 
 // ══════════════════════════════════════════════════
-//  ENVIAR MENSAJE
+//  ENVIAR MENSAJE — streaming + fallback JSON
 // ══════════════════════════════════════════════════
 async function enviar() {
   const texto = inputEl.value.trim();
@@ -1197,28 +1218,24 @@ async function enviar() {
   inputEl.disabled = true;
   sendBtn.disabled = true;
   statusEl.textContent = 'PROCESANDO...';
+  ocultarSlash();
 
-  // Añadir al DOM
   agregarMsgDOM('usuario', texto);
   inputEl.value = '';
   counterEl.textContent = '0 / 500';
   counterEl.className = 'chat-counter';
 
-  // Guardar en conversación
   const conv = convs.find(c => c.id === convActual);
   if (conv) {
     conv.msgs.push({ rol:'usuario', texto, hora: horaActual() });
-    // Actualizar título con el primer mensaje del usuario
     if (conv.msgs.filter(m => m.rol === 'usuario').length === 1) {
       conv.titulo = texto.slice(0, 38) + (texto.length > 38 ? '…' : '');
       convTitulo.textContent = conv.titulo;
     }
     conv.ts = Date.now();
-    // Límite de mensajes
     if (conv.msgs.length > MAX_MSGS) conv.msgs = conv.msgs.slice(-MAX_MSGS);
   }
 
-  // Añadir al contexto IA
   historialIA.push({ role:'user', content: texto });
   if (historialIA.length > MAX_CTX) historialIA = historialIA.slice(-MAX_CTX);
 
@@ -1231,23 +1248,82 @@ async function enviar() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mensaje: texto, historial: historialIA.slice(0,-1) })
     });
-    const data = await res.json();
-    const respuesta = data.respuesta || '[ERROR] Sin respuesta del sistema.';
-    const tRespuesta = ((Date.now() - tsInicio) / 1000).toFixed(1);
 
-    mostrarTyping(false);
-    agregarMsgDOM('aria', respuesta, null, true, tRespuesta);
+    const contentType = res.headers.get('Content-Type') || '';
 
-    // Guardar respuesta
-    if (conv) {
-      conv.msgs.push({ rol:'aria', texto: respuesta, hora: horaActual() });
-      if (conv.msgs.length > MAX_MSGS) conv.msgs = conv.msgs.slice(-MAX_MSGS);
-      guardarLS();
+    // ── MODO STREAMING (SSE) ──────────────────────
+    if (contentType.includes('text/event-stream')) {
+      mostrarTyping(false);
+      statusEl.textContent = 'ARIA ESCRIBIENDO...';
+
+      const hora = horaActual();
+      const streamRow = document.createElement('div');
+      streamRow.className = 'msg-row aria';
+      streamRow.innerHTML = `
+        <div class="msg-icon">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAADi0lEQVR4nJVUXWhbZRh+vpMsOaeuVFlPuv4gtmw3Nk1sMzOmbq0Z2rCuNYPFZpRNQv0Bb8XrIcxLb8a88AcUJTAEMbZKN1Cb+sNiJA1JOnoR1kahbcyhkNqRc5am5/XiS89pzirDc/V+73me93m+97zvYTqR5BTBAOiAgP/zCP8RP/LRAQiSKKoPtEfiAL0RkKlkbwAIYE2Ecb/XUmO9ak8vZfbDBACS2GIRH/d7Z1N3OWG92hDoaqkDgo5mMvezu7uXJ8z9nrVTfY8Agw/U9zeGOZ1Ozqzt1CRRNF743IPffPrefjsXXr8KIJtP15nQRAagahonj/sH1qt2CxNApai4I9MCBEDnPTJdTEamVU2zoPtOngfQd/J8pai0HT0iQN/drQON7prkmXjMiN8afZ40PXrtxr2FGQD3Fmb6w1EAOgSb7aE7G84BSGJL7uYnANqOHrE47zk9ETrlnU3l+bFpqvYaVuc6AJgobJU2mSgA2CptOgXE72QNvHUkJbFF1Wp+ry967cZWadN0KAruyHQdgt/rO9i2YV4SRUAY8J2JvXv58afkSlHxTE43j+BByjyjalpw+DQR+sPRSlEZmowOnBhxD41MhKbMWXqILASCF8dCV8rJWz8k5vue7H7GHwDwQIcsu2RZ3lZrL41FAsFXeQnTts89aGvreOxwK2Ps+/gXAF44car72NPbaq20sdbZ1UNEjDEARJRL/djZ6zGV00uZqqrN3/6aiM69crkQj6WyaQCtkqOzq8eAEVFpY62z17O0+HOTbcYQCF5UFIUxdjw0Vdup3dd2ADjUvwFw2dLGmv2QgzE0LcmLo2FemB/HQlcK8RgRFVZWHU/0/DT3Fc8v55J8HALBiLXbvLyilPnxkrtjOZcsrKxOXJg6LB4ql8sDvjN8EImoidzeLt/f/ofHkX6XJ/JGMPzyuL8fQGFlldZzvfbNvZuDMWa5M6uqWm4xkU0nPrr920ToEoAPr7+/nPv1mLjNMdl0or1dPkCZiFwu19nRsNc3YmvrMPJ/Jb/7NpVnXZ7Z1N2zo2HGmMvlUhRF/M7uoRHecEPhWfdgce3PzNznPPPa1S9bJcdMPGYgTeWlxQRjIALvt0BI5zPPHe+uFBXSGiNZWFnVAVmWAeTTCcti6Pz/eG542EjdWpjP3fws+Udm9peF+J2szWbqHbBV1oEnHUz4+J233/zgOmAH6cZ6/QtVVHfB0naRnAAAAABJRU5ErkJggg==" width="20" height="28" style="image-rendering:pixelated;display:block;" alt="ARIA">
+        </div>
+        <div class="stream-burbuja" id="stream-content">
+          <span class="stream-cursor">▌</span>
+        </div>`;
+      chatArea.insertBefore(streamRow, typingEl);
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      const contentEl = streamRow.querySelector('#stream-content');
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+              fullText += parsed.delta.text;
+              contentEl.innerHTML = escHTML(fullText) + '<span class="stream-cursor">▌</span>';
+              chatArea.scrollTop = chatArea.scrollHeight;
+            }
+          } catch(e) {}
+        }
+      }
+
+      // Render final con markdown completo
+      streamRow.remove();
+      const tRespuesta = ((Date.now() - tsInicio) / 1000).toFixed(1);
+      agregarMsgDOM('aria', fullText, hora, true, tRespuesta);
+
+      if (conv) {
+        conv.msgs.push({ rol:'aria', texto: fullText, hora });
+        if (conv.msgs.length > MAX_MSGS) conv.msgs = conv.msgs.slice(-MAX_MSGS);
+        guardarLS();
+      }
+      historialIA.push({ role:'assistant', content: fullText });
+
+    // ── MODO JSON (fallback / Worker sin streaming) ─
+    } else {
+      const data = await res.json();
+      const respuesta = data.respuesta || '[ERROR] Sin respuesta del sistema.';
+      const tRespuesta = ((Date.now() - tsInicio) / 1000).toFixed(1);
+      mostrarTyping(false);
+      agregarMsgDOM('aria', respuesta, null, true, tRespuesta);
+      if (conv) {
+        conv.msgs.push({ rol:'aria', texto: respuesta, hora: horaActual() });
+        if (conv.msgs.length > MAX_MSGS) conv.msgs = conv.msgs.slice(-MAX_MSGS);
+        guardarLS();
+      }
+      historialIA.push({ role:'assistant', content: respuesta });
     }
 
-    historialIA.push({ role:'assistant', content: respuesta });
     if (historialIA.length > MAX_CTX) historialIA = historialIA.slice(-MAX_CTX);
-
     statusEl.textContent = 'SIN NOMBRE · EN LÍNEA';
     renderSidebar();
 
