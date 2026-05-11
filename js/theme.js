@@ -85,7 +85,7 @@
     for (var i = 0; i < keys.length; i++) {
       root.style.setProperty(keys[i], t.vars[keys[i]]);
     }
-    root.setAttribute('data-theme', name);
+    root.setAttribute('data-color', name);
     if (save !== false) localStorage.setItem('rt-theme', name);
     _updateWidget(name);
   }
