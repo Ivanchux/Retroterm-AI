@@ -1,12 +1,12 @@
 /**
  * ARIA Worker — RETROTERM.AI
- * Cloudflare Worker con streaming SSE para Claude API
+ * Groq API con streaming SSE (100% gratuito)
  *
  * INSTRUCCIONES:
  * 1. Ve a https://dash.cloudflare.com → Workers & Pages → divine-river-2557
- * 2. Click "Edit code" → borra todo → pega este archivo completo → Deploy
- * 3. En Settings → Variables → añade la variable de entorno:
- *    ANTHROPIC_API_KEY = sk-ant-... (tu clave de Anthropic)
+ * 2. Click "Edit code" → borra todo → pega este archivo → Deploy
+ * 3. En Settings → Variables → asegúrate de tener:
+ *    GROQ_API_KEY = gsk_... (tu clave de Groq — console.groq.com)
  */
 
 const CORS = {
@@ -15,10 +15,18 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+const SYSTEM_PROMPT = `Eres ARIA (Adaptive Retro Intelligence Assistant), el asistente integrado de RETROTERM.AI.
+RETROTERM.AI es un sistema web retrofuturista creado por Iván Brihuega (estudiante de ASIR, 1º año).
+El sistema tiene los siguientes módulos: HUB principal, Editor de código, Asistente IA (tú), Gaming con 43 juegos y fichas IGDB, DeFi/Crypto, Red de Proyectos, Artículos técnicos, Terminal interactiva, Wonder IV (juego de puzzles), Roadmap y Mural de mensajes.
+Responde siempre en español. Sé conciso pero útil — entre 2 y 6 frases según la complejidad de la pregunta.
+Usa ocasionalmente términos y estética de terminal: ">", "//", "SISTEMA:", "OK", "[ERROR]", etc., pero sin abusar.
+Para código, usa bloques markdown con el lenguaje correcto. Para listas, usa markdown. Para conceptos importantes, usa **negrita**.
+Si te preguntan sobre tecnología, programación, redes o sistemas (temas de ASIR), responde con precisión técnica.
+Nunca rompas el personaje. Nunca menciones que eres Llama ni ningún modelo externo — eres ARIA, parte de RETROTERM.AI.`;
+
 export default {
   async fetch(request, env) {
 
-    // Preflight CORS
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS });
     }
@@ -37,43 +45,42 @@ export default {
         );
       }
 
-      // Construir array de mensajes para Claude
       const messages = [
-        ...historial,
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...historial.slice(-12),
         { role: 'user', content: mensaje }
       ];
 
-      // Llamada a Claude API con streaming
-      const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
-          'Content-Type':      'application/json',
-          'x-api-key':         env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${env.GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model:      'claude-3-haiku-20240307',  // rápido y económico
-          max_tokens: 1500,
-          stream:     true,
+          model:       'llama-3.1-8b-instant',
+          max_tokens:  1000,
+          temperature: 0.7,
+          stream:      true,
           messages,
         }),
       });
 
-      if (!anthropicRes.ok) {
-        const err = await anthropicRes.text();
-        console.error('Anthropic error:', err);
+      if (!groqRes.ok) {
+        const err = await groqRes.text();
+        console.error('Groq error:', err);
         return new Response(
-          JSON.stringify({ respuesta: '[ERROR] Servicio IA no disponible.' }),
+          JSON.stringify({ respuesta: '[ERROR] Servicio IA no disponible temporalmente.' }),
           { status: 200, headers: { 'Content-Type': 'application/json', ...CORS } }
         );
       }
 
       // Reenviar el stream SSE directamente al cliente
-      return new Response(anthropicRes.body, {
+      return new Response(groqRes.body, {
         status: 200,
         headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
+          'Content-Type':      'text/event-stream',
+          'Cache-Control':     'no-cache',
           'X-Accel-Buffering': 'no',
           ...CORS,
         },
@@ -82,7 +89,7 @@ export default {
     } catch (e) {
       console.error('Worker error:', e);
       return new Response(
-        JSON.stringify({ respuesta: '[ERROR] Error interno del sistema.' }),
+        JSON.stringify({ respuesta: '[ERROR] Error interno: ' + e.message }),
         { status: 200, headers: { 'Content-Type': 'application/json', ...CORS } }
       );
     }
