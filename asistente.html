@@ -1287,8 +1287,10 @@ async function enviar() {
           if (data === '[DONE]') continue;
           try {
             const parsed = JSON.parse(data);
-            if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
-              fullText += parsed.delta.text;
+            // Formato OpenAI/Groq
+            const chunk = parsed.choices?.[0]?.delta?.content;
+            if (chunk) {
+              fullText += chunk;
               contentEl.innerHTML = escHTML(fullText) + '<span class="stream-cursor">▌</span>';
               chatArea.scrollTop = chatArea.scrollHeight;
             }
