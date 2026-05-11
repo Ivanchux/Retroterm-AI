@@ -7,7 +7,6 @@
   <meta name="description" content="Sistema retrofuturista de administración, desarrollo y comunicación entre usuarios.">
   <link rel="canonical" href="https://ivanchux.github.io/">
   <link rel="stylesheet" href="css/estilos.css">
-  <link rel="stylesheet" href="css/editor.css">
   <link rel="stylesheet" href="css/accesibilidad.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta name="robots" content="index,follow">
@@ -73,8 +72,8 @@
   .b-arts    { grid-column: 4 / 7;  grid-row: 2; }
   .b-defi    { grid-column: 7 / 10; grid-row: 2; }
   .b-red     { grid-column: 10 / 13;grid-row: 2; }
-  .b-subnet  { grid-column: 1 / 5;  grid-row: 3; }
-  .b-roadmap { grid-column: 5 / 9;  grid-row: 3; }
+  .b-mural   { grid-column: 1 / 5;  grid-row: 3; }
+  .b-perfil  { grid-column: 5 / 9;  grid-row: 3; }
   .b-term    { grid-column: 9 / 13; grid-row: 3; }
   .b-wonder  { grid-column: 1 / 13; grid-row: 4; }
 
@@ -283,7 +282,7 @@
     }
     .b-editor, .b-aria,
     .b-gaming, .b-arts, .b-defi, .b-red,
-    .b-subnet, .b-roadmap, .b-term, .b-wonder {
+    .b-mural, .b-perfil, .b-term, .b-wonder {
       grid-column: span 1;
       grid-row: auto;
       min-height: 110px;
@@ -309,7 +308,7 @@
       min-height: 90px;
     }
     .b-gaming, .b-arts, .b-defi, .b-red,
-    .b-subnet, .b-roadmap, .b-term {
+    .b-mural, .b-perfil, .b-term {
       grid-column: span 1;
       min-height: 85px;
     }
@@ -330,7 +329,7 @@
     }
     .b-editor, .b-aria,
     .b-gaming, .b-arts, .b-defi, .b-red,
-    .b-subnet, .b-roadmap, .b-term, .b-wonder {
+    .b-mural, .b-perfil, .b-term, .b-wonder {
       grid-column: span 1;
       min-height: 75px;
     }
@@ -384,7 +383,7 @@
         <span class="b-glyph tc-cyan">AI</span>
         <span class="b-tag tc-cyan">// inteligencia artificial</span>
         <span class="b-name tc-cyan">ARIA · ASISTENTE IA</span>
-        <span class="b-desc tc-cyan">Modelo de lenguaje integrado · conversacional</span>
+        <span class="b-desc tc-cyan">Streaming SSE · markdown · slash commands · export · navegación por voz</span>
       </a>
 
       <!-- FILA MEDIA -->
@@ -416,19 +415,20 @@
         <span class="b-name tc-teal">RED DE PROYECTOS</span>
       </a>
 
-      <!-- UTILIDADES -->
-      <a href="herramientas.html" class="bento-cell b-subnet bc-ice">
-        <div class="b-dot dot-ice"></div>
-        <span class="b-glyph tc-ice">⚙</span>
-        <span class="b-tag tc-ice">// utilidades</span>
-        <span class="b-name tc-ice">TOOLS</span>
+      <!-- MURAL -->
+      <a href="mural.html" class="bento-cell b-mural bc-violet">
+        <div class="b-dot dot-violet"></div>
+        <span class="b-glyph tc-violet">⬡</span>
+        <span class="b-tag tc-violet">// mensajería en tiempo real</span>
+        <span class="b-name tc-violet">MURAL</span>
       </a>
 
-      <a href="roadmap.html" class="bento-cell b-roadmap bc-dim">
-        <div class="b-dot dot-dim"></div>
-        <span class="b-glyph tc-dim">⟶</span>
-        <span class="b-tag tc-dim">// sistema</span>
-        <span class="b-name tc-dim">ROADMAP</span>
+      <!-- PERFIL -->
+      <a href="perfil.html" class="bento-cell b-perfil bc-ice">
+        <div class="b-dot dot-ice"></div>
+        <span class="b-glyph tc-ice">⊙</span>
+        <span class="b-tag tc-ice">// identidad de usuario</span>
+        <span class="b-name tc-ice">PERFIL</span>
       </a>
 
       <!-- TERMINAL INTERACTIVA -->
@@ -469,52 +469,6 @@
     <footer class="pie">
       <p>RETROTERM.AI v2.1 © 2025 | Creado por Iván Brihuega Crespo</p>
     </footer>
-  </section>
-
-  <section id="desarrollo" class="pantalla seccion">
-    <header><h2>💻 MODO DESARROLLO</h2></header>
-    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
-    <nav class="nav-pie">
-      <a href="#asistente">🤖 Asistente IA</a>
-      <a href="defi.html">💰 DeFi</a>
-      <a href="articulos.html">📚 Artículos</a>
-      <a href="red.html">🌐 Red</a>
-    </nav>
-  </section>
-
-  <section id="red" class="pantalla seccion">
-    <header><h2>🌐 RED DE PROYECTOS</h2></header>
-    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
-    <nav class="nav-pie">
-      <a href="#desarrollo">💻 Desarrollo</a>
-      <a href="#asistente">🤖 Asistente IA</a>
-      <a href="articulos.html">📚 Artículos</a>
-      <a href="red.html">🌐 Red</a>
-    </nav>
-  </section>
-
-  <section id="crypto" class="pantalla seccion">
-    <header><h2>💰 PRECIOS DE CRIPTOMONEDAS</h2></header>
-    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
-    <nav class="nav-pie">
-      <a href="#desarrollo">💻 Desarrollo</a>
-      <a href="#asistente">🤖 Asistente IA</a>
-      <a href="articulos.html">📚 Artículos</a>
-      <a href="red.html">🌐 Red</a>
-    </nav>
-  </section>
-
-  <section id="silo" class="pantalla seccion">
-    <header><h2>🗄️ SILO DEL SISTEMA</h2></header>
-    <p>Zona interna del sistema RETROTERM.AI.</p>
-    <a href="turco.html" class="volver" style="border-color:#00ffff;color:#00ffff;margin-top:20px;display:inline-block;">♟ TURCO_v1 — ACCESO RESTRINGIDO</a>
-    <a href="#inicio" class="volver">⬅ Volver al HUB</a>
-    <nav class="nav-pie">
-      <a href="#desarrollo">💻 Desarrollo</a>
-      <a href="#asistente">🤖 Asistente IA</a>
-      <a href="articulos.html">📚 Artículos</a>
-      <a href="red.html">🌐 Red</a>
-    </nav>
   </section>
 
 <script src="js/accesibilidad.js"></script>
