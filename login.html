@@ -108,7 +108,7 @@
     if (primeraLlamada) {
       primeraLlamada = false;
       if (user) {
-        window.location.replace('/perfil.html');
+        window.location.replace('perfil.html');
       }
       return;
     }
@@ -152,7 +152,7 @@
         await loginUser(email, password);
         log('// OK Autenticacion exitosa. Accediendo...', 'log-ok');
       }
-      setTimeout(() => window.location.replace('/perfil.html'), 800);
+      setTimeout(() => window.location.replace('perfil.html'), 800);
     } catch (err) {
       btn.disabled = false;
       log('// ERROR: ' + traducirError(err.code), 'log-err');

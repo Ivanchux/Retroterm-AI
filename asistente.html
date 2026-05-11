@@ -939,6 +939,44 @@ function renderMarkdown(text) {
   }
 }
 
+// Extrae [NAV:url] del texto, devuelve { texto limpio, navUrl }
+function extraerNav(text) {
+  const match = text.match(/\[NAV:([^\]]+)\]/);
+  if (!match) return { texto: text, navUrl: null };
+  return {
+    texto:  text.replace(match[0], '').trim(),
+    navUrl: match[1].trim()
+  };
+}
+
+// ══════════════════════════════════════════════════
+//  CONTEXTO DEL SITIO — inyectado en historialIA
+//  (nunca se muestra en el chat ni se guarda en conv.msgs)
+// ══════════════════════════════════════════════════
+const SITE_CONTEXT = `Eres ARIA, asistente IA integrada en RETROTERM.AI, web personal de Iván Brihuega Crespo (estudiante de ASIR, 1º año).
+
+SECCIONES DE LA WEB (puedes navegar a ellas cuando el usuario lo pida):
+- editor.html       → Editor de código con syntax highlight
+- asistente.html    → Tú (ARIA), asistente IA — estás aquí
+- gaming.html       → Colección de 43 juegos con fichas, capturas IGDB, estados y reviews
+- gaming-ficha.html → Ficha detallada de un juego con galería de capturas
+- gaming-guia.html  → Guías de juego
+- articulos.html    → Artículos técnicos: Linux, redes, SQL, SEO
+- defi.html         → Seguimiento de criptomonedas (DeFi)
+- red.html          → Red de proyectos del autor
+- herramientas.html → Herramientas: calculadora subnet, etc.
+- terminal.html     → Terminal interactiva en el navegador
+- wonder.html       → Juego de puzzles: 7 maravillas del mundo digital
+- roadmap.html      → Hoja de ruta del proyecto RETROTERM.AI
+- mural.html        → Mural de mensajes en tiempo real entre usuarios
+- perfil.html       → Perfil del usuario con stats de gaming y XP
+
+STACK TÉCNICO: Firebase Auth/Firestore, Supabase (gaming), IGDB API, Cloudflare Workers (tu backend), GitHub Pages (hosting estático).
+
+REGLA DE NAVEGACIÓN: Si el usuario pide abrir, ir o navegar a cualquier sección, incluye al FINAL de tu respuesta el marcador exacto: [NAV:nombre-archivo.html]
+Ejemplo: si pide ir a gaming, tu respuesta termina con [NAV:gaming.html]
+Solo usa este marcador cuando el usuario lo pida explícitamente.`;
+
 // ══════════════════════════════════════════════════
 //  CONSTANTES Y ESTADO
 // ══════════════════════════════════════════════════
@@ -1029,12 +1067,20 @@ function nuevaConversacion() {
   cerrarSidebarMob();
 }
 
+function inyectarContexto() {
+  // Prepend invisible — Claude lo recibe pero el usuario no lo ve
+  historialIA = [
+    { role: 'user',      content: SITE_CONTEXT },
+    { role: 'assistant', content: 'Contexto recibido. Estoy lista para ayudar.' }
+  ];
+}
+
 function cargarConversacion(id) {
   const conv = convs.find(c => c.id === id);
   if (!conv) return;
 
   convActual = id;
-  historialIA = [];
+  inyectarContexto();
 
   // Limpiar chat area (excepto typing)
   Array.from(chatArea.children).forEach(el => {
@@ -1061,8 +1107,9 @@ function cargarConversacion(id) {
 
     conv.msgs.forEach(m => {
       agregarMsgDOM(m.rol, m.texto, m.hora, false);
+      // Reconstruir historialIA tras el contexto inicial
       if (m.rol === 'usuario') historialIA.push({ role:'user',      content: m.texto });
-      else                     historialIA.push({ role:'assistant', content: m.texto });
+      else                     historialIA.push({ role:'assistant', content: extraerNav(m.texto).texto });
     });
 
     // Limitar historialIA al contexto máximo
@@ -1229,16 +1276,37 @@ function agregarMsgDOM(rol, texto, hora, scroll = true, tRespuesta = null) {
     ? '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAIAAADuuAg3AAADi0lEQVR4nJVUXWhbZRh+vpMsOaeuVFlPuv4gtmw3Nk1sMzOmbq0Z2rCuNYPFZpRNQv0Bb8XrIcxLb8a88AcUJTAEMbZKN1Cb+sNiJA1JOnoR1kahbcyhkNqRc5am5/XiS89pzirDc/V+73me93m+97zvYTqR5BTBAOiAgP/zCP8RP/LRAQiSKKoPtEfiAL0RkKlkbwAIYE2Ecb/XUmO9ak8vZfbDBACS2GIRH/d7Z1N3OWG92hDoaqkDgo5mMvezu7uXJ8z9nrVTfY8Agw/U9zeGOZ1Ozqzt1CRRNF743IPffPrefjsXXr8KIJtP15nQRAagahonj/sH1qt2CxNApai4I9MCBEDnPTJdTEamVU2zoPtOngfQd/J8pai0HT0iQN/drQON7prkmXjMiN8afZ40PXrtxr2FGQD3Fmb6w1EAOgSb7aE7G84BSGJL7uYnANqOHrE47zk9ETrlnU3l+bFpqvYaVuc6AJgobJU2mSgA2CptOgXE72QNvHUkJbFF1Wp+ry967cZWadN0KAruyHQdgt/rO9i2YV4SRUAY8J2JvXv58afkSlHxTE43j+BByjyjalpw+DQR+sPRSlEZmowOnBhxD41MhKbMWXqILASCF8dCV8rJWz8k5vue7H7GHwDwQIcsu2RZ3lZrL41FAsFXeQnTts89aGvreOxwK2Ps+/gXAF44car72NPbaq20sdbZ1UNEjDEARJRL/djZ6zGV00uZqqrN3/6aiM69crkQj6WyaQCtkqOzq8eAEVFpY62z17O0+HOTbcYQCF5UFIUxdjw0Vdup3dd2ADjUvwFw2dLGmv2QgzE0LcmLo2FemB/HQlcK8RgRFVZWHU/0/DT3Fc8v55J8HALBiLXbvLyilPnxkrtjOZcsrKxOXJg6LB4ql8sDvjN8EImoidzeLt/f/ofHkX6XJ/JGMPzyuL8fQGFlldZzvfbNvZuDMWa5M6uqWm4xkU0nPrr920ToEoAPr7+/nPv1mLjNMdl0or1dPkCZiFwu19nRsNc3YmvrMPJ/Jb/7NpVnXZ7Z1N2zo2HGmMvlUhTF/M7uoRHecEPhWfdgce3PzNznPPPa1S9bJcdMPGYgTeWlxQRjIALvt0BI5zPPHe+uFBXSGiNZWFnVAVmWAeTTCcti6Pz/eG542EjdWpjP3fws+Udm9peF+J2szWbqHbBV1oEnHUz4+J233/zgOmAH6cZ6/QtVVHfB0naRnAAAAABJRU5ErkJggg==" width="20" height="28" style="image-rendering:pixelated;display:block;" alt="ARIA">'
     : '👤';
   const prefijo = rol === 'aria' ? 'ARIA &gt;' : 'USR &gt;';
-  const contenido = rol === 'aria' ? renderMarkdown(texto) : escHTML(texto);
-  const palabras = texto.trim().split(/\s+/).length;
+  // Extraer comando de navegación si ARIA lo incluye
+  let textoMostrado = texto;
+  let navUrl = null;
+  if (rol === 'aria') {
+    const nav = extraerNav(texto);
+    textoMostrado = nav.texto;
+    navUrl = nav.navUrl;
+  }
+
+  const contenido = rol === 'aria' ? renderMarkdown(textoMostrado) : escHTML(textoMostrado);
+  const palabras = textoMostrado.trim().split(/\s+/).length;
+
   const metaExtra = (rol === 'aria' && tRespuesta)
-    ? `<span class="meta-badge">${tRespuesta}s</span><span class="meta-badge">${palabras} palabras</span><span class="meta-badge action" onclick="copiarTexto('${encodeURIComponent(texto)}')">[ COPIAR ]</span>`
+    ? `<span class="meta-badge">${tRespuesta}s</span><span class="meta-badge">${palabras} palabras</span><span class="meta-badge action" onclick="copiarTexto('${encodeURIComponent(textoMostrado)}')">[ COPIAR ]</span>`
     : (rol === 'aria' ? `<span class="meta-badge">${palabras} palabras</span>` : '');
+
+  const navBlock = navUrl
+    ? `<div class="nav-action" style="margin-top:10px;display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid #003300;background:rgba(0,255,102,0.04);">
+        <span style="font-size:0.62rem;color:#1a5a2a;letter-spacing:1px;">// ARIA quiere abrirte:</span>
+        <span style="font-size:0.68rem;color:#00ff66;">${navUrl}</span>
+        <button onclick="window.location.href='${navUrl}'" style="margin-left:auto;background:none;border:1px solid #00ff66;color:#00ff66;font-family:'Courier New',monospace;font-size:0.65rem;padding:3px 12px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;" onmouseover="this.style.background='#00ff66';this.style.color='#000'" onmouseout="this.style.background='none';this.style.color='#00ff66'">[ IR → ]</button>
+        <button onclick="this.parentElement.remove()" style="background:none;border:1px solid #002200;color:#1a3a1a;font-family:'Courier New',monospace;font-size:0.6rem;padding:3px 8px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='#ff5555';this.style.color='#ff5555'" onmouseout="this.style.borderColor='#002200';this.style.color='#1a3a1a'">[ ✕ ]</button>
+      </div>`
+    : '';
+
   row.innerHTML = `
     <div class="msg-icon">${icono}</div>
     <div class="msg-burbuja">
       <span class="msg-prefix">${prefijo}</span>
       <div class="md-content">${contenido}</div>
+      ${navBlock}
       <span class="msg-timestamp">${hora || horaActual()}</span>
       ${metaExtra ? `<div class="msg-meta">${metaExtra}</div>` : ''}
     </div>`;
