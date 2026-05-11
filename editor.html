@@ -882,7 +882,7 @@ body.amber .code-editor.js-editor   { color: #ffdd66; }
 .boot-dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes bootPulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.2; transform:scale(0.6); } }
 </style>
-  <script src="js/theme.js"></script>
+  <script src="js/theme.js?v=2"></script>
 </head>
 <body>
 
@@ -1233,7 +1233,7 @@ const defaultHTML = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <title>Mi proyecto</title>
-  <script src="js/theme.js"></script>
+  <script src="js/theme.js?v=2"></script>
 </head>
 <body>
   <div class="wrap">
@@ -1772,9 +1772,9 @@ function buildCombined() {
   const css = document.getElementById('editor-css').value;
   const js  = document.getElementById('editor-js').value;
 
-  // Insertar CSS justo antes del primer   <script src="js/theme.js"></script>
+  // Insertar CSS justo antes del primer   <script src="js/theme.js?v=2"></script>
 </head>
-  const headIdx = html.toLowerCase().indexOf('  <script src="js/theme.js"></script>
+  const headIdx = html.toLowerCase().indexOf('  <script src="js/theme.js?v=2"></script>
 </head>');
   if (headIdx !== -1) {
     html = html.slice(0, headIdx) + `<style>\n${css}\n</style>\n` + html.slice(headIdx);
@@ -2058,7 +2058,7 @@ document.addEventListener('keydown', e => {
 const AC = {
   html: [
     // Snippet especial
-    { t:'!',          insert:'<!DOCTYPE html>\n<html lang="es">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Documento</title>\n  <script src="js/theme.js"></script>
+    { t:'!',          insert:'<!DOCTYPE html>\n<html lang="es">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Documento</title>\n  <script src="js/theme.js?v=2"></script>
 </head>\n<body>\n  \n</body>\n</html>', kind:'snip', hint:'boilerplate' },
     // Etiquetas simples
     { t:'p',          insert:'<p></p>',                               kind:'tag', hint:'simple' },
