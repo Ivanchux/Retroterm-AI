@@ -19,6 +19,7 @@
   --c-a44: rgba(0,255,102,0.27);
   --c-a55: rgba(0,255,102,0.33);
   --c-a88: rgba(0,255,102,0.53);
+  --c-bg-tint: #000305;             /* tinte sutil en el fondo de página */
 }
 
 /* Canvas: filter de tema aplicado globalmente */
@@ -35,7 +36,7 @@
 /* =========== PANTALLA PRINCIPAL ===================== */
 
 body {
-  background-color: #000;
+  background-color: var(--c-bg-tint, #000);
   color: var(--c-pri);
   font-family: 'Courier New', monospace;
   margin: 0;
