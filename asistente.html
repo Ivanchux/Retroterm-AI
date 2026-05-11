@@ -642,6 +642,111 @@
   }
   .boot-dot:nth-child(2) { animation-delay: 0.2s; }
   .boot-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  /* ══ CODE BLOCK WRAPPER ══ */
+  .code-block { margin: 10px 0; }
+  .code-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 12px;
+    background: rgba(0,255,102,0.03);
+    border: 1px solid #003300; border-bottom: none;
+    font-size: 0.58rem; letter-spacing: 2px;
+  }
+  .code-lang { color: #1a5a2a; text-transform: uppercase; }
+  .code-copy {
+    background: none; border: 1px solid #002200;
+    color: #1a4a2a; font-family: 'Courier New', monospace;
+    font-size: 0.57rem; padding: 2px 8px; cursor: pointer;
+    letter-spacing: 1px; transition: all 0.2s;
+  }
+  .code-copy:hover { border-color: #00ff66; color: #00ff66; }
+  .code-copy.copied { border-color: #00ff66; color: #00ff66; }
+  .code-block .md-content pre,
+  .code-block pre { margin: 0 !important; }
+
+  /* ══ SLASH COMMANDS ══ */
+  .slash-panel {
+    position: absolute; bottom: 100%; left: 0; right: 0;
+    background: rgba(2,6,2,0.97); border: 1px solid #003300;
+    border-bottom: none; z-index: 50;
+  }
+  .slash-header {
+    padding: 5px 16px; font-size: 0.57rem;
+    color: #1a3a1a; letter-spacing: 2px;
+    border-bottom: 1px solid #002200;
+  }
+  .slash-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 8px 16px; cursor: pointer; transition: background 0.12s;
+  }
+  .slash-item:hover, .slash-item.slash-active {
+    background: rgba(0,255,102,0.05);
+  }
+  .slash-cmd { color: #00ff66; font-size: 0.72rem; min-width: 80px; }
+  .slash-desc { color: #1a4a2a; font-size: 0.62rem; letter-spacing: 1px; }
+
+  /* ══ SCROLL TO BOTTOM ══ */
+  .scroll-btn {
+    position: absolute; bottom: 90px; right: 18px;
+    background: rgba(0,12,0,0.92); border: 1px solid #003300;
+    color: #1a5a2a; font-family: 'Courier New', monospace;
+    font-size: 0.6rem; padding: 5px 12px; cursor: pointer;
+    letter-spacing: 1px; transition: all 0.2s;
+    opacity: 0; transform: translateY(6px); pointer-events: none;
+    z-index: 5;
+  }
+  .scroll-btn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .scroll-btn:hover { border-color: #00ff66; color: #00ff66; }
+
+  /* ══ SHORTCUTS MODAL ══ */
+  .shortcuts-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.82); z-index: 300;
+    align-items: center; justify-content: center;
+  }
+  .shortcuts-modal.visible { display: flex; }
+  .shortcuts-box {
+    background: #020c02; border: 1px solid #003300;
+    max-width: 420px; width: 92%; font-family: 'Courier New', monospace;
+  }
+  .shortcuts-header {
+    padding: 12px 16px; border-bottom: 1px solid #002200;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .shortcuts-title { color: #00ff66; font-size: 0.7rem; letter-spacing: 3px; }
+  .shortcuts-close {
+    background: none; border: none; color: #1a4a2a;
+    cursor: pointer; font-size: 1rem; transition: color 0.15s;
+    font-family: 'Courier New', monospace;
+  }
+  .shortcuts-close:hover { color: #ff5555; }
+  .shortcuts-body { padding: 8px 0 12px; }
+  .shortcut-section {
+    padding: 8px 16px 2px; font-size: 0.57rem;
+    color: #1a3a1a; letter-spacing: 2px;
+  }
+  .shortcut-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 16px;
+  }
+  .shortcut-key {
+    color: #00ff66; border: 1px solid #003300;
+    padding: 2px 8px; font-size: 0.63rem; letter-spacing: 1px;
+  }
+  .shortcut-desc { color: #1a5a2a; font-size: 0.63rem; letter-spacing: 1px; }
+
+  /* ══ RESPONSE META ══ */
+  .msg-meta {
+    display: flex; gap: 8px; margin-top: 6px;
+    font-size: 0.57rem; color: #1a3a1a; letter-spacing: 1px; flex-wrap: wrap;
+  }
+  .meta-badge {
+    border: 1px solid #002200; padding: 1px 6px; color: #1a4a2a;
+  }
+  .meta-badge.action {
+    cursor: pointer; transition: all 0.15s;
+  }
+  .meta-badge.action:hover { border-color: #00ff66; color: #00ff66; }
   </style>
 
 <!-- Markdown + Syntax highlight -->
@@ -697,8 +802,10 @@
         <div class="aria-status" id="aria-status">SIN NOMBRE · EN LÍNEA</div>
       </div>
       <div class="aria-topbar-btns">
-        <button class="topbar-btn" onclick="nuevaConversacion()">[ NUEVA ]</button>
-        <button class="topbar-btn danger" onclick="confirmarBorrarTodo()">[ BORRAR TODO ]</button>
+        <button class="topbar-btn" onclick="nuevaConversacion()" title="Ctrl+N">[ NUEVA ]</button>
+        <button class="topbar-btn" onclick="exportarConversacion()" title="Ctrl+E">[ EXPORT ]</button>
+        <button class="topbar-btn" onclick="abrirShortcuts()" title="Ctrl+?">[ ATAJOS ]</button>
+        <button class="topbar-btn danger" onclick="confirmarBorrarTodo()">[ BORRAR ]</button>
         <a href="index.html" style="text-decoration:none;">
           <button class="topbar-btn">[ HUB ]</button>
         </a>
@@ -706,6 +813,7 @@
     </div>
 
     <!-- Chat area -->
+    <div style="position:relative;flex:1;min-height:0;display:flex;flex-direction:column;">
     <div class="chat-area" id="chat-area">
       <div class="empty-state" id="empty-state">
         <div class="es-icon" style="font-size:0;opacity:0.25;">
@@ -725,8 +833,19 @@
       </div>
     </div>
 
+    <button class="scroll-btn" id="scroll-btn" onclick="chatArea.scrollTop=chatArea.scrollHeight">▼ BAJAR</button>
+    </div><!-- /chat-wrapper -->
+
     <!-- Input -->
-    <div class="chat-input-area">
+    <div class="chat-input-area" style="position:relative;">
+      <!-- Slash commands panel -->
+      <div class="slash-panel" id="slash-panel" style="display:none;">
+        <div class="slash-header">// COMANDOS DISPONIBLES</div>
+        <div class="slash-item" data-cmd="/new"    onclick="ejecutarSlash('/new')">   <span class="slash-cmd">/new</span>    <span class="slash-desc">Nueva conversación</span></div>
+        <div class="slash-item" data-cmd="/export" onclick="ejecutarSlash('/export')"><span class="slash-cmd">/export</span> <span class="slash-desc">Exportar conversación como .md</span></div>
+        <div class="slash-item" data-cmd="/clear"  onclick="ejecutarSlash('/clear')"> <span class="slash-cmd">/clear</span>  <span class="slash-desc">Limpiar historial visual</span></div>
+        <div class="slash-item" data-cmd="/help"   onclick="ejecutarSlash('/help')">  <span class="slash-cmd">/help</span>   <span class="slash-desc">Mostrar atajos de teclado</span></div>
+      </div>
       <div class="chat-input-row">
         <span class="chat-prompt">&gt;_</span>
         <input
@@ -748,6 +867,31 @@
 
   </div><!-- /aria-main -->
 </div><!-- /aria-root -->
+
+<!-- Shortcuts modal -->
+<div class="shortcuts-modal" id="shortcuts-modal" onclick="cerrarShortcuts(event)">
+  <div class="shortcuts-box">
+    <div class="shortcuts-header">
+      <span class="shortcuts-title">// ATAJOS DE TECLADO</span>
+      <button class="shortcuts-close" onclick="cerrarShortcuts()">✕</button>
+    </div>
+    <div class="shortcuts-body">
+      <div class="shortcut-section">CONVERSACIONES</div>
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl + N</span><span class="shortcut-desc">Nueva conversación</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl + E</span><span class="shortcut-desc">Exportar como .md</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl + B</span><span class="shortcut-desc">Toggle sidebar</span></div>
+      <div class="shortcut-section">INTERFAZ</div>
+      <div class="shortcut-row"><span class="shortcut-key">Enter</span><span class="shortcut-desc">Enviar mensaje</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Ctrl + ?</span><span class="shortcut-desc">Mostrar esta pantalla</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">Escape</span><span class="shortcut-desc">Cerrar paneles</span></div>
+      <div class="shortcut-section">SLASH COMMANDS</div>
+      <div class="shortcut-row"><span class="shortcut-key">/new</span><span class="shortcut-desc">Nueva conversación</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">/export</span><span class="shortcut-desc">Exportar conversación</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">/clear</span><span class="shortcut-desc">Limpiar vista</span></div>
+      <div class="shortcut-row"><span class="shortcut-key">/help</span><span class="shortcut-desc">Este panel</span></div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════════
@@ -771,8 +915,15 @@
       } catch(e) {
         highlighted = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       }
-      const lang = language || '';
-      return `<pre><code class="hljs${lang ? ' language-'+lang : ''}">${highlighted}</code></pre>`;
+      const lang = language || 'texto';
+      const escapedCode = code.replace(/`/g,'\\`').replace(/\\/g,'\\\\').replace(/\$/g,'\\$');
+      return `<div class="code-block">
+        <div class="code-header">
+          <span class="code-lang">${lang}</span>
+          <button class="code-copy" onclick="copiarCodigo(this)" data-code="${encodeURIComponent(code)}">[ COPIAR ]</button>
+        </div>
+        <pre><code class="hljs${language ? ' language-'+language : ''}">${highlighted}</code></pre>
+      </div>`;
     }
   };
 
@@ -1025,6 +1176,7 @@ async function enviar() {
   if (historialIA.length > MAX_CTX) historialIA = historialIA.slice(-MAX_CTX);
 
   mostrarTyping(true);
+  const tsInicio = Date.now();
 
   try {
     const res = await fetch(WORKER_URL, {
@@ -1034,9 +1186,10 @@ async function enviar() {
     });
     const data = await res.json();
     const respuesta = data.respuesta || '[ERROR] Sin respuesta del sistema.';
+    const tRespuesta = ((Date.now() - tsInicio) / 1000).toFixed(1);
 
     mostrarTyping(false);
-    agregarMsgDOM('aria', respuesta);
+    agregarMsgDOM('aria', respuesta, null, true, tRespuesta);
 
     // Guardar respuesta
     if (conv) {
@@ -1068,7 +1221,7 @@ async function enviar() {
 // ══════════════════════════════════════════════════
 //  DOM HELPERS
 // ══════════════════════════════════════════════════
-function agregarMsgDOM(rol, texto, hora, scroll = true) {
+function agregarMsgDOM(rol, texto, hora, scroll = true, tRespuesta = null) {
   mostrarTyping(false);
   const row = document.createElement('div');
   row.className = `msg-row ${rol}`;
@@ -1077,12 +1230,17 @@ function agregarMsgDOM(rol, texto, hora, scroll = true) {
     : '👤';
   const prefijo = rol === 'aria' ? 'ARIA &gt;' : 'USR &gt;';
   const contenido = rol === 'aria' ? renderMarkdown(texto) : escHTML(texto);
+  const palabras = texto.trim().split(/\s+/).length;
+  const metaExtra = (rol === 'aria' && tRespuesta)
+    ? `<span class="meta-badge">${tRespuesta}s</span><span class="meta-badge">${palabras} palabras</span><span class="meta-badge action" onclick="copiarTexto('${encodeURIComponent(texto)}')">[ COPIAR ]</span>`
+    : (rol === 'aria' ? `<span class="meta-badge">${palabras} palabras</span>` : '');
   row.innerHTML = `
     <div class="msg-icon">${icono}</div>
     <div class="msg-burbuja">
       <span class="msg-prefix">${prefijo}</span>
       <div class="md-content">${contenido}</div>
       <span class="msg-timestamp">${hora || horaActual()}</span>
+      ${metaExtra ? `<div class="msg-meta">${metaExtra}</div>` : ''}
     </div>`;
   chatArea.insertBefore(row, typingEl);
   if (scroll) chatArea.scrollTop = chatArea.scrollHeight;
@@ -1136,12 +1294,184 @@ function escHTML(str) {
 //  INPUT EVENTS
 // ══════════════════════════════════════════════════
 inputEl.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); }
+  if (e.key === 'Enter' && !e.shiftKey) {
+    // Si hay slash panel abierto, seleccionar el activo o ejecutar el comando escrito
+    if (slashPanel.style.display !== 'none') {
+      const items = [...slashPanel.querySelectorAll('.slash-item:not([style*="none"])')];
+      if (slashIdx >= 0 && items[slashIdx]) {
+        e.preventDefault();
+        ejecutarSlash(items[slashIdx].dataset.cmd);
+        return;
+      }
+      const val = inputEl.value.trim();
+      if (SLASH_CMDS.includes(val)) { e.preventDefault(); ejecutarSlash(val); return; }
+    }
+    e.preventDefault(); enviar();
+  }
+  if (e.key === 'ArrowUp' && slashPanel.style.display !== 'none') {
+    e.preventDefault();
+    const items = [...slashPanel.querySelectorAll('.slash-item:not([style*="none"])')];
+    slashIdx = Math.max(0, slashIdx - 1);
+    actualizarSlashActivo();
+  }
+  if (e.key === 'ArrowDown' && slashPanel.style.display !== 'none') {
+    e.preventDefault();
+    const items = [...slashPanel.querySelectorAll('.slash-item:not([style*="none"])')];
+    slashIdx = Math.min(items.length - 1, slashIdx + 1);
+    actualizarSlashActivo();
+  }
+  if (e.key === 'Escape') ocultarSlash();
 });
 inputEl.addEventListener('input', () => {
-  const len = inputEl.value.length;
+  const val = inputEl.value;
+  const len = val.length;
   counterEl.textContent = `${len} / 500`;
   counterEl.className = 'chat-counter' + (len > 400 ? ' warn' : '');
+  // Slash commands
+  if (val.startsWith('/')) mostrarSlash(val);
+  else ocultarSlash();
+});
+
+// ══════════════════════════════════════════════════
+//  COPIAR CÓDIGO
+// ══════════════════════════════════════════════════
+function copiarCodigo(btn) {
+  const code = decodeURIComponent(btn.dataset.code || '');
+  navigator.clipboard.writeText(code).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '[ ✓ COPIADO ]';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    // Fallback para navegadores sin clipboard API
+    const ta = document.createElement('textarea');
+    ta.value = code; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = '[ ✓ COPIADO ]'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '[ COPIAR ]'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copiarTexto(encoded) {
+  const text = decodeURIComponent(encoded);
+  navigator.clipboard.writeText(text).catch(() => {});
+}
+
+// ══════════════════════════════════════════════════
+//  EXPORTAR CONVERSACIÓN
+// ══════════════════════════════════════════════════
+function exportarConversacion() {
+  const conv = convs.find(c => c.id === convActual);
+  if (!conv || !conv.msgs.length) {
+    agregarMsgDOM('aria', '// No hay mensajes que exportar en esta conversación.');
+    return;
+  }
+  const fecha = new Date().toLocaleString('es-ES', { dateStyle:'short', timeStyle:'short' });
+  let md = `# ${conv.titulo}\n`;
+  md += `> Exportado: ${fecha} · ARIA v1.0 · RETROTERM.AI\n\n---\n\n`;
+  conv.msgs.forEach(m => {
+    const who = m.rol === 'aria' ? '**ARIA**' : '**Tú**';
+    md += `${who} · \`${m.hora}\`\n\n${m.texto}\n\n---\n\n`;
+  });
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `aria-${conv.titulo.slice(0,30).replace(/[^a-z0-9]/gi,'-')}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ══════════════════════════════════════════════════
+//  SLASH COMMANDS
+// ══════════════════════════════════════════════════
+const SLASH_CMDS = ['/new', '/export', '/clear', '/help'];
+const slashPanel = document.getElementById('slash-panel');
+let slashIdx = -1;
+
+function mostrarSlash(query) {
+  const q = query.toLowerCase();
+  const items = slashPanel.querySelectorAll('.slash-item');
+  let visible = 0;
+  items.forEach(item => {
+    const match = item.dataset.cmd.startsWith(q);
+    item.style.display = match ? 'flex' : 'none';
+    if (match) visible++;
+  });
+  slashPanel.style.display = visible ? 'block' : 'none';
+  slashIdx = -1;
+  actualizarSlashActivo();
+}
+
+function ocultarSlash() {
+  slashPanel.style.display = 'none';
+  slashIdx = -1;
+}
+
+function actualizarSlashActivo() {
+  slashPanel.querySelectorAll('.slash-item').forEach((el, i) => {
+    el.classList.toggle('slash-active', i === slashIdx);
+  });
+}
+
+function ejecutarSlash(cmd) {
+  inputEl.value = '';
+  ocultarSlash();
+  if (cmd === '/new')    { nuevaConversacion(); return; }
+  if (cmd === '/export') { exportarConversacion(); return; }
+  if (cmd === '/help')   { abrirShortcuts(); return; }
+  if (cmd === '/clear') {
+    Array.from(chatArea.children).forEach(el => {
+      if (!el.classList.contains('typing-indicator') && !el.classList.contains('empty-state')) el.remove();
+    });
+    const sys = document.createElement('div');
+    sys.className = 'msg-sistema';
+    sys.textContent = '// Vista limpiada — historial guardado en memoria';
+    chatArea.insertBefore(sys, typingEl);
+    return;
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  SHORTCUTS MODAL
+// ══════════════════════════════════════════════════
+function abrirShortcuts() {
+  document.getElementById('shortcuts-modal').classList.add('visible');
+}
+function cerrarShortcuts(e) {
+  if (!e || e.target === document.getElementById('shortcuts-modal') || e.target.classList.contains('shortcuts-close')) {
+    document.getElementById('shortcuts-modal').classList.remove('visible');
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  SCROLL TO BOTTOM BUTTON
+// ══════════════════════════════════════════════════
+const scrollBtn = document.getElementById('scroll-btn');
+chatArea.addEventListener('scroll', () => {
+  const distFromBottom = chatArea.scrollHeight - chatArea.scrollTop - chatArea.clientHeight;
+  scrollBtn.classList.toggle('visible', distFromBottom > 120);
+});
+
+// ══════════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ocultarSlash();
+    cerrarShortcuts({ target: document.getElementById('shortcuts-modal') });
+    cerrarSidebarMob();
+    return;
+  }
+  if (!e.ctrlKey && !e.metaKey) return;
+  switch(e.key.toLowerCase()) {
+    case 'n': e.preventDefault(); nuevaConversacion(); break;
+    case 'e': e.preventDefault(); exportarConversacion(); break;
+    case 'b': e.preventDefault(); toggleSidebar(); break;
+    case '/':
+    case '?': e.preventDefault(); abrirShortcuts(); break;
+  }
 });
 
 // ══════════════════════════════════════════════════
